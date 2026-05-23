@@ -1176,7 +1176,8 @@
                 pChars.forEach(char => {
                     const charCard = document.createElement('div');
                     charCard.id = `char_card_${char.name}`;
-                    charCard.className = "char-card-wrapper bg-white/50 dark:bg-gray-750/50 p-3 sm:p-4 rounded-xl border border-gray-200/60 dark:border-gray-600 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-4 transition-all duration-200";
+                    // 修改 1：卡片外層改為 flex-row 並取消內邊距，加上 overflow-hidden 讓左邊按鈕貼齊邊框
+                    charCard.className = "char-card-wrapper bg-white/50 dark:bg-gray-750/50 rounded-xl border border-gray-200/60 dark:border-gray-600 flex flex-row items-stretch transition-all duration-200 overflow-hidden";
                     charCard.setAttribute('onmouseenter', 'checkMarquee(this, true)');
                     charCard.setAttribute('onmouseleave', 'checkMarquee(this, false)');
                     
@@ -1194,16 +1195,22 @@
                     const isOwned = savedStates['owned_' + char.name];
                     const avatarClass = isOwned ? "" : "unowned-avatar";
 
+                    // 修改 2：新增左側打直的長條按鈕，與邊框完美融合
+                    const detailBtn = document.createElement('button');
+                    detailBtn.onclick = () => window.open(`char_detail.html?char=${encodeURIComponent(char.name)}`, '_blank');
+                    detailBtn.className = "w-8 sm:w-10 shrink-0 flex items-center justify-center bg-amber-500/10 hover:bg-amber-300 dark:bg-gray-700/50 dark:hover:bg-gray-600 border-r border-amber-200/50 dark:border-gray-600 transition-colors cursor-pointer group";
+                    detailBtn.title = `查看 ${t(char.name)} 的詳細資料`;
+                    detailBtn.innerHTML = `<span class="opacity-60 group-hover:opacity-100 group-hover:scale-125 transition-all duration-200 text-sm sm:text-base">📝</span>`;
+                    charCard.appendChild(detailBtn);
+
+                    // 修改 3：用一個內部容器把原本的內容包起來，補回原本的 p-3 sm:p-4 內邊距
+                    const cardInner = document.createElement('div');
+                    cardInner.className = "flex-1 p-3 sm:p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-4 w-full overflow-hidden";
+
                     const nameCol = document.createElement('div');
                     nameCol.className = "flex flex-row items-center justify-start gap-3 min-w-[210px] w-full md:w-auto border-b md:border-b-0 pb-2 md:pb-0 border-gray-200/50 dark:border-gray-700";
                     
                     nameCol.innerHTML = `
-                        <button onclick="window.open('char_detail.html?char=${encodeURIComponent(char.name)}', '_blank')" 
-                                class="shrink-0 p-1.5 bg-amber-50 hover:bg-amber-100 dark:bg-gray-700 dark:hover:bg-gray-600 border border-amber-300 dark:border-gray-600 text-sm rounded-lg shadow-sm transition hover-scale" 
-                                title="查看 ${t(char.name)} 的詳細資料">
-                            📝
-                        </button>
-
                         <div class="relative shrink-0 w-12 h-12" onclick="toggleOwnership('${char.name}')">
                             <div id="avatar_container_${char.name}" class="char-avatar-container w-12 h-12 rounded-lg border-2 ${borderColorClass} shadow-inner bg-white ${avatarClass}">
                                 <img src="${avatarPath}" alt="${t(char.name)}" loading="lazy"
@@ -1258,7 +1265,7 @@
                             </div>
                         </div>
                     `;
-                    charCard.appendChild(nameCol);
+                    cardInner.appendChild(nameCol);
 
                     const layersContainer = document.createElement('div');
                     layersContainer.className = "flex flex-col sm:flex-row gap-3 w-full md:flex-1";
@@ -1305,7 +1312,8 @@
                         layersContainer.appendChild(layerBox);
                     });
 
-                    charCard.appendChild(layersContainer);
+                    cardInner.appendChild(layersContainer);
+                    charCard.appendChild(cardInner);
                     charListContainer.appendChild(charCard);
                 });
 
