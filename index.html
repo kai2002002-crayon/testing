@@ -1200,64 +1200,64 @@
                     nameCol.innerHTML = `
                         <button onclick="window.open('char_detail.html?char=${encodeURIComponent(char.name)}', '_blank')" 
                                 class="shrink-0 p-1.5 bg-amber-50 hover:bg-amber-100 dark:bg-gray-700 dark:hover:bg-gray-600 border border-amber-300 dark:border-gray-600 text-sm rounded-lg shadow-sm transition hover-scale" 
-                               title="查看 ${t(char.name)} 的詳細資料">
-                           📝
-                       </button>
+                                title="查看 ${t(char.name)} 的詳細資料">
+                            📝
+                        </button>
 
-                       <div class="relative shrink-0 w-12 h-12" onclick="toggleOwnership('${char.name}')">
-                           <div id="avatar_container_${char.name}" class="char-avatar-container w-12 h-12 rounded-lg border-2 ${borderColorClass} shadow-inner bg-white ${avatarClass}">
-                               <img src="${avatarPath}" alt="${t(char.name)}" loading="lazy"
-                                    onerror="this.style.display='none'; document.getElementById('fall_av_${char.name}').classList.remove('hidden');">
-                               <img src="${hoverPath}" class="avatar-alt" alt="${t(char.name)}" loading="lazy"
-                                    onerror="this.style.display='none';">
-                           </div>
-        
-                           <div id="fall_av_${char.name}" class="hidden char-avatar-container w-12 h-12 rounded-lg border-2 ${borderColorClass} shadow-sm flex items-center justify-center font-bold text-amber-900 bg-gradient-to-br from-amber-100 to-yellow-200 text-lg ${avatarClass}">
-                               ${t(char.name).charAt(0)}
-                           </div>
-                       </div>
+                        <div class="relative shrink-0 w-12 h-12" onclick="toggleOwnership('${char.name}')">
+                            <div id="avatar_container_${char.name}" class="char-avatar-container w-12 h-12 rounded-lg border-2 ${borderColorClass} shadow-inner bg-white ${avatarClass}">
+                                <img src="${avatarPath}" alt="${t(char.name)}" loading="lazy"
+                                     onerror="this.style.display='none'; document.getElementById('fall_av_${char.name}').classList.remove('hidden');">
+                                <img src="${hoverPath}" class="avatar-alt" alt="${t(char.name)}" loading="lazy"
+                                     onerror="this.style.display='none';">
+                            </div>
+                            
+                            <div id="fall_av_${char.name}" class="hidden char-avatar-container w-12 h-12 rounded-lg border-2 ${borderColorClass} shadow-sm flex items-center justify-center font-bold text-amber-900 bg-gradient-to-br from-amber-100 to-yellow-200 text-lg ${avatarClass}">
+                                ${t(char.name).charAt(0)}
+                            </div>
+                        </div>
 
-                       <div class="flex flex-col gap-0.5 w-full overflow-hidden">
-                           <div class="marquee-box text-sm sm:text-base font-bold text-gray-900 dark:text-gray-100" title="${t(char.name)}">
-                               <span class="marquee-content">${t(char.name)}</span>
-                           </div>
-        
-                           <div class="flex items-center gap-1.5 pt-1 border-t border-dashed border-gray-100 dark:border-gray-700">
-                               <div class="flex items-center hover-scale cursor-help">
-                                   <img src="${pPath}" alt="${t(char.personality)}" title="${t('stats_personality')} ${t(char.personality)}"
-                                        onerror="this.style.display='none'; document.getElementById('fall_p_${char.name}').classList.remove('hidden');"
-                                        class="w-4 h-4 object-contain">
-                                   <span id="fall_p_${char.name}" class="hidden text-[9px] px-1 rounded bg-amber-50 dark:bg-gray-700 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-gray-600 whitespace-nowrap">
-                                       ${t(char.personality)}
-                                   </span>
-                               </div>
-                               <div class="flex items-center hover-scale cursor-help">
-                                   <img src="${racePath}" alt="${t(char.race)}" title="${t('stats_race')} ${t(char.race)}"
-                                        onerror="this.style.display='none'; document.getElementById('fall_r_${char.name}').classList.remove('hidden');"
-                                        class="w-4 h-4 object-contain">
-                                   <span id="fall_r_${char.name}" class="hidden bg-gray-100 dark:bg-gray-700 px-1 rounded text-[9px] text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap">
-                                       ${t(char.race)}
-                                   </span>
-                               </div>
-                               <div class="flex items-center hover-scale cursor-help">
-                                   <img src="${posPath}" alt="${t(char.position)}" title="${t('stats_position')} ${t(char.position)}"
-                                        onerror="this.style.display='none'; document.getElementById('fall_pos_${char.name}').classList.remove('hidden');"
-                                        class="w-4 h-4 object-contain opacity-85">
-                                   <span id="fall_pos_${char.name}" class="hidden bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-1 rounded text-[9px] font-medium whitespace-nowrap">
-                                       ${t(char.position)}
-                                   </span>
-                               </div>
-                               <div class="flex items-center hover-scale cursor-help">
-                                   <img src="${jobPath}" alt="${t(char.job)}" title="${t('stats_job')} ${t(char.job)}"
-                                        onerror="this.style.display='none'; document.getElementById('fall_j_${char.name}').classList.remove('hidden');"
-                                        class="w-4 h-4 object-contain opacity-85">
-                                   <span id="fall_j_${char.name}" class="hidden bg-purple-50 dark:bg-purple-900 text-purple-700 dark:text-purple-300 px-1 rounded text-[9px] font-medium whitespace-nowrap">
-                                       ${t(char.job)}
-                                   </span>
-                               </div>
-                           </div>
-                       </div>
-                   `;
+                        <div class="flex flex-col gap-0.5 w-full overflow-hidden">
+                            <div class="marquee-box text-sm sm:text-base font-bold text-gray-900 dark:text-gray-100" title="${t(char.name)}">
+                                <span class="marquee-content">${t(char.name)}</span>
+                            </div>
+                            
+                            <div class="flex items-center gap-1.5 pt-1 border-t border-dashed border-gray-100 dark:border-gray-700">
+                                <div class="flex items-center hover-scale cursor-help">
+                                    <img src="${pPath}" alt="${t(char.personality)}" title="${t('stats_personality')} ${t(char.personality)}"
+                                         onerror="this.style.display='none'; document.getElementById('fall_p_${char.name}').classList.remove('hidden');"
+                                         class="w-4 h-4 object-contain">
+                                    <span id="fall_p_${char.name}" class="hidden text-[9px] px-1 rounded bg-amber-50 dark:bg-gray-700 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-gray-600 whitespace-nowrap">
+                                        ${t(char.personality)}
+                                    </span>
+                                </div>
+                                <div class="flex items-center hover-scale cursor-help">
+                                    <img src="${racePath}" alt="${t(char.race)}" title="${t('stats_race')} ${t(char.race)}"
+                                         onerror="this.style.display='none'; document.getElementById('fall_r_${char.name}').classList.remove('hidden');"
+                                         class="w-4 h-4 object-contain">
+                                    <span id="fall_r_${char.name}" class="hidden bg-gray-100 dark:bg-gray-700 px-1 rounded text-[9px] text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap">
+                                        ${t(char.race)}
+                                    </span>
+                                </div>
+                                <div class="flex items-center hover-scale cursor-help">
+                                    <img src="${posPath}" alt="${t(char.position)}" title="${t('stats_position')} ${t(char.position)}"
+                                         onerror="this.style.display='none'; document.getElementById('fall_pos_${char.name}').classList.remove('hidden');"
+                                         class="w-4 h-4 object-contain opacity-85">
+                                    <span id="fall_pos_${char.name}" class="hidden bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-1 rounded text-[9px] font-medium whitespace-nowrap">
+                                        ${t(char.position)}
+                                    </span>
+                                </div>
+                                <div class="flex items-center hover-scale cursor-help">
+                                    <img src="${jobPath}" alt="${t(char.job)}" title="${t('stats_job')} ${t(char.job)}"
+                                         onerror="this.style.display='none'; document.getElementById('fall_j_${char.name}').classList.remove('hidden');"
+                                         class="w-4 h-4 object-contain opacity-85">
+                                    <span id="fall_j_${char.name}" class="hidden bg-purple-50 dark:bg-purple-900 text-purple-700 dark:text-purple-300 px-1 rounded text-[9px] font-medium whitespace-nowrap">
+                                        ${t(char.job)}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
                     charCard.appendChild(nameCol);
 
                     const layersContainer = document.createElement('div');
