@@ -1200,7 +1200,7 @@
                     detailBtn.onclick = () => window.open(`char_detail.html?char=${encodeURIComponent(char.name)}`, '_blank');
                     detailBtn.className = "w-8 sm:w-10 shrink-0 flex items-center justify-center bg-amber-500/10 hover:bg-amber-300 dark:bg-gray-700/50 dark:hover:bg-gray-600 border-r border-amber-200/50 dark:border-gray-600 transition-colors cursor-pointer group";
                     detailBtn.title = `查看 ${t(char.name)} 的詳細資料`;
-                    detailBtn.innerHTML = `<span class="opacity-60 group-hover:opacity-100 group-hover:scale-125 transition-all duration-200 text-sm sm:text-base">📝</span>`;
+                    detailBtn.innerHTML = `<span class="opacity-60 group-hover:opacity-100 group-hover:scale-125 transition-all duration-200 text-sm sm:text-base">🔍</span>`;
                     charCard.appendChild(detailBtn);
 
                     // 修改 3：用一個內部容器把原本的內容包起來，補回原本的 p-3 sm:p-4 內邊距
