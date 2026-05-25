@@ -147,98 +147,72 @@
             "阿萊特": "Allet", "雷吉": "Lazy", "馬爾": "Mago", "泰達": "Taida", "寧琉": "Ner"
         };
 
-        // 🎁 珍藏品圖片對照表 (由 postimage 直連網址組成)
+        // 🎁 珍藏品圖片與名稱完整對照表 (已同步 Spine 英文名)
         const PRESENT_MAP = {
-            "Alice": "https://i.postimg.cc/SXd1YT62/Present-List-Alice.png",
-            "Allet": "https://i.postimg.cc/JyxYH6Ny/Present-List-Allet.png",
-            "Amelia": "https://i.postimg.cc/d76NZH2Z/Present-List-Amelia.png",
-            "Ashur": "https://i.postimg.cc/R3dpJs7f/Present-List-Ashur.png",
-            "Aya": "https://i.postimg.cc/XZL1BHfc/Present-List-Aya.png",
-            "Bana": "https://i.postimg.cc/xk5pNxv5/Present-List-Bana.png",
-            "Barie": "https://i.postimg.cc/VSgZ0Gq4/Present-List-Barie.png",
-            "Barong": "https://i.postimg.cc/sBmHG6YT/Present-List-Barong.png",
-            "Belita": "https://i.postimg.cc/FfpCkWyC/Present-List-Belita.png",
-            "Beni": "https://i.postimg.cc/cgJ9RRh7/Present-List-Beni.png",
-            "BigWood": "https://i.postimg.cc/1nzCGGBr/Present-List-Big-Wood.png",
-            "Blanchet": "https://i.postimg.cc/7GLs339V/Present-List-Blanchet.png",
-            "Butter": "https://i.postimg.cc/Ppq3WWyS/Present-List-Butter.png",
-            "Canna": "https://i.postimg.cc/G8p7FFKg/Present-List-Canna.png",
-            "Canta": "https://i.postimg.cc/DJzjrr6N/Present-List-Canta.png",
-            "Carren": "https://i.postimg.cc/gX0SVVsB/Present-List-Carren.png",
-            "Chloe": "https://i.postimg.cc/TLP7VV0B/Present-List-Chloe.png",
-            "Chopi": "https://i.postimg.cc/473L66wC/Present-List-Chopi.png",
-            "Daya": "https://i.postimg.cc/qh7bssQp/Present-List-Daya.png",
-            "Diana": "https://i.postimg.cc/MMGP77tq/Present-List-Diana.png",
-            "Ed": "https://i.postimg.cc/qhZmjNDP/Present-List-Ed.png",
-            "Eisia": "https://i.postimg.cc/7GQBm5tj/Present-List-Eisia.png",
-            "Elena": "https://i.postimg.cc/34bLnkbT/Present-List-Elena.png",
-            "Epica": "https://i.postimg.cc/BLwhMjwS/Present-List-Epica.png",
-            "Erpin": "https://i.postimg.cc/Kks9J1sx/Present-List-Erpin.png",
-            "Espi": "https://i.postimg.cc/CB6vmR6F/Present-List-Espi.png",
-            "Festa": "https://i.postimg.cc/WFf9Xdfz/Present-List-Festa.png",
-            "Fricle": "https://i.postimg.cc/S2tZDnt2/Present-List-Fricle.png",
-            "Gabia": "https://i.postimg.cc/CB6vmR6Z/Present-List-Gabia.png",
-            "Guin": "https://i.postimg.cc/qhZmjNZC/Present-List-Guin.png",
-            "Haley": "https://i.postimg.cc/ph10qm1z/Present-List-Haley.png",
-            "Hilde": "https://i.postimg.cc/7JGKcqpb/Present-List-Hilde.png",
-            "Ifrit": "https://i.postimg.cc/k6hjf2hx/Present-List-Ifrit.png",
-            "Jade": "https://i.postimg.cc/0KMV39Lj/Present-List-Jade.png",
-            "Joanne": "https://i.postimg.cc/rR0fbqv0/Present-List-Joanne.png",
-            "Jubee": "https://i.postimg.cc/xNJ679Wm/Present-List-Jubee.png",
-            "Kidian": "https://i.postimg.cc/xNJ679Wz/Present-List-Kidian.png",
-            "Kommy": "https://i.postimg.cc/fSt8FM6v/Present-List-Kommy.png",
-            "Kommy-Swim": "https://i.postimg.cc/fSt8FM6j/Present-List-Kommy-Swim.png",
-            "Kyarot": "https://i.postimg.cc/dZk5XJzj/Present-List-Kyarot.png",
-            "Laika": "https://i.postimg.cc/5QYsGfZg/Present-List-Laika.png",
-            "Lazy": "https://i.postimg.cc/jnwM9RGM/Present-List-Lazy.png",
-            "Leets": "https://i.postimg.cc/N29dVQWz/Present-List-Leets.png",
-            "Lethe": "https://i.postimg.cc/1VnvTyL7/Present-List-Lethe.png",
-            "Levi": "https://i.postimg.cc/zHbxMq9Q/Present-List-Levi.png",
-            "Lion": "https://i.postimg.cc/c6rk6crd/Present-List-Lion.png",
-            "MaestroMK2": "https://i.postimg.cc/14f74Kfs/Present-List-Maestro-MK2.png",
-            "Mago": "https://i.postimg.cc/dDLND9Lq/Present-List-Mago.png",
-            "Marie": "https://i.postimg.cc/9zrgzBrF/Present-List-Marie.png",
-            "Mayo": "https://i.postimg.cc/xqcpqPcN/Present-List-Mayo.png",
-            "Meluna": "https://i.postimg.cc/8sjXsbjj/Present-List-Meluna.png",
-            "Momo": "https://i.postimg.cc/SjJ1jGJn/Present-List-Momo.png",
-            "Naia": "https://i.postimg.cc/XXp1XgpC/Present-List-Naia.png",
-            "Ner": "https://i.postimg.cc/23McWBZW/Present-List-Ner.png",
-            "Opal": "https://i.postimg.cc/mhtphStS/Present-List-Opal.png",
-            "Picora": "https://i.postimg.cc/Cdzrd4zN/Present-List-Picora.png",
-            "Pira": "https://i.postimg.cc/23McWBZZ/Present-List-Pira.png",
-            "Polan": "https://i.postimg.cc/QVw47WTQ/Present-List-Polan.png",
-            "Posher": "https://i.postimg.cc/8s9Kvr6L/Present-List-Posher.png",
-            "Ran": "https://i.postimg.cc/Sj3T9zMW/Present-List-Ran.png",
-            "Renewa-Awaken": "https://i.postimg.cc/jCmgfJ76/Present-List-Renewa-Awaken.png",
-            "Rim": "https://i.postimg.cc/dDpHCTy6/Present-List-Rim.png",
-            "Rim-Chaos": "https://i.postimg.cc/xqhxmbzs/Present-List-Rim-Chaos.png",
-            "Risty": "https://i.postimg.cc/K4wqTgMJ/Present-List-Risty.png",
-            "Rohne": "https://i.postimg.cc/4nqLch92/Present-List-Rohne.png",
-            "Rollett": "https://i.postimg.cc/Sj3T9zMw/Present-List-Rollett.png",
-            "Rude": "https://i.postimg.cc/MXNPBjQg/Present-List-Rude.png",
-            "Rufo": "https://i.postimg.cc/qgSbKC3P/Present-List-Rufo.png",
-            "Sari": "https://i.postimg.cc/XXmH5y5S/Present-List-Sari.png",
-            "Selline": "https://i.postimg.cc/RqystntB/Present-List-Selline.png",
-            "Shady": "https://i.postimg.cc/4mc8QN6F/Present-List-Shady.png",
-            "Shasha": "https://i.postimg.cc/w7NWQTXP/Present-List-Shasha.png",
-            "Sherum": "https://i.postimg.cc/BXFhBQTz/Present-List-Sherum.png",
-            "Shoupan": "https://i.postimg.cc/mt9dy2Y0/Present-List-Shoupan.png",
-            "Silphir": "https://i.postimg.cc/TpbkJYjv/Present-List-Silphir.png",
-            "Sist": "https://i.postimg.cc/1fFWr50Z/Present-List-Sist.png",
-            "Snorky": "https://i.postimg.cc/ZCNfxKPT/Present-List-Snorky.png",
-            "Speaki": "https://i.postimg.cc/cr3DB47H/Present-List-Speaki.png",
-            "Speaki-Maid": "https://i.postimg.cc/KRT9Dv7R/Present-List-Speaki-Maid.png",
-            "Suro": "https://i.postimg.cc/WhZ9wbmD/Present-List-Suro.png",
-            "Sylla": "https://i.postimg.cc/PCkS3sKr/Present-List-Sylla.png",
-            "Taida": "https://i.postimg.cc/fJdHfT79/Present-List-Taida.png",
-            "Tig": "https://i.postimg.cc/SnpgTFVJ/Present-List-Tig.png",
-            "Ui": "https://i.postimg.cc/YvwdnK84/Present-List-Ui.png",
-            "Vela": "https://i.postimg.cc/G41X7wzD/Present-List-Vela.png",
-            "Velvet": "https://i.postimg.cc/fVh82n5X/Present-List-Velvet.png",
-            "Vivi": "https://i.postimg.cc/bZjmCcL9/Present-List-Vivi.png",
-            "xXionx": "https://i.postimg.cc/4YTWLkw6/Present-List-x-Xionx.png",
-            "Yomi": "https://i.postimg.cc/68NMjJzM/Present-List-Yomi.png",
-            "Yumimi": "https://i.postimg.cc/5XMs7dpn/Present-List-Yumimi.png"
+            "Alice": { name: "愛麗絲的卡片冊", url: "https://i.postimg.cc/SXd1YT62/Present-List-Alice.png" },
+            "Allet": { name: "無限保存拌飯醬", url: "https://i.postimg.cc/JyxYH6Ny/Present-List-Allet.png" },
+            "Amelia": { name: "莫納蒂姆的待審文件堆", url: "https://i.postimg.cc/d76NZH2Z/Present-List-Amelia.png" },
+            "Ashur": { name: "艾心堂全年免費自由使用劵", url: "https://i.postimg.cc/R3dpJs7f/Present-List-Ashur.png" },
+            "Aya": { name: "雪花雕像", url: "https://i.postimg.cc/XZL1BHfc/Present-List-Aya.png" },
+            "Belita": { name: "老舊的木雕玩偶", url: "https://i.postimg.cc/FfpCkWyC/Present-List-Belita.png" },
+            "Beni": { name: "高級釣魚包", url: "https://i.postimg.cc/cgJ9RRh7/Present-List-Beni.png" },
+            "BigWood": { name: "大木頭的種子", url: "https://i.postimg.cc/1nzCGGBr/Present-List-Big-Wood.png" },
+            "Blanchet": { name: "藍玫瑰花束", url: "https://i.postimg.cc/7GLs339V/Present-List-Blanchet.png" },
+            "Butter": { name: "花草花冠", url: "https://i.postimg.cc/Ppq3WWyS/Present-List-Butter.png" },
+            "Canna": { name: "客製化遊戲機", url: "https://i.postimg.cc/G8p7FFKg/Present-List-Canna.png" },
+            "Carren": { name: "胡蘿蔔幼苗種子包", url: "https://i.postimg.cc/gX0SVVsB/Present-List-Carren.png" },
+            "Chloe": { name: "王國風景掛毯", url: "https://i.postimg.cc/TLP7VV0B/Present-List-Chloe.png" },
+            "Chopi": { name: "教主簽名簿", url: "https://i.postimg.cc/473L66wC/Present-List-Chopi.png" },
+            "Diana": { name: "橡樹實木搖椅", url: "https://i.postimg.cc/MMGP77tq/Present-List-Diana.png" },
+            "Ed": { name: "夢中的姐妹畫作", url: "https://i.postimg.cc/qhZmjNDP/Present-List-Ed.png" },
+            "Elena": { name: "精靈製最新型筆記型電腦", url: "https://i.postimg.cc/34bLnkbT/Present-List-Elena.png" },
+            "Epica": { name: "教主史詩抄本", url: "https://i.postimg.cc/BLwhMjwS/Present-List-Epica.png" },
+            "Erpin": { name: "昨晚的蠟筆", url: "https://i.postimg.cc/Kks9J1sx/Present-List-Erpin.png" },
+            "Espi": { name: "夢境筆記", url: "https://i.postimg.cc/CB6vmR6F/Present-List-Espi.png" },
+            "Festa": { name: "全盛時期簽名專輯", url: "https://i.postimg.cc/WFf9Xdfz/Present-List-Festa.png" },
+            "Fricle": { name: "友情荊棘戒指", url: "https://i.postimg.cc/S2tZDnt2/Present-List-Fricle.png" },
+            "Gabia": { name: "高級奇石套裝", url: "https://i.postimg.cc/CB6vmR6Z/Present-List-Gabia.png" },
+            "Haley": { name: "莫納蒂姆戰略圖", url: "https://i.postimg.cc/ph10qm1z/Present-List-Haley.png" },
+            "Hilde": { name: "專業學位證書", url: "https://i.postimg.cc/7JGKcqpb/Present-List-Hilde.png" },
+            "Ifrit": { name: "銀箔套裝", url: "https://i.postimg.cc/k6hjf2hx/Present-List-Ifrit.png" },
+            "Jade": { name: "高級玉石地板", url: "https://i.postimg.cc/0KMV39Lj/Present-List-Jade.png" },
+            "Jubee": { name: "皇家蜂蜜", url: "https://i.postimg.cc/xNJ679Wm/Present-List-Jubee.png" },
+            "Kidian": { name: "黑曜石短劍", url: "https://i.postimg.cc/xNJ679Wz/Present-List-Kidian.png" },
+            "Kommy": { name: "名牌枕頭", url: "https://i.postimg.cc/fSt8FM6v/Present-List-Kommy.png" },
+            "Kyarot": { name: "", url: "https://i.postimg.cc/dZk5XJzj/Present-List-Kyarot.png" },
+            "Lazy": { name: "最先進工具組", url: "https://i.postimg.cc/jnwM9RGM/Present-List-Lazy.png" },
+            "Leets": { name: "超重鋼鐵盔甲", url: "https://i.postimg.cc/N29dVQWz/Present-List-Leets.png" },
+            "Levi": { name: "超大尺寸保暖內衣", url: "https://i.postimg.cc/zHbxMq9Q/Present-List-Levi.png" },
+            "MaestroMK2": { name: "充滿回婚憶的硬碟", url: "https://i.postimg.cc/14f74Kfs/Present-List-Maestro-MK2.png" },
+            "Mago": { name: "羊毛大衣", url: "https://i.postimg.cc/dDLND9Lq/Present-List-Mago.png" },
+            "Marie": { name: "反物質中子炸彈", url: "https://i.postimg.cc/9zrgzBrF/Present-List-Marie.png" },
+            "Mayo": { name: "奇怪的石膏像", url: "https://i.postimg.cc/xqcpqPcN/Present-List-Mayo.png" },
+            "Meluna": { name: "遊艇啟動匙", url: "https://i.postimg.cc/8sjXsbjj/Present-List-Meluna.png" },
+            "Momo": { name: "忍術替身木", url: "https://i.postimg.cc/SjJ1jGJn/Present-List-Momo.png" },
+            "Naia": { name: "海豚大砲", url: "https://i.postimg.cc/XXp1XgpC/Present-List-Naia.png" },
+            "Ner": { name: "", url: "https://i.postimg.cc/23McWBZW/Present-List-Ner.png" },
+            "Picora": { name: "精緻的時尚貼紙簿", url: "https://i.postimg.cc/Cdzrd4zN/Present-List-Picora.png" },
+            "Posher": { name: "健康防禦葡萄汁", url: "https://i.postimg.cc/8s9Kvr6L/Present-List-Posher.png" },
+            "Rim": { name: "高級茶杯套裝", url: "https://i.postimg.cc/dDpHCTy6/Present-List-Rim.png" },
+            "Rohne": { name: "教主觀察日記", url: "https://i.postimg.cc/4nqLch92/Present-List-Rohne.png" },
+            "Rude": { name: "莫納蒂姆健身房高級會員卡", url: "https://i.postimg.cc/MXNPBjQg/Present-List-Rude.png" },
+            "Rufo": { name: "作弊骰子", url: "https://i.postimg.cc/qgSbKC3P/Present-List-Rufo.png" },
+            "Sari": { name: "反應卡片", url: "https://i.postimg.cc/XXmH5y5S/Present-List-Sari.png" },
+            "Selline": { name: "挑釁用的比賽服", url: "https://i.postimg.cc/RqystntB/Present-List-Selline.png" },
+            "Shady": { name: "魔法水晶珠", url: "https://i.postimg.cc/4mc8QN6F/Present-List-Shady.png" },
+            "Shoupan": { name: "艾利亞斯英雄勳章", url: "https://i.postimg.cc/mt9dy2Y0/Present-List-Shoupan.png" },
+            "Silphir": { name: "對練用稻草人", url: "https://i.postimg.cc/TpbkJYjv/Present-List-Silphir.png" },
+            "Sist": { name: "紫水晶存錢筒", url: "https://i.postimg.cc/1fFWr50Z/Present-List-Sist.png" },
+            "Snorky": { name: "手工豆漿48包", url: "https://i.postimg.cc/ZCNfxKPT/Present-List-Snorky.png" },
+            "Speaki": { name: "南瓜南瓜套裝", url: "https://i.postimg.cc/cr3DB47H/Present-List-Speaki.png" },
+            "Sylla": { name: "攜帶型電風扇", url: "https://i.postimg.cc/PCkS3sKr/Present-List-Sylla.png" },
+            "Taida": { name: "偷懶專用睡袋", url: "https://i.postimg.cc/fJdHfT79/Present-List-Taida.png" },
+            "Ui": { name: "魔靈池塘的蓮花", url: "https://i.postimg.cc/YvwdnK84/Present-List-Ui.png" },
+            "Velvet": { name: "黃金荊棘王冠", url: "https://i.postimg.cc/fVh82n5X/Present-List-Velvet.png" },
+            "Vivi": { name: "銀製高腳杯", url: "https://i.postimg.cc/bZjmCcL9/Present-List-Vivi.png" },
+            "xXionx": { name: "網絡小說單行本", url: "https://i.postimg.cc/4YTWLkw6/Present-List-x-Xionx.png" },
+            "Yomi": { name: "向月花花環", url: "https://i.postimg.cc/68NMjJzM/Present-List-Yomi.png" },
+            "Yumimi": { name: "偽裝用木製面具", url: "https://i.postimg.cc/5XMs7dpn/Present-List-Yumimi.png" }
         };
         
         const IMAGE_MAP = {
@@ -307,23 +281,47 @@
             if (spineKey) {
     
                 // ==========================================
-                // 🎁 就在這裡！把「動態顯示珍藏品邏輯」貼進來
+                // 🎁 升級版：動態顯示珍藏品名稱與圖片邏輯
                 // ==========================================
                 const presentContainer = document.getElementById('presentContainer');
+                const presentNameBox = document.getElementById('presentName');
                 const DEFAULT_NO_PRESENT_URL = "https://i.postimg.cc/qtwD6bsq/Icon-Present.png";
     
                 let finalImgUrl = DEFAULT_NO_PRESENT_URL;
+                let presentDisplayName = "珍藏品正在送遞中..."; // 🌟 關鍵修改：未實裝角色的預設文字
                 let isHasPresent = false;
 
+                // 🔍 比對並取得當前角色的珍藏品資料
                 if (PRESENT_MAP[spineKey]) {
-                    finalImgUrl = PRESENT_MAP[spineKey];
+                    finalImgUrl = PRESENT_MAP[spineKey].url;
                     isHasPresent = true;
+        
+                    // 如果名稱不為空值，就用表單內的名字；如果是空的（例如 Kyarot/Ner），就自動填寫「角色名 的珍藏品」
+                    if (PRESENT_MAP[spineKey].name && PRESENT_MAP[spineKey].name.trim() !== "") {
+                        presentDisplayName = PRESENT_MAP[spineKey].name;
+                    } else {
+                        presentDisplayName = `${charData.name}的珍藏品`;
+                    }
                 }
 
-                const altText = isHasPresent ? `${charData.name}的珍藏品` : "此角色暫無珍藏品";
+                // ✍️ 渲染名稱區塊
+                if (presentNameBox) {
+                    presentNameBox.innerText = presentDisplayName;
+                    presentNameBox.classList.remove('hidden'); // 讓名稱框顯示出來
+        
+                    // 🎨 UI 小優化：如果是「送遞中」，可以讓文字稍微暗一點，增加等待感
+                    if (!isHasPresent) {
+                        presentNameBox.classList.add('text-gray-400', 'border-dashed');
+                    } else {
+                        presentNameBox.classList.add('text-gray-200');
+                    }
+                }
+
+                // 🚀 渲染圖片區塊
+                const altText = isHasPresent ? `${charData.name} - ${presentDisplayName}` : "珍藏品正在送遞中";
                 const imgClass = isHasPresent 
                     ? "max-w-full max-h-48 object-contain transition-transform duration-300 hover:scale-105"
-                    : "max-w-full max-h-32 object-contain";
+                    : "max-w-full max-h-32 object-contain opacity-70"; // 🌟 UI 小優化：送遞中的統一圖示稍微半透明 (opacity-70)
 
                 if (presentContainer) {
                     presentContainer.innerHTML = `
@@ -335,7 +333,7 @@
                     `;
                 }
                 // ==========================================
-                // 🎁 珍藏品代碼結束，下面維持您原本的 Spine 播放器代碼
+                // 🎁 珍藏品代碼結束
                 // ==========================================
                 avatarBox.innerHTML = ''; // 清空 fallback 文字或提示
                 
