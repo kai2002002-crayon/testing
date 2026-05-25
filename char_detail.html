@@ -347,7 +347,7 @@
             // 2. 如果後半段有內容，用逗號(，)、頓號(、)、句號(。)將效果切分成陣列
             // 這裡我們把所有這些符號都當作切點
             const effects = parts.length > 1 
-                ? parts[1].split(/[，、]/).filter(p => p.trim() !== "") 
+                ? parts[1].split(/[,、]/).filter(p => p.trim() !== "") 
                 : [];
 
             // 3. 渲染描述文字
