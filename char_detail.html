@@ -214,25 +214,25 @@
                     // 🗡️ 普通攻擊 (加入 whitespace-pre-wrap 與統一行距)
                     html += `
                         <div class="bg-slate-50 dark:bg-slate-700/40 border-2 border-slate-300 dark:border-slate-600 rounded-xl p-4 shadow-sm">
-                                <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-600 pb-2 mb-3">
-                                    <div class="flex items-center gap-2">
-                                        ${normalAttackIcon ? `<img src="${normalAttackIcon}" class="w-8 h-8 rounded-lg shadow-sm border border-slate-300 dark:border-slate-600">` : `<span>🎯</span>`}
-                                        <span class="font-extrabold text-slate-800 dark:text-slate-200 text-base">普通攻擊</span>
-                                    </div>
-                                </div>
-                                <div class="space-y-4">
-                                    <div>
-                                        <p class="text-xs font-bold text-slate-700 dark:text-slate-300">【基本】</p>
-                                        ${renderTextAsStats(charSkillData.normalAttack.basic)}
-                                    </div>
-                                    ${charSkillData.normalAttack.enhanced !== "無" ? `
-                                    <div>
-                                        <p class="text-xs font-bold text-slate-700 dark:text-slate-300">【強化】</p>
-                                        ${renderTextAsStats(charSkillData.normalAttack.enhanced)}
-                                    </div>` : ''}
+                            <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-600 pb-2 mb-3">
+                                <div class="flex items-center gap-2">
+                                    ${normalAttackIcon ? `<img src="${normalAttackIcon}" class="w-8 h-8 rounded-lg shadow-sm border border-slate-300 dark:border-slate-600">` : `<span>🎯</span>`}
+                                    <span class="font-extrabold text-slate-800 dark:text-slate-200 text-base">普通攻擊</span>
                                 </div>
                             </div>
-                        `;
+                            <div class="space-y-4">
+                                <div>
+                                    <p class="text-xs font-bold text-slate-700 dark:text-slate-300">【基本】</p>
+                                    ${renderSkillContent(charSkillData.normalAttack.basic)}
+                                </div>
+                                ${charSkillData.normalAttack.enhanced !== "無" ? `
+                                <div>
+                                    <p class="text-xs font-bold text-slate-700 dark:text-slate-300">【強化】</p>
+                                    ${renderSkillContent(charSkillData.normalAttack.enhanced)}
+                                </div>` : ''}
+                            </div>
+                        </div>
+                    `;
 
                     // 🟢 一般技能
                     html += `
@@ -336,14 +336,23 @@
                   list.innerHTML = `<div class="text-center text-red-500 dark:text-red-400 font-bold text-sm py-4">讀取留言失敗，請確認資料庫權限設定。</div>`;
               });
         }
-        // 這個函數會把文字依照「，」或「。」切開，並轉成獨立的 Stats 標籤
-        function renderTextAsStats(text) {
+        // 💡 這個函數會把「描述 | 效果」切分處理
+        function renderSkillContent(text) {
             if (!text) return "";
-            // 用逗號或句號切開，過濾掉空的項目
-            const parts = text.split(/[，。]/).filter(p => p.trim() !== "");
-            return `<div class="flex flex-wrap gap-1.5 mt-2">` + 
-                parts.map(p => `<span class="px-2 py-0.5 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 text-[11px] font-bold rounded-md shadow-sm">${p.trim()}</span>`).join('') + 
-                `</div>`;
+    
+            // 如果有 | 符號，就切分，否則視為純描述
+            const parts = text.split('|');
+            const description = parts[0].trim();
+            const effects = parts.length > 1 ? parts[1].split(/[，。]/).filter(p => p.trim() !== "") : [];
+
+            let html = `<p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${description}</p>`;
+    
+            if (effects.length > 0) {
+                html += `<div class="flex flex-wrap gap-1.5 mt-2">` + 
+                    effects.map(eff => `<span class="px-2 py-0.5 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 text-[11px] font-bold rounded-md shadow-sm">${eff.trim()}</span>`).join('') + 
+                    `</div>`;
+            }
+            return html;
         }
         function submitComment() {
             let authorInput = document.getElementById('commentAuthor').value.trim();
