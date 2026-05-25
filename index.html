@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="referrer" content="no-referrer">
+    
     <title>嘟嘟臉金蠟筆記事本</title>
     <link rel="icon" href="https://i.postimg.cc/SsdYCfTT/rimrim.png" type="image/png">
     <script src="data.js"></script>
@@ -70,12 +72,16 @@
             -webkit-touch-callout: none; 
             -webkit-user-select: none; 
             user-select: none; 
+            /* 🛠️ 修復 2：強制 GPU 加速，解決 Opera Hover 時的閃爍與黑邊問題 */
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            will-change: transform;
         }
 
         /* 僅在支援滑鼠的設備上啟用懸停放大 */
         @media (hover: hover) and (pointer: fine) {
             .char-avatar-container:hover { 
-                transform: scale(1.5); 
+                transform: scale(1.5) translateZ(0); /* 同步保留 GPU 加速屬性 */
                 z-index: 50; 
                 box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); 
             }
@@ -98,15 +104,19 @@
         .swap-avatars .avatar-alt {
             opacity: 1;
         }
+        
         /* 針對小圖示與蠟筆按鈕的懸停微放大特效 */
         .hover-scale {
             transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
             position: relative;
             z-index: 1;
+            /* 🛠️ 修復 2：強制 GPU 加速 */
+            transform: translateZ(0);
+            backface-visibility: hidden;
         }
         @media (hover: hover) and (pointer: fine) {
             .hover-scale:hover {
-                transform: scale(1.15); /* 放大 15% 恰到好處，既有動感又不會破版 */
+                transform: scale(1.15) translateZ(0); /* 放大 15% 恰到好處，既有動感又不會破版 */
                 z-index: 10; /* 確保放大的元素會蓋在別人上面 */
             }
         }
@@ -130,6 +140,7 @@
         .social-fixed { position: fixed; bottom: 20px; right: 20px; z-index: 100; }
         .social-menu { display: none; margin-bottom: 8px; flex-direction: column; gap: 8px; }
         .social-fixed:hover .social-menu { display: flex; }
+        
         /* ==============================================================
             🌟 看板娘 Rim 專屬容器
             ============================================================== */
@@ -401,7 +412,7 @@
                 "攻擊": "攻撃", "防禦": "防御", "血量": "HP", "爆擊": "会心", "爆抗": "会心抵抗", "全部": "すべて",
                 "洛涅": "ローネ", "薇薇": "ヴィヴィ", "艾爾芬": "エルフィン", "錫安": "シオン・ザ・DB", "伊弗利特": "イフリート", "伊德": "イード", "佩佩": "ベルベット", "佩斯塔": "フェスタ",
                 "修帕": "シュパン", "傑德": "ジェイド", "優米": "ヨミ", "劉美美": "ユミミ", "加薇雅": "ガヴィア", "卡洛特": "キャロット", "卡蓮": "カレン", "喬菲": "チョッピー",
-                "基狄恩": "ギデオン", "大師2號": "マエストロMK2", "大木頭": "ビッグウッド", "奈雅": "ナイア", "奶油": "バター", "布蘭切": "ブランセ", "希拉": "シーラ", "ヒルデ": "ヒルデ",
+                "基狄恩": "ギデオン", "大師2號": "マエストロMK2", "大木頭": "ビッグウッド", "奈雅": "ナイア", "奶油": "バター", "布蘭切": "ブランセ", "希拉": "シーラ", "希爾德": "ヒルデ",
                 "希瑟圖": "シスト", "希菲爾": "シルフィール", "帕特拉": "パトラ", "庫洛艾": "クロエ", "康娜": "カンナ", "愛麗絲": "アリス", "斑尼": "ベニー", "斯皮奇": "スピッキー",
                 "斯諾奇": "スノキー", "柯米": "コミー", "桃桃": "モモ", "梅森": "メゾン", "梅露娜": "メロナ", "海莉": "ヘイリー", "珀榭": "ポーシャー", "琳": "リム",
                 "瑟琳娜": "セリーネ", "瑪約": "マヨ", "瑪麗": "マリー", "皮可菈": "ピコラ", "盧波": "ルポ", "米雪": "ミンス", "綾": "アヤ", "羽伊": "ウイ",
@@ -1104,7 +1115,6 @@
                 pChars.forEach(char => {
                     const charCard = document.createElement('div');
                     charCard.id = `char_card_${char.name}`;
-                    // 修改 1：卡片外層改為 flex-row 並取消內邊距，加上 overflow-hidden 讓左邊按鈕貼齊邊框
                     charCard.className = "char-card-wrapper bg-white/50 dark:bg-gray-750/50 rounded-xl border border-gray-200/60 dark:border-gray-600 flex flex-row items-stretch transition-all duration-200 overflow-hidden";
                     charCard.setAttribute('onmouseenter', 'checkMarquee(this, true)');
                     charCard.setAttribute('onmouseleave', 'checkMarquee(this, false)');
@@ -1123,14 +1133,11 @@
                     const isOwned = savedStates['owned_' + char.name];
                     const avatarClass = isOwned ? "" : "unowned-avatar";
 
-                    // 修改 2：新增左側打直的長條按鈕，與邊框完美融合
-                    // 修改後的左側按鈕區塊
                     const detailBtn = document.createElement('button');
                     detailBtn.onclick = () => window.open(`char_detail.html?char=${encodeURIComponent(char.name)}`, '_blank');
                     detailBtn.className = "w-8 sm:w-10 shrink-0 flex items-center justify-center bg-amber-500/10 hover:bg-amber-300 dark:bg-gray-700/50 dark:hover:bg-gray-600 border-r border-amber-200/50 dark:border-gray-600 transition-colors cursor-pointer group";
                     detailBtn.title = `查看 ${t(char.name)} 的詳細資料`;
 
-                    // 使用您提供的圖示，並加上輕微的動態放大效果
                     detailBtn.innerHTML = `
                         <img src="https://i.postimg.cc/T1Y9CC22/Album-Icon-Info.png" 
                              alt="Info" 
@@ -1138,19 +1145,19 @@
                     `;
                     charCard.appendChild(detailBtn);
 
-                    // 修改 3：用一個內部容器把原本的內容包起來，補回原本的 p-3 sm:p-4 內邊距
                     const cardInner = document.createElement('div');
                     cardInner.className = "flex-1 p-3 sm:p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-4 w-full overflow-hidden";
 
                     const nameCol = document.createElement('div');
                     nameCol.className = "flex flex-row items-center justify-start gap-3 min-w-[210px] w-full md:w-auto border-b md:border-b-0 pb-2 md:pb-0 border-gray-200/50 dark:border-gray-700";
                     
+                    // 🛠️ 修復 3：移除這裡面 img 的 loading="lazy"，避免 Opera 延遲載入破圖
                     nameCol.innerHTML = `
                         <div class="relative shrink-0 w-12 h-12" onclick="toggleOwnership('${char.name}')">
                             <div id="avatar_container_${char.name}" class="char-avatar-container w-12 h-12 rounded-lg border-2 ${borderColorClass} shadow-inner bg-white ${avatarClass}">
-                                <img src="${avatarPath}" alt="${t(char.name)}" loading="lazy"
+                                <img src="${avatarPath}" alt="${t(char.name)}" 
                                      onerror="this.style.display='none'; document.getElementById('fall_av_${char.name}').classList.remove('hidden');">
-                                <img src="${hoverPath}" class="avatar-alt" alt="${t(char.name)}" loading="lazy"
+                                <img src="${hoverPath}" class="avatar-alt" alt="${t(char.name)}" 
                                      onerror="this.style.display='none';">
                             </div>
                             
