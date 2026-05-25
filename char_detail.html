@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>角色詳細資料</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script src="skill.js"></script>
     <style>
         body { font-family: 'Noto Sans TC', sans-serif; background-color: #fcf8f2; }
     </style>
@@ -19,10 +20,13 @@
         </button>
 
         <div class="flex flex-col sm:flex-row items-center gap-6 border-b-2 border-amber-200 pb-6 mb-6">
-            <div id="charAvatar" class="w-24 h-24 rounded-2xl border-4 border-amber-500 bg-white overflow-hidden shadow-md flex items-center justify-center text-3xl font-bold text-amber-900">
+            <div id="charAvatar" class="w-24 h-24 rounded-2xl border-4 border-amber-500 bg-white overflow-hidden shadow-md flex items-center justify-center text-3xl font-bold text-amber-900 flex-shrink-0">
+            </div>
+            <div class="text-center sm:text-left w-full">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-2 justify-center sm:justify-start">
+                    <h1 id="charName" class="text-3xl font-extrabold text-amber-900">角色名稱</h1>
+                    <div id="attrBadgeContainer"></div>
                 </div>
-            <div class="text-center sm:text-left">
-                <h1 id="charName" class="text-3xl font-extrabold text-amber-955 mb-2">角色名稱</h1>
                 <div class="flex flex-wrap justify-center sm:justify-start gap-2 text-xs font-bold">
                     <span id="charPersonality" class="px-2.5 py-1 bg-green-100 text-green-800 rounded-lg">性格：-</span>
                     <span id="charRace" class="px-2.5 py-1 bg-blue-100 text-blue-800 rounded-lg">種族：-</span>
@@ -32,34 +36,38 @@
             </div>
         </div>
 
-        <h2 class="text-lg font-bold text-amber-900 mb-3 flex items-center gap-1">🖍️ 金蠟筆分佈詳情</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            
-            <div class="bg-amber-50/60 border border-amber-200 p-3 rounded-xl">
-                <h3 class="font-bold text-amber-800 text-sm mb-2 border-b border-amber-200 pb-1">🥇 第一層屬性</h3>
-                <ul id="layer1List" class="space-y-1 text-xs font-medium text-gray-700 list-disc list-inside"></ul>
+        <div class="mb-8">
+            <h2 class="text-lg font-bold text-amber-900 mb-3 flex items-center gap-1">🖍️ 金蠟筆分佈詳情</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-amber-50/60 border border-amber-200 p-3 rounded-xl">
+                    <h3 class="font-bold text-amber-800 text-sm mb-2 border-b border-amber-200 pb-1">🥇 第一層屬性</h3>
+                    <ul id="layer1List" class="space-y-1 text-xs font-medium text-gray-700 list-disc list-inside"></ul>
+                </div>
+                <div class="bg-orange-50/60 border border-orange-200 p-3 rounded-xl">
+                    <h3 class="font-bold text-orange-800 text-sm mb-2 border-b border-orange-200 pb-1">🥈 第二層屬性</h3>
+                    <ul id="layer2List" class="space-y-1 text-xs font-medium text-gray-700 list-disc list-inside"></ul>
+                </div>
+                <div class="bg-red-50/60 border border-red-200 p-3 rounded-xl">
+                    <h3 class="font-bold text-red-800 text-sm mb-2 border-b border-red-200 pb-1">🥉 第三層屬性</h3>
+                    <ul id="layer3List" class="space-y-1 text-xs font-medium text-gray-700 list-disc list-inside"></ul>
+                </div>
             </div>
-
-            <div class="bg-orange-50/60 border border-orange-200 p-3 rounded-xl">
-                <h3 class="font-bold text-orange-800 text-sm mb-2 border-b border-orange-200 pb-1">🥈 第二層屬性</h3>
-                <ul id="layer2List" class="space-y-1 text-xs font-medium text-gray-700 list-disc list-inside"></ul>
-            </div>
-
-            <div class="bg-red-50/60 border border-red-200 p-3 rounded-xl">
-                <h3 class="font-bold text-red-800 text-sm mb-2 border-b border-red-200 pb-1">🥉 第三層屬性</h3>
-                <ul id="layer3List" class="space-y-1 text-xs font-medium text-gray-700 list-disc list-inside"></ul>
-            </div>
-
         </div>
 
-        <div class="mt-6 pt-6 border-t border-dashed border-gray-200 text-center text-xs text-gray-400">
-            💡 提示：未來可在此區塊自行串接 Firebase 擴充詳細技能、教主評價或裝飾圖片。
+        <div class="mt-6 pt-6 border-t-2 border-amber-200">
+            <h2 class="text-xl font-black text-amber-950 mb-4 flex items-center gap-1.5">⚔️ 技能詳細資料</h2>
+            <div id="skillsContainer" class="space-y-5">
+                </div>
+        </div>
+
+        <div class="mt-8 pt-4 border-t border-dashed border-gray-200 text-center text-xs text-gray-400">
+            💡 本頁面已完美串接 skill.js 完整技能資料庫。
         </div>
 
     </div>
 
     <script>
-        // 核心資料庫 (與你的主頁面保持一致，用於查詢)
+        // 大頭貼圖片資料庫
         const IMAGE_MAP = {
             "avatar_洛涅": "https://i.postimg.cc/nL4vx1LN/luo-nie.png",
             "avatar_薇薇": "https://i.postimg.cc/gkx8jpJD/wei-wei.png",
@@ -132,7 +140,8 @@
             "avatar_寧琉": "https://i.postimg.cc/tgt95LY0/ning-liu.png"
         };
 
-                const INITIAL_DATA = [
+        // 蠟筆格子與天賦資料庫
+        const INITIAL_DATA = [
             { name: "洛涅", personality: "天真", race: "精靈", position: "前排", job: "肉盾", layer1: ["血量", "爆擊"], layer2: ["防禦", "爆擊", "爆抗"], layer3: ["攻擊", "防禦", "血量", "爆擊"] },
             { name: "薇薇", personality: "天真", race: "龍族", position: "前排", job: "肉盾", layer1: ["血量", "爆擊"], layer2: ["防禦", "爆擊", "爆抗"], layer3: ["攻擊", "防禦", "血量", "爆擊"] },
             { name: "卡洛特", personality: "天真", race: "妖精", position: "後排", job: "輔助", layer1: ["攻擊", "血量"], layer2: ["攻擊", "防禦", "爆抗"], layer3: ["攻擊", "防禦", "爆擊", "爆抗"] },
@@ -151,7 +160,7 @@
             { name: "奶油", personality: "活潑", race: "獸人", position: "後排", job: "輸出", layer1: ["攻擊", "防禦"], layer2: ["攻擊", "防禦", "血量"], layer3: ["攻擊", "血量", "爆擊", "爆抗"] },
             { name: "桃桃", personality: "活潑", race: "獸人", position: "後排", job: "輸出", layer1: ["攻擊", "血量"], layer2: ["攻擊", "防禦", "爆抗"], layer3: ["攻擊",  "防禦", "爆擊", "爆抗"] },
             { name: "瑟琳娜", personality: "活潑", race: "幽靈", position: "前排", job: "肉盾", layer1: ["攻擊", "防禦"], layer2: ["攻擊", "防禦", "血量"], layer3: ["攻擊", "血量", "爆擊", "爆抗"] },
-            { name: "羽伊", personality: "活潑", race: "魔靈", position: "中排", job: "輔助", layer1: ["爆擊", "爆抗"], layer2: ["血量", "爆擊", "爆抗"], layer3: ["防禦", "血量", "爆擊", "爆抗"] },
+            { name: "羽伊", personality: "活潑", race: "魔靈", position: "慢排", job: "輔助", layer1: ["爆擊", "爆抗"], layer2: ["血量", "爆擊", "爆抗"], layer3: ["防禦", "血量", "爆擊", "爆抗"] },
             { name: "艾皮卡", personality: "活潑", race: "獸人", position: "中排", job: "輸出", layer1: ["爆擊", "爆抗"], layer2: ["血量", "爆擊", "爆抗"], layer3: ["防禦", "血量", "爆擊", "爆抗"] },
             { name: "路德", personality: "活潑", race: "龍族", position: "前排", job: "肉盾", layer1: ["血量", "爆擊"], layer2: ["防禦", "爆擊", "爆抗"], layer3: ["攻擊", "防禦", "血量", "爆擊"] },
             { name: "康娜", personality: "活潑", race: "精靈", position: "後排", job: "輸出", layer1: ["防禦", "爆抗"], layer2: ["攻擊", "血量", "爆擊"], layer3: ["攻擊", "防禦", "血量", "爆抗"] },
@@ -204,23 +213,37 @@
             { name: "寧琉", personality: "狂亂", race: "妖精", position: "前排", job: "輔助", layer1: ["攻擊", "防禦"], layer2: ["攻擊", "防禦", "血量"], layer3: ["攻擊", "血量", "爆擊", "爆抗"] }
         ];
 
-        // 解析網址參數
+        // 解析網址參數 (?char=角色名)
         const urlParams = new URLSearchParams(window.location.search);
         const targetName = urlParams.get('char');
 
         if (targetName) {
-            // 尋找對應角色資料
+            // 1. 讀取角色蠟筆基礎檔案
             const charData = INITIAL_DATA.find(c => c.name === targetName);
 
+            // 2. 讀取引入的外部 skill.js 技能資料 (全域變數為 characterSkills)
+            let charSkillData = null;
+            if (typeof characterSkills !== 'undefined') {
+                charSkillData = characterSkills.find(s => s.name === targetName);
+            }
+
             if (charData) {
-                // 填入文字資料
+                // 填入基礎文字資料
                 document.getElementById('charName').innerText = charData.name;
                 document.getElementById('charPersonality').innerText = `🔮 性格：${charData.personality}`;
                 document.getElementById('charRace').innerText = `🧬 種族：${charData.race}`;
                 document.getElementById('charPosition').innerText = `🗺️ 站位：${charData.position}`;
                 document.getElementById('charJob').innerText = `⚔️ 職業：${charData.job}`;
 
-                // 填入大頭貼
+                // 填入攻擊屬性徽章
+                const attrBadgeContainer = document.getElementById('attrBadgeContainer');
+                if (charSkillData && charSkillData.attribute) {
+                    const isPhys = charSkillData.attribute === "物理";
+                    const badgeClass = isPhys ? "bg-red-500 text-white" : "bg-purple-600 text-white";
+                    attrBadgeContainer.innerHTML = `<span class="px-3 py-0.5 rounded-full text-xs font-black shadow-sm ${badgeClass}">${charSkillData.attribute}屬性</span>`;
+                }
+
+                // 填入頭像
                 const avatarBox = document.getElementById('charAvatar');
                 const imgUrl = IMAGE_MAP[`avatar_${charData.name}`];
                 if (imgUrl) {
@@ -230,17 +253,82 @@
                 }
 
                 // 填入三層格子列表
-                const renderList = (elementId, array) => {
+                const renderCrayonList = (elementId, array) => {
                     const ul = document.getElementById(elementId);
                     ul.innerHTML = array.map(attr => `<li>${attr}</li>`).join('');
                 };
-
-                renderList('layer1List', charData.layer1);
-                renderList('layer2List', charData.layer2);
-                renderList('layer3List', charData.layer3);
+                renderCrayonList('layer1List', charData.layer1);
+                renderCrayonList('layer2List', charData.layer2);
+                renderCrayonList('layer3List', charData.layer3);
 
                 // 更新網頁分頁標題
                 document.title = `${charData.name} - 角色詳細資料`;
+
+                // 3. 渲染動態技能卡片面板
+                const skillsContainer = document.getElementById('skillsContainer');
+                if (charSkillData) {
+                    let html = "";
+
+                    // Helper 函式：將技能數值陣列轉為小型標籤 (Chips)
+                    const makeStatChips = (statsArray) => {
+                        if (!statsArray || statsArray.length === 0) return '';
+                        return `<div class="flex flex-wrap gap-1.5 mt-2">` + 
+                            statsArray.map(stat => `<span class="px-2 py-0.5 bg-white/80 border border-gray-200 text-gray-700 text-[11px] font-bold rounded-md shadow-2xs">${stat}</span>`).join('') + 
+                            `</div>`;
+                    };
+
+                    // (A) 普通攻擊
+                    html += `
+                        <div class="bg-slate-50 border-2 border-slate-300 rounded-xl p-4 shadow-xs">
+                            <div class="flex justify-between items-center border-b border-slate-200 pb-1.5 mb-2">
+                                <span class="font-extrabold text-slate-800 text-base flex items-center gap-1">🎯 普通攻擊</span>
+                            </div>
+                            <div class="space-y-2 text-xs">
+                                <p class="text-gray-600"><strong class="text-slate-700">【基本】</strong>${charSkillData.normalAttack.basic}</p>
+                                ${charSkillData.normalAttack.enhanced !== "無" ? `<p class="text-gray-600"><strong class="text-slate-700">【強化】</strong>${charSkillData.normalAttack.enhanced}</p>` : ''}
+                            </div>
+                        </div>
+                    `;
+
+                    // (B) 普通技能
+                    html += `
+                        <div class="bg-emerald-50/80 border-2 border-emerald-300 rounded-xl p-4 shadow-xs">
+                            <div class="flex justify-between items-center border-b border-emerald-200 pb-1.5 mb-2">
+                                <span class="font-extrabold text-emerald-800 text-base flex items-center gap-1">🟢 普通技能：${charSkillData.normalSkill.name}</span>
+                            </div>
+                            <p class="text-xs text-gray-600 font-medium leading-relaxed">${charSkillData.normalSkill.desc}</p>
+                            ${makeStatChips(charSkillData.normalSkill.stats)}
+                        </div>
+                    `;
+
+                    // (C) 高級技能 (大招)
+                    html += `
+                        <div class="bg-violet-50/80 border-2 border-violet-300 rounded-xl p-4 shadow-xs">
+                            <div class="flex justify-between items-center border-b border-violet-200 pb-1.5 mb-2">
+                                <span class="font-extrabold text-violet-800 text-base flex items-center gap-1">🔥 高級技能：${charSkillData.ultimateSkill.name}</span>
+                                <span class="px-2 py-0.5 bg-violet-600 text-white font-black text-[10px] rounded-md shadow-xs">CD: ${charSkillData.ultimateSkill.cooldown}</span>
+                            </div>
+                            <p class="text-xs text-gray-600 font-medium leading-relaxed">${charSkillData.ultimateSkill.desc}</p>
+                            ${makeStatChips(charSkillData.ultimateSkill.stats)}
+                        </div>
+                    `;
+
+                    // (D) 被動技能
+                    html += `
+                        <div class="bg-amber-50/70 border-2 border-amber-300 rounded-xl p-4 shadow-xs">
+                            <div class="flex justify-between items-center border-b border-amber-200 pb-1.5 mb-2">
+                                <span class="font-extrabold text-amber-800 text-base flex items-center gap-1">✨ 被動技能</span>
+                            </div>
+                            <p class="text-xs text-gray-600 font-medium leading-relaxed">${charSkillData.passiveSkill.desc}</p>
+                            ${makeStatChips(charSkillData.passiveSkill.stats)}
+                        </div>
+                    `;
+
+                    skillsContainer.innerHTML = html;
+                } else {
+                    skillsContainer.innerHTML = `<div class="text-xs font-bold text-gray-400 bg-gray-50 border border-gray-200 text-center py-4 rounded-xl">⚠️ 找不到該角色的技能資料庫。</div>`;
+                }
+
             } else {
                 document.body.innerHTML = `<div class="p-8 text-center font-bold text-red-500">❌ 找不到該角色的資料。</div>`;
             }
