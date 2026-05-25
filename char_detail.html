@@ -211,24 +211,28 @@
                     success: function (player) {
                         console.log(`✅ ${charData.name} 的 Spine 動畫載入成功！`);
                         
+                        // 👗 外觀優化邏輯：優先套用 'Normal'，其次套用非 'default' 的外觀
+                        const skins = player.skeleton.data.skins;
+                        if (skins && skins.length > 1) {
+                            // 🔍 優先找叫 'Normal' 的外觀；如果沒有，就找第一個不是 'default' 的
+                            const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default');
+                            
+                            if (targetSkin) {
+                                player.skeleton.setSkinByName(targetSkin.name);
+                                player.skeleton.setSlotsToSetupPose(); // 強制刷新骨架與貼圖，把衣服手腳穿上！
+                                console.log(`👗 ${charData.name} 自動裝備外觀: ${targetSkin.name}`);
+                            }
+                        }
+
                         // 🌟 互動魔法：點擊切換隨機動作
                         const canvas = avatarBox.querySelector('canvas');
                         if(canvas) {
                             canvas.addEventListener('click', () => {
-                                // 抓取這個檔案裡面所有的動畫清單
                                 const animations = player.skeleton.data.animations;
-                                if (animations && animations.length > 0) {
-                                    // 排除 'Idle'，避免點了還是繼續待機，讓玩家有真實的反饋
+                                if (animations && animations.length > 1) {
                                     const animsToPlay = animations.filter(a => a.name !== 'Idle_1');
-                                    // 如果真的只有 Idle，就將就著用
-                                    const targetAnims = animsToPlay.length > 0 ? animsToPlay : animations;
-                                    
-                                    // 隨機抽籤一個動作
-                                    const randomAnim = targetAnims[Math.floor(Math.random() * targetAnims.length)].name;
-                                    
-                                    // 在第0軌播放抽中的動作 (不循環)
+                                    const randomAnim = animsToPlay[Math.floor(Math.random() * animsToPlay.length)].name;
                                     player.animationState.setAnimation(0, randomAnim, false);
-                                    // 播放完畢後，無縫接軌切回待機動作 (持續循環)
                                     player.animationState.addAnimation(0, "Idle_1", true, 0);
                                 }
                             });
