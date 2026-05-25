@@ -8,7 +8,7 @@ const characterSkills = [
     "name": "路德",
     "attribute": "物理",
     "normalAttack": {
-      "basic": "對敵人揮動拳頭，造成物理傷害。\n[物理傷害：100%]",
+      "basic": "對敵人揮動拳頭，造成物理傷害。 [物理傷害：100%]",
       "enhanced": "無"
     },
     "normalSkill": {
