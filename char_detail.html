@@ -236,21 +236,29 @@
                             
                             let idleTimer = null; // 用來儲存計時器的變數
 
-                            // 📦 封裝：播放隨機動作的函數 (點擊或滿5秒都會觸發它)
+                            // 📦 封裝：播放動作並強制維持 5 秒
                             function playRandomAction() {
-                                // 排除 Idle_1 待機動作
                                 const animsToPlay = animations.filter(a => a.name !== 'Idle_1');
                                 if (animsToPlay.length > 0) {
                                     const randomAnim = animsToPlay[Math.floor(Math.random() * animsToPlay.length)].name;
-                                    
-                                    // 播放隨機動作，播完後接回 Idle_1
+        
+                                   console.log(`🤖 觸發動作: ${randomAnim}`);
+        
+                                    // 1. 播放隨機動作 (設定為不循環，播完即止)
                                     player.animationState.setAnimation(0, randomAnim, false);
-                                    player.animationState.addAnimation(0, "Idle_1", true, 0);
-                                    
-                                    console.log(`🤖 觸發動作: ${randomAnim}`);
+        
+                                    // 2. 設定一個延遲，強制 5 秒後才切回待機
+                                    // 使用 setTimeout 在 5000 毫秒後強制切換
+                                    clearTimeout(idleTimer); // 清除原本的計時器
+                                    idleTimer = setTimeout(() => {
+                                        player.animationState.setAnimation(0, "Idle_1", true);
+                                        // 3. 恢復原本的循環計時
+                                        startIdleTimer();
+                                    }, 5000);
+                                } else {
+                                    // 如果沒有其他動作，直接恢復循環計時
+                                    startIdleTimer();
                                 }
-                                // 動作觸發後，重新開始下一輪的 5 秒倒數
-                                startIdleTimer();
                             }
 
                             // ⏱️ 封裝：啟動/重設計時器的函數
