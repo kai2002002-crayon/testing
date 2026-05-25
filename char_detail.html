@@ -137,7 +137,47 @@
             "avatar_泰達": "https://i.postimg.cc/vH2GKCw8/tai-da.png",
             "avatar_寧琉": "https://i.postimg.cc/tgt95LY0/ning-liu.png"
         };
+        const ICON_MAP = {
+            "personality_天真": "https://i.postimg.cc/J7ZWLD30/tian-zhen.png",
+            "personality_活潑": "https://i.postimg.cc/4ykkcsGt/huo-po.png",
+            "personality_冷靜": "https://i.postimg.cc/xjMS2JGd/leng-jing.png",
+            "personality_狂亂": "https://i.postimg.cc/ryxLk0Gm/kuang-luan.png",
+            "personality_憂鬱": "https://i.postimg.cc/g07PY3BR/you-yu.png",
+            "race_精靈": "https://i.postimg.cc/D4THRGwZ/jing-ling.png",
+            "race_龍族": "https://i.postimg.cc/QK3wv7dB/long-zu.png",
+            "race_妖精": "https://i.postimg.cc/SYh3H9xn/yao-jing.png",
+            "race_魔靈": "https://i.postimg.cc/H89RmLrW/mo-ling.png",
+            "race_獸人": "https://i.postimg.cc/sGrqbWgQ/shou-ren.png",
+            "race_幽靈": "https://i.postimg.cc/tnjw8647/you-ling.png",
+            "race_魔女": "https://i.postimg.cc/H8gRFMk8/mo-nu.png",
+            "race_???": "https://i.postimg.cc/zHr64hGf/unknown.png",
+            "position_前排": "https://i.postimg.cc/VvBTbtDy/qian-pai.png",
+            "position_中排": "https://i.postimg.cc/RZ08NNtT/zhong-pai.png",
+            "position_後排": "https://i.postimg.cc/DwC9gqFk/hou-pai.png",
+            "job_肉盾": "https://i.postimg.cc/zfGJDzDB/rou-dun.png",
+            "job_輔助": "https://i.postimg.cc/MG3zvCXJ/fu-zhu.png",
+            "job_輸出": "https://i.postimg.cc/3wf3dsWH/shu-chu.png"
+        };
 
+        // 2. 更新填入文字資料的邏輯，加入圖片功能
+        const updateTag = (id, label, value, prefix) => {
+            const el = document.getElementById(id);
+            const iconUrl = ICON_MAP[`${prefix}_${value}`] || "";
+            el.innerHTML = `
+                <div class="flex items-center gap-1.5">
+                    ${iconUrl ? `<img src="${iconUrl}" class="w-4 h-4 object-contain">` : ""}
+                    <span>${label}：${value}</span>
+                </div>
+            `;
+        };
+
+        // 在尋找到角色資料後，呼叫 updateTag
+        updateTag('charPersonality', '性格', charData.personality, 'personality');
+        updateTag('charRace', '種族', charData.race, 'race');
+        updateTag('charPosition', '站位', charData.position, 'position');
+        updateTag('charJob', '職業', charData.job, 'job');
+        };
+        
         // 技能圖示資料庫
         const SKILL_ICONS = {
             "attack_物理": "https://i.postimg.cc/7Cng30rY/wu-li-gong-ji.png",
