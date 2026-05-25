@@ -195,37 +195,48 @@
 
             // 🌟 核心升級：Spine 動態圖讀取與互動邏輯
             const avatarBox = document.getElementById('charAvatar');
-            const spineKey = SPINE_MAP[charData.name]; // 拿取您對應的英文路徑名稱
+            const spineKey = SPINE_MAP[charData.name];
 
             if (spineKey) {
-                avatarBox.innerHTML = ''; // 清空 fallback 文字或提示
+                avatarBox.innerHTML = ''; 
                 
                 let player = new spine.SpinePlayer(avatarBox, {
-                    // 💡 這裡已經幫您完美對應 GitHub 上的 spine_assests 路徑了！
                     skelUrl: `./spine_assests/${spineKey}/${spineKey}.skel.bytes`,
                     atlasUrl: `./spine_assests/${spineKey}/${spineKey}.atlas.txt`,
-                    animation: "idle",       // 預設播放動畫
+                    // ❌ 刪除了原本的 animation: "idle"，避免找不到動作直接報錯
                     premultipliedAlpha: true,
                     backgroundColor: "#00000000",
                     alpha: true,
-                    showControls: false,     // 隱藏播放控制列
+                    showControls: false,
                     success: function (player) {
                         console.log(`✅ ${charData.name} 的 Spine 動畫載入成功！`);
                         
-                        // 🌟 互動魔法：點擊切換隨機動作
-                        const canvas = avatarBox.querySelector('canvas');
-                        if(canvas) {
-                            canvas.addEventListener('click', () => {
-                                const animations = player.skeleton.data.animations;
-                                if (animations && animations.length > 0) {
-                                    const animsToPlay = animations.filter(a => a.name !== 'idle');
+                        // 🌟 自動獲取該角色的所有動作
+                        const animations = player.skeleton.data.animations;
+                        if (animations && animations.length > 0) {
+                            
+                            // 🔍 尋找待機動作：找名字包含 idle 或 wait 的，如果都沒有，就隨便抓第一個動作
+                            let defaultAnimObj = animations.find(a => a.name.toLowerCase().includes('idle') || a.name.toLowerCase().includes('wait'));
+                            let defaultAnimName = defaultAnimObj ? defaultAnimObj.name : animations[0].name;
+
+                            // 🎬 播放找到的待機動作 (true 代表無限循環)
+                            player.animationState.setAnimation(0, defaultAnimName, true);
+
+                            // 🌟 互動魔法：點擊切換隨機動作
+                            const canvas = avatarBox.querySelector('canvas');
+                            if(canvas) {
+                                canvas.addEventListener('click', () => {
+                                    // 排除剛才設定的待機動作
+                                    const animsToPlay = animations.filter(a => a.name !== defaultAnimName);
                                     const targetAnims = animsToPlay.length > 0 ? animsToPlay : animations;
                                     const randomAnim = targetAnims[Math.floor(Math.random() * targetAnims.length)].name;
                                     
+                                    // 播放隨機動作 (false 代表播一次就停)
                                     player.animationState.setAnimation(0, randomAnim, false);
-                                    player.animationState.addAnimation(0, "idle", true, 0);
-                                }
-                            });
+                                    // 播完後，無縫切回原本的待機動作
+                                    player.animationState.addAnimation(0, defaultAnimName, true, 0);
+                                });
+                            }
                         }
                     },
                     error: function (player, reason) {
@@ -235,7 +246,7 @@
                     }
                 });
             } else {
-                // 如果角色不在清單中，維持原本的靜態圖片
+                // 如果沒有設定動態圖，維持靜態
                 const imgUrl = IMAGE_MAP[`avatar_${charData.name}`];
                 if (imgUrl) {
                     avatarBox.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover">`;
