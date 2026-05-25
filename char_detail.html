@@ -81,20 +81,20 @@
             </div>
         </div>
 
-        <div class="mt-8 bg-gray-800/80 backdrop-blur border border-gray-700/50 rounded-2xl p-6 shadow-xl">
+        <div class="mt-8 bg-gradient-to-br from-amber-50 to-rose-50 dark:from-gray-800/80 dark:to-gray-800/80 backdrop-blur border border-rose-200 dark:border-gray-700/50 rounded-2xl p-6 shadow-xl shadow-rose-100/50 dark:shadow-none transition-colors duration-300">
             <div class="flex items-center gap-3 mb-4">
                 <span class="text-2xl">🎁</span>
-                <h3 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">
+                <h3 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-orange-400 dark:from-pink-400 dark:to-purple-400">
                     坨坨珍藏品
                 </h3>
             </div>
     
-            <div class="flex flex-col items-center justify-center rounded-xl bg-gray-900/50 border border-gray-800 p-4 min-h-[200px]">
-                <div id="presentName" class="text-lg font-bold text-gray-200 mb-3 tracking-wide bg-gray-800 px-4 py-1 rounded-full border border-gray-700/60 hidden">
+            <div class="flex flex-col items-center justify-center rounded-xl bg-white/60 dark:bg-gray-900/50 border border-rose-100 dark:border-gray-800 p-4 min-h-[200px] transition-colors duration-300">
+                <div id="presentName" class="hidden">
                     </div>
         
                 <div id="presentContainer" class="w-full flex justify-center items-center overflow-hidden">
-                    <p class="text-gray-500 text-sm animate-pulse">正在開啟珍藏品寶箱...</p>
+                    <p class="text-orange-400 dark:text-gray-500 text-sm animate-pulse">正在開啟珍藏品寶箱...</p>
                 </div>
             </div>
         </div>
@@ -312,13 +312,24 @@
                 // ✍️ 渲染名稱區塊
                 if (presentNameBox) {
                     presentNameBox.innerText = presentDisplayName;
-                    presentNameBox.classList.remove('hidden'); // 讓名稱框顯示出來
         
-                    // 🎨 UI 小優化：如果是「送遞中」，可以讓文字稍微暗一點，增加等待感
+                    // 賦予溫馨主題與暗夜模式的基礎設定
+                    presentNameBox.className = "mb-3 tracking-wide px-4 py-1 rounded-full border transition-colors duration-300 block";
+        
                     if (!isHasPresent) {
-                        presentNameBox.classList.add('text-gray-400', 'border-dashed');
+                        // ⏳ 送遞中狀態：淡淡的玫瑰色底，虛線外框
+                        presentNameBox.classList.add(
+                            'text-sm', 'text-rose-400', 'dark:text-gray-400', 
+                            'bg-rose-50', 'dark:bg-gray-800/50', 
+                            'border-rose-200', 'dark:border-gray-700', 'border-dashed'
+                        );
                     } else {
-                        presentNameBox.classList.add('text-gray-200');
+                        // 🎁 已實裝狀態：溫暖且明顯的粉橘色實體框
+                        presentNameBox.classList.add(
+                            'text-lg', 'font-bold', 'text-rose-900', 'dark:text-gray-100', 
+                            'bg-rose-100', 'dark:bg-gray-800', 
+                            'border-rose-300', 'dark:border-gray-600', 'shadow-sm'
+                        );
                     }
                 }
 
