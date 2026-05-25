@@ -211,7 +211,7 @@
                     const ultSkillIcon = SKILL_ICONS[`hover_avatar_${currentTargetName}`] || "";
                     const passiveSkillIcon = SKILL_ICONS[`skill_passive_${currentTargetName}`] || "";
 
-                    // 🌟 修改：技能區塊加入暗黑模式的配色
+                    // 🗡️ 普通攻擊 (加入 whitespace-pre-wrap 與統一行距)
                     html += `
                         <div class="bg-slate-50 dark:bg-slate-700/40 border-2 border-slate-300 dark:border-slate-600 rounded-xl p-4 shadow-sm">
                             <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-600 pb-2 mb-3">
@@ -220,13 +220,14 @@
                                     <span class="font-extrabold text-slate-800 dark:text-slate-200 text-base">普通攻擊</span>
                                 </div>
                             </div>
-                            <div class="space-y-2 text-xs">
-                                <p class="text-gray-600 dark:text-gray-400"><strong class="text-slate-700 dark:text-slate-300">【基本】</strong>${charSkillData.normalAttack.basic}</p>
-                                ${charSkillData.normalAttack.enhanced !== "無" ? `<p class="text-gray-600 dark:text-gray-400"><strong class="text-slate-700 dark:text-slate-300">【強化】</strong>${charSkillData.normalAttack.enhanced}</p>` : ''}
+                            <div class="space-y-2 text-xs font-medium leading-relaxed">
+                                <p class="text-gray-600 dark:text-gray-300 whitespace-pre-wrap"><strong class="text-slate-700 dark:text-slate-200">【基本】</strong>${charSkillData.normalAttack.basic}</p>
+                                ${charSkillData.normalAttack.enhanced !== "無" ? `<p class="text-gray-600 dark:text-gray-300 whitespace-pre-wrap"><strong class="text-slate-700 dark:text-slate-200">【強化】</strong>${charSkillData.normalAttack.enhanced}</p>` : ''}
                             </div>
                         </div>
                     `;
 
+                    // 🟢 一般技能
                     html += `
                         <div class="bg-emerald-50/80 dark:bg-emerald-900/20 border-2 border-emerald-300 dark:border-emerald-700 rounded-xl p-4 shadow-sm">
                             <div class="flex justify-between items-center border-b border-emerald-200 dark:border-emerald-800 pb-2 mb-3">
@@ -235,11 +236,12 @@
                                     <span class="font-extrabold text-emerald-800 dark:text-emerald-300 text-base">${charSkillData.normalSkill.name}</span>
                                 </div>
                             </div>
-                            <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed">${charSkillData.normalSkill.desc}</p>
+                            <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.normalSkill.desc}</p>
                             ${makeStatChips(charSkillData.normalSkill.stats)}
                         </div>
                     `;
 
+                    // 🔥 大絕招
                     html += `
                         <div class="bg-violet-50/80 dark:bg-violet-900/20 border-2 border-violet-300 dark:border-violet-700 rounded-xl p-4 shadow-sm">
                             <div class="flex justify-between items-center border-b border-violet-200 dark:border-violet-800 pb-2 mb-3">
@@ -249,11 +251,12 @@
                                 </div>
                                 <span class="px-2 py-0.5 bg-violet-600 dark:bg-violet-500 text-white font-black text-[10px] rounded-md shadow-sm">CD: ${charSkillData.ultimateSkill.cooldown}</span>
                             </div>
-                            <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed">${charSkillData.ultimateSkill.desc}</p>
+                            <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.ultimateSkill.desc}</p>
                             ${makeStatChips(charSkillData.ultimateSkill.stats)}
                         </div>
                     `;
 
+                    // ✨ 被動技能
                     html += `
                         <div class="bg-amber-50/70 dark:bg-amber-900/20 border-2 border-amber-300 dark:border-amber-700 rounded-xl p-4 shadow-sm">
                             <div class="flex justify-between items-center border-b border-amber-200 dark:border-amber-800 pb-2 mb-3">
@@ -262,11 +265,11 @@
                                     <span class="font-extrabold text-amber-800 dark:text-amber-300 text-base">被動技能</span>
                                 </div>
                             </div>
-                            <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed">${charSkillData.passiveSkill.desc}</p>
+                            <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.passiveSkill.desc}</p>
                             ${makeStatChips(charSkillData.passiveSkill.stats)}
                         </div>
                     `;
-
+                    
                     skillsContainer.innerHTML = html;
                 } else {
                     skillsContainer.innerHTML = `<div class="p-4 bg-gray-50 dark:bg-slate-700 text-gray-500 dark:text-gray-400 font-bold border border-gray-200 dark:border-slate-600 rounded-xl text-center">⚠️ 找不到「${currentTargetName}」的技能資料，請確認 skill.js 中有此角色。</div>`;
