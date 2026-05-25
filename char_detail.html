@@ -281,6 +281,24 @@
                 document.getElementById('charPosition').innerText = `🗺️ 站位：${charData.position}`;
                 document.getElementById('charJob').innerText = `⚔️ 職業：${charData.job}`;
 
+                const updateTag = (id, label, value, prefix) => {
+                     const el = document.getElementById(id);
+                     // 檢查是否有對應的 icon (例如 "personality_天真")
+                     const iconUrl = ICON_MAP[`${prefix}_${value}`] || "";
+                     el.innerHTML = `
+                         <div class="flex items-center gap-1.5">
+                             ${iconUrl ? `<img src="${iconUrl}" class="w-4 h-4 object-contain">` : ""}
+                             <span>${label}：${value}</span>
+                         </div>
+                     `;
+                 };
+
+                 // 呼叫更新
+                 updateTag('charPersonality', '性格', charData.personality, 'personality');
+                 updateTag('charRace', '種族', charData.race, 'race');
+                 updateTag('charPosition', '站位', charData.position, 'position');
+                 updateTag('charJob', '職業', charData.job, 'job');
+                
                 // 填入頭像
                 const avatarBox = document.getElementById('charAvatar');
                 const imgUrl = IMAGE_MAP[`avatar_${charData.name}`];
