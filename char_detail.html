@@ -340,13 +340,20 @@
         function renderSkillContent(text) {
             if (!text) return "";
     
-            // 如果有 | 符號，就切分，否則視為純描述
+            // 1. 先用 | 切分描述與效果
             const parts = text.split('|');
             const description = parts[0].trim();
-            const effects = parts.length > 1 ? parts[1].split(/[，。]/).filter(p => p.trim() !== "") : [];
+    
+            // 2. 如果後半段有內容，用逗號(，)、頓號(、)、句號(。)將效果切分成陣列
+            // 這裡我們把所有這些符號都當作切點
+            const effects = parts.length > 1 
+                ? parts[1].split(/[，、。]/).filter(p => p.trim() !== "") 
+                : [];
 
+            // 3. 渲染描述文字
             let html = `<p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${description}</p>`;
     
+            // 4. 如果有多個效果，每一個都會變成一個獨立的小方塊
             if (effects.length > 0) {
                 html += `<div class="flex flex-wrap gap-1.5 mt-2">` + 
                     effects.map(eff => `<span class="px-2 py-0.5 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 text-[11px] font-bold rounded-md shadow-sm">${eff.trim()}</span>`).join('') + 
