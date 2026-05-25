@@ -23,12 +23,9 @@
             <div id="charAvatar" class="w-24 h-24 rounded-2xl border-4 border-amber-500 bg-white overflow-hidden shadow-md flex items-center justify-center text-3xl font-bold text-amber-900 flex-shrink-0">
             </div>
             <div class="text-center sm:text-left w-full">
-                <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-2 justify-center sm:justify-start">
-                    <h1 id="charName" class="text-3xl font-extrabold text-amber-900">角色名稱</h1>
-                    <div id="attrBadgeContainer"></div>
-                </div>
+                <h1 id="charName" class="text-3xl font-extrabold text-amber-900 mb-3">角色名稱</h1>
                 <div class="flex flex-wrap justify-center sm:justify-start gap-2 text-xs font-bold">
-                    <span id="charPersonality" class="px-2.5 py-1 bg-green-100 text-green-800 rounded-lg">性格：-</span>
+                 <span id="charPersonality" class="px-2.5 py-1 bg-green-100 text-green-800 rounded-lg">性格：-</span>
                     <span id="charRace" class="px-2.5 py-1 bg-blue-100 text-blue-800 rounded-lg">種族：-</span>
                     <span id="charPosition" class="px-2.5 py-1 bg-orange-100 text-orange-800 rounded-lg">站位：-</span>
                     <span id="charJob" class="px-2.5 py-1 bg-purple-100 text-purple-800 rounded-lg">職業：-</span>
@@ -243,14 +240,6 @@
                 document.getElementById('charRace').innerText = `🧬 種族：${charData.race}`;
                 document.getElementById('charPosition').innerText = `🗺️ 站位：${charData.position}`;
                 document.getElementById('charJob').innerText = `⚔️ 職業：${charData.job}`;
-
-                // 填入攻擊屬性徽章
-                const attrBadgeContainer = document.getElementById('attrBadgeContainer');
-                if (charSkillData && charSkillData.attribute) {
-                    const isPhys = charSkillData.attribute === "物理";
-                    const badgeClass = isPhys ? "bg-red-500 text-white" : "bg-purple-600 text-white";
-                    attrBadgeContainer.innerHTML = `<span class="px-3 py-0.5 rounded-full text-xs font-black shadow-sm ${badgeClass}">${charSkillData.attribute}屬性</span>`;
-                }
 
                 // 填入頭像
                 const avatarBox = document.getElementById('charAvatar');
