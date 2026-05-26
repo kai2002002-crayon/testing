@@ -49,8 +49,6 @@
 
         <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 border-b-2 border-amber-200 dark:border-slate-700 pb-6 mb-6">
             <div id="charAvatar" class="w-32 h-40 sm:w-40 sm:h-48 rounded-2xl border-4 border-amber-500 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 overflow-hidden shadow-md flex items-center justify-center text-3xl font-bold text-amber-900 dark:text-amber-100 flex-shrink-0 relative cursor-pointer group">
-                <div class="absolute inset-0 bg-black/40 hidden group-hover:flex items-center justify-center text-white text-xs font-bold z-10 pointer-events-none transition-opacity">
-                    👆 點擊戳戳
                 </div>
             </div>
             
@@ -484,13 +482,6 @@
                 avatarBox.style.backgroundRepeat = 'no-repeat'; 
                 avatarBox.classList.add('overflow-hidden', 'rounded-2xl', 'shadow-inner');
             }
-
-            // 確保原本隱藏的戳戳提示依然存在
-            avatarBox.innerHTML = `
-                <div class="absolute inset-0 bg-black/40 hidden group-hover:flex items-center justify-center text-white text-xs font-bold z-10 pointer-events-none transition-opacity">
-                    👆 點擊戳戳
-                </div>
-            `;
 
             globalSpinePlayer = new spine.SpinePlayer(avatarBox, {
                 // 💡 核心修改：路徑改為 /baseFolderKey/costumeKey.副檔名
