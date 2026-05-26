@@ -34,6 +34,9 @@
         body { font-family: 'Noto Sans TC', sans-serif; }
         /* 隱藏 Spine 播放器下方預設的黑色漸層與時間軸 */
         .spine-player-controls { display: none !important; }
+        /* 服裝切換按鈕自訂樣式 */
+        .costume-btn { transition: all 0.2s ease; }
+        .costume-btn:active { transform: scale(0.95); }
     </style>
 </head>
 <body class="p-4 sm:p-8 bg-[#fcf8f2] dark:bg-slate-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
@@ -44,7 +47,7 @@
             ⬅️ 關閉此頁
         </button>
 
-        <div class="flex flex-col sm:flex-row items-center gap-6 border-b-2 border-amber-200 dark:border-slate-700 pb-6 mb-6">
+        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 border-b-2 border-amber-200 dark:border-slate-700 pb-6 mb-6">
             <div id="charAvatar" class="w-32 h-40 sm:w-40 sm:h-48 rounded-2xl border-4 border-amber-500 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 overflow-hidden shadow-md flex items-center justify-center text-3xl font-bold text-amber-900 dark:text-amber-100 flex-shrink-0 relative cursor-pointer group">
                 <div class="absolute inset-0 bg-black/40 hidden group-hover:flex items-center justify-center text-white text-xs font-bold z-10 pointer-events-none transition-opacity">
                     👆 點擊戳戳
@@ -60,6 +63,9 @@
                     <span id="charPosition" class="px-3 py-1 bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 rounded-lg shadow-sm border border-orange-200 dark:border-orange-800 flex items-center"></span>
                     <span id="charJob" class="px-3 py-1 bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 rounded-lg shadow-sm border border-purple-200 dark:border-purple-800 flex items-center"></span>
                 </div>
+
+                <div id="costumeButtonsContainer" class="flex flex-wrap justify-center sm:justify-start gap-2 mt-4 hidden">
+                    </div>
             </div>
         </div>
 
@@ -151,7 +157,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // 🌟 新增：69位角色的 Spine 名稱對應表
+        // Spine 名稱對應表
         const SPINE_MAP = {
             "洛涅": "Rohne", "薇薇": "Vivi", "艾爾芬": "Erpin", "錫安": "xXionx", "伊弗利特": "Ifrit", "伊德": "Ed", "佩佩": "Velvet", "佩斯塔": "Festa",
             "修帕": "Shoupan", "傑德": "Jade", "優米": "Yomi", "劉美美": "Yumimi", "加薇雅": "Gabia", "卡洛特": "Kyarot", "卡蓮": "Carren", "喬菲": "Chopi",
@@ -164,16 +170,21 @@
             "阿萊特": "Allet", "雷吉": "Lazy", "馬爾": "Mago", "泰達": "Taida", "寧琉": "Ner"
         };
 
-        // 🌆 遊戲大廳隨機背景圖清單
+        // 👗 角色服裝對應表 (包含預設服裝與所有Skin特殊服裝)
+        const COSTUME_MAP = {
+            "劉美美": ["Yumimi"], "卡蓮": ["Carren"], "喬菲": ["Chopi"], "帕特拉": ["Patula"], "梅森": ["Maison"], "瑪麗": ["Marie"], "米雪": ["Mynx"], "茱蜜": ["Jubee"], "莎莉": ["Sari"], "貝魯": ["Veroo"], "路易": ["Cuee"], "阿萊特": ["Allet"], "雷吉": ["Lazy"], "泰達": ["Taida"],
+            "艾舒爾": ["Ashur", "AshurSkin1"], "貝麗塔": ["Belita", "BelitaSkin1"], "斑尼": ["Beni", "BeniSkin1"], "大木頭": ["BigWood", "BigWoodSkin1"], "艾斯皮": ["Espi", "EspiSkin1"], "佩斯塔": ["Festa", "FestaSkin1"], "伊弗利特": ["Ifrit", "IfritSkin1"], "傑德": ["Jade", "JadeSkin1"], "莉茲": ["Leets", "LeetsSkin1"], "萊薇": ["Levi", "LeviSkin1"], "大師2號": ["MaestroMK2", "MaestroMK2Skin1"], "馬爾": ["Mago", "MagoSkin1"], "瑪約": ["Mayo", "MayoSkin1"], "梅露娜": ["Meluna", "MelunaSkin1"], "路德": ["Rude", "RudeSkin1"], "盧波": ["Rufo", "RufoSkin1"], "修帕": ["Shoupan", "ShoupanSkin1"], "希菲爾": ["Silphir", "SilphirSkin1"], "斯諾奇": ["Snorky", "SnorkySkin1"], "斯皮奇": ["Speaki", "SpeakiSkin1"], "佩佩": ["Velvet", "VelvetSkin1"],
+            "布蘭切": ["Blanchet", "BlanchetSkin1", "BlanchetSkin2"], "奶油": ["Butter", "ButterSkin1", "ButterSkin2"], "康娜": ["Canna", "CannaSkin1", "CannaSkin2"], "伊德": ["Ed", "EdSkin1", "EdSkin2"], "艾琳娜": ["Elena", "ElenaSkin1", "ElenaSkin2"], "艾皮卡": ["Epica", "EpicaSkin1", "EpicaSkin2"], "芙莉可": ["Fricle", "FricleSkin1", "FricleSkin2"], "加薇雅": ["Gabia", "GabiaSkin1", "GabiaSkin2"], "海莉": ["Haley", "HaleySkin1", "HaleySkin2"], "希爾德": ["Hilde", "HildeSkin1", "HildeSkin2"], "基狄恩": ["Kidian", "KidianSkin1", "KidianSkin2"], "柯米": ["Kommy", "KommySkin1", "KommySkin2"], "卡洛特": ["Kyarot", "KyarotSkin1", "KyarotSkin2"], "奈雅": ["Naia", "NaiaSkin1", "NaiaSkin2"], "寧琉": ["Ner", "NerSkin1", "NerSkin2"], "皮可菈": ["Picora", "PicoraSkin1", "PicoraSkin2"], "珀榭": ["Posher", "PosherSkin1", "PosherSkin2"], "琳": ["Rim", "RimSkin1", "RimSkin2"], "洛涅": ["Rohne", "RohneSkin1", "RohneSkin2"], "謝蒂": ["Shady", "ShadySkin1", "ShadySkin2"], "希瑟圖": ["Sist", "SistSkin1", "SistSkin2"], "希拉": ["Sylla", "SyllaSkin1", "SyllaSkin2"], "優米": ["Yomi", "YomiSkin1", "YomiSkin2"],
+            "愛麗絲": ["Alice", "AliceSkin1", "AliceSkin2", "AliceSkin3"], "艾蜜莉雅": ["Amelia", "AmeliaSkin1", "AmeliaSkin2", "AmeliaSkin3"], "綾": ["Aya", "AyaSkin1", "AyaSkin2", "AyaSkin3"], "庫洛艾": ["Chloe", "ChloeSkin1", "ChloeSkin2", "ChloeSkin3"], "蒂亞娜": ["Diana", "DianaSkin1", "DianaSkin2", "DianaSkin3"], "桃桃": ["Momo", "MomoSkin1", "MomoSkin2", "MomoSkin3"], "瑟琳娜": ["Selline", "SellineSkin1", "SellineSkin2", "SellineSkin3"], "羽伊": ["Ui", "UiSkin1", "UiSkin2", "UiSkin3"], "薇薇": ["Vivi", "ViviSkin1", "ViviSkin2", "ViviSkin3"], "錫安": ["xXionx", "xXionxSkin1", "xXionxSkin2", "xXionxSkin3"],
+            "艾爾芬": ["Erpin", "ErpinSkin1", "ErpinSkin2", "ErpinSkin3", "ErpinSkin4"]
+        };
+
         const LOBBY_BACKGROUNDS = [
-            "https://i.postimg.cc/WhSFdxt3/Lobby-100010-1.png",
-            "https://i.postimg.cc/CzJBR9dy/Lobby-10002-1.png",
-            "https://i.postimg.cc/vcXg4CTC/Lobby-10003-1.png",
-            "https://i.postimg.cc/svKQMb1r/Lobby-10007-1.png",
-            "https://i.postimg.cc/jLvwDBCT/Lobby-10008-1.png",
-            "https://i.postimg.cc/svKQMb1D/Lobby-10009-1.png"
+            "https://i.postimg.cc/WhSFdxt3/Lobby-100010-1.png", "https://i.postimg.cc/CzJBR9dy/Lobby-10002-1.png", "https://i.postimg.cc/vcXg4CTC/Lobby-10003-1.png",
+            "https://i.postimg.cc/svKQMb1r/Lobby-10007-1.png", "https://i.postimg.cc/jLvwDBCT/Lobby-10008-1.png", "https://i.postimg.cc/svKQMb1D/Lobby-10009-1.png"
         ];
-        // 🎁 珍藏品圖片與名稱完整對照表 (已同步 Spine 英文名)
+        
+        // (此處省略 PRESENT_MAP, LETTER_MAP, THOUGHT_MAP, IMAGE_MAP, ICON_MAP, SKILL_ICONS，您原始檔案中的常數完全保留)
         const PRESENT_MAP = {
             "Alice": { name: "愛麗絲的卡片冊", url: "https://i.postimg.cc/SXd1YT62/Present-List-Alice.png" },
             "Allet": { name: "無限保存拌飯醬", url: "https://i.postimg.cc/JyxYH6Ny/Present-List-Allet.png" },
@@ -241,7 +252,6 @@
             "Yumimi": { name: "偽裝用木製面具", url: "https://i.postimg.cc/5XMs7dpn/Present-List-Yumimi.png" }
         };
 
-        // 💌 珍藏品書信內容對照表
         const LETTER_MAP = {
             "Alice": "教主，你還記得嗎？之前問過你要不要和鏡子裡的姊姊一起生活的事。我決定取消了。雖然有點可惜，但也沒辦法。因為我已經發現了，讓給姊姊實在是太浪費了，因為你這個傢伙實在是太有趣了。讓我看上可不是件容易的事，所以你應該感到榮幸。下次再來找我占卜塔羅牌吧。我會幫你抽出最好的運勢。不過，至於那運勢對誰來說最好，我可不會告訴你。",
             "Allet": "教主大人，您好！我是莫納蒂姆鎮壓隊的阿萊特。平時總是因公事聯絡，這次用私人的名義寫信，還真有點不習慣呢。其實寫這封信的主要原因是想向教主大人表達感謝。教主在任何事情上都能身先士卒，這一點是我最敬佩的地方！啊，不過康娜隊長也是我最敬佩的人之一……唔，真難抉擇！總之，教主大人，以後如果在莫納蒂姆遇到什麼困難，請一定要找我阿萊特。我將全力以赴，竭誠為您效勞！忠誠！",
@@ -289,7 +299,7 @@
             "Posher": "教主，我這次又製作了一種新藥水，要不要來試試看？我已經說過很多次了，像我的藥水這樣苦口的東西，才是對身體好的，你懂的吧？不過嘛，為了教主，我可以破例考慮一下製作一款味道好一點的藥水。當然，也別抱太高期待，畢竟味道的好壞是很主觀的。呵呵。有空的話，記得來找我玩。我會等著你的。",
             "Rim": "在山坡上的偏僻小屋獨自生活的我，自從來到宴會廳後結識了許多朋友。似乎也有喜歡我笑話的朋友，讓我感到欣慰。喜歡檸檬茶的朋友多嗎？希望有一天朋友們也能來我家玩。多虧教主大人在宴會廳讓我認識了這麼多使者，真是太好了。",
             "Rohne": "我是親切的間諜，能力出眾的間諜！且從不浪費食物的間諜，洛涅！能和教主大人聊各種話題，紓解工作的壓力，真的非常開心。不知道教主大人和我聊天，是否也覺得有趣呢？不過我有點擔心，自己會不會不小心把機密內容說漏嘴了！希望教主大人也能非常非常開心！對了，我常去宴會廳這件事，請務必保密，特別是不能讓艾蜜莉雅小姐知道！",
-            "Rude": "教主，你好。用文字而不是口頭來交流，對我來說還是挺陌生的。每次在宴會廳總是吃到許多對身體有益的東西，我想藉這個機會向你表達感謝。最近，你還有在好好鍛鍊嗎？雖然我每次見到你都會問這個問題，可能有點煩，但這是我表達關心的方式。下次來我的訓練室吧，我準備了新的訓練課程。",
+            "Rude": "教主，你好。用文字而不是口頭來交流，對我來說還是挺陌生的。每次在宴會廳總是吃到許多對身體有益的東西，我想藉這個機會向向你表達感謝。最近，你還有在好好鍛鍊嗎？雖然我每次見到你都會問這個問題，可能有點煩，但這是我表達關心的方式。下次來我的訓練室吧，我準備了新的訓練課程。",
             "Rufo": "反對獸糧黨的首腦虛波，向氣象局一等猛將教主寄送了這封信。不過我對如何寫信不太擅長。提格隊長還說要我幫她寫一份，但虛波真的很忙啊！教主，你是怎麼弄到那麼多食材的？要小心別被班尼發現了。我真的很想和你玩一次桌遊。我願意借出精靈的特製裝置，讓教主擲骰子更順手！但一定要對提格隊長保密。",
             "Sari": "你好，教主！好久不見！果然，寫信這件事真的很困難，因為看不到對方的話語或行動。因此我現在正想像著腦海中的教主正在和我說話，一邊把這種想像寫下來！喔，現在腦海裡的教主正在和我聊昨天吃到的焦糖布丁。哇，超棒的！一定很好吃吧！教主你連解說都這麼親切、清楚呢！嗯，不過果然還是和腦海中的教主對話有點彆扭。我好想趕快像平時那樣直接和你見面！快來親自講一些有趣的事情給我聽，教主！知道吧？",
             "Selline": "嗨～整理相簿時發現了教主拍得不錯的照片耶？覺得只有我看太可惜了，就發給你一張。別擔心，不是什麼奇怪的照片。看著照片突然想起跟你下棋的時候。雖然一個人玩也不錯，但果然兩個人一起玩才是最棒的。下次再陪我玩一局吧？我保證不會笑你技術爛的。呵呵，我認真的啦～",
@@ -309,7 +319,6 @@
             "Yumimi": "嗯~最近我的別墅都沒有人來，想來是教主您特別留意了吧？謝謝！以後如果在森林裡遇到什麼珍貴的藥草或香菇，我會包裝好寄給您!今後也請多多指教，若是您想享受大自然的生活，隨時都可以到附近來玩。但請您務必一個人來喔?因為我不太喜歡別墅裡太過熱鬧。"
         };
 
-        // 💡 教主感想對照表
         const THOUGHT_MAP = {
             "Alice": "每天抽1張就可以得知大概運勢的卡片簿。不知道這上面是不是有魔法，卡片會自動洗牌。",
             "Allet": "據說這是一種在沒有像樣餐點時，撒在食物上吃的醬料。真的能無限保存嗎？",
@@ -419,11 +428,14 @@
         };
 
         let currentTargetName = "";
+        let currentCharData = null;
+        let globalSpinePlayer = null;
+        let globalIdleTimer = null;
         
         // ==========================================
         // 🎁 珍藏品切換頁籤邏輯
         // ==========================================
-        let currentTab = 'thought'; // 預設頁籤
+        let currentTab = 'thought';
 
         function switchPresentTab(tab) {
             currentTab = tab;
@@ -431,21 +443,17 @@
             const btnThought = document.getElementById('btnThought');
             const presentText = document.getElementById('presentText');
             
-            // 確保拿到正確的角色英文名
             const spineKey = SPINE_MAP[currentTargetName]; 
 
-            // 重置所有按鈕為灰色（未選中狀態）
             const inactiveClass = "flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300";
             
             if (tab === 'letter') {
-                // 選中 [書信]
                 btnLetter.className = "flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-rose-500 text-white shadow-md";
                 btnThought.className = inactiveClass;
                 
                 const content = LETTER_MAP[spineKey] || "（書信正在傳遞中...）";
                 presentText.innerHTML = content.replace(/\n/g, '<br>');
             } else {
-                // 選中 [感想]
                 btnThought.className = "flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-amber-500 text-white shadow-md";
                 btnLetter.className = inactiveClass;
                 
@@ -453,7 +461,142 @@
                 presentText.innerHTML = content.replace(/\n/g, '<br>');
             }
         }
+
         // ==========================================
+        // 🌟 Spine 獨立渲染邏輯 (支援換裝)
+        // ==========================================
+        function loadSpineAnimation(costumeKey) {
+            const avatarBox = document.getElementById('charAvatar');
+            
+            // 清除前一次的計時器與舊骨架
+            clearTimeout(globalIdleTimer);
+            avatarBox.innerHTML = ''; 
+
+            // 隨機背景魔法：僅在首次進入或無背景時賦予背景，避免每次換裝都閃爍切換背景
+            if (!avatarBox.style.backgroundImage && LOBBY_BACKGROUNDS && LOBBY_BACKGROUNDS.length > 0) {
+                const randomBg = LOBBY_BACKGROUNDS[Math.floor(Math.random() * LOBBY_BACKGROUNDS.length)];
+                avatarBox.style.backgroundImage = `url('${randomBg}')`;
+                avatarBox.style.backgroundSize = 'cover';       
+                avatarBox.style.backgroundPosition = 'center';  
+                avatarBox.style.backgroundRepeat = 'no-repeat'; 
+                avatarBox.classList.add('overflow-hidden', 'rounded-2xl', 'shadow-inner');
+            }
+
+            // 確保原本隱藏的戳戳提示依然存在
+            avatarBox.innerHTML = `
+                <div class="absolute inset-0 bg-black/40 hidden group-hover:flex items-center justify-center text-white text-xs font-bold z-10 pointer-events-none transition-opacity">
+                    👆 點擊戳戳
+                </div>
+            `;
+
+            globalSpinePlayer = new spine.SpinePlayer(avatarBox, {
+                skelUrl: `./spine_assets/${costumeKey}/${costumeKey}.skel.bytes`,
+                atlasUrl: `./spine_assets/${costumeKey}/${costumeKey}.atlas.txt`,
+                animation: "Idle_1",     
+                premultipliedAlpha: true,
+                backgroundColor: "#00000000", 
+                alpha: true,                 
+                showControls: false,     
+                
+                viewport: {
+                    x: -400,     
+                    y: 0,        
+                    width: 800,  
+                    height: 1000 
+                },
+
+                success: function (player) {
+                    console.log(`✅ ${costumeKey} 的 Spine 動畫載入成功！`);
+                    
+                    const skins = player.skeleton.data.skins;
+                    if (skins && skins.length > 1) {
+                        const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default');
+                        if (targetSkin) {
+                            player.skeleton.setSkinByName(targetSkin.name);
+                            player.skeleton.setSlotsToSetupPose();
+                        }
+                    }
+
+                    const animations = player.skeleton.data.animations;
+                    if (animations && animations.length > 1) {
+                        
+                        function playRandomAction() {
+                            const animsToPlay = animations.filter(a => a.name !== 'Idle_1');
+                            if (animsToPlay.length > 0) {
+                                const randomAnim = animsToPlay[Math.floor(Math.random() * animsToPlay.length)].name;
+                                player.animationState.setAnimation(0, randomAnim, true);
+                                clearTimeout(globalIdleTimer);
+                                globalIdleTimer = setTimeout(() => {
+                                    player.animationState.setAnimation(0, "Idle_1", true);
+                                    startIdleTimer();
+                                }, 5000); 
+                            } else {
+                                startIdleTimer();
+                            }
+                        }
+
+                        function startIdleTimer() {
+                            clearTimeout(globalIdleTimer);
+                            globalIdleTimer = setTimeout(() => {
+                                playRandomAction();
+                            }, 5000);
+                        }
+
+                        startIdleTimer();
+
+                        const canvas = avatarBox.querySelector('canvas');
+                        if(canvas) {
+                            canvas.addEventListener('click', () => {
+                                playRandomAction();
+                            });
+                        }
+                    }
+                },
+                error: function (player, reason) {
+                    console.warn(`⚠️ Spine 載入失敗，降級顯示靜態圖。原因:`, reason);
+                    // 由於換裝可能會找不到特定 Skin 的靜態圖，一律降級顯示角色的預設圖
+                    const imgUrl = IMAGE_MAP[`avatar_${currentCharData.name}`];
+                    avatarBox.innerHTML = imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-cover">` : currentCharData.name.charAt(0);
+                }
+            });
+        }
+
+        // ==========================================
+        // 👗 換裝按鈕渲染與點擊邏輯
+        // ==========================================
+        function renderCostumeButtons(charName) {
+            const container = document.getElementById('costumeButtonsContainer');
+            const costumes = COSTUME_MAP[charName];
+            
+            // 如果該角色沒有服裝或只有預設服裝，就不顯示按鈕區塊
+            if (!costumes || costumes.length <= 1) {
+                container.classList.add('hidden');
+                return;
+            }
+
+            container.classList.remove('hidden');
+            let html = '';
+            costumes.forEach((costumeKey, idx) => {
+                // 預設名稱，後續可依需求直接改為實際名稱
+                let displayName = idx === 0 ? "預設服裝" : `特殊服裝 ${idx}`;
+                let activeStyle = idx === 0 ? 'bg-amber-500 text-white border-amber-600 shadow-sm' : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-slate-600 hover:bg-amber-100 dark:hover:bg-slate-600';
+                
+                html += `<button onclick="changeCostume('${costumeKey}', this)" class="costume-btn px-3 py-1 text-[11px] sm:text-xs font-bold rounded-lg border ${activeStyle}">${displayName}</button>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function changeCostume(costumeKey, btnElement) {
+            // 重置所有按鈕樣式
+            document.querySelectorAll('.costume-btn').forEach(btn => {
+                btn.className = "costume-btn px-3 py-1 text-[11px] sm:text-xs font-bold rounded-lg border bg-white dark:bg-slate-700 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-slate-600 hover:bg-amber-100 dark:hover:bg-slate-600";
+            });
+            // 套用選取樣式
+            btnElement.className = "costume-btn px-3 py-1 text-[11px] sm:text-xs font-bold rounded-lg border bg-amber-500 text-white border-amber-600 shadow-sm";
+
+            // 呼叫 Spine 重新載入
+            loadSpineAnimation(costumeKey);
+        }
 
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -462,24 +605,19 @@
             if (!currentTargetName) { renderError("❌ 未指定角色，請從主頁點擊角色按鈕進入。"); return; }
             if (typeof INITIAL_DATA === 'undefined') { renderError("❌ 載入失敗：找不到 INITIAL_DATA。"); return; }
 
-            const charData = INITIAL_DATA.find(c => c.name.trim() === currentTargetName);
-            if (!charData) { renderError(`❌ 找不到名稱為「${currentTargetName}」的角色資料。`); return; }
+            currentCharData = INITIAL_DATA.find(c => c.name.trim() === currentTargetName);
+            if (!currentCharData) { renderError(`❌ 找不到名稱為「${currentTargetName}」的角色資料。`); return; }
 
-            document.getElementById('charName').innerText = charData.name;
-            updateTag('charPersonality', '性格', charData.personality, 'personality');
-            updateTag('charRace', '種族', charData.race, 'race');
-            updateTag('charPosition', '站位', charData.position, 'position');
-            updateTag('charJob', '職業', charData.job, 'job');
+            document.getElementById('charName').innerText = currentCharData.name;
+            updateTag('charPersonality', '性格', currentCharData.personality, 'personality');
+            updateTag('charRace', '種族', currentCharData.race, 'race');
+            updateTag('charPosition', '站位', currentCharData.position, 'position');
+            updateTag('charJob', '職業', currentCharData.job, 'job');
 
-            // 🌟 核心升級：Spine 動態圖讀取與互動邏輯
-            const avatarBox = document.getElementById('charAvatar');
-            const spineKey = SPINE_MAP[charData.name]; // 拿取您對應的英文路徑名稱
+            const spineKey = SPINE_MAP[currentCharData.name];
 
             if (spineKey) {
-    
-                // ==========================================
-                // 🎁 升級版：動態顯示珍藏品名稱、圖片與書信邏輯
-                // ==========================================
+                // 🎁 珍藏品邏輯
                 const presentContainer = document.getElementById('presentContainer');
                 const presentNameBox = document.getElementById('presentName');
                 const presentLetterContainer = document.getElementById('presentLetterContainer');
@@ -491,7 +629,6 @@
                 let presentDisplayName = "珍藏品正在送遞中..."; 
                 let isHasPresent = false;
 
-                // 🔍 取得當前角色的珍藏品資料
                 if (PRESENT_MAP[spineKey]) {
                     finalImgUrl = PRESENT_MAP[spineKey].url;
                     isHasPresent = true;
@@ -499,26 +636,21 @@
                     if (PRESENT_MAP[spineKey].name && PRESENT_MAP[spineKey].name.trim() !== "") {
                         presentDisplayName = PRESENT_MAP[spineKey].name;
                     } else {
-                        presentDisplayName = `${charData.name}的珍藏品`;
+                        presentDisplayName = `${currentCharData.name}的珍藏品`;
                     }
                 }
 
-                // ✍️ 渲染名稱區塊
                 if (presentNameBox) {
                     presentNameBox.innerText = presentDisplayName;
-        
-                    // 賦予溫馨主題與暗夜模式的基礎設定 (改為 inline-block 以適應靠左排版)
                     presentNameBox.className = "inline-block mb-1 tracking-wide px-4 py-1.5 rounded-full border transition-colors duration-300";
         
                     if (!isHasPresent) {
-                        // ⏳ 送遞中狀態
                         presentNameBox.classList.add(
                             'text-sm', 'text-rose-400', 'dark:text-gray-400', 
                             'bg-rose-50', 'dark:bg-gray-800/50', 
                             'border-rose-200', 'dark:border-gray-700', 'border-dashed'
                         );
                     } else {
-                        // 🎁 已實裝狀態
                         presentNameBox.classList.add(
                             'text-base', 'font-bold', 'text-rose-900', 'dark:text-gray-100', 
                             'bg-rose-100', 'dark:bg-gray-800', 
@@ -528,24 +660,17 @@
                     presentNameBox.classList.remove('hidden');
                 }
 
-                // 💌 渲染書信內容區塊
                 if (presentLetterContainer && presentLetterBox) {
                     if (isHasPresent) {
                         presentLetterContainer.classList.remove('hidden');
-            
-                        // 讀取 LETTER_MAP 裡的信，如果還沒寫，就顯示預設佔位文字
                         let letterContent = LETTER_MAP[spineKey] || "（隨附的信件內容整理中，敬請期待...）";
-            
-                        // 將文字中的 \n 轉換為網頁換行標籤 <br>
                         presentLetterBox.innerHTML = letterContent.replace(/\n/g, '<br>');
                     } else {
-                       // 如果連珍藏品都沒實裝，就隱藏整個書信框
                         presentLetterContainer.classList.add('hidden');
                     }
                 }
 
-                // 🚀 渲染圖片區塊
-                const altText = isHasPresent ? `${charData.name} - ${presentDisplayName}` : "珍藏品正在送遞中";
+                const altText = isHasPresent ? `${currentCharData.name} - ${presentDisplayName}` : "珍藏品正在送遞中";
                 const imgClass = isHasPresent 
                     ? "w-32 md:w-40 object-contain transition-transform duration-300 hover:scale-110 drop-shadow-md"
                     : "w-24 md:w-32 object-contain opacity-70"; 
@@ -559,129 +684,23 @@
                              onerror="if(this.src != '${DEFAULT_NO_PRESENT_URL}') this.src='${DEFAULT_NO_PRESENT_URL}'; else this.parentElement.innerHTML='<p class=\'text-gray-500 text-sm\'>⚠️ 珍藏品載入錯誤</p>'">
                     `;
                 }
-                // ==========================================
-                // 🎁 珍藏品代碼結束
-                // ==========================================
-                // 1. 清空容器原本的內容
-                avatarBox.innerHTML = ''; 
                 
-                // 🌆 2. 隨機背景魔法：從清單抽一張背景圖套用給外框
-                if (LOBBY_BACKGROUNDS && LOBBY_BACKGROUNDS.length > 0) {
-                    const randomBg = LOBBY_BACKGROUNDS[Math.floor(Math.random() * LOBBY_BACKGROUNDS.length)];
-                    
-                    // 運用 JS 賦予外框美麗的背景圖樣式
-                    avatarBox.style.backgroundImage = `url('${randomBg}')`;
-                    avatarBox.style.backgroundSize = 'cover';       // 讓背景完美填滿外框
-                    avatarBox.style.backgroundPosition = 'center';  // 鏡頭置中
-                    avatarBox.style.backgroundRepeat = 'no-repeat'; // 不重複拼貼
-                    
-                    // 💡 視覺微調：確保外框有圓角且背景不會超出外框
-                    avatarBox.classList.add('overflow-hidden', 'rounded-2xl', 'shadow-inner');
-                }
-                
-                // 3. 初始化 Spine 播放器 (維持您原本的設定)
-                let player = new spine.SpinePlayer(avatarBox, {
-                    skelUrl: `./spine_assets/${spineKey}/${spineKey}.skel.bytes`, // 拼法已修正為 assets
-                    atlasUrl: `./spine_assets/${spineKey}/${spineKey}.atlas.txt`,
-                    animation: "Idle_1",     
-                    premultipliedAlpha: true,
-                    backgroundColor: "#00000000", // 🌟 關鍵：維持全透明，背景圖才看得到
-                    alpha: true,                  // 🌟 關鍵：維持全透明
-                    showControls: false,     
-                    
-                    // 攝影機鏡頭鎖定 (維持您之前調好的高矮比例)
-                    viewport: {
-                        x: -400,     
-                        y: 0,        
-                        width: 800,  
-                        height: 1000 
-                    },
+                // 👗 渲染換裝按鈕
+                renderCostumeButtons(currentCharData.name);
 
-                    success: function (player) {
-                        console.log(`✅ ${charData.name} 的 Spine 動畫載入成功！`);
-                        
-                        // 👗 外觀優化邏輯 (維持不變)
-                        const skins = player.skeleton.data.skins;
-                        if (skins && skins.length > 1) {
-                            const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default');
-                            if (targetSkin) {
-                                player.skeleton.setSkinByName(targetSkin.name);
-                                player.skeleton.setSlotsToSetupPose();
-                            }
-                        }
+                // 🚀 初始化 Spine (預設載入陣列中的第一個)
+                const initialCostumeKey = (COSTUME_MAP[currentCharData.name] && COSTUME_MAP[currentCharData.name].length > 0) 
+                                          ? COSTUME_MAP[currentCharData.name][0] 
+                                          : spineKey;
+                loadSpineAnimation(initialCostumeKey);
 
-                        // 🎬 閒置與互動計時器魔法
-                        const animations = player.skeleton.data.animations;
-                        if (animations && animations.length > 1) {
-                            
-                            let idleTimer = null; // 用來儲存計時器的變數
-
-                            // 📦 封裝：播放動作並確保至少循環 5 秒
-                            function playRandomAction() {
-                                const animsToPlay = animations.filter(a => a.name !== 'Idle_1');
-                                if (animsToPlay.length > 0) {
-                                    const randomAnim = animsToPlay[Math.floor(Math.random() * animsToPlay.length)].name;
-        
-                                    console.log(`🤖 觸發動作: ${randomAnim}`);
-        
-                                    // 1. 播放隨機動作 (設定為 true，讓它先開始循環)
-                                    player.animationState.setAnimation(0, randomAnim, true);
-        
-                                    // 2. 清除舊計時器
-                                    clearTimeout(idleTimer);
-        
-                                    // 3. 設定一個計時器，5 秒後才准許切換回 Idle_1
-                                    idleTimer = setTimeout(() => {
-                                        // 切換回待機，且設定為循環
-                                        player.animationState.setAnimation(0, "Idle_1", true);
-            
-                                        // 重新啟動 5 秒後的下一次自動動作
-                                        startIdleTimer();
-                                    }, 5000); // 強制執行 5 秒
-        
-                                } else {
-                                    startIdleTimer();
-                                }
-                            }
-
-                            // ⏱️ 封裝：啟動/重設計時器的函數
-                            function startIdleTimer() {
-                                // 先清除舊的計時器，避免重複疊加
-                                clearTimeout(idleTimer);
-                                // 重新設定 5 秒 (5000 毫秒) 後執行
-                                idleTimer = setTimeout(() => {
-                                    playRandomAction();
-                                }, 5000);
-                            }
-
-                            // 🚀 第一次初始化：載入成功後立刻開始倒數 5 秒
-                            startIdleTimer();
-
-                            // 🌟 互動魔法：玩家主動點擊
-                            const canvas = avatarBox.querySelector('canvas');
-                            if(canvas) {
-                                canvas.addEventListener('click', () => {
-                                    console.log("👆 玩家主動戳了角色");
-                                    // 點擊時直接觸發動作 (內部會自動清除舊計時器並重開 5 秒)
-                                    playRandomAction();
-                                });
-                            }
-                        }
-                    },
-                    error: function (player, reason) {
-                        console.warn(`⚠️ Spine 載入失敗，降級顯示靜態圖。原因:`, reason);
-                        // 如果破圖或是路徑打錯，退回顯示靜態圖片
-                        const imgUrl = IMAGE_MAP[`avatar_${charData.name}`];
-                        avatarBox.innerHTML = imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-cover">` : charData.name.charAt(0);
-                    }
-                });
             } else {
-                // 如果角色不在清單中，維持原本的靜態圖片
-                const imgUrl = IMAGE_MAP[`avatar_${charData.name}`];
+                const avatarBox = document.getElementById('charAvatar');
+                const imgUrl = IMAGE_MAP[`avatar_${currentCharData.name}`];
                 if (imgUrl) {
                     avatarBox.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover">`;
                 } else {
-                    avatarBox.innerText = charData.name.charAt(0);
+                    avatarBox.innerText = currentCharData.name.charAt(0);
                 }
             }
 
@@ -689,11 +708,11 @@
                 const ul = document.getElementById(elementId);
                 ul.innerHTML = array.map(attr => `<li>${attr}</li>`).join('');
             };
-            renderCrayonList('layer1List', charData.layer1);
-            renderCrayonList('layer2List', charData.layer2);
-            renderCrayonList('layer3List', charData.layer3);
+            renderCrayonList('layer1List', currentCharData.layer1);
+            renderCrayonList('layer2List', currentCharData.layer2);
+            renderCrayonList('layer3List', currentCharData.layer3);
 
-            document.title = `${charData.name} - 角色詳細資料`;
+            document.title = `${currentCharData.name} - 角色詳細資料`;
 
             const skillsContainer = document.getElementById('skillsContainer');
             
@@ -785,8 +804,6 @@
             }
 
             loadComments(currentTargetName);
-
-            // 🎁 載入完畢後，預設顯示珍藏品的「教主感想」
             switchPresentTab('thought');
             
         };
