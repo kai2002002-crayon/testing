@@ -14,6 +14,16 @@
             darkMode: 'class',
         }
     </script>
+    <script>
+        // 如果您想要強制用 JS 寫入日期，就寫在這裡
+        window.addEventListener('DOMContentLoaded', (event) => {
+            const dateSpan = document.getElementById('lastupdate');
+            if(dateSpan) {
+                // 如果您想改日期，直接在這裡改括號裡的字串即可
+                dateSpan.innerText = "2026/05/26"; 
+            }
+        });
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
