@@ -576,11 +576,13 @@
             container.classList.remove('hidden');
             let html = '';
             costumes.forEach((costumeKey, idx) => {
-                // 預設名稱，後續可依需求直接改為實際名稱
-                let displayName = idx === 0 ? "預設服裝" : `特殊服裝 ${idx}`;
+                // 💡 修改按鈕名稱為「預設」、「服裝1」、「服裝2」...
+                let displayName = idx === 0 ? "預設" : `服裝${idx}`;
+                
+                // 讓按鈕的文字稍微放大一點點，方便點擊
                 let activeStyle = idx === 0 ? 'bg-amber-500 text-white border-amber-600 shadow-sm' : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-slate-600 hover:bg-amber-100 dark:hover:bg-slate-600';
                 
-                html += `<button onclick="changeCostume('${costumeKey}', this)" class="costume-btn px-3 py-1 text-[11px] sm:text-xs font-bold rounded-lg border ${activeStyle}">${displayName}</button>`;
+                html += `<button onclick="changeCostume('${costumeKey}', this)" class="costume-btn px-4 py-1.5 text-xs font-bold rounded-lg border ${activeStyle}">${displayName}</button>`;
             });
             container.innerHTML = html;
         }
