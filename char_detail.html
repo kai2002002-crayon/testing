@@ -463,10 +463,13 @@
         }
 
         // ==========================================
-        // 🌟 Spine 獨立渲染邏輯 (支援換裝)
+        // 🌟 Spine 獨立渲染邏輯 (支援換裝與同資料夾讀取)
         // ==========================================
         function loadSpineAnimation(costumeKey) {
             const avatarBox = document.getElementById('charAvatar');
+            
+            // 💡 取得「基礎資料夾名稱」(例如: Ashur)
+            const baseFolderKey = SPINE_MAP[currentTargetName]; 
             
             // 清除前一次的計時器與舊骨架
             clearTimeout(globalIdleTimer);
@@ -490,8 +493,9 @@
             `;
 
             globalSpinePlayer = new spine.SpinePlayer(avatarBox, {
-                skelUrl: `./spine_assets/${costumeKey}/${costumeKey}.skel.bytes`,
-                atlasUrl: `./spine_assets/${costumeKey}/${costumeKey}.atlas.txt`,
+                // 💡 核心修改：路徑改為 /baseFolderKey/costumeKey.副檔名
+                skelUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.skel.bytes`,
+                atlasUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.atlas.txt`,
                 animation: "Idle_1",     
                 premultipliedAlpha: true,
                 backgroundColor: "#00000000", 
@@ -506,7 +510,7 @@
                 },
 
                 success: function (player) {
-                    console.log(`✅ ${costumeKey} 的 Spine 動畫載入成功！`);
+                    console.log(`✅ ${costumeKey} 的 Spine 動畫載入成功！(路徑: ${baseFolderKey}/${costumeKey})`);
                     
                     const skins = player.skeleton.data.skins;
                     if (skins && skins.length > 1) {
