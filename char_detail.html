@@ -493,8 +493,8 @@
 
             const inactiveClass = "flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300";
 
-            // 💡 每次切換前，先重置外框與遮罩的所有動態屬性
-            presentTextContainer.className = "relative rounded-xl p-5 border border-rose-200 dark:border-gray-700 flex items-center transition-all duration-300";
+            // 💡 每次切換前，先重置外框：注意這裡我把原本的 p-5 拿掉了，改由下方各個情況動態賦予
+            presentTextContainer.className = "relative rounded-xl border border-rose-200 dark:border-gray-700 flex items-center transition-all duration-300";
             presentTextContainer.style.backgroundImage = 'none';
             overlay.classList.add('hidden');
 
@@ -503,24 +503,27 @@
                 btnThought.className = inactiveClass;
                 
                 if (hasLetter) {
-                    // 🌟 情況 1：有情信 -> 顯示種族信紙，強制展開高度
+                    // 🌟 情況 1：有情信 -> 顯示種族信紙
                     const bgUrl = LETTER_BG_MAP[currentCharData.race] || LOVE_LETTER_BG;
                     presentTextContainer.style.backgroundImage = `url('${bgUrl}')`;
-                    presentTextContainer.style.backgroundSize = '100% 100%'; // 強制完整顯示整張信紙
-                    presentTextContainer.classList.add('min-h-[350px]', 'sm:min-h-[400px]', 'shadow-inner');
-                    overlay.classList.remove('hidden'); // 開啟半透明遮罩
+                    presentTextContainer.style.backgroundSize = '100% 100%'; 
+                    
+                    // 💡 核心修改：使用超大內邊距 (px-12 py-16)，把文字往中央壓縮，避開透明邊緣
+                    presentTextContainer.classList.add('px-12', 'py-16', 'sm:px-16', 'sm:py-20', 'min-h-[350px]', 'sm:min-h-[400px]', 'shadow-inner');
+                    overlay.classList.remove('hidden'); 
                     
                     presentText.className = "relative z-10 text-gray-900 dark:text-gray-100 text-sm md:text-base leading-relaxed font-bold w-full drop-shadow-md";
                     presentText.innerHTML = LETTER_MAP[spineKey].replace(/\n/g, '<br>');
                 } else {
-                    // 🌟 情況 2：無情信 -> 顯示 Love Letter 圖示 (居中等比縮放)
+                    // 🌟 情況 2：無情信 -> 顯示 Love Letter 圖示
                     presentTextContainer.style.backgroundImage = `url('${LOVE_LETTER_BG}')`;
                     presentTextContainer.style.backgroundSize = 'contain';
                     presentTextContainer.style.backgroundRepeat = 'no-repeat';
                     presentTextContainer.style.backgroundPosition = 'center';
-                    presentTextContainer.classList.add('min-h-[200px]', 'bg-rose-50/50', 'dark:bg-gray-800/50');
                     
-                    // 加上毛玻璃背景框，確保文字不會和 Love Letter 圖示糊在一起
+                    // 💡 這裡加回一般距離的 p-5
+                    presentTextContainer.classList.add('p-5', 'min-h-[200px]', 'bg-rose-50/50', 'dark:bg-gray-800/50');
+                    
                     presentText.className = "relative z-10 text-gray-900 dark:text-gray-100 text-sm md:text-base leading-relaxed font-bold w-full drop-shadow-md text-center bg-white/60 dark:bg-black/60 p-2 rounded-lg backdrop-blur-sm";
                     presentText.innerHTML = "（這隻坨坨好像還沒寫信給你呢...）";
                 }
@@ -529,17 +532,20 @@
                 btnLetter.className = inactiveClass;
                 
                 if (hasThought) {
-                    // 🌟 情況 3：有教主感想 -> 原本 UI，不顯示信紙
-                    presentTextContainer.classList.add('bg-rose-50/80', 'dark:bg-gray-800/80', 'min-h-[160px]');
+                    // 🌟 情況 3：有教主感想 -> 原本 UI
+                    // 💡 加回一般距離的 p-5
+                    presentTextContainer.classList.add('p-5', 'bg-rose-50/80', 'dark:bg-gray-800/80', 'min-h-[160px]');
                     presentText.className = "relative z-10 text-gray-700 dark:text-gray-300 text-sm md:text-base leading-relaxed";
                     presentText.innerHTML = THOUGHT_MAP[spineKey].replace(/\n/g, '<br>');
                 } else {
-                    // 🌟 情況 4：無感想 -> 同樣顯示 Love Letter 圖示
+                    // 🌟 情況 4：無感想 -> Love Letter 圖示
                     presentTextContainer.style.backgroundImage = `url('${LOVE_LETTER_BG}')`;
                     presentTextContainer.style.backgroundSize = 'contain';
                     presentTextContainer.style.backgroundRepeat = 'no-repeat';
                     presentTextContainer.style.backgroundPosition = 'center';
-                    presentTextContainer.classList.add('min-h-[200px]', 'bg-rose-50/50', 'dark:bg-gray-800/50');
+                    
+                    // 💡 加回一般距離的 p-5
+                    presentTextContainer.classList.add('p-5', 'min-h-[200px]', 'bg-rose-50/50', 'dark:bg-gray-800/50');
                     
                     presentText.className = "relative z-10 text-gray-900 dark:text-gray-100 text-sm md:text-base leading-relaxed font-bold w-full drop-shadow-md text-center bg-white/60 dark:bg-black/60 p-2 rounded-lg backdrop-blur-sm";
                     presentText.innerHTML = "（教主目前還沒寫下對這個珍藏品的感想呢...）";
