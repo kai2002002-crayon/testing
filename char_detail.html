@@ -112,11 +112,12 @@
                         <button id="btnThought" onclick="switchPresentTab('thought')" class="flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300">教主感想</button>
                     </div>
 
-                    <div id="presentTextContainer" class="relative rounded-xl p-5 border border-rose-200 dark:border-gray-700 flex items-center transition-all duration-300">
-                        <!-- 💡 遮罩預設隱藏，只有顯示專屬信紙時才會開啟 -->
-                        <div id="presentOverlay" class="absolute inset-0 bg-white/20 dark:bg-black/40 z-0 pointer-events-none rounded-xl hidden transition-colors"></div>
+                    <div id="presentTextContainer" class="relative rounded-xl border border-rose-200 dark:border-gray-700 flex items-center overflow-hidden transition-all duration-300">
+                        <img id="presentBgImg" src="" class="hidden">
                         
-                        <p id="presentText" class="relative z-10 text-gray-900 dark:text-gray-100 text-sm md:text-base leading-relaxed font-bold w-full drop-shadow-md">請選擇顯示內容...</p>
+                        <div id="presentOverlay" class="absolute inset-0 bg-white/20 dark:bg-black/40 z-10 pointer-events-none hidden transition-colors"></div>
+                        
+                        <p id="presentText" class="relative z-20 text-gray-900 dark:text-gray-100 text-sm md:text-base leading-relaxed font-bold w-full drop-shadow-md">請選擇顯示內容...</p>
                     </div>
                 </div>
             </div>
@@ -485,6 +486,7 @@
             const btnThought = document.getElementById('btnThought');
             const presentText = document.getElementById('presentText');
             const presentTextContainer = document.getElementById('presentTextContainer');
+            const bgImg = document.getElementById('presentBgImg'); // 💡 抓取新的圖片層
             const overlay = document.getElementById('presentOverlay');
             
             const spineKey = SPINE_MAP[currentTargetName]; 
@@ -493,9 +495,9 @@
 
             const inactiveClass = "flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300";
 
-            // 💡 每次切換前，先重置外框：注意這裡我把原本的 p-5 拿掉了，改由下方各個情況動態賦予
-            presentTextContainer.className = "relative rounded-xl border border-rose-200 dark:border-gray-700 flex items-center transition-all duration-300";
-            presentTextContainer.style.backgroundImage = 'none';
+            // 💡 每次切換前，重置外框與圖片
+            presentTextContainer.className = "relative rounded-xl border border-rose-200 dark:border-gray-700 flex items-center overflow-hidden transition-all duration-300";
+            bgImg.classList.add('hidden');
             overlay.classList.add('hidden');
 
             if (tab === 'letter') {
@@ -504,27 +506,26 @@
                 
                 if (hasLetter) {
                     // 🌟 情況 1：有情信 -> 顯示種族信紙
-                    const bgUrl = LETTER_BG_MAP[currentCharData.race] || LOVE_LETTER_BG;
-                    presentTextContainer.style.backgroundImage = `url('${bgUrl}')`;
-                    presentTextContainer.style.backgroundSize = '100% 100%'; 
+                    bgImg.src = LETTER_BG_MAP[currentCharData.race] || LOVE_LETTER_BG;
+                    // 💡 使用 object-cover 保持圖片不變形(解決模糊)，並用 scale-[1.3] 放大圖片 30% 抵銷透明留白！
+                    bgImg.className = "absolute inset-0 w-full h-full object-cover scale-[1.35] sm:scale-[1.25] object-center z-0 transition-transform duration-500";
+                    bgImg.classList.remove('hidden');
                     
-                    // 💡 核心修改：使用超大內邊距 (px-12 py-16)，把文字往中央壓縮，避開透明邊緣
-                    presentTextContainer.classList.add('px-12', 'py-16', 'sm:px-16', 'sm:py-20', 'min-h-[350px]', 'sm:min-h-[400px]', 'shadow-inner');
+                    // 因為信紙被放大了，留白變少了，所以內邊距可以稍微放寬一點點
+                    presentTextContainer.classList.add('px-8', 'py-12', 'sm:px-12', 'sm:py-16', 'min-h-[350px]', 'sm:min-h-[400px]', 'shadow-inner');
                     overlay.classList.remove('hidden'); 
                     
-                    presentText.className = "relative z-10 text-gray-900 dark:text-gray-100 text-sm md:text-base leading-relaxed font-bold w-full drop-shadow-md";
+                    presentText.className = "relative z-20 text-gray-900 dark:text-gray-100 text-sm md:text-base leading-relaxed font-bold w-full drop-shadow-md";
                     presentText.innerHTML = LETTER_MAP[spineKey].replace(/\n/g, '<br>');
                 } else {
                     // 🌟 情況 2：無情信 -> 顯示 Love Letter 圖示
-                    presentTextContainer.style.backgroundImage = `url('${LOVE_LETTER_BG}')`;
-                    presentTextContainer.style.backgroundSize = 'contain';
-                    presentTextContainer.style.backgroundRepeat = 'no-repeat';
-                    presentTextContainer.style.backgroundPosition = 'center';
+                    bgImg.src = LOVE_LETTER_BG;
+                    // Love Letter 使用 contain 保持原本大小，置中顯示
+                    bgImg.className = "absolute inset-0 w-full h-full object-contain scale-90 z-0 opacity-80";
+                    bgImg.classList.remove('hidden');
                     
-                    // 💡 這裡加回一般距離的 p-5
                     presentTextContainer.classList.add('p-5', 'min-h-[200px]', 'bg-rose-50/50', 'dark:bg-gray-800/50');
-                    
-                    presentText.className = "relative z-10 text-gray-900 dark:text-gray-100 text-sm md:text-base leading-relaxed font-bold w-full drop-shadow-md text-center bg-white/60 dark:bg-black/60 p-2 rounded-lg backdrop-blur-sm";
+                    presentText.className = "relative z-20 text-gray-900 dark:text-gray-100 text-sm md:text-base leading-relaxed font-bold w-full drop-shadow-md text-center bg-white/60 dark:bg-black/60 p-2 rounded-lg backdrop-blur-sm";
                     presentText.innerHTML = "（這隻坨坨好像還沒寫信給你呢...）";
                 }
             } else {
@@ -532,27 +533,22 @@
                 btnLetter.className = inactiveClass;
                 
                 if (hasThought) {
-                    // 🌟 情況 3：有教主感想 -> 原本 UI
-                    // 💡 加回一般距離的 p-5
+                    // 🌟 情況 3：有教主感想
                     presentTextContainer.classList.add('p-5', 'bg-rose-50/80', 'dark:bg-gray-800/80', 'min-h-[160px]');
-                    presentText.className = "relative z-10 text-gray-700 dark:text-gray-300 text-sm md:text-base leading-relaxed";
+                    presentText.className = "relative z-20 text-gray-700 dark:text-gray-300 text-sm md:text-base leading-relaxed";
                     presentText.innerHTML = THOUGHT_MAP[spineKey].replace(/\n/g, '<br>');
                 } else {
                     // 🌟 情況 4：無感想 -> Love Letter 圖示
-                    presentTextContainer.style.backgroundImage = `url('${LOVE_LETTER_BG}')`;
-                    presentTextContainer.style.backgroundSize = 'contain';
-                    presentTextContainer.style.backgroundRepeat = 'no-repeat';
-                    presentTextContainer.style.backgroundPosition = 'center';
+                    bgImg.src = LOVE_LETTER_BG;
+                    bgImg.className = "absolute inset-0 w-full h-full object-contain scale-90 z-0 opacity-80";
+                    bgImg.classList.remove('hidden');
                     
-                    // 💡 加回一般距離的 p-5
                     presentTextContainer.classList.add('p-5', 'min-h-[200px]', 'bg-rose-50/50', 'dark:bg-gray-800/50');
-                    
-                    presentText.className = "relative z-10 text-gray-900 dark:text-gray-100 text-sm md:text-base leading-relaxed font-bold w-full drop-shadow-md text-center bg-white/60 dark:bg-black/60 p-2 rounded-lg backdrop-blur-sm";
+                    presentText.className = "relative z-20 text-gray-900 dark:text-gray-100 text-sm md:text-base leading-relaxed font-bold w-full drop-shadow-md text-center bg-white/60 dark:bg-black/60 p-2 rounded-lg backdrop-blur-sm";
                     presentText.innerHTML = "（教主目前還沒寫下對這個珍藏品的感想呢...）";
                 }
             }
         }
-
         // ==========================================
         // 🌟 Spine 獨立渲染邏輯 (支援換裝與同資料夾讀取)
         // ==========================================
