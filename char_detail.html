@@ -113,11 +113,14 @@
                     </div>
 
                     <div id="presentTextContainer" class="relative rounded-xl border border-rose-200 dark:border-gray-700 overflow-hidden transition-all duration-300 bg-rose-50 dark:bg-gray-800">
-                        <img id="presentBgImg" src="" class="hidden w-full h-auto object-contain scale-[1.12] origin-center">
+                        <!-- 💡 圖片層：不再用 scale，等一下會在 JS 賦予它真實寬高 -->
+                        <img id="presentBgImg" src="" class="hidden">
                         
+                        <!-- 遮罩層 -->
                         <div id="presentOverlay" class="absolute inset-0 bg-white/20 dark:bg-black/40 z-10 pointer-events-none hidden transition-colors"></div>
                         
-                        <div id="presentTextWrapper" class="relative z-20 flex flex-col p-5 w-full">
+                        <!-- 💡 文字層：長度超過時會自動出現滑動條 (overflow-y-auto) -->
+                        <div id="presentTextWrapper" class="relative z-20 flex flex-col p-5 w-full h-full">
                             <p id="presentText" class="text-sm md:text-base leading-relaxed w-full drop-shadow-md">請選擇顯示內容...</p>
                         </div>
                     </div>
@@ -490,7 +493,7 @@
             const presentTextContainer = document.getElementById('presentTextContainer');
             const bgImg = document.getElementById('presentBgImg'); 
             const overlay = document.getElementById('presentOverlay');
-            const textWrapper = document.getElementById('presentTextWrapper'); // 💡 抓取新的文字滑動層
+            const textWrapper = document.getElementById('presentTextWrapper');
             
             const spineKey = SPINE_MAP[currentTargetName]; 
             const hasLetter = LETTER_MAP[spineKey] && LETTER_MAP[spineKey].trim() !== "";
@@ -500,10 +503,9 @@
 
             // 💡 每次切換前，重置所有狀態
             presentTextContainer.className = "relative rounded-xl border border-rose-200 dark:border-gray-700 overflow-hidden transition-all duration-300 bg-rose-50 dark:bg-slate-800";
-            presentTextContainer.style.backgroundImage = 'none';
             bgImg.className = 'hidden';
             overlay.classList.add('hidden');
-            textWrapper.className = "relative z-20 flex flex-col p-5 w-full"; // 預設狀態 (教主感想)
+            textWrapper.className = "relative z-20 flex flex-col p-5 w-full h-full"; 
             presentText.className = "text-sm md:text-base leading-relaxed w-full";
 
             if (tab === 'letter') {
@@ -511,26 +513,29 @@
                 btnThought.className = inactiveClass;
                 
                 if (hasLetter) {
-                    // 🌟 情況 1：有情信 -> 完美顯示完整信紙！
+                    // 🌟 情況 1：有情信 -> 極致清晰版！
                     bgImg.src = LETTER_BG_MAP[currentCharData.race] || LOVE_LETTER_BG;
-                    // 讓圖片自然撐開高度 (維持原圖 1534x1020 的超清晰比例)，並放大 12% 裁掉周圍透明區
-                    bgImg.className = "block w-full h-auto object-contain scale-[1.12] origin-center transition-transform duration-500";
+                    
+                    // 💡 神奇魔法：不用 scale！使用 w-[116%] 與 max-w-none 實體放大圖片，配合 -left-[8%] 把透明邊框推出容器外！
+                    // 這樣一來圖片絕對清晰不失真，且完美保留 1534x1020 的左右邊緣細節！
+                    bgImg.className = "absolute w-[116%] h-[116%] max-w-none -left-[8%] -top-[8%] object-contain z-0 transition-opacity duration-500";
+                    
+                    presentTextContainer.classList.add('min-h-[350px]', 'sm:min-h-[420px]', 'shadow-inner');
                     overlay.classList.remove('hidden'); 
                     
-                    // 💡 將文字層轉為 absolute，並設定內邊距 (px-10 py-8)，如果文字太長就能在信紙內「滑動」
-                    textWrapper.className = "absolute inset-0 z-20 flex flex-col px-10 py-8 sm:px-16 sm:py-12 overflow-y-auto";
+                    // 💡 文字層轉為 absolute 並加入 overflow-y-auto，文字太長就能在信紙內滑動！
+                    textWrapper.className = "absolute inset-0 z-20 flex flex-col px-8 py-6 sm:px-14 sm:py-10 overflow-y-auto";
                     
                     presentText.classList.add('text-gray-900', 'dark:text-gray-100', 'font-bold', 'drop-shadow-md');
                     presentText.innerHTML = LETTER_MAP[spineKey].replace(/\n/g, '<br>');
                 } else {
-                    // 🌟 情況 2：無情信
-                    presentTextContainer.style.backgroundImage = `url('${LOVE_LETTER_BG}')`;
-                    presentTextContainer.style.backgroundSize = 'contain';
-                    presentTextContainer.style.backgroundRepeat = 'no-repeat';
-                    presentTextContainer.style.backgroundPosition = 'center';
-                    presentTextContainer.classList.add('min-h-[200px]');
+                    // 🌟 情況 2：無情信 -> 顯示 Love Letter 圖示
+                    bgImg.src = LOVE_LETTER_BG;
+                    bgImg.className = "absolute inset-0 w-full h-full object-contain p-6 opacity-60 z-0";
+                    bgImg.classList.remove('hidden');
                     
-                    textWrapper.classList.add('justify-center', 'items-center', 'h-full', 'min-h-[200px]');
+                    presentTextContainer.classList.add('min-h-[200px]');
+                    textWrapper.classList.add('justify-center', 'items-center');
                     presentText.className = "text-gray-900 dark:text-gray-100 text-sm md:text-base leading-relaxed font-bold w-full drop-shadow-md text-center bg-white/60 dark:bg-black/60 p-2 rounded-lg backdrop-blur-sm";
                     presentText.innerHTML = "（這隻坨坨好像還沒寫信給你呢...）";
                 }
@@ -539,19 +544,18 @@
                 btnLetter.className = inactiveClass;
                 
                 if (hasThought) {
-                    // 🌟 情況 3：有教主感想
+                    // 🌟 情況 3：有教主感想 (維持簡潔版面，不加背景圖)
                     presentTextContainer.classList.add('min-h-[160px]');
                     presentText.classList.add('text-gray-700', 'dark:text-gray-300');
                     presentText.innerHTML = THOUGHT_MAP[spineKey].replace(/\n/g, '<br>');
                 } else {
-                    // 🌟 情況 4：無感想
-                    presentTextContainer.style.backgroundImage = `url('${LOVE_LETTER_BG}')`;
-                    presentTextContainer.style.backgroundSize = 'contain';
-                    presentTextContainer.style.backgroundRepeat = 'no-repeat';
-                    presentTextContainer.style.backgroundPosition = 'center';
-                    presentTextContainer.classList.add('min-h-[200px]');
+                    // 🌟 情況 4：無感想 -> 顯示 Love Letter 圖示
+                    bgImg.src = LOVE_LETTER_BG;
+                    bgImg.className = "absolute inset-0 w-full h-full object-contain p-6 opacity-60 z-0";
+                    bgImg.classList.remove('hidden');
                     
-                    textWrapper.classList.add('justify-center', 'items-center', 'h-full', 'min-h-[200px]');
+                    presentTextContainer.classList.add('min-h-[200px]');
+                    textWrapper.classList.add('justify-center', 'items-center');
                     presentText.className = "text-gray-900 dark:text-gray-100 text-sm md:text-base leading-relaxed font-bold w-full drop-shadow-md text-center bg-white/60 dark:bg-black/60 p-2 rounded-lg backdrop-blur-sm";
                     presentText.innerHTML = "（教主目前還沒寫下對這個珍藏品的感想呢...）";
                 }
