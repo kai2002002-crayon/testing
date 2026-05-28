@@ -97,31 +97,31 @@
                 </h3>
             </div>
     
-            <div class="flex flex-col md:flex-row gap-6 items-center md:items-start rounded-xl bg-white/60 dark:bg-gray-900/50 border border-rose-100 dark:border-gray-800 p-5">
+            <div id="presentWrapper" class="flex flex-col md:flex-row gap-6 items-center md:items-start rounded-xl bg-white/60 dark:bg-gray-900/50 border border-rose-100 dark:border-gray-800 p-5">
         
-                <div class="w-full md:w-1/3 flex flex-col items-center gap-3">
+                <!-- 💡 左側：珍藏品圖示與名稱 -->
+                <div id="presentLeft" class="w-full md:w-1/3 flex flex-col items-center gap-3 transition-all duration-300">
                     <div id="presentContainer" class="w-full flex justify-center items-center overflow-hidden">
                         <p class="text-orange-400 dark:text-gray-500 text-sm animate-pulse">寶箱開啟中...</p>
                     </div>
                     <div id="presentName" class="hidden text-center font-bold text-rose-900 dark:text-rose-200 bg-rose-100/50 dark:bg-rose-900/30 px-3 py-1 rounded-lg border border-rose-200 dark:border-rose-800 text-sm"></div>
                 </div>
 
-                <div class="w-full md:w-2/3 flex flex-col gap-3">
+                <!-- 💡 右側：情信與感想頁籤 (無珍藏品時會被 JS 隱藏) -->
+                <div id="presentRight" class="w-full md:w-2/3 flex flex-col gap-3 transition-all duration-300">
                     <div class="flex gap-2">
                         <button id="btnLetter" onclick="switchPresentTab('letter')" class="flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-rose-500 text-white shadow-md">坨坨情信</button>
                         <button id="btnThought" onclick="switchPresentTab('thought')" class="flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300">教主感想</button>
                     </div>
 
-                    <div id="presentTextContainer" class="relative rounded-xl border border-rose-200 dark:border-gray-700 overflow-hidden aspect-[1534/1020] w-full transition-all duration-300 bg-rose-50 dark:bg-gray-800 shadow-xl">
-                        
-                        <div id="presentOverlay" class="absolute inset-0 bg-white/15 dark:bg-black/30 z-10 pointer-events-none hidden transition-colors"></div>
-                        
-                        <div id="presentTextWrapper" class="absolute inset-0 z-20 overflow-y-auto px-[10%] py-[8%] sm:px-[14%] sm:py-[10%] custom-scrollbar flex">
-                            <p id="presentText" class="text-[11px] sm:text-xs md:text-base leading-relaxed w-full font-bold self-center">請選擇顯示內容...</p>
+                    <!-- 簡化後的純文字框 -->
+                    <div id="presentTextContainer" class="relative rounded-xl border border-rose-200 dark:border-gray-700 overflow-hidden transition-all duration-300 bg-rose-50 dark:bg-gray-800 flex flex-col min-h-[160px]">
+                        <div id="presentTextWrapper" class="relative z-20 flex-1 w-full p-5 flex flex-col">
+                            <p id="presentText" class="text-sm md:text-base leading-relaxed w-full drop-shadow-md text-gray-700 dark:text-gray-300">請選擇顯示內容...</p>
                         </div>
-                        
                     </div>
                 </div>
+                
             </div>
         </div>
         
@@ -488,7 +488,6 @@
             const btnThought = document.getElementById('btnThought');
             const presentText = document.getElementById('presentText');
             const presentTextContainer = document.getElementById('presentTextContainer');
-            const overlay = document.getElementById('presentOverlay');
             const textWrapper = document.getElementById('presentTextWrapper');
             
             const spineKey = SPINE_MAP[currentTargetName]; 
@@ -497,38 +496,26 @@
 
             const inactiveClass = "flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300";
 
-            // 💡 重置狀態：保持完美的 aspect 比例外框
-            presentTextContainer.className = "relative rounded-xl border border-rose-200 dark:border-gray-700 overflow-hidden aspect-[1534/1020] w-full transition-all duration-300 bg-rose-50 dark:bg-slate-800 shadow-xl";
+            // 重置為預設純文字框樣式
             presentTextContainer.style.backgroundImage = 'none';
-            overlay.classList.add('hidden');
-            textWrapper.className = "absolute inset-0 z-20 overflow-y-auto px-[10%] py-[8%] sm:px-[14%] sm:py-[10%] custom-scrollbar flex";
-            presentText.className = "text-[11px] sm:text-xs md:text-base leading-relaxed w-full self-center text-gray-700 dark:text-gray-300";
+            presentTextContainer.className = "relative rounded-xl border border-rose-200 dark:border-gray-700 overflow-hidden transition-all duration-300 bg-rose-50 dark:bg-slate-800 flex flex-col min-h-[160px]";
+            textWrapper.className = "relative z-20 flex-1 w-full p-5 flex flex-col";
+            presentText.className = "text-sm md:text-base leading-relaxed w-full text-gray-700 dark:text-gray-300";
 
             if (tab === 'letter') {
                 btnLetter.className = "flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-rose-500 text-white shadow-md";
                 btnThought.className = inactiveClass;
                 
                 if (hasLetter) {
-                    // 🌟 情況 1：有情信 -> 完美等比例清晰版
-                    const bgUrl = LETTER_BG_MAP[currentCharData.race] || LOVE_LETTER_BG;
-                    presentTextContainer.style.backgroundImage = `url('${bgUrl}')`;
-                    
-                    // 💡 重點：因為圖片四周留白太多，我們用 114% 微微放大並置中，把外圍透明白邊擠出去
-                    presentTextContainer.style.backgroundSize = '114%'; 
-                    presentTextContainer.style.backgroundPosition = 'center';
-                    presentTextContainer.style.backgroundRepeat = 'no-repeat';
-                    
-                    overlay.classList.remove('hidden'); 
-                    
-                    // 文字設定：text-gray-900 確保信紙上讀取清晰。手機版預設 text-[11px] 或 sm:text-xs 避免字太大壓扁
-                    presentText.className = "text-gray-900 dark:text-gray-100 font-bold drop-shadow-md text-[11px] sm:text-xs md:text-base leading-relaxed w-full";
+                    // 有情信：純文字顯示
                     presentText.innerHTML = LETTER_MAP[spineKey].replace(/\n/g, '<br>');
                 } else {
-                    // 🌟 情況 2：無情信 -> 顯示 Love Letter 圖示
+                    // 無情信：顯示 Icon
                     presentTextContainer.style.backgroundImage = `url('${LOVE_LETTER_BG}')`;
                     presentTextContainer.style.backgroundSize = 'contain';
                     presentTextContainer.style.backgroundPosition = 'center';
                     presentTextContainer.style.backgroundRepeat = 'no-repeat';
+                    presentTextContainer.classList.add('min-h-[200px]');
                     
                     textWrapper.classList.add('items-center', 'justify-center');
                     presentText.className = "text-gray-900 dark:text-gray-100 text-xs md:text-base leading-relaxed font-bold w-full drop-shadow-md text-center bg-white/60 dark:bg-black/60 p-2 rounded-lg backdrop-blur-sm";
@@ -539,20 +526,19 @@
                 btnLetter.className = inactiveClass;
                 
                 if (hasThought) {
-                    // 🌟 情況 3：有教主感想 (不使用信紙背景，純文字)
-                    textWrapper.classList.add('items-center');
-                    presentText.className = "text-gray-700 dark:text-gray-300 text-xs sm:text-sm md:text-base leading-relaxed w-full";
+                    // 有感想：純文字顯示
                     presentText.innerHTML = THOUGHT_MAP[spineKey].replace(/\n/g, '<br>');
                 } else {
-                    // 🌟 情況 4：無感想 -> 顯示 Love Letter 圖示
+                    // 無感想：顯示 Icon
                     presentTextContainer.style.backgroundImage = `url('${LOVE_LETTER_BG}')`;
                     presentTextContainer.style.backgroundSize = 'contain';
                     presentTextContainer.style.backgroundPosition = 'center';
                     presentTextContainer.style.backgroundRepeat = 'no-repeat';
+                    presentTextContainer.classList.add('min-h-[200px]');
                     
                     textWrapper.classList.add('items-center', 'justify-center');
                     presentText.className = "text-gray-900 dark:text-gray-100 text-xs md:text-base leading-relaxed font-bold w-full drop-shadow-md text-center bg-white/60 dark:bg-black/60 p-2 rounded-lg backdrop-blur-sm";
-                    presentText.innerHTML = "（教主目前還沒寫下對這個珍藏品編寫感想呢...）";
+                    presentText.innerHTML = "（教主目前還沒寫下對這個珍藏品的感想呢...）";
                 }
             }
         }
@@ -711,10 +697,10 @@
 
             if (spineKey) {
                 // 🎁 珍藏品邏輯
+                const presentLeft = document.getElementById('presentLeft');
+                const presentRight = document.getElementById('presentRight');
                 const presentContainer = document.getElementById('presentContainer');
                 const presentNameBox = document.getElementById('presentName');
-                const presentLetterContainer = document.getElementById('presentLetterContainer');
-                const presentLetterBox = document.getElementById('presentLetter');
     
                 const DEFAULT_NO_PRESENT_URL = "https://i.postimg.cc/qtwD6bsq/Icon-Present.png";
     
@@ -753,21 +739,10 @@
                     presentNameBox.classList.remove('hidden');
                 }
 
-                if (presentLetterContainer && presentLetterBox) {
-                    if (isHasPresent) {
-                        presentLetterContainer.classList.remove('hidden');
-                        let letterContent = LETTER_MAP[spineKey] || "（隨附的信件內容整理中，敬請期待...）";
-                        presentLetterBox.innerHTML = letterContent.replace(/\n/g, '<br>');
-                    } else {
-                        presentLetterContainer.classList.add('hidden');
-                    }
-                }
-
                 const altText = isHasPresent ? `${currentCharData.name} - ${presentDisplayName}` : "珍藏品正在送遞中";
-                // 💡 新增高度限制 (h-32, md:h-40)，讓所有珍藏品都被關在一個固定大小的正方形框框內等比縮放
                 const imgClass = isHasPresent 
-                    ? "w-32 h-32 md:w-40 md:h-40 object-contain transition-transform duration-300 hover:scale-110 drop-shadow-md"
-                    : "w-24 h-24 md:w-32 md:h-32 object-contain opacity-70"; 
+                    ? "w-32 md:w-40 object-contain transition-transform duration-300 hover:scale-110 drop-shadow-md"
+                    : "w-24 md:w-32 object-contain opacity-70 animate-pulse"; // 給沒珍藏品的 Icon 加一點呼吸燈效果
 
                 if (presentContainer) {
                     presentContainer.innerHTML = `
@@ -775,11 +750,20 @@
                              alt="${altText}" 
                              class="${imgClass}"
                              loading="lazy"
-                             onerror="if(this.src != '${DEFAULT_NO_PRESENT_URL}') this.src='${DEFAULT_NO_PRESENT_URL}'; else this.parentElement.innerHTML='<p class=\'text-gray-500 text-sm\'>⚠️ 珍藏品載入錯誤</p>'">
+                             onerror="if(this.src != '${DEFAULT_NO_PRESENT_URL}') this.src='${DEFAULT_NO_PRESENT_URL}'; else this.parentElement.innerHTML='<p class=\\'text-gray-500 text-sm\\'>⚠️ 珍藏品載入錯誤</p>'">
                     `;
                 }
+
+                // 💡 神奇魔法：如果連珍藏品都沒有，就徹底隱藏右側的對話框與按鈕，並把左側置中放大！
+                if (!isHasPresent) {
+                    if (presentRight) presentRight.classList.add('hidden');
+                    if (presentLeft) presentLeft.className = "w-full flex flex-col items-center justify-center gap-4 py-6 transition-all duration-300";
+                } else {
+                    if (presentRight) presentRight.classList.remove('hidden');
+                    if (presentLeft) presentLeft.className = "w-full md:w-1/3 flex flex-col items-center gap-3 transition-all duration-300";
+                }
                 
-                // 👗 渲染換裝按鈕
+                // 👗 渲染換裝按鈕 (維持原代碼)
                 renderCostumeButtons(currentCharData.name);
 
                 // 🚀 初始化 Spine (預設載入陣列中的第一個)
