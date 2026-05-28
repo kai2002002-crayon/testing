@@ -497,44 +497,41 @@
 
             const inactiveClass = "flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300";
 
-            // 💡 每次切換前，重置所有狀態
-            presentTextContainer.className = "relative rounded-xl border border-rose-200 dark:border-gray-700 overflow-hidden transition-all duration-300 bg-rose-50 dark:bg-slate-800 flex flex-col";
+            // 💡 重置狀態：保持完美的 aspect 比例外框
+            presentTextContainer.className = "relative rounded-xl border border-rose-200 dark:border-gray-700 overflow-hidden aspect-[1534/1020] w-full transition-all duration-300 bg-rose-50 dark:bg-slate-800 shadow-xl";
             presentTextContainer.style.backgroundImage = 'none';
             overlay.classList.add('hidden');
+            textWrapper.className = "absolute inset-0 z-20 overflow-y-auto px-[10%] py-[8%] sm:px-[14%] sm:py-[10%] custom-scrollbar flex";
+            presentText.className = "text-[11px] sm:text-xs md:text-base leading-relaxed w-full self-center text-gray-700 dark:text-gray-300";
 
             if (tab === 'letter') {
                 btnLetter.className = "flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-rose-500 text-white shadow-md";
                 btnThought.className = inactiveClass;
                 
                 if (hasLetter) {
-                    // 🌟 情況 1：有情信 -> 畫質最清晰的原生背景放大法！
+                    // 🌟 情況 1：有情信 -> 完美等比例清晰版
                     const bgUrl = LETTER_BG_MAP[currentCharData.race] || LOVE_LETTER_BG;
                     presentTextContainer.style.backgroundImage = `url('${bgUrl}')`;
                     
-                    // 💡 神奇魔法：使用 130% 放大背景。
-                    // 這樣能保持原圖 1534x1020 的最清晰畫質，並自動把透明邊框推出容器外隱藏起來！
-                    presentTextContainer.style.backgroundSize = '130%'; 
+                    // 💡 重點：因為圖片四周留白太多，我們用 114% 微微放大並置中，把外圍透明白邊擠出去
+                    presentTextContainer.style.backgroundSize = '114%'; 
                     presentTextContainer.style.backgroundPosition = 'center';
                     presentTextContainer.style.backgroundRepeat = 'no-repeat';
                     
-                    presentTextContainer.classList.add('min-h-[350px]', 'sm:min-h-[420px]', 'shadow-inner');
                     overlay.classList.remove('hidden'); 
                     
-                    // 💡 文字層：加入 absolute 蓋滿信紙，並使用嚴格的 padding (pt-12)，讓文字固定從信紙上方開始，不再出界！
-                    textWrapper.className = "absolute inset-0 z-20 overflow-y-auto px-8 pt-12 pb-8 sm:px-14 sm:pt-16 sm:pb-10 custom-scrollbar";
-                    
-                    presentText.className = "text-gray-900 dark:text-gray-100 font-bold drop-shadow-md text-sm md:text-base leading-relaxed";
+                    // 文字設定：text-gray-900 確保信紙上讀取清晰。手機版預設 text-[11px] 或 sm:text-xs 避免字太大壓扁
+                    presentText.className = "text-gray-900 dark:text-gray-100 font-bold drop-shadow-md text-[11px] sm:text-xs md:text-base leading-relaxed w-full";
                     presentText.innerHTML = LETTER_MAP[spineKey].replace(/\n/g, '<br>');
                 } else {
-                    // 🌟 情況 2：無情信
+                    // 🌟 情況 2：無情信 -> 顯示 Love Letter 圖示
                     presentTextContainer.style.backgroundImage = `url('${LOVE_LETTER_BG}')`;
                     presentTextContainer.style.backgroundSize = 'contain';
                     presentTextContainer.style.backgroundPosition = 'center';
                     presentTextContainer.style.backgroundRepeat = 'no-repeat';
-                    presentTextContainer.classList.add('min-h-[200px]');
                     
-                    textWrapper.className = "absolute inset-0 z-20 flex flex-col items-center justify-center p-5";
-                    presentText.className = "text-gray-900 dark:text-gray-100 text-sm md:text-base leading-relaxed font-bold w-full drop-shadow-md text-center bg-white/60 dark:bg-black/60 p-3 rounded-xl backdrop-blur-sm";
+                    textWrapper.classList.add('items-center', 'justify-center');
+                    presentText.className = "text-gray-900 dark:text-gray-100 text-xs md:text-base leading-relaxed font-bold w-full drop-shadow-md text-center bg-white/60 dark:bg-black/60 p-2 rounded-lg backdrop-blur-sm";
                     presentText.innerHTML = "（這隻坨坨好像還沒寫信給你呢...）";
                 }
             } else {
@@ -542,23 +539,20 @@
                 btnLetter.className = inactiveClass;
                 
                 if (hasThought) {
-                    // 🌟 情況 3：有教主感想
-                    presentTextContainer.classList.add('min-h-[160px]');
-                    // 恢復一般的 block 排版，讓長文自然撐開容器，不使用 absolute
-                    textWrapper.className = "relative z-20 w-full p-5";
-                    presentText.className = "text-gray-700 dark:text-gray-300 text-sm md:text-base leading-relaxed";
+                    // 🌟 情況 3：有教主感想 (不使用信紙背景，純文字)
+                    textWrapper.classList.add('items-center');
+                    presentText.className = "text-gray-700 dark:text-gray-300 text-xs sm:text-sm md:text-base leading-relaxed w-full";
                     presentText.innerHTML = THOUGHT_MAP[spineKey].replace(/\n/g, '<br>');
                 } else {
-                    // 🌟 情況 4：無感想
+                    // 🌟 情況 4：無感想 -> 顯示 Love Letter 圖示
                     presentTextContainer.style.backgroundImage = `url('${LOVE_LETTER_BG}')`;
                     presentTextContainer.style.backgroundSize = 'contain';
                     presentTextContainer.style.backgroundPosition = 'center';
                     presentTextContainer.style.backgroundRepeat = 'no-repeat';
-                    presentTextContainer.classList.add('min-h-[200px]');
                     
-                    textWrapper.className = "absolute inset-0 z-20 flex flex-col items-center justify-center p-5";
-                    presentText.className = "text-gray-900 dark:text-gray-100 text-sm md:text-base leading-relaxed font-bold w-full drop-shadow-md text-center bg-white/60 dark:bg-black/60 p-3 rounded-xl backdrop-blur-sm";
-                    presentText.innerHTML = "（教主目前還沒寫下對這個珍藏品的感想呢...）";
+                    textWrapper.classList.add('items-center', 'justify-center');
+                    presentText.className = "text-gray-900 dark:text-gray-100 text-xs md:text-base leading-relaxed font-bold w-full drop-shadow-md text-center bg-white/60 dark:bg-black/60 p-2 rounded-lg backdrop-blur-sm";
+                    presentText.innerHTML = "（教主目前還沒寫下對這個珍藏品編寫感想呢...）";
                 }
             }
         }
