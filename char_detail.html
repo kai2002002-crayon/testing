@@ -740,9 +740,10 @@
                 }
 
                 const altText = isHasPresent ? `${currentCharData.name} - ${presentDisplayName}` : "珍藏品正在送遞中";
+                // 💡 新增高度限制 (h-32, md:h-40)，讓所有珍藏品都被關在一個固定大小的正方形框框內等比縮放
                 const imgClass = isHasPresent 
-                    ? "w-32 md:w-40 object-contain transition-transform duration-300 hover:scale-110 drop-shadow-md"
-                    : "w-24 md:w-32 object-contain opacity-70 animate-pulse"; // 給沒珍藏品的 Icon 加一點呼吸燈效果
+                    ? "w-32 h-32 md:w-40 md:h-40 object-contain transition-transform duration-300 hover:scale-110 drop-shadow-md"
+                    : "w-24 h-24 md:w-32 md:h-32 object-contain opacity-70";
 
                 if (presentContainer) {
                     presentContainer.innerHTML = `
