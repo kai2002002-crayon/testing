@@ -889,9 +889,9 @@
             // 🚀 新增：秘密預載入 (Preload) 信紙背景
             // 這樣教主點擊「坨坨情信」時，圖片就會零秒瞬間出現！
             // ==========================================
-            if (currentCharData && currentCharData.race) {
-                const preloadImg = new Image();
-                preloadImg.src = LETTER_BG_MAP[currentCharData.race] || LOVE_LETTER_BG;
+            // 預載空信封圖示，以防沒情信時出現延遲
+            const preloadImg = new Image();
+            preloadImg.src = LOVE_LETTER_BG;
             }
             
         };
