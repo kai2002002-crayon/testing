@@ -112,12 +112,12 @@
                         <button id="btnThought" onclick="switchPresentTab('thought')" class="flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300">教主感想</button>
                     </div>
 
-                    <div id="presentTextContainer" class="relative rounded-xl border border-rose-200 dark:border-gray-700 overflow-hidden transition-all duration-300 bg-rose-50 dark:bg-gray-800 flex flex-col">
+                    <div id="presentTextContainer" class="relative rounded-xl border border-rose-200 dark:border-gray-700 overflow-hidden aspect-[1534/1020] w-full transition-all duration-300 bg-rose-50 dark:bg-gray-800 shadow-xl">
                         
-                        <div id="presentOverlay" class="absolute inset-0 bg-white/20 dark:bg-black/40 z-10 pointer-events-none hidden transition-colors"></div>
+                        <div id="presentOverlay" class="absolute inset-0 bg-white/15 dark:bg-black/30 z-10 pointer-events-none hidden transition-colors"></div>
                         
-                        <div id="presentTextWrapper" class="relative z-20 flex-1 w-full overflow-y-auto custom-scrollbar">
-                            <p id="presentText" class="text-sm md:text-base leading-relaxed w-full drop-shadow-md">請選擇顯示內容...</p>
+                        <div id="presentTextWrapper" class="absolute inset-0 z-20 overflow-y-auto px-[10%] py-[8%] sm:px-[14%] sm:py-[10%] custom-scrollbar flex">
+                            <p id="presentText" class="text-[11px] sm:text-xs md:text-base leading-relaxed w-full font-bold self-center">請選擇顯示內容...</p>
                         </div>
                         
                     </div>
@@ -903,7 +903,16 @@
             }
 
             loadComments(currentTargetName);
-            switchPresentTab('thought');
+            switchPresentTab('thought'); // 這是您原本就在的程式碼
+            
+            // ==========================================
+            // 🚀 新增：秘密預載入 (Preload) 信紙背景
+            // 這樣教主點擊「坨坨情信」時，圖片就會零秒瞬間出現！
+            // ==========================================
+            if (currentCharData && currentCharData.race) {
+                const preloadImg = new Image();
+                preloadImg.src = LETTER_BG_MAP[currentCharData.race] || LOVE_LETTER_BG;
+            }
             
         };
 
