@@ -546,7 +546,7 @@
                         const animNames = animations.map(a => a.name);
                         
                         // 排除不會動或會破圖的結尾動作，順便排除 Idle_1 (因為要拿來當過渡)
-                        const excludeList = ['Smash_End_1', 'Smash_End_2', 'Tickle_End', 'Touch_End', 'Idle_1'];
+                        const excludeList = [];
                         const playList = animNames.filter(n => !excludeList.includes(n));
                         let currentIndex = 0;
 
@@ -560,9 +560,7 @@
                             
                             // 照搬舊版的完美防破圖機制：動作播 5 秒 -> 切回 Idle_1 -> 再等 5 秒播下一個動作
                             clearTimeout(globalIdleTimer);
-                            globalIdleTimer = setTimeout(() => {
-                                player.animationState.setAnimation(0, "Idle_1", true);
-                                globalIdleTimer = setTimeout(playNextAnimation, 5000);
+                            globalIdleTimer = setTimeout(playNextAnimation, 5000);
                             }, 5000);
                         }
 
