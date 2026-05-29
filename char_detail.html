@@ -529,36 +529,18 @@
                 },
 
                 success: function (player) {
-                    console.log(`✅ ${costumeKey} 的 Spine 動畫載入成功！(路徑: ${baseFolderKey}/${costumeKey})`);
+                    console.log(`✅ ${costumeKey} 的 Spine 動畫載入成功！`);
                     
-                    // 🕵️‍♂️ 偷看官方的骨頭命名機密
-                    console.log("=== 🦴 角色骨骼清單大公開 ===");
-                    player.skeleton.bones.forEach(bone => {
-                        console.log("骨頭名稱:", bone.data.name);
-                    });
-                    console.log("===============================");
-                    
-                    // ==========================================
-                    // 🌟 你的專屬測試區 (加在這裡！)
-                    // ==========================================
-                    
-                    // 1. 將 player 綁定到全域變數，這樣你在 F12 Console 就能隨時呼叫 myPlayer！
                     window.myPlayer = player; 
-                    console.log("🎉 已將 Spine 綁定到 window.myPlayer，可以在 Console 盡情測試了！");
 
-                    // 2. 測試眼線偏移
+                    // 測試眼線 (保持不變)
                     let rightEye = player.skeleton.findBone('S1_F_Eyeline_Idle_R1_CT');
                     if (rightEye) {
-                        rightEye.y += 10; // 嘗試把 Y 軸往上移 (看眼神會不會變)
+                        rightEye.y += 10;
                         player.skeleton.updateWorldTransform(); 
-                        console.log("✅ 右眼線骨架已找到並手動調整！");
-                    } else {
-                        console.log("❌ 找不到名為 S1_F_Eyeline_Idle_R1_CT 的骨架，請檢查上面的骨骼清單");
                     }
-                    // ==========================================
                     
                     const skins = player.skeleton.data.skins;
-                    // 修改後的 Skin 設定邏輯
                     if (skins && skins.length > 1) {
                         const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default');
                         if (targetSkin) {
@@ -569,65 +551,34 @@
 
                     const animations = player.skeleton.data.animations;
                     if (animations && animations.length > 1) {
-                        
-                        // 🚫 排除清單：過濾掉基礎待機，以及只有在觸控放開時才該播的結尾動作
                         const excludeList = ['Idle_1', 'Smash_End_1', 'Smash_End_2', 'Tickle_End', 'Touch_End'];
-                        const randomAnims = animations.filter(a => !excludeList.includes(a.name));
-                        
-                        // ... 後續你的動畫輪播邏輯
-                        
-                        // 將過濾出來的動畫「名稱」存成一個新陣列
                         const validAnims = animations
                             .filter(a => !excludeList.includes(a.name))
                             .map(a => a.name);
                         
                         if (validAnims.length > 0) {
-                            // 宣告一個播放隨機動畫的函式
+                            // 統一使用這一個函式名
                             function playRandomAnimation() {
-                                // 隨機抽出一支動畫
                                 const randomIndex = Math.floor(Math.random() * validAnims.length);
                                 const nextAnim = validAnims[randomIndex];
-                                
-                                console.log("🔄 隨機切換動畫至:", nextAnim);
-                                
-                                // 1. 先將骨架強制歸零回到原點，防止帶有「位移」的動畫讓角色默默走出畫面外
+                                console.log("🔄 切換動畫:", nextAnim);
                                 player.skeleton.setToSetupPose(); 
-                                
-                                // 2. 切換動畫，並設定 true 讓它在接下來的 5 秒內保持循環 (維持動作)
                                 player.animationState.setAnimation(0, nextAnim, true);
                             }
 
-                            // 載入完成後，先手動觸發第一次
                             playRandomAnimation();
-
-                            // 啟動定時器，每 5000 毫秒 (5秒) 執行一次 playRandomAnimation
                             setInterval(playRandomAnimation, 5000);
-                        }
-                    }
 
-                        function startIdleTimer() {
-                            clearTimeout(globalIdleTimer);
-                            globalIdleTimer = setTimeout(() => {
-                                playRandomAction();
-                            }, 5000);
-                        }
-
-                        startIdleTimer();
-
-                        const canvas = avatarBox.querySelector('canvas');
-                        if (canvas) {
-                            canvas.addEventListener('click', () => {
-                                playRandomAction();
-                            });
+                            // 綁定點擊事件，使用正確的函式名稱
+                            const canvas = avatarBox.querySelector('canvas');
+                            if (canvas) {
+                                canvas.addEventListener('click', () => {
+                                    playRandomAnimation();
+                                });
+                            }
                         }
                     }
                 },
-                error: function (player, reason) {
-                    console.warn(`⚠️ Spine 載入失敗，降級顯示靜態圖。原因:`, reason);
-                    // 降級顯示角色的預設圖
-                    const imgUrl = IMAGE_MAP[`avatar_${currentCharData.name}`];
-                    avatarBox.innerHTML = imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-cover">` : currentCharData.name.charAt(0);
-                }
             });
         }
 
