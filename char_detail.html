@@ -497,74 +497,94 @@
         // ==========================================
         function loadSpineAnimation(costumeKey) {
             const avatarBox = document.getElementById('charAvatar');
-            const baseFolderKey = SPINE_MAP[currentTargetName];
-    
+            const baseFolderKey = SPINE_MAP[currentTargetName]; 
+            
             clearTimeout(globalIdleTimer);
             avatarBox.innerHTML = ''; 
 
-            // 初始化 SpinePlayer
+            // 隨機背景魔法：僅在首次進入或無背景時賦予背景，避免每次換裝都閃爍切換背景
+            if (!avatarBox.style.backgroundImage && LOBBY_BACKGROUNDS && LOBBY_BACKGROUNDS.length > 0) {
+                const randomBg = LOBBY_BACKGROUNDS[Math.floor(Math.random() * LOBBY_BACKGROUNDS.length)];
+                avatarBox.style.backgroundImage = `url('${randomBg}')`;
+                avatarBox.style.backgroundSize = 'cover';       
+                avatarBox.style.backgroundPosition = 'center';  
+                avatarBox.style.backgroundRepeat = 'no-repeat'; 
+                avatarBox.classList.add('overflow-hidden', 'rounded-2xl', 'shadow-inner');
+            }
+
             globalSpinePlayer = new spine.SpinePlayer(avatarBox, {
                 skelUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.skel.bytes`,
                 atlasUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.atlas.txt`,
+                animation: "Idle_1",     
                 premultipliedAlpha: true,
-                backgroundColor: "#00000000",
-                alpha: true,
-                showControls: false,
-                // 移除 viewport 限制，改用 auto，這通常能解決「角色不見」的問題
-                viewport: null, 
+                backgroundColor: "#00000000", 
+                alpha: true,                 
+                showControls: false,     
+                
+                viewport: {
+                    x: -400,     
+                    y: 0,        
+                    width: 800,  
+                    height: 1000 
+                },
 
                 success: function (player) {
-                    console.log(`✅ ${costumeKey} 載入成功！`);
-                    window.myPlayer = player; // 方便你在 F12 Console 操作
-
-                    // --- [除錯用] 列印所有骨架名稱 ---
-                    console.log("=== 🦴 骨架清單大公開 ===");
-                    player.skeleton.bones.forEach(b => console.log(b.data.name));
-                    console.log("===============================");
-
-                    // 設定皮膚
+                    console.log(`✅ ${costumeKey} 的 Spine 動畫載入成功！(路徑: ${baseFolderKey}/${costumeKey})`);
+                    
                     const skins = player.skeleton.data.skins;
-                    if (skins && skins.length > 0) {
-                        player.skeleton.setSkin(skins[0]);
-                        player.skeleton.setSlotsToSetupPose();
+                    // 修改後的 Skin 設定邏輯
+                    if (skins && skins.length > 1) {
+                        const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default');
+                        if (targetSkin) {
+                            player.skeleton.setSkin(targetSkin); // 使用 setSkin(object) 比 setSkinByName 更直觀
+                            player.skeleton.setSlotsToSetupPose();
+                        }
                     }
 
-                    // --- 自動輪播所有動作 (每個5秒) ---
                     const animations = player.skeleton.data.animations;
-                    if (animations && animations.length > 0) {
-                        const allAnims = animations.map(a => a.name);
-                        let currentIndex = 0;
+                    if (animations && animations.length > 1) {
+                        
+                        // 🚫 排除清單：過濾掉基礎待機，以及只有在觸控放開時才該播的結尾動作
+                        const excludeList = ['Idle_1', 'Smash_End_1', 'Smash_End_2', 'Tickle_End', 'Touch_End'];
+                        const randomAnims = animations.filter(a => !excludeList.includes(a.name));
 
-                        function playNextAnimation() {
-                            const nextAnim = allAnims[currentIndex];
-                            console.log("🔄 播放:", nextAnim);
-                    
-                            player.skeleton.setToSetupPose();
-                            player.animationState.setAnimation(0, nextAnim, true); 
-                    
-                            currentIndex = (currentIndex + 1) % allAnims.length;
+                        // 🎲 播放隨機動作，播完後「自動無縫接回 Idle_1」
+                        function playRandomAction() {
+                            if (randomAnims.length > 0) {
+                                const randomAnim = randomAnims[Math.floor(Math.random() * randomAnims.length)].name;
+                                
+                                player.animationState.setAnimation(0, randomAnim, false); 
+                                player.animationState.addAnimation(0, "Idle_1", true, 0); 
+                                
+                                startIdleTimer();
+                            }
                         }
 
-                        // 啟動 5 秒循環切換
-                        playNextAnimation();
-                        globalIdleTimer = setInterval(playNextAnimation, 5000);
+                        function startIdleTimer() {
+                            clearTimeout(globalIdleTimer);
+                            globalIdleTimer = setTimeout(() => {
+                                playRandomAction();
+                            }, 5000);
+                        }
 
-                        // 綁定點擊畫布即時切換
+                        startIdleTimer();
+
                         const canvas = avatarBox.querySelector('canvas');
                         if (canvas) {
-                            canvas.onclick = () => {
-                                playNextAnimation();
-                                clearInterval(globalIdleTimer); // 手動點擊後重置計時器
-                                globalIdleTimer = setInterval(playNextAnimation, 5000);
-                            };
+                            canvas.addEventListener('click', () => {
+                                playRandomAction();
+                            });
                         }
                     }
                 },
-        error: function (player, reason) {
-            console.error("🚨 Spine 載入失敗:", reason);
+                error: function (player, reason) {
+                    console.warn(`⚠️ Spine 載入失敗，降級顯示靜態圖。原因:`, reason);
+                    // 降級顯示角色的預設圖
+                    const imgUrl = IMAGE_MAP[`avatar_${currentCharData.name}`];
+                    avatarBox.innerHTML = imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-cover">` : currentCharData.name.charAt(0);
+                }
+            });
         }
-    });
-}
 
         // ==========================================
         // 👗 換裝按鈕渲染與點擊邏輯
