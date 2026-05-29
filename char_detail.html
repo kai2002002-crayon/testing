@@ -529,58 +529,60 @@
                 },
 
                 success: function (player) {
-                    console.log(`✅ ${costumeKey} 的 Spine 動畫載入成功！`);
-                    window.myPlayer = player; 
-
-                    // --- [新增] 骨架清單除錯功能 ---
-                    console.log("=== 🦴 角色骨架清單大公開 ===");
-                    player.skeleton.bones.forEach(bone => {
-                        console.log("骨頭名稱:", bone.data.name);
-                    });
-                    console.log("===============================");
-    
-                    // 測試：你可以透過 Console 使用 window.myPlayer.skeleton.findBone('骨頭名稱') 來操作
-
-                    // --- 設定皮膚 ---
+                    console.log(`✅ ${costumeKey} 的 Spine 動畫載入成功！(路徑: ${baseFolderKey}/${costumeKey})`);
+                    
                     const skins = player.skeleton.data.skins;
+                    // 修改後的 Skin 設定邏輯
                     if (skins && skins.length > 1) {
                         const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default');
                         if (targetSkin) {
-                            player.skeleton.setSkin(targetSkin);
+                            player.skeleton.setSkin(targetSkin); // 使用 setSkin(object) 比 setSkinByName 更直觀
                             player.skeleton.setSlotsToSetupPose();
                         }
                     }
 
-                    // --- 自動輪播所有動作 (每個5秒) ---
                     const animations = player.skeleton.data.animations;
-                    if (animations && animations.length > 0) {
-                        // 取出所有動畫名稱
-                        const allAnims = animations.map(a => a.name);
-                        let currentIndex = 0;
+                    if (animations && animations.length > 1) {
+                        
+                        // 🚫 排除清單：過濾掉基礎待機，以及只有在觸控放開時才該播的結尾動作
+                        const excludeList = ['Idle_1', 'Smash_End_1', 'Smash_End_2', 'Tickle_End', 'Touch_End'];
+                        const randomAnims = animations.filter(a => !excludeList.includes(a.name));
 
-                        function playNextAnimation() {
-                            const nextAnim = allAnims[currentIndex];
-                            console.log("🔄 正在播放:", nextAnim);
-            
-                            player.skeleton.setToSetupPose(); 
-                            player.animationState.setAnimation(0, nextAnim, true); // true 讓它循環播放，直到下一次切換
-
-                            currentIndex = (currentIndex + 1) % allAnims.length; // 輪播到最後一項後回到第 0 項
+                        // 🎲 播放隨機動作，播完後「自動無縫接回 Idle_1」
+                        function playRandomAction() {
+                            if (randomAnims.length > 0) {
+                                const randomAnim = randomAnims[Math.floor(Math.random() * randomAnims.length)].name;
+                                
+                                player.animationState.setAnimation(0, randomAnim, false); 
+                                player.animationState.addAnimation(0, "Idle_1", true, 0); 
+                                
+                                startIdleTimer();
+                            }
                         }
 
-                        // 第一次手動觸發
-                        playNextAnimation();
+                        function startIdleTimer() {
+                            clearTimeout(globalIdleTimer);
+                            globalIdleTimer = setTimeout(() => {
+                                playRandomAction();
+                            }, 5000);
+                        }
 
-                        // 啟動 5 秒定時器
-                        setInterval(playNextAnimation, 5000);
+                        startIdleTimer();
 
-                        // 綁定點擊畫布即時切換下一個動作
                         const canvas = avatarBox.querySelector('canvas');
                         if (canvas) {
-                            canvas.onclick = () => playNextAnimation();
+                            canvas.addEventListener('click', () => {
+                                playRandomAction();
+                            });
                         }
                     }
                 },
+                error: function (player, reason) {
+                    console.warn(`⚠️ Spine 載入失敗，降級顯示靜態圖。原因:`, reason);
+                    // 降級顯示角色的預設圖
+                    const imgUrl = IMAGE_MAP[`avatar_${currentCharData.name}`];
+                    avatarBox.innerHTML = imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-cover">` : currentCharData.name.charAt(0);
+                }
             });
         }
 
