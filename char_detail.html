@@ -561,7 +561,6 @@
                             // 照搬舊版的完美防破圖機制：動作播 5 秒 -> 切回 Idle_1 -> 再等 5 秒播下一個動作
                             clearTimeout(globalIdleTimer);
                             globalIdleTimer = setTimeout(playNextAnimation, 5000);
-                            }, 5000);
                         }
 
                         // 初始化：因為設定檔已經幫我們播 Idle_1 了，所以等待 5 秒後直接開始輪播
