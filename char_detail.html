@@ -494,14 +494,14 @@
         // ==========================================
         // 🌟 Spine 獨立渲染邏輯 (支援換裝與同資料夾讀取)
         // ==========================================
-        function loadSpineAnimation(costumeKey) {
+         function loadSpineAnimation(costumeKey) {
             const avatarBox = document.getElementById('charAvatar');
             const baseFolderKey = SPINE_MAP[currentTargetName];
             
             clearTimeout(globalIdleTimer);
             avatarBox.innerHTML = ''; 
         
-            // 隨機背景魔法：僅在首次進入或無背景時賦予背景，避免每次換裝都閃爍切換背景
+            // 隨機背景魔法
             if (!avatarBox.style.backgroundImage && LOBBY_BACKGROUNDS && LOBBY_BACKGROUNDS.length > 0) {
                 const randomBg = LOBBY_BACKGROUNDS[Math.floor(Math.random() * LOBBY_BACKGROUNDS.length)];
                 avatarBox.style.backgroundImage = `url('${randomBg}')`;
@@ -511,11 +511,11 @@
                 avatarBox.classList.add('overflow-hidden', 'rounded-2xl', 'shadow-inner');
             }
         
-            // 使用一個空物件作為初始化，不要在初始化時指定 animation，避免衝突
+            // 初始化 Spine Player
             globalSpinePlayer = new spine.SpinePlayer(avatarBox, {
                 skelUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.skel.bytes`,
                 atlasUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.atlas.txt`,
-                animation: "Idle_1",
+                // 💡 移除預設 animation: "Idle_1"，讓後續程式自動判斷播放，避免找不到動作而當機
                 premultipliedAlpha: true,
                 backgroundColor: "#00000000", 
                 alpha: true,                 
@@ -526,11 +526,6 @@
                     console.log(`✅ 載入成功: ${costumeKey}`);
                     window.myPlayer = player; 
         
-                    // 骨架清單除錯
-                    console.group("🦴 骨架清單");
-                    player.skeleton.bones.forEach(b => console.log(b.data.name));
-                    console.groupEnd();
-
                     // 1. 設定皮膚
                     const skins = player.skeleton.data.skins;
                     if (skins && skins.length > 0) {
@@ -552,14 +547,7 @@
                             
                             console.log(`🔄 正在輪播: ${nextAnim}`);
                             
-                            // 🌟 終極完美解法：完全模擬 Spine 官方 UI 的切換邏輯
-                            // 1. 清空當前的播放軌道
-                            player.animationState.clearTracks(); 
-                            
-                            // 2. 關鍵！強制將所有骨架、透明度、圖片插槽「洗掉」並還原到初始預設狀態
-                            player.skeleton.setToSetupPose(); 
-                            
-                            // 3. 在乾淨的骨架上，播放新的動作
+                            // 💡 最純粹的播放指令，讓 Spine 引擎處理完美的平滑過渡
                             player.animationState.setAnimation(0, nextAnim, true); 
                             
                             currentIndex++;
@@ -570,15 +558,12 @@
                         // 初始化啟動 (延遲100毫秒確保畫布已渲染)
                         setTimeout(playNextAnimation, 100);
 
-                        // 畫布點擊切換
-                        const canvas = avatarBox.querySelector('canvas');
-                        if (canvas) {
-                            canvas.replaceWith(canvas.cloneNode(true));
-                            avatarBox.querySelector('canvas').addEventListener('click', () => {
-                                clearTimeout(globalIdleTimer);
-                                playNextAnimation();
-                            });
-                        }
+                        // 💡 致命錯誤修正：絕對不能用 cloneNode 替換 Canvas！
+                        // 直接把點擊事件覆蓋綁定在外部的 avatarBox 上即可安全清空並觸發
+                        avatarBox.onclick = () => {
+                            clearTimeout(globalIdleTimer);
+                            playNextAnimation();
+                        };
                     }
                 },
                 error: function (player, reason) {
