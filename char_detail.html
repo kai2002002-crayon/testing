@@ -535,7 +535,7 @@
                     const skins = player.skeleton.data.skins;
                     if (skins && skins.length > 0) {
                         const targetSkin = skins.find(s => s.name === 'Normal') || skins[0];
-                        player.skeleton.setSkin(targetSkin);
+                        player.skeleton.setSkinByName(targetSkin.name);
                         player.skeleton.setSlotsToSetupPose();
                     }
         
