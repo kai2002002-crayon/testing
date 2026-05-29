@@ -497,13 +497,22 @@
         // ==========================================
         function loadSpineAnimation(costumeKey) {
             const avatarBox = document.getElementById('charAvatar');
-            const baseFolderKey = SPINE_MAP[currentTargetName];
-    
-            // 清除舊定時器
+            const baseFolderKey = SPINE_MAP[currentTargetName]; 
+            
             clearTimeout(globalIdleTimer);
             avatarBox.innerHTML = ''; 
 
-            // 初始化渲染
+            // 隨機背景魔法：僅在首次進入或無背景時賦予背景，避免每次換裝都閃爍切換背景
+            if (!avatarBox.style.backgroundImage && LOBBY_BACKGROUNDS && LOBBY_BACKGROUNDS.length > 0) {
+                const randomBg = LOBBY_BACKGROUNDS[Math.floor(Math.random() * LOBBY_BACKGROUNDS.length)];
+                avatarBox.style.backgroundImage = `url('${randomBg}')`;
+                avatarBox.style.backgroundSize = 'cover';       
+                avatarBox.style.backgroundPosition = 'center';  
+                avatarBox.style.backgroundRepeat = 'no-repeat'; 
+                avatarBox.classList.add('overflow-hidden', 'rounded-2xl', 'shadow-inner');
+            }
+
+            // 2. 恢復你確定「正式版能跑」的穩定初始化參數
             globalSpinePlayer = new spine.SpinePlayer(avatarBox, {
                 skelUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.skel.bytes`,
                 atlasUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.atlas.txt`,
@@ -512,18 +521,18 @@
                 backgroundColor: "#00000000", 
                 alpha: true,                 
                 showControls: false,
+                // 使用正式版的 viewport，確保不因參數變動導致消失
                 viewport: { x: -400, y: 0, width: 800, height: 1000 },
 
                 success: function (player) {
-                    console.log(`✅ 載入成功: ${costumeKey}`);
-                    window.myPlayer = player; 
-
-                    // 骨架清單除錯
-                    console.group("🦴 骨架清單");
-                    player.skeleton.bones.forEach(b => console.log(b.data.name));
-                    console.groupEnd();
-
-                    // 設定皮膚
+                    console.log(`✅ ${costumeKey} 的 Spine 動畫載入成功！(路徑: ${baseFolderKey}/${costumeKey})`);
+                    // 🕵️‍♂️ 偷看官方的骨頭命名機密
+                    console.log("=== 🦴 角色骨骼清單大公開 ===");
+                    player.skeleton.bones.forEach(bone => {
+                        console.log("骨頭名稱:", bone.data.name);
+                    });
+                    console.log("===============================");
+                    
                     const skins = player.skeleton.data.skins;
                     if (skins && skins.length > 1) {
                         const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default');
@@ -533,14 +542,9 @@
                         }
                     }
 
-                    // 自動輪播所有動作
                     const animations = player.skeleton.data.animations;
-                    if (animations && animations.length > 0) {
-                        // 排除會讓角色隱形的動作
-                        const excludeList = ['Smash_End_1', 'Smash_End_2', 'Tickle_End', 'Touch_End'];
-                        const playList = animations.map(a => a.name).filter(n => !excludeList.includes(n));
-                        let currentIndex = 0;
-
+                    if (animations && animations.length > 1) {
+                        
                         function playNextAnimation() {
                             const nextAnim = playList[currentIndex];
                             console.log(`🔄 輪播中: ${nextAnim}`);
@@ -557,20 +561,19 @@
                             globalIdleTimer = setTimeout(playNextAnimation, 5000);
                         }
 
-                        // 初始化播放
-                        playNextAnimation();
+                        startNextAnimation();
 
-                        // 綁定畫布點擊
                         const canvas = avatarBox.querySelector('canvas');
-                        if (canvas) {
-                            // 移除舊事件避免重複監聽
-                            canvas.replaceWith(canvas.cloneNode(true));
-                            avatarBox.querySelector('canvas').addEventListener('click', playNextAnimation);
+                        if(canvas) {
+                            canvas.addEventListener('click', () => {
+                                playRandomAction();
+                            });
                         }
                     }
                 },
                 error: function (player, reason) {
-                    console.error("❌ 初始化失敗:", reason);
+                    console.warn(`⚠️ Spine 載入失敗，降級顯示靜態圖。原因:`, reason);
+                    // 降級顯示角色的預設圖
                     const imgUrl = IMAGE_MAP[`avatar_${currentCharData.name}`];
                     avatarBox.innerHTML = imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-cover">` : currentCharData.name.charAt(0);
                 }
