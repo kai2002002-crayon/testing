@@ -502,10 +502,6 @@
             clearTimeout(globalIdleTimer);
             avatarBox.innerHTML = ''; 
 
-            // 1. 強制確保容器有尺寸 (修正因為 CSS 可能導致的渲染異常)
-            avatarBox.style.width = '320px';
-            avatarBox.style.height = '400px';
-
             // 隨機背景魔法：僅在首次進入或無背景時賦予背景，避免每次換裝都閃爍切換背景
             if (!avatarBox.style.backgroundImage && LOBBY_BACKGROUNDS && LOBBY_BACKGROUNDS.length > 0) {
                 const randomBg = LOBBY_BACKGROUNDS[Math.floor(Math.random() * LOBBY_BACKGROUNDS.length)];
@@ -519,50 +515,57 @@
             globalSpinePlayer = new spine.SpinePlayer(avatarBox, {
                 skelUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.skel.bytes`,
                 atlasUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.atlas.txt`,
+                animation: "Idle_1",     
                 premultipliedAlpha: true,
-                backgroundColor: "#00000000",
-                alpha: true,
-                showControls: false,
-                debug: true,      // 關鍵：這會畫出相機與骨架的 Debug 輔助線
-                viewport: null,   // 關鍵：讓 Spine 自動計算顯示區域
+                backgroundColor: "#00000000", 
+                alpha: true,                 
+                showControls: false,     
+                
+                viewport: {
+                    x: -400,     
+                    y: 0,        
+                    width: 800,  
+                    height: 1000 
+                },
 
                 success: function (player) {
-                    console.log(`✅ ${costumeKey} 載入成功！`);
+                    console.log(`✅ ${costumeKey} 的 Spine 動畫載入成功！(路徑: ${baseFolderKey}/${costumeKey})`);
                     window.myPlayer = player;
+                    console.log("骨架名稱:", player.skeleton.bones.map(b => b.data.name));console.log("骨架名稱:", player.skeleton.bones.map(b => b.data.name));
+                    
+                    const skins = player.skeleton.data.skins;
+                    // 修改後的 Skin 設定邏輯
+                    if (skins && skins.length > 1) {
+                        const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default');
+                        if (targetSkin) {
+                            player.skeleton.setSkin(targetSkin); // 使用 setSkin(object) 比 setSkinByName 更直觀
+                            player.skeleton.setSlotsToSetupPose();
+                        }
+                    }
 
-                    // --- 強制重繪指令 ---
-                    // 許多情況下，動畫雖然在跑，但沒有觸發第一次 render
-                    player.skeleton.setToSetupPose();
-                    player.skeleton.updateWorldTransform();
-                        
-                    // 2. 骨架清單列印
-                    console.log("=== 🦴 骨架清單 ===");
-                    player.skeleton.bones.forEach(b => console.log(b.data.name));
-
-                    // 強制重置座標 (修正角色飄走問題)
-                    player.skeleton.x = 0;
-                    player.skeleton.y = 0;
-                    player.skeleton.updateWorldTransform();
-
-                    // 3. 動作循環播放邏輯
                     const animations = player.skeleton.data.animations;
                     if (animations && animations.length > 0) {
                         const allAnims = animations.map(a => a.name);
                         let currentIndex = 0;
-
+                        
+                        // 🚫 排除清單：過濾掉基礎待機，以及只有在觸控放開時才該播的結尾動作
+                        const excludeList = ['Idle_1', 'Smash_End_1', 'Smash_End_2', 'Tickle_End', 'Touch_End'];
+                        const randomAnims = animations.filter(a => !excludeList.includes(a.name));
                         function playNextAnimation() {
                             const nextAnim = allAnims[currentIndex];
-                            console.log("🔄 播放:", nextAnim);
+                            console.log("🔄 切換動畫:", nextAnim);
                     
-                            player.skeleton.setToSetupPose();
+                            // 關鍵：使用 setAnimation(0, name, true) 循環播放
+                            // 不要使用 setAnimation(..., false) 後再 addAnimation
                             player.animationState.setAnimation(0, nextAnim, true); 
+                    
                             currentIndex = (currentIndex + 1) % allAnims.length;
                         }
-
+                        // 首次播放並啟動計時器
                         playNextAnimation();
                         globalIdleTimer = setInterval(playNextAnimation, 5000);
 
-                        // 點擊事件
+                        // 綁定點擊切換
                         const canvas = avatarBox.querySelector('canvas');
                         if (canvas) {
                             canvas.onclick = () => {
@@ -573,10 +576,16 @@
                         }
                     }
                 },
+        error: function (player, reason) {
+            console.error("❌ 初始化失敗:", reason);
+        }
+    });
+}
                 error: function (player, reason) {
-                    console.error("❌ 嚴重錯誤:", reason);
-                    // 這裡顯示錯誤，方便除錯
-                    avatarBox.innerHTML = `<div style="color:red; font-size:12px;">載入失敗: ${reason}</div>`;
+                    console.warn(`⚠️ Spine 載入失敗，降級顯示靜態圖。原因:`, reason);
+                    // 降級顯示角色的預設圖
+                    const imgUrl = IMAGE_MAP[`avatar_${currentCharData.name}`];
+                    avatarBox.innerHTML = imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-cover">` : currentCharData.name.charAt(0);
                 }
             });
         }
