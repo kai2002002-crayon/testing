@@ -534,8 +534,8 @@
                     // 1. 設定皮膚
                     const skins = player.skeleton.data.skins;
                     if (skins && skins.length > 0) {
-                        const targetSkin = skins.find(s => s.name === 'Normal') || skins[0];
-                        player.skeleton.setSkinByName(targetSkin.name);
+                        const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default');
+                        player.skeleton.setSkin(targetSkin);
                         player.skeleton.setSlotsToSetupPose();
                     }
         
