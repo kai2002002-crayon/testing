@@ -515,6 +515,7 @@
             globalSpinePlayer = new spine.SpinePlayer(avatarBox, {
                 skelUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.skel.bytes`,
                 atlasUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.atlas.txt`,
+                animation: "Idle_1",
                 premultipliedAlpha: true,
                 backgroundColor: "#00000000", 
                 alpha: true,                 
@@ -546,7 +547,6 @@
                         let currentIndex = 0;
 
                         function playNextAnimation() {
-                            const animsToPlay = animations.filter(a => a.name !== 'Idle_1');
                             const targetAnims = playList.length > 0 ? playList : animations.map(a => a.name);
                             const nextAnim = targetAnims[currentIndex % targetAnims.length];
                             
