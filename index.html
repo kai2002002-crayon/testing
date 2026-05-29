@@ -173,10 +173,15 @@
             height: 100% !important;
             display: block !important;
         }
+        #rim-live-container .spine-player-canvas {
+    background-color: transparent !important;
+}
     </style>
 </head>
 <body class="p-3 sm:p-6 md:p-8 text-gray-800 dark:text-gray-100">
-
+    <div id="loader" class="fixed inset-0 bg-[#fcf8f2] dark:bg-slate-900 z-[9999] flex items-center justify-center">
+        <div class="animate-bounce text-2xl">🖍️</div>
+    </div>
     <div class="max-w-7xl mx-auto">
         
         <header class="bg-gradient-to-r from-amber-100/90 via-yellow-100/90 to-orange-100/90 dark:from-gray-800/90 dark:via-gray-700/90 dark:to-gray-800/90 rounded-2xl p-4 sm:p-6 shadow-md mb-6 border-4 border-amber-400 dark:border-gray-600 flex flex-col transition-colors backdrop-blur-sm relative">
@@ -561,7 +566,10 @@
                 banner.classList.remove('hidden');
             }
             return false;
-        };
+        }
+        window.addEventListener('load', () => {
+            document.getElementById('loader').style.display = 'none';
+        });
     </script>
 
     <script>
