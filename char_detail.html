@@ -564,11 +564,6 @@
                     }
                 },
                 error: function (player, reason) {
-                    console.error("❌ 初始化失敗:", reason);
-                }
-            });
-        }
-                error: function (player, reason) {
                     console.warn(`⚠️ Spine 載入失敗，降級顯示靜態圖。原因:`, reason);
                     // 降級顯示角色的預設圖
                     const imgUrl = IMAGE_MAP[`avatar_${currentCharData.name}`];
