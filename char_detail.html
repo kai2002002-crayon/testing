@@ -540,40 +540,58 @@
         
                     // 2. 獲取所有動作並自動輪播
                     const animations = player.skeleton.data.animations;
-                    if (!animations || animations.length === 0) return;
-        
-                    const excludeList = ['Smash_End_1', 'Smash_End_2', 'Tickle_End', 'Touch_End'];
-                    const playList = animations.map(a => a.name).filter(n => !excludeList.includes(n));
-                    let currentIndex = 0;
-        
-                    function playNextAnimation() {
-                        // 如果 playList 有內容就播，沒有則退而求其次播所有
-                        const targetAnims = playList.length > 0 ? playList : animations.map(a => a.name);
-                        const nextAnim = targetAnims[currentIndex % targetAnims.length];
+                    if (animations && animations.length > 0) {
                         
-                        console.log(`🔄 播放: ${nextAnim}`);
+                        // 自動尋找待機動作 (名稱包含 idle，若無則拿清單第一個)
+                        const idleAnim = animations.map(a => a.name).find(n => n.toLowerCase().includes('idle')) || animations[0].name;
+
+                        // 排除會隱形或破圖的動作，同時排除待機動作(避免重複)
+                        const excludeList = ['Smash_End_1', 'Smash_End_2', 'Tickle_End', 'Touch_End', idleAnim];
+                        const playList = animations.map(a => a.name).filter(n => !excludeList.includes(n));
                         
-                        // 【關鍵修改】: 確保動畫狀態重置一次，避免殘留
-                        player.animationState.clearTracks();
-                        player.animationState.setAnimation(0, nextAnim, true); 
-                        
-                        currentIndex++;
-                        startIdleTimer();
-                    }
-        
-                    function startIdleTimer() {
-                        clearTimeout(globalIdleTimer);
-                        globalIdleTimer = setTimeout(playNextAnimation, 5000);
-                    }
-        
-                    // 【關鍵修改】：給一點點時間讓 Spine 載入骨架，再啟動動畫
-                    setTimeout(playNextAnimation, 100);
-        
-                    // 綁定點擊
-                    const canvas = avatarBox.querySelector('canvas');
-                    if (canvas) {
-                        canvas.replaceWith(canvas.cloneNode(true));
-                        avatarBox.querySelector('canvas').addEventListener('click', playNextAnimation);
+                        let currentIndex = 0;
+                        let isIdleState = true; // 控制現在是否該播待機
+
+                        function playNextAnimation() {
+                            if (playList.length === 0) {
+                                // 如果這個角色只有待機動作，就一直播待機
+                                player.animationState.setAnimation(0, idleAnim, true);
+                            } else {
+                                if (isIdleState) {
+                                    // 【回歸待機】利用 Idle 強制重置角色的位置與骨架
+                                    console.log(`🔄 返回待機: ${idleAnim}`);
+                                    player.animationState.setAnimation(0, idleAnim, true);
+                                } else {
+                                    // 【播放特定動作】
+                                    const nextAnim = playList[currentIndex % playList.length];
+                                    console.log(`🔄 播放動作: ${nextAnim}`);
+                                    player.animationState.setAnimation(0, nextAnim, true);
+                                    currentIndex++;
+                                }
+                                // 切換開關 (下次就會相反)
+                                isIdleState = !isIdleState; 
+                            }
+                            startIdleTimer();
+                        }
+
+                        function startIdleTimer() {
+                            clearTimeout(globalIdleTimer);
+                            globalIdleTimer = setTimeout(playNextAnimation, 5000); // 5秒切換
+                        }
+
+                        // 初始化啟動，第一幀強制播待機動作建立初始座標
+                        isIdleState = true; 
+                        setTimeout(playNextAnimation, 100);
+
+                        // 畫布點擊切換 (點擊時直接跳下一個狀態)
+                        const canvas = avatarBox.querySelector('canvas');
+                        if (canvas) {
+                            canvas.replaceWith(canvas.cloneNode(true));
+                            avatarBox.querySelector('canvas').addEventListener('click', () => {
+                                clearTimeout(globalIdleTimer);
+                                playNextAnimation();
+                            });
+                        }
                     }
                 },
                 error: function (player, reason) {
