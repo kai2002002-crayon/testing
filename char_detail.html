@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
@@ -530,55 +530,52 @@
 
                 success: function (player) {
                     console.log(`✅ ${costumeKey} 的 Spine 動畫載入成功！`);
-                    
                     window.myPlayer = player; 
 
-                    // 測試眼線 (保持不變)
-                    let rightEye = player.skeleton.findBone('S1_F_Eyeline_Idle_R1_CT');
-                    if (rightEye) {
-                        rightEye.y += 10;
-                        player.skeleton.updateWorldTransform(); 
-                    }
-                    
+                    // 1. 設定皮膚
                     const skins = player.skeleton.data.skins;
                     if (skins && skins.length > 1) {
                         const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default');
                         if (targetSkin) {
-                            player.skeleton.setSkin(targetSkin); 
+                            player.skeleton.setSkin(targetSkin);
                             player.skeleton.setSlotsToSetupPose();
                         }
                     }
 
+                    // 2. 動畫輪播邏輯
                     const animations = player.skeleton.data.animations;
                     if (animations && animations.length > 1) {
                         const excludeList = ['Idle_1', 'Smash_End_1', 'Smash_End_2', 'Tickle_End', 'Touch_End'];
                         const validAnims = animations
                             .filter(a => !excludeList.includes(a.name))
                             .map(a => a.name);
-                        
+        
                         if (validAnims.length > 0) {
-                            // 統一使用這一個函式名
                             function playRandomAnimation() {
                                 const randomIndex = Math.floor(Math.random() * validAnims.length);
                                 const nextAnim = validAnims[randomIndex];
-                                console.log("🔄 切換動畫:", nextAnim);
                                 player.skeleton.setToSetupPose(); 
                                 player.animationState.setAnimation(0, nextAnim, true);
                             }
 
+                            // 啟動循環
                             playRandomAnimation();
                             setInterval(playRandomAnimation, 5000);
 
-                            // 綁定點擊事件，使用正確的函式名稱
+                            // 綁定點擊事件
                             const canvas = avatarBox.querySelector('canvas');
                             if (canvas) {
-                                canvas.addEventListener('click', () => {
-                                    playRandomAnimation();
-                                });
+                                canvas.onclick = () => playRandomAnimation();
                             }
                         }
                     }
                 },
+                error: function (player, reason) {
+                    console.warn(`⚠️ Spine 載入失敗，降級顯示靜態圖。原因:`, reason);
+                    // 降級顯示角色的預設圖
+                    const imgUrl = IMAGE_MAP[`avatar_${currentCharData.name}`];
+                    avatarBox.innerHTML = imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-cover">` : currentCharData.name.charAt(0);
+                }
             });
         }
 
