@@ -712,7 +712,9 @@
                 const initialCostumeKey = (COSTUME_MAP[currentCharData.name] && COSTUME_MAP[currentCharData.name].length > 0) 
                                           ? COSTUME_MAP[currentCharData.name][0] 
                                           : spineKey;
-                loadSpineAnimation(initialCostumeKey);
+                setTimeout(() => {
+                    loadSpineAnimation(initialCostumeKey);
+                }, 100);
 
             } else {
                 const avatarBox = document.getElementById('charAvatar');
