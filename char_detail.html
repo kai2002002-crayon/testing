@@ -534,9 +534,9 @@
                     // 1. 設定皮膚
                     const skins = player.skeleton.data.skins;
                     if (skins && skins.length > 0) {
-                        const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default');
-                        player.skeleton.setSkinByName(targetSkin.name);
-                        player.skeleton.setSlotsToSetupPose();
+                        const targetSkin = skins.find(s => s.name === 'Normal') || skins[0];
+                        player.skeleton.setSkin(targetSkin);
+                        player.skeleton.setSlotsToSetupPose(); 
                     }
         
                     // 2. 獲取所有動作並自動輪播
@@ -552,7 +552,14 @@
                             
                             console.log(`🔄 正在輪播: ${nextAnim}`);
                             
-                            // 💡 關鍵修正：移除 clearTracks()，讓 Spine 引擎發揮原本的自動融合與重置功能
+                            // 🌟 終極完美解法：完全模擬 Spine 官方 UI 的切換邏輯
+                            // 1. 清空當前的播放軌道
+                            player.animationState.clearTracks(); 
+                            
+                            // 2. 關鍵！強制將所有骨架、透明度、圖片插槽「洗掉」並還原到初始預設狀態
+                            player.skeleton.setToSetupPose(); 
+                            
+                            // 3. 在乾淨的骨架上，播放新的動作
                             player.animationState.setAnimation(0, nextAnim, true); 
                             
                             currentIndex++;
