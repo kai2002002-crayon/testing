@@ -502,6 +502,10 @@
             clearTimeout(globalIdleTimer);
             avatarBox.innerHTML = ''; 
 
+            // 1. 強制確保容器有尺寸 (修正因為 CSS 可能導致的渲染異常)
+            avatarBox.style.width = '320px';
+            avatarBox.style.height = '400px';
+
             // 隨機背景魔法：僅在首次進入或無背景時賦予背景，避免每次換裝都閃爍切換背景
             if (!avatarBox.style.backgroundImage && LOBBY_BACKGROUNDS && LOBBY_BACKGROUNDS.length > 0) {
                 const randomBg = LOBBY_BACKGROUNDS[Math.floor(Math.random() * LOBBY_BACKGROUNDS.length)];
@@ -514,31 +518,28 @@
 
             globalSpinePlayer = new spine.SpinePlayer(avatarBox, {
                 skelUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.skel.bytes`,
-               atlasUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.atlas.txt`,
+                atlasUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.atlas.txt`,
                 premultipliedAlpha: true,
                 backgroundColor: "#00000000",
                 alpha: true,
                 showControls: false,
-                // 移除 viewport 限制，改用 auto，這通常能解決「角色不見」的問題
-                viewport: null, 
+                // 如果設為 null 還是不行，這裡用一個明確的範圍試試
+                viewport: { x: -300, y: -300, width: 600, height: 600 },
 
                 success: function (player) {
                     console.log(`✅ ${costumeKey} 載入成功！`);
-                    window.myPlayer = player; // 方便你在 F12 Console 操作
+                    window.myPlayer = player;
 
-                    // --- [除錯用] 列印所有骨架名稱 ---
-                    console.log("=== 🦴 骨架清單大公開 ===");
+                    // 2. 骨架清單列印
+                    console.log("=== 🦴 骨架清單 ===");
                     player.skeleton.bones.forEach(b => console.log(b.data.name));
-                    console.log("===============================");
 
-                    // 設定皮膚
-                    const skins = player.skeleton.data.skins;
-                    if (skins && skins.length > 0) {
-                        player.skeleton.setSkin(skins[0]);
-                        player.skeleton.setSlotsToSetupPose();
-                    }
+                    // 強制重置座標 (修正角色飄走問題)
+                    player.skeleton.x = 0;
+                    player.skeleton.y = 0;
+                    player.skeleton.updateWorldTransform();
 
-                    // --- 自動輪播所有動作 (每個5秒) ---
+                    // 3. 動作循環播放邏輯
                     const animations = player.skeleton.data.animations;
                     if (animations && animations.length > 0) {
                         const allAnims = animations.map(a => a.name);
@@ -550,30 +551,27 @@
                     
                             player.skeleton.setToSetupPose();
                             player.animationState.setAnimation(0, nextAnim, true); 
-                    
                             currentIndex = (currentIndex + 1) % allAnims.length;
                         }
 
-                        // 啟動 5 秒循環切換
                         playNextAnimation();
                         globalIdleTimer = setInterval(playNextAnimation, 5000);
 
-                        // 綁定點擊畫布即時切換
+                        // 點擊事件
                         const canvas = avatarBox.querySelector('canvas');
                         if (canvas) {
                             canvas.onclick = () => {
                                 playNextAnimation();
-                                clearInterval(globalIdleTimer); // 手動點擊後重置計時器
+                                clearInterval(globalIdleTimer);
                                 globalIdleTimer = setInterval(playNextAnimation, 5000);
                             };
                         }
                     }
                 },
                 error: function (player, reason) {
-                    console.warn(`⚠️ Spine 載入失敗，降級顯示靜態圖。原因:`, reason);
-                    // 降級顯示角色的預設圖
-                    const imgUrl = IMAGE_MAP[`avatar_${currentCharData.name}`];
-                    avatarBox.innerHTML = imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-cover">` : currentCharData.name.charAt(0);
+                    console.error("❌ 嚴重錯誤:", reason);
+                    // 這裡顯示錯誤，方便除錯
+                    avatarBox.innerHTML = `<div style="color:red; font-size:12px;">載入失敗: ${reason}</div>`;
                 }
             });
         }
