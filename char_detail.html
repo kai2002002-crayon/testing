@@ -525,14 +525,15 @@
                 viewport: { x: -400, y: 0, width: 800, height: 1000 },
 
                 success: function (player) {
-                    console.log(`✅ ${costumeKey} 的 Spine 動畫載入成功！(路徑: ${baseFolderKey}/${costumeKey})`);
-                    // 🕵️‍♂️ 偷看官方的骨頭命名機密
-                    console.log("=== 🦴 角色骨骼清單大公開 ===");
-                    player.skeleton.bones.forEach(bone => {
-                        console.log("骨頭名稱:", bone.data.name);
-                    });
-                    console.log("===============================");
-                    
+                    console.log(`✅ 載入成功: ${costumeKey}`);
+                    window.myPlayer = player; 
+
+                    // 骨架清單除錯
+                    console.group("🦴 骨架清單");
+                    player.skeleton.bones.forEach(b => console.log(b.data.name));
+                    console.groupEnd();
+
+                    // 設定皮膚
                     const skins = player.skeleton.data.skins;
                     if (skins && skins.length > 1) {
                         const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default');
@@ -542,9 +543,14 @@
                         }
                     }
 
+                    // 自動輪播所有動作
                     const animations = player.skeleton.data.animations;
                     if (animations && animations.length > 1) {
-                        
+                        // 排除會讓角色隱形的動作
+                        const excludeList = ['Smash_End_1', 'Smash_End_2', 'Tickle_End', 'Touch_End'];
+                        const playList = animations.map(a => a.name).filter(n => !excludeList.includes(n));
+                        let currentIndex = 0;
+
                         function playNextAnimation() {
                             const nextAnim = playList[currentIndex];
                             console.log(`🔄 輪播中: ${nextAnim}`);
@@ -561,19 +567,20 @@
                             globalIdleTimer = setTimeout(playNextAnimation, 5000);
                         }
 
-                        startNextAnimation();
+                        // 初始化播放
+                        playNextAnimation();
 
+                        // 綁定畫布點擊
                         const canvas = avatarBox.querySelector('canvas');
-                        if(canvas) {
-                            canvas.addEventListener('click', () => {
-                                playRandomAction();
-                            });
+                        if (canvas) {
+                            // 移除舊事件避免重複監聽
+                            canvas.replaceWith(canvas.cloneNode(true));
+                            avatarBox.querySelector('canvas').addEventListener('click', playNextAnimation);
                         }
                     }
                 },
                 error: function (player, reason) {
-                    console.warn(`⚠️ Spine 載入失敗，降級顯示靜態圖。原因:`, reason);
-                    // 降級顯示角色的預設圖
+                    console.error("❌ 初始化失敗:", reason);
                     const imgUrl = IMAGE_MAP[`avatar_${currentCharData.name}`];
                     avatarBox.innerHTML = imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-cover">` : currentCharData.name.charAt(0);
                 }
