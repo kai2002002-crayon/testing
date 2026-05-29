@@ -552,19 +552,35 @@
                         
                         // 🚫 排除清單：過濾掉基礎待機，以及只有在觸控放開時才該播的結尾動作
                         const excludeList = ['Idle_1', 'Smash_End_1', 'Smash_End_2', 'Tickle_End', 'Touch_End'];
-                        const randomAnims = animations.filter(a => !excludeList.includes(a.name));
-
-                        // 🎲 播放隨機動作，播完後「自動無縫接回 Idle_1」
-                        function playRandomAction() {
-                            if (randomAnims.length > 0) {
-                                const randomAnim = randomAnims[Math.floor(Math.random() * randomAnims.length)].name;
+                        
+                        // 將過濾出來的動畫「名稱」存成一個新陣列
+                        const validAnims = animations
+                            .filter(a => !excludeList.includes(a.name))
+                            .map(a => a.name);
+                        
+                        if (validAnims.length > 0) {
+                            // 宣告一個播放隨機動畫的函式
+                            function playRandomAnimation() {
+                                // 隨機抽出一支動畫
+                                const randomIndex = Math.floor(Math.random() * validAnims.length);
+                                const nextAnim = validAnims[randomIndex];
                                 
-                                player.animationState.setAnimation(0, randomAnim, false); 
-                                player.animationState.addAnimation(0, "Idle_1", true, 0); 
+                                console.log("🔄 隨機切換動畫至:", nextAnim);
                                 
-                                startIdleTimer();
+                                // 1. 先將骨架強制歸零回到原點，防止帶有「位移」的動畫讓角色默默走出畫面外
+                                player.skeleton.setToSetupPose(); 
+                                
+                                // 2. 切換動畫，並設定 true 讓它在接下來的 5 秒內保持循環 (維持動作)
+                                player.animationState.setAnimation(0, nextAnim, true);
                             }
+
+                            // 載入完成後，先手動觸發第一次
+                            playRandomAnimation();
+
+                            // 啟動定時器，每 5000 毫秒 (5秒) 執行一次 playRandomAnimation
+                            setInterval(playRandomAnimation, 5000);
                         }
+                    }
 
                         function startIdleTimer() {
                             clearTimeout(globalIdleTimer);
