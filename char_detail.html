@@ -547,50 +547,58 @@
                     }
 
                    const animations = player.skeleton.data.animations;
-                    if (animations && animations.length > 0) {
+                   if (animations && animations.length > 0) {
+    
+                       // 1. 取出所有動畫名稱
+                       // 💡 建議：如果你發現某些動作(例如死亡或結束)會讓角色飛走或隱形，可以把 excludeList 加回來過濾掉它們
+                       const excludeList = ['Smash_End_1', 'Smash_End_2', 'Tickle_End', 'Touch_End'];
+                       const allAnims = animations.map(a => a.name).filter(name => !excludeList.includes(name));
+    
+                       // 如果過濾後沒有動作了，就退回使用全部動作
+                       const playList = allAnims.length > 0 ? allAnims : animations.map(a => a.name);
+                       let currentIndex = 0; 
+
+                       // 2. 播放下一個動作的函數
+                       function playNextAnimation() {
+                           const nextAnim = playList[currentIndex];
+                           console.log(`🔄 正在播放 (${currentIndex + 1}/${playList.length}):`, nextAnim);
+
+                           // ❌ 已經刪除了 player.skeleton.setToSetupPose(); 避免圖層破圖消失
+
+                           // 播放指定動作
+                           player.animationState.setAnimation(0, nextAnim, true); 
+
+                           // 將索引推向下一個
+                           currentIndex = (currentIndex + 1) % playList.length;
+
+                           // 重新啟動 5 秒計時器
+                           startIdleTimer();
+                       }
+
+                       // 3. ⏱️ 5秒轉換計時器
+                       function startIdleTimer() {
+                           clearTimeout(globalIdleTimer);
+                           globalIdleTimer = setTimeout(() => {
+                               playNextAnimation(); // 5秒一到，自動切換下一個
+                           }, 5000);
+                       }
+
+                       // 4. 啟動第一次播放
+                       playNextAnimation();
+
+                       // 5. === 🖱️ 處理點擊事件 (點擊即時切換下一個動作) ===
+                       const canvas = avatarBox.querySelector('canvas');
+                       if (canvas) {
+                           // 先移除可能重複綁定的事件，避免快速連點爆走
+                           const newCanvas = canvas.cloneNode(true);
+                           canvas.parentNode.replaceChild(newCanvas, canvas);
         
-                        // 1. 取出【所有】動畫名稱 (移除排除清單，包含所有動作)
-                        const allAnims = animations.map(a => a.name);
-                        let currentIndex = 0; // 記錄目前播到第幾個動作
-
-                        // 2. 播放下一個動作的函數
-                        function playNextAnimation() {
-                            const nextAnim = allAnims[currentIndex];
-                            console.log(`🔄 正在播放 (${currentIndex + 1}/${allAnims.length}):`, nextAnim);
-            
-                            // 清除上一個動作的殘留位移，避免骨架扭曲
-                            player.skeleton.setToSetupPose(); 
-            
-                            // 播放指定動作 (true 代表循環播放，即使動作很短也會重複，直到5秒後被切換)
-                            player.animationState.setAnimation(0, nextAnim, true); 
-            
-                            // 將索引推向下一個，如果到底了就回到第 0 個
-                            currentIndex = (currentIndex + 1) % allAnims.length;
-            
-                            // 重新啟動 5 秒計時器
-                            startIdleTimer();
-                        }
-
-                        // 3. ⏱️ 5秒轉換計時器
-                        function startIdleTimer() {
-                            clearTimeout(globalIdleTimer);
-                            globalIdleTimer = setTimeout(() => {
-                                playNextAnimation(); // 5秒一到，自動切換下一個
-                            }, 5000);
-                        }
-
-                        // 4. 啟動第一次播放
-                        playNextAnimation();
-
-                        // 5. === 🖱️ 處理點擊事件 (點擊即時切換下一個動作) ===
-                        const canvas = avatarBox.querySelector('canvas');
-                        if (canvas) {
-                            canvas.addEventListener('click', () => {
-                                console.log("👆 點擊畫布，立即切換動作！");
-                                playNextAnimation(); // 點擊時也會觸發切換，並自動重置 5 秒計時
-                            });
-                        }
-                    }
+                           newCanvas.addEventListener('click', () => {
+                               console.log("👆 點擊畫布，立即切換動作！");
+                               playNextAnimation(); 
+                           });
+                       }
+                   }
                 },
                 error: function (player, reason) {
                     console.warn(`⚠️ Spine 載入失敗，降級顯示靜態圖。原因:`, reason);
