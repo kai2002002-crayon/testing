@@ -526,6 +526,16 @@
 
                 success: function (player) {
                     console.log(`✅ ${costumeKey} 的 Spine 動畫載入成功！(路徑: ${baseFolderKey}/${costumeKey})`);
+    
+                    // ==========================================
+                    // 🛠️ [新增] 骨架清單除錯與全域變數綁定
+                    // ==========================================
+                    window.myPlayer = player; // 綁定到全域，方便你在 F12 Console 隨時呼叫
+                    console.log("=== 🦴 角色骨架清單大公開 ===");
+                    player.skeleton.bones.forEach(bone => {
+                        console.log("骨頭名稱:", bone.data.name);
+                    });
+                    console.log("===============================");
                     
                     const skins = player.skeleton.data.skins;
                     if (skins && skins.length > 1) {
@@ -536,44 +546,48 @@
                         }
                     }
 
-                    const animations = player.skeleton.data.animations;
-                    if (animations && animations.length > 1) {
-                        
-                        // 🚫 排除清單：過濾掉基礎待機，以及只有在觸控放開時才該播的結尾動作
-                        const excludeList = ['Idle_1', 'Smash_End_1', 'Smash_End_2', 'Tickle_End', 'Touch_End'];
-                        const randomAnims = animations.filter(a => !excludeList.includes(a.name));
+                   const animations = player.skeleton.data.animations;
+                    if (animations && animations.length > 0) {
+        
+                        // 1. 取出【所有】動畫名稱 (移除排除清單，包含所有動作)
+                        const allAnims = animations.map(a => a.name);
+                        let currentIndex = 0; // 記錄目前播到第幾個動作
 
-                        // 🎲 播放隨機動作，播完後「自動無縫接回 Idle_1」
-                        function playRandomAction() {
-                            if (randomAnims.length > 0) {
-                                const randomAnim = randomAnims[Math.floor(Math.random() * randomAnims.length)].name;
-                                
-                                // false 代表只播一次
-                                player.animationState.setAnimation(0, randomAnim, false); 
-                                // 0 代表在前一個動作結束後，無縫接回 Idle_1 循環 (true)
-                                player.animationState.addAnimation(0, "Idle_1", true, 0); 
-                                
-                                // 重新開始 5 秒計時，避免動作播到一半又被計時器切斷
-                                startIdleTimer();
-                            }
+                        // 2. 播放下一個動作的函數
+                        function playNextAnimation() {
+                            const nextAnim = allAnims[currentIndex];
+                            console.log(`🔄 正在播放 (${currentIndex + 1}/${allAnims.length}):`, nextAnim);
+            
+                            // 清除上一個動作的殘留位移，避免骨架扭曲
+                            player.skeleton.setToSetupPose(); 
+            
+                            // 播放指定動作 (true 代表循環播放，即使動作很短也會重複，直到5秒後被切換)
+                            player.animationState.setAnimation(0, nextAnim, true); 
+            
+                            // 將索引推向下一個，如果到底了就回到第 0 個
+                            currentIndex = (currentIndex + 1) % allAnims.length;
+            
+                            // 重新啟動 5 秒計時器
+                            startIdleTimer();
                         }
 
-                        // ⏱️ 閒置計時器 (每 5 秒觸發一次隨機動作)
+                        // 3. ⏱️ 5秒轉換計時器
                         function startIdleTimer() {
                             clearTimeout(globalIdleTimer);
                             globalIdleTimer = setTimeout(() => {
-                                playRandomAction();
+                                playNextAnimation(); // 5秒一到，自動切換下一個
                             }, 5000);
                         }
 
-                        // 啟動初始計時器
-                        startIdleTimer();
+                        // 4. 啟動第一次播放
+                        playNextAnimation();
 
-                        // === 🖱️ 處理點擊事件 (單純點擊任何地方都會切換動作) ===
+                        // 5. === 🖱️ 處理點擊事件 (點擊即時切換下一個動作) ===
                         const canvas = avatarBox.querySelector('canvas');
                         if (canvas) {
                             canvas.addEventListener('click', () => {
-                                playRandomAction();
+                                console.log("👆 點擊畫布，立即切換動作！");
+                                playNextAnimation(); // 點擊時也會觸發切換，並自動重置 5 秒計時
                             });
                         }
                     }
