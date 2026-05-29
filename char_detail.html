@@ -531,6 +531,11 @@
                 success: function (player) {
                     console.log(`✅ ${costumeKey} 的 Spine 動畫載入成功！`);
                     window.myPlayer = player; 
+                    player.skeleton.x = 0;
+                    player.skeleton.y = 0;
+                    player.skeleton.scaleX = 1;
+                    player.skeleton.scaleY = 1;
+                    player.skeleton.updateWorldTransform();
 
                     // --- [新增] 骨架清單除錯功能 ---
                     console.log("=== 🦴 角色骨架清單大公開 ===");
