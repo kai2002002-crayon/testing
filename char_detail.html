@@ -497,41 +497,42 @@
         // ==========================================
         function loadSpineAnimation(costumeKey) {
             const avatarBox = document.getElementById('charAvatar');
-            const baseFolderKey = SPINE_MAP[currentTargetName];
+            const baseFolderKey = SPINE_MAP[currentTargetName]; 
             
-            // 🧹 清除計時器與舊畫布 (防止 WebGL 當機)
             clearTimeout(globalIdleTimer);
-            if (window.globalSpinePlayer) {
-                window.globalSpinePlayer.dispose(); // 釋放舊的 GPU 記憶體
-                window.globalSpinePlayer = null;
-            }
             avatarBox.innerHTML = ''; 
-        
-            // 🎨 隨機背景
+
+            // 隨機背景魔法：僅在首次進入或無背景時賦予背景，避免每次換裝都閃爍切換背景
             if (!avatarBox.style.backgroundImage && LOBBY_BACKGROUNDS && LOBBY_BACKGROUNDS.length > 0) {
                 const randomBg = LOBBY_BACKGROUNDS[Math.floor(Math.random() * LOBBY_BACKGROUNDS.length)];
                 avatarBox.style.backgroundImage = `url('${randomBg}')`;
-                avatarBox.style.backgroundSize = 'cover';
-                avatarBox.style.backgroundPosition = 'center';
-                avatarBox.style.backgroundRepeat = 'no-repeat';
+                avatarBox.style.backgroundSize = 'cover';       
+                avatarBox.style.backgroundPosition = 'center';  
+                avatarBox.style.backgroundRepeat = 'no-repeat'; 
                 avatarBox.classList.add('overflow-hidden', 'rounded-2xl', 'shadow-inner');
             }
-        
-            // 🚀 建立播放器
-            window.globalSpinePlayer = new spine.SpinePlayer(avatarBox, {
+
+            // 2. 恢復你確定「正式版能跑」的穩定初始化參數
+            globalSpinePlayer = new spine.SpinePlayer(avatarBox, {
                 skelUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.skel.bytes`,
                 atlasUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.atlas.txt`,
+                animation: "Idle_1",     
                 premultipliedAlpha: true,
                 backgroundColor: "#00000000", 
                 alpha: true,                 
                 showControls: false,
+                // 使用正式版的 viewport，確保不因參數變動導致消失
                 viewport: { x: -400, y: 0, width: 800, height: 1000 },
-        
+
                 success: function (player) {
-                    console.log(`✅ 載入成功: ${costumeKey}`);
-                    window.myPlayer = player; 
-        
-                    // 🌟 1. 【100% 還原舊版的換皮邏輯】 (這段你原本的寫法最穩)
+                    console.log(`✅ ${costumeKey} 的 Spine 動畫載入成功！(路徑: ${baseFolderKey}/${costumeKey})`);
+                    // 🕵️‍♂️ 偷看官方的骨頭命名機密
+                    console.log("=== 🦴 角色骨骼清單大公開 ===");
+                    player.skeleton.bones.forEach(bone => {
+                        console.log("骨頭名稱:", bone.data.name);
+                    });
+                    console.log("===============================");
+                    
                     const skins = player.skeleton.data.skins;
                     if (skins && skins.length > 1) {
                         const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default');
@@ -540,54 +541,45 @@
                             player.skeleton.setSlotsToSetupPose();
                         }
                     }
-        
-                    // 🌟 2. 動作輪播邏輯
+
                     const animations = player.skeleton.data.animations;
-                    if (animations && animations.length > 0) {
-                        const animNames = animations.map(a => a.name);
+                    if (animations && animations.length > 1) {
                         
-                        // 【關鍵修復】優先強制鎖定 "Idle_1"，沒有才找包含 idle 的，最後拿第一個
-                        const idleAnim = animNames.find(n => n === 'Idle_1') || 
-                                         animNames.find(n => n.toLowerCase().includes('idle')) || 
-                                         animNames[0];
-
-                        const excludeList = ['Smash_End_1', 'Smash_End_2', 'Tickle_End', 'Touch_End'];
-                        const playList = animNames.filter(n => !excludeList.includes(n));
-                        let currentIndex = 0;
-
-                        // 💥 破案關鍵：第一秒必須強制播放 Idle_1，把隱形的身體「洗」出來！
-                        console.log(`🟢 初始打底動作: ${idleAnim}`);
-                        player.animationState.setAnimation(0, idleAnim, true);
-
-                        function playNextAnimation() {
-                            const targetAnims = playList.length > 0 ? playList : [idleAnim];
-                            const nextAnim = targetAnims[currentIndex % targetAnims.length];
-                            
-                            console.log(`🔄 自動輪播: ${nextAnim}`);
-                            
-                            // 最純粹的切換，不加任何 clearTracks 干擾
-                            player.animationState.setAnimation(0, nextAnim, true); 
-                            
-                            currentIndex++;
-                            clearTimeout(globalIdleTimer);
-                            globalIdleTimer = setTimeout(playNextAnimation, 5000);
+                        function playRandomAction() {
+                            const animsToPlay = animations.filter(a => a.name !== 'Idle_1');
+                            if (animsToPlay.length > 0) {
+                                const randomAnim = animsToPlay[Math.floor(Math.random() * animsToPlay.length)].name;
+                                player.animationState.setAnimation(0, randomAnim, true);
+                                clearTimeout(globalIdleTimer);
+                                globalIdleTimer = setTimeout(() => {
+                                    player.animationState.setAnimation(0, "Idle_1", true);
+                                    startIdleTimer();
+                                }, 5000); 
+                            } else {
+                                startIdleTimer();
+                            }
                         }
 
-                        // 讓 Idle_1 乖乖播滿 5 秒後，才開始切換其他動作
-                        globalIdleTimer = setTimeout(playNextAnimation, 5000);
+                        function startIdleTimer() {
+                            clearTimeout(globalIdleTimer);
+                            globalIdleTimer = setTimeout(() => {
+                                playRandomAction();
+                            }, 5000);
+                        }
 
-                        // 安全的點擊事件綁定 (不破壞 Canvas)
+                        startIdleTimer();
+
                         const canvas = avatarBox.querySelector('canvas');
-                        if (canvas) {
-                            canvas.onclick = () => {
-                                clearTimeout(globalIdleTimer);
-                                playNextAnimation();
-                            };
+                        if(canvas) {
+                            canvas.addEventListener('click', () => {
+                                playRandomAction();
+                            });
                         }
                     }
                 },
                 error: function (player, reason) {
-                    console.error("❌ Spine 載入失敗:", reason);
+                    console.warn(`⚠️ Spine 載入失敗，降級顯示靜態圖。原因:`, reason);
+                    // 降級顯示角色的預設圖
                     const imgUrl = IMAGE_MAP[`avatar_${currentCharData.name}`];
                     avatarBox.innerHTML = imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-cover">` : currentCharData.name.charAt(0);
                 }
