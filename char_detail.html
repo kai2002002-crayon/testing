@@ -545,26 +545,21 @@
                     const animations = player.skeleton.data.animations;
                     if (animations && animations.length > 1) {
                         
-                        // 🚫 排除清單：過濾掉基礎待機，以及只有在觸控放開時才該播的結尾動作
-                        const excludeList = ['Idle_1', 'Smash_End_1', 'Smash_End_2', 'Tickle_End', 'Touch_End'];
-                        const randomAnims = animations.filter(a => !excludeList.includes(a.name));
-
-                        // 🎲 播放隨機動作，播完後「自動無縫接回 Idle_1」
                         function playRandomAction() {
-                            if (randomAnims.length > 0) {
-                                const randomAnim = randomAnims[Math.floor(Math.random() * randomAnims.length)].name;
-                                
-                                // false 代表只播一次
-                                player.animationState.setAnimation(0, randomAnim, false); 
-                                // 0 代表在前一個動作結束後，無縫接回 Idle_1 循環 (true)
-                                player.animationState.addAnimation(0, "Idle_1", true, 0); 
-                                
-                                // 重新開始 5 秒計時，避免動作播到一半又被計時器切斷
+                            const animsToPlay = animations.filter(a => a.name !== 'Idle_1');
+                            if (animsToPlay.length > 0) {
+                                const randomAnim = animsToPlay[Math.floor(Math.random() * animsToPlay.length)].name;
+                                player.animationState.setAnimation(0, randomAnim, true);
+                                clearTimeout(globalIdleTimer);
+                                globalIdleTimer = setTimeout(() => {
+                                    player.animationState.setAnimation(0, "Idle_1", true);
+                                    startIdleTimer();
+                                }, 5000); 
+                            } else {
                                 startIdleTimer();
                             }
                         }
 
-                        // ⏱️ 閒置計時器 (每 5 秒觸發一次隨機動作)
                         function startIdleTimer() {
                             clearTimeout(globalIdleTimer);
                             globalIdleTimer = setTimeout(() => {
@@ -572,12 +567,10 @@
                             }, 5000);
                         }
 
-                        // 啟動初始計時器
                         startIdleTimer();
 
-                        // === 🖱️ 處理點擊事件 (單純點擊任何地方都會切換動作) ===
                         const canvas = avatarBox.querySelector('canvas');
-                        if (canvas) {
+                        if(canvas) {
                             canvas.addEventListener('click', () => {
                                 playRandomAction();
                             });
