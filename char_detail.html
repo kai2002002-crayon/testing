@@ -37,6 +37,15 @@
         /* 服裝切換按鈕自訂樣式 */
         .costume-btn { transition: all 0.2s ease; }
         .costume-btn:active { transform: scale(0.95); }
+
+        /* 🚫 隱藏 Spine 播放器內建的藍色轉圈圈與載入文字 */
+        .spine-player-loading, 
+        .spine-player-progress, 
+        .spine-player-progress-bar {
+            display: none !important;
+            opacity: 0 !important;
+        }
+        
     </style>
 </head>
 <body class="p-4 sm:p-8 bg-[#fcf8f2] dark:bg-slate-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
