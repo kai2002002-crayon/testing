@@ -532,7 +532,16 @@
                     console.log(`✅ ${costumeKey} 的 Spine 動畫載入成功！`);
                     window.myPlayer = player; 
 
-                    // 1. 設定皮膚
+                    // --- [新增] 骨架清單除錯功能 ---
+                    console.log("=== 🦴 角色骨架清單大公開 ===");
+                    player.skeleton.bones.forEach(bone => {
+                        console.log("骨頭名稱:", bone.data.name);
+                    });
+                    console.log("===============================");
+    
+                    // 測試：你可以透過 Console 使用 window.myPlayer.skeleton.findBone('骨頭名稱') 來操作
+
+                    // --- 設定皮膚 ---
                     const skins = player.skeleton.data.skins;
                     if (skins && skins.length > 1) {
                         const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default');
@@ -542,40 +551,36 @@
                         }
                     }
 
-                    // 2. 動畫輪播邏輯
+                    // --- 自動輪播所有動作 (每個5秒) ---
                     const animations = player.skeleton.data.animations;
-                    if (animations && animations.length > 1) {
-                        const excludeList = ['Idle_1', 'Smash_End_1', 'Smash_End_2', 'Tickle_End', 'Touch_End'];
-                        const validAnims = animations
-                            .filter(a => !excludeList.includes(a.name))
-                            .map(a => a.name);
-        
-                        if (validAnims.length > 0) {
-                            function playRandomAnimation() {
-                                const randomIndex = Math.floor(Math.random() * validAnims.length);
-                                const nextAnim = validAnims[randomIndex];
-                                player.skeleton.setToSetupPose(); 
-                                player.animationState.setAnimation(0, nextAnim, true);
-                            }
+                    if (animations && animations.length > 0) {
+                        // 取出所有動畫名稱
+                        const allAnims = animations.map(a => a.name);
+                        let currentIndex = 0;
 
-                            // 啟動循環
-                            playRandomAnimation();
-                            setInterval(playRandomAnimation, 5000);
+                        function playNextAnimation() {
+                            const nextAnim = allAnims[currentIndex];
+                            console.log("🔄 正在播放:", nextAnim);
+            
+                            player.skeleton.setToSetupPose(); 
+                            player.animationState.setAnimation(0, nextAnim, true); // true 讓它循環播放，直到下一次切換
 
-                            // 綁定點擊事件
-                            const canvas = avatarBox.querySelector('canvas');
-                            if (canvas) {
-                                canvas.onclick = () => playRandomAnimation();
-                            }
+                            currentIndex = (currentIndex + 1) % allAnims.length; // 輪播到最後一項後回到第 0 項
+                        }
+
+                        // 第一次手動觸發
+                        playNextAnimation();
+
+                        // 啟動 5 秒定時器
+                        setInterval(playNextAnimation, 5000);
+
+                        // 綁定點擊畫布即時切換下一個動作
+                        const canvas = avatarBox.querySelector('canvas');
+                        if (canvas) {
+                            canvas.onclick = () => playNextAnimation();
                         }
                     }
                 },
-                error: function (player, reason) {
-                    console.warn(`⚠️ Spine 載入失敗，降級顯示靜態圖。原因:`, reason);
-                    // 降級顯示角色的預設圖
-                    const imgUrl = IMAGE_MAP[`avatar_${currentCharData.name}`];
-                    avatarBox.innerHTML = imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-cover">` : currentCharData.name.charAt(0);
-                }
             });
         }
 
