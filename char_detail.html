@@ -578,10 +578,17 @@
                         let currentIndex = 0;
 
                         function playNextAnimation() {
-                            const nextAnim = playList[currentIndex % playList.length];
-                            console.log(`🔄 自動輪播: ${nextAnim}`);
-                            player.animationState.setAnimation(0, nextAnim, true);
-                            currentIndex++;
+                            const targetAnims = playList.length > 0 ? playList : ['Idle_1'];
+    
+                            // 🌟 修改這裡：不再使用 currentIndex，改為隨機抽取
+                            const randomIndex = Math.floor(Math.random() * targetAnims.length);
+                            const nextAnim = targetAnims[randomIndex];
+    
+                            console.log(`🎲 隨機輪播: ${nextAnim}`);
+                            player.animationState.setAnimation(0, nextAnim, true); 
+    
+                            // 刪掉 currentIndex++，因為我們不需要記順序了
+    
                             clearTimeout(globalIdleTimer);
                             globalIdleTimer = setTimeout(playNextAnimation, 5000);
                         }
