@@ -530,9 +530,9 @@
         
                 success: function (player) {
                     console.log(`✅ 載入成功: ${costumeKey}`);
-                    window.myPlayer = player; 
-        
-                    // 🌟 1. 【100% 還原舊版的換皮邏輯】
+                    window.myPlayer = player;
+
+                    // 🌟 1. 皮膚換裝邏輯
                     const skins = player.skeleton.data.skins;
                     if (skins && skins.length > 1) {
                         const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default');
@@ -541,43 +541,55 @@
                             player.skeleton.setSlotsToSetupPose();
                         }
                     }
-        
-                    // 🌟 2. 動作循序輪播邏輯
+
+                    // 🌟 2. 視角縮放與重置邏輯 (新增的部分)
+                    let currentZoom = 1.0;
+                    const baseViewport = { x: -400, y: 0, width: 800, height: 1000 };
+                    const avatarBox = document.getElementById('charAvatar');
+
+                    // 滾輪縮放
+                    avatarBox.addEventListener('wheel', function(event) {
+                        event.preventDefault();
+                        const zoomSpeed = 0.1;
+                        currentZoom = event.deltaY < 0 ? Math.min(currentZoom + zoomSpeed, 3.0) : Math.max(currentZoom - zoomSpeed, 0.5);
+
+                        const newWidth = baseViewport.width / currentZoom;
+                        const newHeight = baseViewport.height / currentZoom;
+                        player.setViewport({ x: -(newWidth / 2), y: 0, width: newWidth, height: newHeight });
+                    }, { passive: false });
+
+                    // 雙擊重置
+                    avatarBox.addEventListener('dblclick', function() {
+                        currentZoom = 1.0;
+                        player.setViewport(baseViewport);
+                        console.log("🔄 視角已重置");
+                    });
+
+                    // 🌟 3. 動作輪播邏輯
                     const animations = player.skeleton.data.animations;
                     if (animations && animations.length > 0) {
                         const animNames = animations.map(a => a.name);
-                        
-                        // 排除不會動或會破圖的結尾動作，順便排除 Idle_1 (因為要拿來當過渡)
-                        const excludeList = [];
-                        const playList = animNames.filter(n => !excludeList.includes(n));
+                        const playList = animNames;
                         let currentIndex = 0;
 
                         function playNextAnimation() {
-                            const targetAnims = playList.length > 0 ? playList : ['Idle_1'];
-    
-                            // 🌟 修改這裡：不再使用 currentIndex，改為隨機抽取
-                            const randomIndex = Math.floor(Math.random() * targetAnims.length);
-                            const nextAnim = targetAnims[randomIndex];
-    
-                            console.log(`🎲 隨機輪播: ${nextAnim}`);
-                            player.animationState.setAnimation(0, nextAnim, true); 
-    
-                            // 刪掉 currentIndex++，因為我們不需要記順序了
-    
+                            const nextAnim = playList[currentIndex % playList.length];
+                            console.log(`🔄 自動輪播: ${nextAnim}`);
+                            player.animationState.setAnimation(0, nextAnim, true);
+                            currentIndex++;
                             clearTimeout(globalIdleTimer);
                             globalIdleTimer = setTimeout(playNextAnimation, 5000);
                         }
 
-                        // 初始化：因為設定檔已經幫我們播 Idle_1 了，所以等待 5 秒後直接開始輪播
                         globalIdleTimer = setTimeout(playNextAnimation, 5000);
 
-                        // 🌟 3. 完全還原舊版的點擊事件綁定
+                        // 點擊畫布手動切換
                         const canvas = avatarBox.querySelector('canvas');
                         if (canvas) {
                             canvas.addEventListener('click', () => {
                                 clearTimeout(globalIdleTimer);
                                 playNextAnimation();
-                            });
+                           });
                         }
                     }
                 },
