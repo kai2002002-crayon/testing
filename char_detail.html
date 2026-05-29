@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+        <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
@@ -512,6 +512,7 @@
                 avatarBox.classList.add('overflow-hidden', 'rounded-2xl', 'shadow-inner');
             }
 
+            // 2. 恢復你確定「正式版能跑」的穩定初始化參數
             globalSpinePlayer = new spine.SpinePlayer(avatarBox, {
                 skelUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.skel.bytes`,
                 atlasUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.atlas.txt`,
@@ -519,38 +520,23 @@
                 premultipliedAlpha: true,
                 backgroundColor: "#00000000", 
                 alpha: true,                 
-                showControls: false,     
-                
-                viewport: {
-                    x: -400,     
-                    y: 0,        
-                    width: 800,  
-                    height: 1000 
-                },
+                showControls: false,
+                // 使用正式版的 viewport，確保不因參數變動導致消失
+                viewport: { x: -400, y: 0, width: 800, height: 1000 },
 
                 success: function (player) {
-                    console.log(`✅ ${costumeKey} 的 Spine 動畫載入成功！(路徑: ${baseFolderKey}/${costumeKey})`);
-                    window.myPlayer = player;
-                    console.log("骨架名稱:", player.skeleton.bones.map(b => b.data.name));console.log("骨架名稱:", player.skeleton.bones.map(b => b.data.name));
-                    
-                    const skins = player.skeleton.data.skins;
-                    // 修改後的 Skin 設定邏輯
-                    if (skins && skins.length > 1) {
-                        const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default');
-                        if (targetSkin) {
-                            player.skeleton.setSkin(targetSkin); // 使用 setSkin(object) 比 setSkinByName 更直觀
-                            player.skeleton.setSlotsToSetupPose();
-                        }
-                    }
+                    console.log(`✅ 角色載入成功: ${costumeKey}`);
+                    window.myPlayer = player; 
 
+                    // --- 骨架名稱除錯 (不影響渲染) ---
+                    console.log("骨架名稱:", player.skeleton.bones.map(b => b.data.name));
+
+                    // --- 自動輪播邏輯 (僅作為外掛邏輯) ---
                     const animations = player.skeleton.data.animations;
                     if (animations && animations.length > 0) {
                         const allAnims = animations.map(a => a.name);
                         let currentIndex = 0;
-                        
-                        // 🚫 排除清單：過濾掉基礎待機，以及只有在觸控放開時才該播的結尾動作
-                        const excludeList = ['Idle_1', 'Smash_End_1', 'Smash_End_2', 'Tickle_End', 'Touch_End'];
-                        const randomAnims = animations.filter(a => !excludeList.includes(a.name));
+
                         function playNextAnimation() {
                             const nextAnim = allAnims[currentIndex];
                             console.log("🔄 切換動畫:", nextAnim);
@@ -561,6 +547,7 @@
                     
                             currentIndex = (currentIndex + 1) % allAnims.length;
                         }
+
                         // 首次播放並啟動計時器
                         playNextAnimation();
                         globalIdleTimer = setInterval(playNextAnimation, 5000);
@@ -576,11 +563,11 @@
                         }
                     }
                 },
-        error: function (player, reason) {
-            console.error("❌ 初始化失敗:", reason);
+                error: function (player, reason) {
+                    console.error("❌ 初始化失敗:", reason);
+                }
+            });
         }
-    });
-}
                 error: function (player, reason) {
                     console.warn(`⚠️ Spine 載入失敗，降級顯示靜態圖。原因:`, reason);
                     // 降級顯示角色的預設圖
