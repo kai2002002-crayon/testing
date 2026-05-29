@@ -132,7 +132,6 @@
                           class="w-full mb-1 px-3 py-2 text-sm font-medium text-gray-800 dark:text-gray-200 rounded-lg border border-amber-300 dark:border-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-slate-800 resize-none shadow-inner"></textarea>
                 </textarea>
 
-                <!-- 字數顯示區 -->
                 <div class="flex justify-end mb-3">
                     <span id="charCount" class="text-[10px] font-bold text-amber-700/60 dark:text-gray-400">0 / 500</span>
                 </div>
@@ -343,7 +342,7 @@
             "Erpin": "艾爾芬偷偷用了我倉庫裡的蠟筆，帶著歉意送來了一套蠟筆作為賠禮。",
             "Espi": "這是艾斯皮在窺探他人夢境後，記錄下來的有趣夢境筆記。",
             "Festa": "這是佩斯塔用過去的名字活動時，親自簽名的最佳專輯。",
-            "Fricle": "刺是用橡膠製成的，所以不會傷到人。她好像是趁我不注意時，偷偷把它跟信放進了我的口袋。",
+            "Fricle": "刺是用橡膠製成的，ِمض不會傷到人。她好像是趁我不注意時，偷偷把它跟信放進了我的口袋。",
             "Gabia": "這是加薇雅在魔靈山洞窟和湖附近用心收集的漂亮石頭，看起來就像是寶石一樣。",
             "Haley": "據說是莫納蒂姆的祕密地圖，但感覺只是觀光旅遊指南而已。海莉說她在祕密地圖上畫圈的地方是重要的要塞。",
             "Hilde": "上面大大地寫著「希爾德博士」的學位證書。看來是她背著艾琳娜，偷偷藏在了自己的抽屜裡。",
@@ -497,90 +496,88 @@
         // ==========================================
         function loadSpineAnimation(costumeKey) {
             const avatarBox = document.getElementById('charAvatar');
-            const baseFolderKey = SPINE_MAP[currentTargetName]; 
+            const baseFolderKey = SPINE_MAP[currentTargetName];
             
             clearTimeout(globalIdleTimer);
             avatarBox.innerHTML = ''; 
-
+        
             // 隨機背景魔法：僅在首次進入或無背景時賦予背景，避免每次換裝都閃爍切換背景
             if (!avatarBox.style.backgroundImage && LOBBY_BACKGROUNDS && LOBBY_BACKGROUNDS.length > 0) {
                 const randomBg = LOBBY_BACKGROUNDS[Math.floor(Math.random() * LOBBY_BACKGROUNDS.length)];
                 avatarBox.style.backgroundImage = `url('${randomBg}')`;
-                avatarBox.style.backgroundSize = 'cover';       
-                avatarBox.style.backgroundPosition = 'center';  
-                avatarBox.style.backgroundRepeat = 'no-repeat'; 
+                avatarBox.style.backgroundSize = 'cover';
+                avatarBox.style.backgroundPosition = 'center';
+                avatarBox.style.backgroundRepeat = 'no-repeat';
                 avatarBox.classList.add('overflow-hidden', 'rounded-2xl', 'shadow-inner');
             }
-
-            // 2. 恢復你確定「正式版能跑」的穩定初始化參數
+        
+            // 使用一個空物件作為初始化，不要在初始化時指定 animation，避免衝突
             globalSpinePlayer = new spine.SpinePlayer(avatarBox, {
                 skelUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.skel.bytes`,
                 atlasUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.atlas.txt`,
-                animation: "Idle_1",     
                 premultipliedAlpha: true,
                 backgroundColor: "#00000000", 
                 alpha: true,                 
                 showControls: false,
-                // 使用正式版的 viewport，確保不因參數變動導致消失
                 viewport: { x: -400, y: 0, width: 800, height: 1000 },
-
+        
                 success: function (player) {
                     console.log(`✅ 載入成功: ${costumeKey}`);
                     window.myPlayer = player; 
-
+        
                     // 骨架清單除錯
                     console.group("🦴 骨架清單");
                     player.skeleton.bones.forEach(b => console.log(b.data.name));
                     console.groupEnd();
 
-                    // 設定皮膚
+                    // 1. 設定皮膚
                     const skins = player.skeleton.data.skins;
-                    if (skins && skins.length > 1) {
-                        const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default');
-                        if (targetSkin) {
-                            player.skeleton.setSkinByName(targetSkin.name);
-                            player.skeleton.setSlotsToSetupPose();
-                        }
+                    if (skins && skins.length > 0) {
+                        const targetSkin = skins.find(s => s.name === 'Normal') || skins[0];
+                        player.skeleton.setSkin(targetSkin);
+                        player.skeleton.setSlotsToSetupPose();
                     }
-
-                    // 自動輪播所有動作
+        
+                    // 2. 獲取所有動作並自動輪播
                     const animations = player.skeleton.data.animations;
-                    if (animations && animations.length > 1) {
-                        // 排除會讓角色隱形的動作
-                        const excludeList = ['Smash_End_1', 'Smash_End_2', 'Tickle_End', 'Touch_End'];
-                        const playList = animations.map(a => a.name).filter(n => !excludeList.includes(n));
-                        let currentIndex = 0;
-
-                        function playNextAnimation() {
-                            const nextAnim = playList[currentIndex];
-                            console.log(`🔄 輪播中: ${nextAnim}`);
-                    
-                            // 播放動畫，不重置骨架位移，避免破圖
-                            player.animationState.setAnimation(0, nextAnim, true); 
-                    
-                            currentIndex = (currentIndex + 1) % playList.length;
-                            startIdleTimer();
-                        }
-
-                        function startIdleTimer() {
-                            clearTimeout(globalIdleTimer);
-                            globalIdleTimer = setTimeout(playNextAnimation, 5000);
-                        }
-
-                        // 初始化播放
-                        playNextAnimation();
-
-                        // 綁定畫布點擊
-                        const canvas = avatarBox.querySelector('canvas');
-                        if (canvas) {
-                            // 移除舊事件避免重複監聽
-                            canvas.replaceWith(canvas.cloneNode(true));
-                            avatarBox.querySelector('canvas').addEventListener('click', playNextAnimation);
-                        }
+                    if (!animations || animations.length === 0) return;
+        
+                    const excludeList = ['Smash_End_1', 'Smash_End_2', 'Tickle_End', 'Touch_End'];
+                    const playList = animations.map(a => a.name).filter(n => !excludeList.includes(n));
+                    let currentIndex = 0;
+        
+                    function playNextAnimation() {
+                        // 如果 playList 有內容就播，沒有則退而求其次播所有
+                        const targetAnims = playList.length > 0 ? playList : animations.map(a => a.name);
+                        const nextAnim = targetAnims[currentIndex % targetAnims.length];
+                        
+                        console.log(`🔄 播放: ${nextAnim}`);
+                        
+                        // 【關鍵修改】: 確保動畫狀態重置一次，避免殘留
+                        player.animationState.clearTracks();
+                        player.animationState.setAnimation(0, nextAnim, true); 
+                        
+                        currentIndex++;
+                        startIdleTimer();
+                    }
+        
+                    function startIdleTimer() {
+                        clearTimeout(globalIdleTimer);
+                        globalIdleTimer = setTimeout(playNextAnimation, 5000);
+                    }
+        
+                    // 【關鍵修改】：給一點點時間讓 Spine 載入骨架，再啟動動畫
+                    setTimeout(playNextAnimation, 100);
+        
+                    // 綁定點擊
+                    const canvas = avatarBox.querySelector('canvas');
+                    if (canvas) {
+                        canvas.replaceWith(canvas.cloneNode(true));
+                        avatarBox.querySelector('canvas').addEventListener('click', playNextAnimation);
                     }
                 },
                 error: function (player, reason) {
-                    console.error("❌ 初始化失敗:", reason);
+                    console.error("❌ Spine 載入失敗:", reason);
                     const imgUrl = IMAGE_MAP[`avatar_${currentCharData.name}`];
                     avatarBox.innerHTML = imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-cover">` : currentCharData.name.charAt(0);
                 }
