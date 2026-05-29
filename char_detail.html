@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
@@ -124,7 +124,19 @@
             
             <div class="bg-amber-50/80 dark:bg-slate-700/60 p-4 rounded-xl border border-amber-300 dark:border-slate-600 mb-6 shadow-sm transition-colors">
                 <input type="text" id="commentAuthor" placeholder="您的暱稱 (留白將以匿名顯示)" class="w-full sm:w-1/2 mb-3 px-3 py-2 text-sm font-bold text-amber-900 dark:text-white placeholder-amber-700/50 dark:placeholder-gray-400 rounded-lg border border-amber-300 dark:border-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-slate-800 shadow-inner">
-                <textarea id="commentContent" rows="3" placeholder="寫下您對這位坨坨的評價、組隊心得或是發廚發言..." class="w-full mb-3 px-3 py-2 text-sm font-medium text-gray-800 dark:text-gray-200 rounded-lg border border-amber-300 dark:border-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-slate-800 resize-none shadow-inner"></textarea>
+                <textarea id="commentContent" 
+                          rows="3" 
+                          maxlength="500" 
+                          oninput="document.getElementById('charCount').innerText = this.value.length + ' / 500'"
+                          placeholder="寫下您對這位坨坨的評價、組隊心得或是發廚發言..." 
+                          class="w-full mb-1 px-3 py-2 text-sm font-medium text-gray-800 dark:text-gray-200 rounded-lg border border-amber-300 dark:border-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-slate-800 resize-none shadow-inner">
+                </textarea>
+
+                <!-- 字數顯示區 -->
+                <div class="flex justify-end mb-3">
+                    <span id="charCount" class="text-[10px] font-bold text-amber-700/60 dark:text-gray-400">0 / 500</span>
+                </div>
+
                 <div class="flex justify-end">
                     <button onclick="submitComment()" id="submitCommentBtn" class="px-5 py-2 bg-amber-500 text-white text-sm font-bold rounded-xl shadow-md hover:bg-amber-600 dark:bg-amber-600 dark:hover:bg-amber-500 transition transform active:scale-95">
                         送出評價 🚀
