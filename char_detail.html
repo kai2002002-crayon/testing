@@ -497,7 +497,36 @@
         // ==========================================
         function loadSpineAnimation(costumeKey) {
             const avatarBox = document.getElementById('charAvatar');
-            const baseFolderKey = SPINE_MAP[currentTargetName]; 
+            const baseFolderKey = SPINE_MAP[currentTargetName];
+    
+            // 1. 清理
+            avatarBox.innerHTML = '';
+            avatarBox.style.border = '2px solid red'; // 強制顯眼外框，確認容器有沒有被正確渲染
+    
+                console.log("🚀 開始嘗試初始化 Spine...");
+            console.log("路徑檢查:", `./spine_assets/${baseFolderKey}/${costumeKey}.skel.bytes`);
+
+            try {
+                globalSpinePlayer = new spine.SpinePlayer(avatarBox, {
+                    skelUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.skel.bytes`,
+                    atlasUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.atlas.txt`,
+                    animation: "Idle_1",
+                    showControls: false,
+                    success: function (player) {
+                        console.log("✅ 成功初始化！");
+                        window.myPlayer = player;
+                        // ... (後續你的邏輯)
+                    },
+            error: function (player, reason) {
+                // 這是最重要的一步，我們會看到為什麼失敗
+                console.error("🚨 致命錯誤，SpinePlayer 初始化失敗！原因：", reason);
+                avatarBox.innerHTML = `<div style="color:red; padding:20px;">載入失敗: ${reason}</div>`;
+            }
+        });
+    } catch (e) {
+        console.error("💥 程式碼執行錯誤:", e);
+    }
+} 
             
             clearTimeout(globalIdleTimer);
             avatarBox.innerHTML = ''; 
