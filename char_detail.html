@@ -584,6 +584,12 @@
 
                 success: function (player) {
                     console.log(`✅ ${costumeKey} 的 Spine 動畫載入成功！(路徑: ${baseFolderKey}/${costumeKey})`);
+                    // 🕵️‍♂️ 偷看官方的骨頭命名機密
+                    console.log("=== 🦴 角色骨骼清單大公開 ===");
+                    player.skeleton.bones.forEach(bone => {
+                        console.log("骨頭名稱:", bone.data.name);
+                    });
+                    console.log("===============================");
                     
                     const skins = player.skeleton.data.skins;
                     if (skins && skins.length > 1) {
