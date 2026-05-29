@@ -524,8 +524,12 @@
     
                 // 關鍵修改：將 viewport 改為 null 讓 Spine 自動對焦，或者使用一個極大的範圍
                 viewport: {
-                    x: 0, y: 0, width: 1000, height: 1000 
-                },
+                debug: true, // 這會把「相機範圍」畫出來，如果角色在範圍外，你可以看到邊框
+                x: 0, 
+                y: 0, 
+                width: 2000, // 擴大範圍到極大，看能不能撈到角色
+                height: 2000 
+            },
     // ... 後續設定
 
                 success: function (player) {
