@@ -513,26 +513,24 @@
             }
 
             // 2. 恢復你確定「正式版能跑」的穩定初始化參數
-            globalSpinePlayer = new spine.SpinePlayer(avatarBox, {
+            window.globalSpinePlayer = new spine.SpinePlayer(avatarBox, {
                 skelUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.skel.bytes`,
                 atlasUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.atlas.txt`,
+                
+                // 🚨 救命關鍵：絕對不能刪除這行，Spine 需要它來計算畫布大小並打底！
                 animation: "Idle_1",     
+                
                 premultipliedAlpha: true,
                 backgroundColor: "#00000000", 
                 alpha: true,                 
                 showControls: false,
-                // 使用正式版的 viewport，確保不因參數變動導致消失
                 viewport: { x: -400, y: 0, width: 800, height: 1000 },
-
+        
                 success: function (player) {
-                    console.log(`✅ ${costumeKey} 的 Spine 動畫載入成功！(路徑: ${baseFolderKey}/${costumeKey})`);
-                    // 🕵️‍♂️ 偷看官方的骨頭命名機密
-                    console.log("=== 🦴 角色骨骼清單大公開 ===");
-                    player.skeleton.bones.forEach(bone => {
-                        console.log("骨頭名稱:", bone.data.name);
-                    });
-                    console.log("===============================");
-                    
+                    console.log(`✅ 載入成功: ${costumeKey}`);
+                    window.myPlayer = player; 
+        
+                    // 🌟 1. 【100% 還原舊版的換皮邏輯】
                     const skins = player.skeleton.data.skins;
                     if (skins && skins.length > 1) {
                         const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default');
@@ -541,45 +539,48 @@
                             player.skeleton.setSlotsToSetupPose();
                         }
                     }
-
+        
+                    // 🌟 2. 動作循序輪播邏輯
                     const animations = player.skeleton.data.animations;
-                    if (animations && animations.length > 1) {
+                    if (animations && animations.length > 0) {
+                        const animNames = animations.map(a => a.name);
                         
-                        function playRandomAction() {
-                            const animsToPlay = animations.filter(a => a.name !== 'Idle_1');
-                            if (animsToPlay.length > 0) {
-                                const randomAnim = animsToPlay[Math.floor(Math.random() * animsToPlay.length)].name;
-                                player.animationState.setAnimation(0, randomAnim, true);
-                                clearTimeout(globalIdleTimer);
-                                globalIdleTimer = setTimeout(() => {
-                                    player.animationState.setAnimation(0, "Idle_1", true);
-                                    startIdleTimer();
-                                }, 5000); 
-                            } else {
-                                startIdleTimer();
-                            }
-                        }
+                        // 排除不會動或會破圖的結尾動作，順便排除 Idle_1 (因為要拿來當過渡)
+                        const excludeList = ['Smash_End_1', 'Smash_End_2', 'Tickle_End', 'Touch_End', 'Idle_1'];
+                        const playList = animNames.filter(n => !excludeList.includes(n));
+                        let currentIndex = 0;
 
-                        function startIdleTimer() {
+                        function playNextAnimation() {
+                            const targetAnims = playList.length > 0 ? playList : ['Idle_1'];
+                            const nextAnim = targetAnims[currentIndex % targetAnims.length];
+                            
+                            console.log(`🔄 自動輪播: ${nextAnim}`);
+                            player.animationState.setAnimation(0, nextAnim, true); 
+                            currentIndex++;
+                            
+                            // 照搬舊版的完美防破圖機制：動作播 5 秒 -> 切回 Idle_1 -> 再等 5 秒播下一個動作
                             clearTimeout(globalIdleTimer);
                             globalIdleTimer = setTimeout(() => {
-                                playRandomAction();
+                                player.animationState.setAnimation(0, "Idle_1", true);
+                                globalIdleTimer = setTimeout(playNextAnimation, 5000);
                             }, 5000);
                         }
 
-                        startIdleTimer();
+                        // 初始化：因為設定檔已經幫我們播 Idle_1 了，所以等待 5 秒後直接開始輪播
+                        globalIdleTimer = setTimeout(playNextAnimation, 5000);
 
+                        // 🌟 3. 完全還原舊版的點擊事件綁定
                         const canvas = avatarBox.querySelector('canvas');
-                        if(canvas) {
+                        if (canvas) {
                             canvas.addEventListener('click', () => {
-                                playRandomAction();
+                                clearTimeout(globalIdleTimer);
+                                playNextAnimation();
                             });
                         }
                     }
                 },
                 error: function (player, reason) {
-                    console.warn(`⚠️ Spine 載入失敗，降級顯示靜態圖。原因:`, reason);
-                    // 降級顯示角色的預設圖
+                    console.error("❌ Spine 載入失敗:", reason);
                     const imgUrl = IMAGE_MAP[`avatar_${currentCharData.name}`];
                     avatarBox.innerHTML = imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-cover">` : currentCharData.name.charAt(0);
                 }
