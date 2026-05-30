@@ -701,12 +701,15 @@
                                         
                                         // 🌟 終極真理名單：只收錄真正的「網格控制器」與「官方互動骨」
                                         // 嚴格禁止純面紅骨骼 (Ball_R)，保證面紅絕對不會單獨飛出臉外！
+                                        // 🌟 終極真理名單：順應遊戲原生設計，徹底剔除不可拉扯的左臉！
+                                        // 只保留官方專用互動骨與「遠處右臉」的網格控制器
                                         const trueControllers = [
                                             "Character_Ball_Move", // 神級官方通用互動骨 (傑德、莎莉等都有)
-                                            "S1_Ball_L_CT", "S1_F_Ball_L_CT", 
-                                            "S2_F_Ball_L_CT",
-                                            "S3_F_Ball_L_CT",
-                                            "Face_H_RCT", "Face_H_LCT", "Ball_L_CT"
+                                            "S1_Ball_R_CT", "S1_F_Ball_R_CT", 
+                                            "S2_F_Ball_R_CT", 
+                                            "S3_F_Ball_R_CT", 
+                                            "Face_H_RCT",          // 莎莉特規 (右臉)
+                                            "Ball_R_CT"
                                         ];
                                         
                                         for (let bName of trueControllers) {
