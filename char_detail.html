@@ -477,6 +477,7 @@
             const btnLetter = document.getElementById('btnLetter');
             const btnThought = document.getElementById('btnThought');
             const presentText = document.getElementById('presentText');
+            const presentTextWrapper = document.getElementById('presentTextWrapper'); // 抓取要換背景的容器
             const spineKey = SPINE_MAP[currentTargetName]; 
             
             const inactiveClass = "flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300";
@@ -485,10 +486,23 @@
                 btnLetter.className = "flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-rose-500 text-white shadow-md";
                 btnThought.className = inactiveClass;
                 presentText.innerHTML = (LETTER_MAP[spineKey] || "（這隻坨坨好像還沒寫信給你呢...）").replace(/\n/g, '<br>');
+                
+                // 🌟 喚醒魔法：套用種族專屬背景圖
+                const race = currentCharData.race;
+                const bgUrl = LETTER_BG_MAP[race] || LOVE_LETTER_BG;
+                presentTextWrapper.style.backgroundImage = `url('${bgUrl}')`;
+                presentTextWrapper.style.backgroundSize = 'cover';
+                presentTextWrapper.style.backgroundPosition = 'center';
+                // 為了讓文字在花俏的背景上更清楚，加上半透明底色遮罩
+                presentText.className = "text-sm md:text-base leading-relaxed w-full drop-shadow-md text-gray-800 dark:text-gray-100 bg-white/60 dark:bg-black/40 p-3 rounded-lg backdrop-blur-sm";
             } else {
                 btnThought.className = "flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-amber-500 text-white shadow-md";
                 btnLetter.className = inactiveClass;
                 presentText.innerHTML = (THOUGHT_MAP[spineKey] || "（教主目前還沒寫下對這個珍藏品的感想呢...）").replace(/\n/g, '<br>');
+                
+                // 取消背景圖，恢復預設樣式
+                presentTextWrapper.style.backgroundImage = 'none';
+                presentText.className = "text-sm md:text-base leading-relaxed w-full drop-shadow-md text-gray-700 dark:text-gray-300";
             }
         }
         
@@ -500,6 +514,13 @@
             const baseFolderKey = SPINE_MAP[currentTargetName]; 
             
             clearTimeout(globalIdleTimer);
+
+            // 🌟 關鍵防崩潰修復：先正規銷毀舊的 Spine 實例，釋放 WebGL 記憶體
+            if (window.globalSpinePlayer) {
+                window.globalSpinePlayer.dispose();
+                window.globalSpinePlayer = null;
+            }
+            
             avatarBox.innerHTML = ''; 
 
             // 隨機背景魔法：僅在首次進入或無背景時賦予背景，避免每次換裝都閃爍切換背景
@@ -1299,6 +1320,7 @@
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => {
                 document.getElementById('commentContent').value = '';
+                document.getElementById('charCount').innerText = '0 / 500'; // 🌟 加上這行，重置字數提示
                 btn.disabled = false;
                 btn.innerHTML = '送出評價 🚀';
                 btn.classList.replace('bg-gray-400', 'bg-amber-500');
