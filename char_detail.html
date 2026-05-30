@@ -531,7 +531,12 @@
                 success: function (player) {
                     console.log(`✅ 載入成功: ${costumeKey}`);
                     window.myPlayer = player;
-
+                    
+                    // 骨架清單除錯
+                    console.group("🦴 骨架清單");
+                    player.skeleton.bones.forEach(b => console.log(b.data.name));
+                    console.groupEnd();
+                    
                     // 🌟 1. 皮膚換裝邏輯
                     const skins = player.skeleton.data.skins;
                     if (skins && skins.length > 1) {
