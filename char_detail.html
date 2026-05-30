@@ -595,19 +595,14 @@
                             // --- 🌟 關鍵魔法：攔截 Spine 的渲染刷新，疊加拉臉變形 ---
                             const originalUpdateWorldTransform = player.skeleton.updateWorldTransform.bind(player.skeleton);
                             player.skeleton.updateWorldTransform = function() {
-                                // 1. 先讓 Spine 執行原本的骨架計算（包含角色的呼吸、待機動畫等）
                                 originalUpdateWorldTransform();
                                 
-                                // 2. 如果正在捏臉，我們在計算好的世界座標上，加上手指的偏移量
                                 if (hasTriggeredRub && activeFaceBone) {
-                                    // 將「當前動畫的世界座標」加上「手指拖拉的世界偏移量」
                                     let targetWorld = { 
                                         x: activeFaceBone.worldX + faceOffsetWorldX, 
                                         y: activeFaceBone.worldY + faceOffsetWorldY 
                                     };
                                     
-                                    // 🚀 核心修復：將絕對的世界座標，轉換成該骨骼的「本地座標」！
-                                    // 這完美解決了「往左拉卻往下掉」的方向錯誤問題
                                     if (activeFaceBone.parent) {
                                         activeFaceBone.parent.worldToLocal(targetWorld);
                                     }
@@ -615,7 +610,6 @@
                                     activeFaceBone.x = targetWorld.x;
                                     activeFaceBone.y = targetWorld.y;
                                     
-                                    // 3. 再次呼叫更新，讓 Spine 根據我們校正後的座標，重新讓面部網格變形
                                     originalUpdateWorldTransform();
                                 }
                             };
@@ -650,7 +644,8 @@
                                 let clickedPart = null;
                                 let minDistance = Infinity;
                                 const hitZones = [
-                                    { name: "頭部", bones: ["Character_Pat", "S3_Head"], radius: 120 },
+                                    // 🌟 修正 1：將頭部半徑從 120 大幅擴大到 220，讓判定範圍完美覆蓋到胖嘟嘟的雙頰！
+                                    { name: "頭部", bones: ["Character_Pat", "S3_Head"], radius: 220 },
                                     { name: "身體", bones: ["Character_Tickle", "S3_Body_1", "S3_Body_Root"], radius: 150 }
                                 ];
                                 hitZones.forEach(zone => {
@@ -701,24 +696,35 @@
                                     const rect = canvas.getBoundingClientRect();
                                     hitZoneOnDown = getHitZone(e.clientX - rect.left, e.clientY - rect.top);
 
-                                    // 🌟 嚴格抓取：只尋找距離手指最近的「五官面部控制骨骼」
+                                    // 🌟 修正 2：智能掃描！精準抓取「臉頰」專用網格控制骨
                                     if (hitZoneOnDown && hitZoneOnDown.name === "頭部") {
                                         let minBoneDist = Infinity;
-                                        const candidateBones = ["S1_Face_HCT", "S1_Face_VCT", "S1_Face_BCT"];
-                                        for (let bName of candidateBones) {
-                                            let bone = player.skeleton.findBone(bName);
-                                            if (bone) {
+                                        
+                                        player.skeleton.bones.forEach(bone => {
+                                            const bName = bone.data.name.toLowerCase();
+                                            // 尋找包含 face, cheek 的骨骼，但刻意「排除」控制整張臉的中心點(如 HCT)
+                                            if ((bName.includes("face") || bName.includes("cheek") || bName.includes("jaw")) 
+                                                && !bName.includes("hct") && !bName.includes("vct") && !bName.includes("root")) {
+                                                
                                                 const boneCanvasX = ((bone.worldX - baseViewport.x) / baseViewport.width) * rect.width;
                                                 const boneCanvasY = rect.height - ((bone.worldY - baseViewport.y) / baseViewport.height) * rect.height;
                                                 const dist = Math.hypot((e.clientX - rect.left) - boneCanvasX, (e.clientY - rect.top) - boneCanvasY);
                                                 
+                                                // 找出距離手指「真正最近」的邊緣控制點 (通常就是左右臉頰)
                                                 if (dist < minBoneDist) {
                                                     minBoneDist = dist;
                                                     activeFaceBone = bone; 
                                                 }
                                             }
+                                        });
+
+                                        // 備案：如果找不到細節骨骼，退回抓取 S1_Face_BCT (通常在下巴或下臉頰)
+                                        if (!activeFaceBone) {
+                                            activeFaceBone = player.skeleton.findBone("S1_Face_BCT");
                                         }
-                                        // 註：移除了 S3_Head 的備用方案，頭髮再也不會跟著動了！
+                                        
+                                        // 除錯用：您可以按 F12 打開控制台，看看您剛剛捏到的是哪根骨頭！
+                                        console.log("🤏 捏住的嘟嘟臉骨骼:", activeFaceBone ? activeFaceBone.data.name : "無");
                                     }
                                 }
                             });
@@ -768,13 +774,12 @@
                                         }
                                     }
 
-                                    // 計算臉部拉扯數值 (螢幕座標 -> Spine世界坐標系)
                                     if (hasTriggeredRub && hitZoneOnDown && hitZoneOnDown.name === "頭部" && activeFaceBone) {
                                         const rect = canvas.getBoundingClientRect();
                                         const spineScaleX = baseViewport.width / rect.width / currentZoom;
                                         const spineScaleY = baseViewport.height / rect.height / currentZoom;
                                         
-                                        const stretchIntensity = 1.2; // 拉伸強度
+                                        const stretchIntensity = 1.2; 
                                         faceOffsetWorldX = (e.clientX - startX) * spineScaleX * stretchIntensity; 
                                         faceOffsetWorldY = -(e.clientY - startY) * spineScaleY * stretchIntensity; 
                                     }
@@ -798,7 +803,6 @@
                                     isPointerDown = false;
                                     const animNames = player.skeleton.data.animations.map(a => a.name);
                     
-                                    // 放手瞬間：偏移量歸零，下個 frame 角色臉部就會自動彈回去！
                                     faceOffsetWorldX = 0; 
                                     faceOffsetWorldY = 0;
                                     activeFaceBone = null; 
