@@ -596,103 +596,7 @@
                         if (canvas) {
                             canvas.style.touchAction = 'none'; // 鎖定手機滑動，專注於觸控互動！
 
-                            // 💡 共用變數
-                            let currentZoom = 1.0;
-                            const ZOOM_ANCHOR_Y = 600; 
-                            const baseViewport = { x: -400, y: 0, width: 800, height: 1000 }; 
-                            const pointers = {}; 
-                            let initialPinchDistance = 0;
-            
-                            let isPointerDown = false;
-                            let dragDistance = 0;
-                            let lastX = 0, lastY = 0;
-                            let startX = 0, startY = 0; 
-                            let faceOffsetWorldX = 0, faceOffsetWorldY = 0; 
-                            let hitZoneOnDown = null;
-                            let hasTriggeredRub = false; 
-                            let tickleTimer = null; 
-                            let activeFaceBone = null; 
-
-                            // --- 🌟 關鍵魔法：攔截 Spine 的渲染刷新，疊加拉臉變形 ---
-                            const originalUpdateWorldTransform = player.skeleton.updateWorldTransform.bind(player.skeleton);
-                            player.skeleton.updateWorldTransform = function() {
-                                originalUpdateWorldTransform();
-                                
-                                if (hasTriggeredRub && activeFaceBone) {
-                                    let targetWorld = { 
-                                        x: activeFaceBone.worldX + faceOffsetWorldX, 
-                                        y: activeFaceBone.worldY + faceOffsetWorldY 
-                                    };
-                                    
-                                    if (activeFaceBone.parent) {
-                                        activeFaceBone.parent.worldToLocal(targetWorld);
-                                    }
-                                    
-                                    activeFaceBone.x = targetWorld.x;
-                                    activeFaceBone.y = targetWorld.y;
-                                    
-                                    originalUpdateWorldTransform();
-                                }
-                            };
-                            // --------------------------------------------------------
-
-                            // --- 🖱️ 電腦專用：滾輪縮放 ---
-                            avatarBox.addEventListener('wheel', function(event) {
-                                event.preventDefault();
-                                currentZoom = event.deltaY < 0 ? Math.min(currentZoom + 0.1, 4.0) : Math.max(currentZoom - 0.1, 0.5);
-                                if (player.skeleton) {
-                                    player.skeleton.scaleX = currentZoom;
-                                    player.skeleton.scaleY = currentZoom;
-                                    player.skeleton.y = ZOOM_ANCHOR_Y * (1 - currentZoom);
-                                    player.skeleton.x = 0;
-                                }
-                            }, { passive: false });
-
-                            // --- 🔄 雙擊重置 ---
-                            avatarBox.addEventListener('dblclick', function() {
-                                currentZoom = 1.0;
-                                if (player.skeleton) {
-                                    player.skeleton.scaleX = 1.0;
-                                    player.skeleton.scaleY = 1.0;
-                                    player.skeleton.y = 0;
-                                    player.skeleton.x = 0;
-                                }
-                            });
-
-                            // 輔助函式：計算點擊部位
-                            function getHitZone(mouseX, mouseY) {
-                                const rect = canvas.getBoundingClientRect();
-                                let clickedPart = null;
-                                let minDistance = Infinity;
-                                const hitZones = [
-                                    // 🌟 修正 1：將頭部半徑從 120 大幅擴大到 220，讓判定範圍完美覆蓋到胖嘟嘟的雙頰！
-                                    { name: "頭部", bones: ["Character_Pat", "S3_Head"], radius: 220 },
-                                    { name: "身體", bones: ["Character_Tickle", "S3_Body_1", "S3_Body_Root"], radius: 150 }
-                                ];
-                                hitZones.forEach(zone => {
-                                    let targetBone = null;
-                                    for (let bName of zone.bones) {
-                                        targetBone = player.skeleton.findBone(bName);
-                                        if (targetBone) break;
-                                    }
-                                    if (targetBone) {
-                                        const boneCanvasX = ((targetBone.worldX - baseViewport.x) / baseViewport.width) * rect.width;
-                                        const boneCanvasY = rect.height - ((targetBone.worldY - baseViewport.y) / baseViewport.height) * rect.height;
-                                        const dx = mouseX - boneCanvasX;
-                                        const dy = mouseY - boneCanvasY;
-                                        const distance = Math.sqrt(dx * dx + dy * dy);
-                                        const scaledRadius = (zone.radius * currentZoom) * (rect.height / baseViewport.height);
-
-                                        if (distance < scaledRadius && distance < minDistance) {
-                                            minDistance = distance;
-                                            clickedPart = zone;
-                                        }
-                                    }
-                                });
-                                return clickedPart;
-                            }
-
-                            // 💡 共用變數
+                            // 💡 共用變數 (這裡原本被重複貼上了兩次，已刪除重複的部分)
                             let currentZoom = 1.0;
                             const ZOOM_ANCHOR_Y = 600; 
                             const baseViewport = { x: -400, y: 0, width: 800, height: 1000 }; 
@@ -835,15 +739,10 @@
                                         }
 
                                         // 🛑 【關鍵防呆：右臉/頭髮保護機制】
-                                        // 由於上述骨骼都在左臉，我們設定一個合理的「捏臉判定半徑」
-                                        // 如果玩家點在右邊的頭髮上，距離左臉骨骼太遠，就會直接取消捏臉鎖定！
                                         const maxPullRadius = 150 * currentZoom * (rect.height / baseViewport.height);
                                         
                                         if (minBoneDist > maxPullRadius) {
                                             activeFaceBone = null; // 距離太遠，取消變形鎖定（只會觸發純粹的摸頭動畫）
-                                            // console.log("點擊在右側或頭髮，純摸頭不捏臉！");
-                                        } else {
-                                            // console.log("🤏 成功捏住左側嘟嘟臉骨骼:", activeFaceBone ? activeFaceBone.data.name : "無");
                                         }
                                     }
                                 }
