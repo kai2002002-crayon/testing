@@ -601,99 +601,143 @@
                         globalIdleTimer = setTimeout(playNextAnimation, 5000);
 
                         // 點擊畫布手動切換
-                        // 🌟 4. 部位點擊判定與專屬反應系統
+                        // 🌟 4. 進階互動系統 (精準區分「點擊」與「拖拉撫摸」)
                         const canvas = avatarBox.querySelector('canvas');
-                        if (canvas) {
-                            canvas.addEventListener('click', function(event) {
-                                // 1. 取得滑鼠在畫布上的精準座標
-                                const rect = canvas.getBoundingClientRect();
-                                const mouseX = event.clientX - rect.left;
-                                const mouseY = event.clientY - rect.top;
+                       if (canvas) {
+                           let isPointerDown = false;
+                           let dragDistance = 0;
+                           let lastX = 0, lastY = 0;
+                           let hitZoneOnDown = null;
+                           let hasTriggeredRub = false; // 用來標記是否已經變成「撫摸」
+
+                           // 輔助函式：計算滑鼠在哪個判定區
+                           function getHitZone(mouseX, mouseY) {
+                               const rect = canvas.getBoundingClientRect();
+                               let clickedPart = null;
+                               let minDistance = Infinity;
+
+                               const hitZones = [
+                                   { name: "頭部", bones: ["Character_Pat", "S3_Head"], radius: 120 },
+                                   { name: "身體", bones: ["Character_Tickle", "S3_Body_1", "S3_Body_Root"], radius: 150 }
+                               ];
+
+                               hitZones.forEach(zone => {
+                                   let targetBone = null;
+                                   for (let bName of zone.bones) {
+                                       targetBone = player.skeleton.findBone(bName);
+                                       if (targetBone) break;
+                                   }
+                                   if (targetBone) {
+                                       const boneCanvasX = ((targetBone.worldX - baseViewport.x) / baseViewport.width) * rect.width;
+                                       const boneCanvasY = rect.height - ((targetBone.worldY - baseViewport.y) / baseViewport.height) * rect.height;
+                                       const dx = mouseX - boneCanvasX;
+                                       const dy = mouseY - boneCanvasY;
+                                       const distance = Math.sqrt(dx * dx + dy * dy);
+                                       const scaledRadius = (zone.radius * currentZoom) * (rect.height / baseViewport.height);
+
+                                       if (distance < scaledRadius && distance < minDistance) {
+                                           minDistance = distance;
+                                           clickedPart = zone;
+                                       }
+                                   }
+                               });
+                               return clickedPart;
+                           }
+
+                           // 👆 第一階段：按下 (記錄座標與部位)
+                           canvas.addEventListener('pointerdown', (e) => {
+                               isPointerDown = true;
+                               dragDistance = 0;
+                               lastX = e.clientX;
+                               lastY = e.clientY;
+                               hasTriggeredRub = false;
+
+                               const rect = canvas.getBoundingClientRect();
+                               hitZoneOnDown = getHitZone(e.clientX - rect.left, e.clientY - rect.top);
+                           });
+
+                           // ✌️ 第二階段：移動 (判斷是否為「拖拉/撫摸」)
+                           canvas.addEventListener('pointermove', (e) => {
+                               if (!isPointerDown) return;
                 
-                                let clickedPart = null;
-                                let minDistance = Infinity;
+                               const dx = e.clientX - lastX;
+                               const dy = e.clientY - lastY;
+                               dragDistance += Math.sqrt(dx * dx + dy * dy);
+                               lastX = e.clientX;
+                               lastY = e.clientY;
 
-                                // 2. 定義互動熱區 (支援所有角色，優先尋找專用骨頭，沒有才找替代骨頭)
-                                const hitZones = [
-                                    { 
-                                        name: "頭部 (摸頭)", 
-                                        bones: ["Character_Pat", "S3_Head"], 
-                                        radius: 120, // 判定半徑
-                                        triggerAnim: "Touch" // 觸發的動作關鍵字
-                                    },
-                                    { 
-                                        name: "身體 (搔癢)", 
-                                        bones: ["Character_Tickle", "S3_Body_1", "S3_Body_Root"], 
-                                        radius: 150, 
-                                        triggerAnim: "Tickle" 
-                                    },
-                                    { 
-                                        name: "武器/配件", 
-                                        bones: ["S3_Weapon", "S3_Scythe_Gem"], 
-                                        radius: 120, 
-                                        triggerAnim: "Smash" 
-                                    }
-                                ];
-
-                                // 3. 掃描每個熱區，找出距離滑鼠最近的骨頭
-                                hitZones.forEach(zone => {
-                                    let targetBone = null;
-                                    for (let bName of zone.bones) {
-                                        targetBone = player.skeleton.findBone(bName);
-                                        if (targetBone) break; // 找到就停止尋找
-                                    }
-
-                                    if (targetBone) {
-                                        // 【關鍵數學】將 Spine 的底層世界座標，完美轉換成網頁 CSS 座標
-                                        const boneCanvasX = ((targetBone.worldX - baseViewport.x) / baseViewport.width) * rect.width;
-                                        const boneCanvasY = rect.height - ((targetBone.worldY - baseViewport.y) / baseViewport.height) * rect.height;
-
-                                        // 計算滑鼠與骨頭的直線距離 (畢氏定理)
-                                        const dx = mouseX - boneCanvasX;
-                                        const dy = mouseY - boneCanvasY;
-                                        const distance = Math.sqrt(dx * dx + dy * dy);
-
-                                        // 根據目前的縮放倍率 (currentZoom) 動態調整判定範圍
-                                        const scaledRadius = (zone.radius * currentZoom) * (rect.height / baseViewport.height);
-
-                                        // 如果點擊在範圍內，且是目前距離最近的部位
-                                        if (distance < scaledRadius && distance < minDistance) {
-                                            minDistance = distance;
-                                            clickedPart = zone;
-                                        }
-                                    }
-                                });
-
-                                clearTimeout(globalIdleTimer);
-
-                                // 4. 根據點擊部位，播放對應的反應動作
-                                if (clickedPart) {
-                                    console.log(`👉 精準點擊: ${clickedPart.name}`);
+                               // 💡 如果拖拉距離超過 30 像素，且尚未觸發過反應，就判定為「撫摸/搔癢」
+                               if (dragDistance > 30 && !hasTriggeredRub && hitZoneOnDown) {
+                                   hasTriggeredRub = true;
+                                   clearTimeout(globalIdleTimer);
                     
-                                    // 從角色的所有動作中，找出符合該部位反應的動作 (排除會卡住的 _End 結尾動作)
-                                    const animNames = player.skeleton.data.animations.map(a => a.name);
-                                   let matches = animNames.filter(n => n.includes(clickedPart.triggerAnim) && !n.includes('_End'));
+                                   const animNames = player.skeleton.data.animations.map(a => a.name);
                     
-                                    // 如果這隻角色剛好沒有這個專屬動作，就用一般輪播當作備案
-                                    if (matches.length === 0) {
-                                        matches = playList.length > 0 ? playList : ['Idle_1'];
-                                    }
+                                   if (hitZoneOnDown.name === "頭部") {
+                                       console.log("🖐️ 拖拉: 撫摸頭部 (Touch)");
+                                       const touchAnims = animNames.filter(n => n.includes('Touch') && !n.includes('_End'));
+                                       if (touchAnims.length > 0) {
+                                           player.animationState.setAnimation(0, touchAnims[Math.floor(Math.random() * touchAnims.length)], true);
+                                       }
+                                   } else if (hitZoneOnDown.name === "身體") {
+                                       console.log("🖐️ 拖拉: 搔癢身體 (Tickle)");
+                                       const tickleAnims = animNames.filter(n => n.includes('Tickle') && !n.includes('_End'));
+                                       if (tickleAnims.length > 0) {
+                                           player.animationState.setAnimation(0, tickleAnims[Math.floor(Math.random() * tickleAnims.length)], true);
+                                       }
+                                   }
+                               }
+                           });
 
-                                    // 隨機抽一個反應動作來播
-                                    const reactionAnim = matches[Math.floor(Math.random() * matches.length)];
-                                    console.log(`✨ 觸發專屬反應: ${reactionAnim}`);
-                                    player.animationState.setAnimation(0, reactionAnim, true);
-                    
-                                } else {
-                                    // 如果點到空白處，就當作一般點擊，切換下一個普通動作
-                                    console.log(`👉 點擊空白處`);
-                                    playNextAnimation();
-                                }
+                           // 🤟 第三階段：放開 (如果是單純點擊，執行特殊連技)
+                           canvas.addEventListener('pointerup', (e) => {
+                               isPointerDown = false;
                 
-                                // 互動結束後，重新設定 5 秒後恢復自動輪播
-                                globalIdleTimer = setTimeout(playNextAnimation, 5000);
-                            });
-                        }
+                               // 💡 如果沒有觸發過拖拉，代表這是一次乾淨的「單次點擊」
+                               if (!hasTriggeredRub) {
+                                   clearTimeout(globalIdleTimer);
+                    
+                                   if (hitZoneOnDown) {
+                                       if (hitZoneOnDown.name === "頭部") {
+                                           console.log("👉 單次點擊: 頭部 (觸發 Smash 連技)");
+                            
+                                           const animNames = player.skeleton.data.animations.map(a => a.name);
+                                           const hasSmash1 = animNames.includes("Smash_End_1");
+                                           const hasSmash2 = animNames.includes("Smash_End_2");
+                            
+                                           // 🌟 Spine 連技魔法：播完動作 A 後，自動排程播放動作 B
+                                           if (hasSmash1 && hasSmash2) {
+                                               // 參數 false = 只播一次不循環
+                                               player.animationState.setAnimation(0, "Smash_End_1", false);
+                                               // addAnimation 代表加入排程佇列，0 代表與上個動作無縫接軌
+                                               player.animationState.addAnimation(0, "Smash_End_2", true, 0); 
+                                           } else if (hasSmash1) {
+                                               player.animationState.setAnimation(0, "Smash_End_1", true);
+                                           } else {
+                                               playNextAnimation(); // 防呆備案
+                                           }
+                                       } else {
+                                           console.log("👉 單次點擊: 身體 (切換一般動作)");
+                                           playNextAnimation(); // 點擊身體就當作換動作
+                                       }
+                                   } else {
+                                       console.log("👉 點擊空白處");
+                                       playNextAnimation();
+                                   }
+                    
+                                   // 點擊完後，重新倒數 5 秒恢復自動輪播
+                                   globalIdleTimer = setTimeout(playNextAnimation, 5000);
+                               } else {
+                                   // 如果剛才是撫摸，放開手時也要重新倒數
+                                   globalIdleTimer = setTimeout(playNextAnimation, 5000);
+                               }
+                           });
+
+                           // 預防滑鼠按住移出畫布範圍卡住
+                           canvas.addEventListener('pointerout', () => {
+                               isPointerDown = false;
+                           });
+                       }
                     }
                 },
                 error: function (player, reason) {
