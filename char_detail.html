@@ -731,14 +731,22 @@
                                         let minBoneDist = Infinity;
                                         const allBoneNames = player.skeleton.bones.map(b => b.data.name);
                                         
-                                        // 找出所有面部線條總控與臉頰顏色控制
-                                        const faceCtrls = allBoneNames.filter(n => n.includes("Face_HCT") || n.includes("Face_VCT") || n.includes("Face_BCT"));
-                                        const cheekCtrls = allBoneNames.filter(n => n.includes("Ball_L_CT") || n.includes("Ball_R_CT") || (n.includes("Ball") && n.includes("CT")));
+                                        // 🌟 終極地毯式掃描：只要名字有 Face 或 Ball 通通抓出來！
+                                        let candidateNames = allBoneNames.filter(n => {
+                                            const lower = n.toLowerCase();
+                                            if (lower.includes("face") || lower.includes("ball")) {
+                                                // 排除移動根節點、顏色特效等，避免整個身體飛出去
+                                                if (lower.includes("root") || lower.includes("move") || lower.includes("color") || lower.includes("sweat") || lower.includes("mask") || lower.includes("eff")) {
+                                                    return false;
+                                                }
+                                                return true;
+                                            }
+                                            return false;
+                                        });
                                         
-                                        const candidateBones = [...cheekCtrls, ...faceCtrls];
                                         let closestBoneName = null;
                                         
-                                        for (let bName of candidateBones) {
+                                        for (let bName of candidateNames) {
                                             let bone = player.skeleton.findBone(bName);
                                             if (bone) {
                                                 const boneCanvasX = ((bone.worldX - baseViewport.x) / baseViewport.width) * rect.width;
@@ -756,15 +764,10 @@
                                         if (minBoneDist > maxPullRadius) {
                                             activeFaceBones = []; 
                                         } else if (closestBoneName) {
-                                            // 🌟 核心防撕裂：永遠把面部線條總控 (HCT/VCT) 加入移動清單，確保線色合一！
-                                            let bonesToMoveNames = [...faceCtrls];
-                                            if (!bonesToMoveNames.includes(closestBoneName)) {
-                                                bonesToMoveNames.push(closestBoneName);
-                                            }
-                                            
-                                            let rawBones = bonesToMoveNames.map(n => player.skeleton.findBone(n)).filter(b => b);
+                                            // 🌟 霸道總裁綁定：不挑了，全部一起動！
+                                            let rawBones = candidateNames.map(n => player.skeleton.findBone(n)).filter(b => b);
 
-                                            // 🛡️ 核心防暴走族譜過濾器：檢查是否為父子關係
+                                            // 🛡️ 智能族譜過濾器：防止父子疊加導致的雙重位移 (飛走)
                                             function isDescendant(child, potentialParent) {
                                                 let p = child.parent;
                                                 while (p) {
@@ -774,7 +777,7 @@
                                                 return false;
                                             }
 
-                                            // 只有「不是別人兒子」的骨骼，才有資格被獨立加上位移！
+                                            // 篩選出所有「最高輩分」的骨骼，讓線條跟顏色完美同步移動！
                                             activeFaceBones = [];
                                             for (let bone of rawBones) {
                                                 let hasAncestor = false;
@@ -843,11 +846,12 @@
                                         const spineScaleX = baseViewport.width / rect.width / currentZoom;
                                         const spineScaleY = baseViewport.height / rect.height / currentZoom;
                                         
-                                        const stretchIntensity = 1.3; 
+                                        // 🌟 調降拉扯強度，讓整體手感更像捏 Q 彈臉頰，避免拉破圖
+                                        const stretchIntensity = 1.0; 
                                         let rawDx = (e.clientX - startX) * spineScaleX * stretchIntensity; 
                                         let rawDy = -(e.clientY - startY) * spineScaleY * stretchIntensity; 
                                         
-                                        const maxStretch = 150;
+                                        const maxStretch = 100; // 最大拉扯限制縮小到 100
                                         const currentStretch = Math.hypot(rawDx, rawDy);
                                         if (currentStretch > maxStretch) {
                                             rawDx = (rawDx / currentStretch) * maxStretch;
