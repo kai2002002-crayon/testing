@@ -646,12 +646,12 @@
 
                             // 👆 整合階段 1：按下
                             canvas.addEventListener('pointerdown', (e) => {
-                                pointers[e.pointerId] = { x: e.clientX, y: e.clientY }; // 紀錄觸控點
+                                pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
                                 const pointerKeys = Object.keys(pointers);
 
                                 if (pointerKeys.length === 2) {
                                     // ✌️ 雙指按下：進入縮放模式
-                                    isPointerDown = false; // 強制關閉撫摸判定
+                                    isPointerDown = false; 
                                     clearTimeout(tickleTimer); 
                                     const p1 = pointers[pointerKeys[0]];
                                     const p2 = pointers[pointerKeys[1]];
@@ -668,7 +668,7 @@
                                 }
                             });
 
-                            // ✌️ 整合階段 2：移動
+                            // ✌️ 整合階段 2：移動 (加入真正的拉臉骨骼)
                             canvas.addEventListener('pointermove', (e) => {
                                 if (!pointers[e.pointerId]) return;
                                 pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
@@ -692,34 +692,36 @@
                                     initialPinchDistance = currentDistance;
 
                                 } else if (pointerKeys.length === 1 && isPointerDown) {
-                                    // ✋ 單指拖拉中 (拉臉/撫摸判定)
+                                    // ✋ 單指拖拉中
                                     const dx = e.clientX - lastX;
                                     const dy = e.clientY - lastY;
                                     dragDistance += Math.sqrt(dx * dx + dy * dy);
                     
-                                    // 1. 偵測到移動並命中頭部，啟動拉扯狀態
-                                    if (dragDistance > 10 && !hasTriggeredRub && hitZoneOnDown && hitZoneOnDown.name === "頭部") {
+                                    // 1. 拖動距離超過 10，觸發拉扯/持續撫摸
+                                    if (dragDistance > 10 && !hasTriggeredRub && hitZoneOnDown) {
                                         hasTriggeredRub = true;
                                         clearTimeout(globalIdleTimer);
-                                        player.animationState.setAnimation(0, "Touch_Idle", true);
+                                        
+                                        if (hitZoneOnDown.name === "頭部") {
+                                            player.animationState.setAnimation(0, "Touch_Idle", true);
+                                        } else if (hitZoneOnDown.name === "身體") {
+                                            player.animationState.setAnimation(0, "Tickle_Idle", true); // 或 Tickle
+                                        }
                                     }
 
-                                    // 2. 如果正在拉扯頭部，實時更新骨骼位置
+                                    // 2. 拉臉網格變形核心邏輯！
                                     if (hasTriggeredRub && hitZoneOnDown && hitZoneOnDown.name === "頭部") {
-                                        const headBone = player.skeleton.findBone("S3_Head");
-                                        if (headBone) {
-                                            // 將螢幕座標轉換為骨架空間座標
-                                            const rect = canvas.getBoundingClientRect();
-                                            const normX = (e.clientX - rect.left) / rect.width;
-                                            const normY = (e.clientY - rect.top) / rect.height;
-                            
-                                            // 將手指移動量疊加到骨骼上 (設定一個拉伸係數)
-                                            headBone.x += dx * 0.5; 
-                                            headBone.y -= dy * 0.5; // Spine 座標 Y 軸通常向上
-                            
-                                            // 強制重新計算骨架位置
-                                            player.skeleton.updateWorldTransform();
+                                        // 優先抓取面部控制骨骼，如果沒有再抓頭部
+                                        const faceBones = ["S1_Face_HCT", "S1_Face_VCT", "S1_Face_BCT", "S3_Head"];
+                                        for (let bName of faceBones) {
+                                            let bone = player.skeleton.findBone(bName);
+                                            if (bone) {
+                                                // 控制骨骼對位移很敏感，所以係數調低 (0.2)
+                                                bone.x += dx * 0.2; 
+                                                bone.y -= dy * 0.2; 
+                                            }
                                         }
+                                        player.skeleton.updateWorldTransform(); // 強制更新渲染
                                     }
 
                                     lastX = e.clientX;
@@ -727,12 +729,11 @@
                                 }
                             });
 
-                            // 🤟 整合階段 3：放開
+                            // 🤟 整合階段 3：放開 (修復敲打與恢復邏輯)
                             const handlePointerUp = (e) => {
                                 delete pointers[e.pointerId];
                                 const pointerKeys = Object.keys(pointers);
 
-                                // 💡 防呆：如果原本是雙指縮放，放開了一指，強制中斷撫摸判定，避免剩下那指突然發出點擊指令
                                 if (pointerKeys.length === 1) {
                                     isPointerDown = false;
                                     return;
@@ -740,46 +741,64 @@
 
                                 if (pointerKeys.length === 0 && isPointerDown) {
                                     isPointerDown = false;
+                                    const animNames = player.skeleton.data.animations.map(a => a.name);
                     
-                                    if (hasTriggeredRub && hitZoneOnDown && hitZoneOnDown.name === "頭部") {
-                                        // --- 放手：播放 Touch_End ---
-                                        const animNames = player.skeleton.data.animations.map(a => a.name);
-                        
-                                        // 先重置骨骼座標，避免角色臉歪掉
-                                        const headBone = player.skeleton.findBone("S3_Head");
-                                        if (headBone) {
-                                            headBone.x = 0; headBone.y = 0; 
-                                            player.skeleton.updateWorldTransform();
+                                    // 【關鍵防呆】無論是敲擊還是拉扯，放手時一律將臉部變形骨骼歸零！
+                                    const faceBones = ["S1_Face_HCT", "S1_Face_VCT", "S1_Face_BCT", "S3_Head"];
+                                    for (let bName of faceBones) {
+                                        let bone = player.skeleton.findBone(bName);
+                                        if (bone) {
+                                            bone.x = 0; bone.y = 0; 
                                         }
+                                    }
+                                    player.skeleton.updateWorldTransform();
 
-                                        if (animNames.includes("Touch_End")) {
-                                            player.animationState.setAnimation(0, "Touch_End", false);
-                                            player.animationState.addAnimation(0, "Idle_1", true, 0);
-                                        } else {
-                                            player.animationState.setAnimation(0, "Idle_1", true);
-                                        }
-                                    } else {
-                                        // --- 單指：中斷撫摸邏輯 ---
-                                        clearTimeout(tickleTimer); 
-
-                                        if (hitZoneOnDown && hitZoneOnDown.name === "身體") {
-                                            if (animNames.includes("Tickle_End")) {
-                                                player.animationState.setAnimation(0, "Tickle_End", false); 
-                                                player.animationState.addAnimation(0, "Idle_1", true, 0);   
-                                            }
-                                        } else if (hitZoneOnDown && hitZoneOnDown.name === "頭部") {
+                                    if (hasTriggeredRub) {
+                                        // 狀況 A：這是一次「拖拉 (Drag)」後的放手
+                                        if (hitZoneOnDown && hitZoneOnDown.name === "頭部") {
                                             if (animNames.includes("Touch_End")) {
                                                 player.animationState.setAnimation(0, "Touch_End", false);
                                                 player.animationState.addAnimation(0, "Idle_1", true, 0);
+                                            } else {
+                                                player.animationState.setAnimation(0, "Idle_1", true);
+                                            }
+                                        } else if (hitZoneOnDown && hitZoneOnDown.name === "身體") {
+                                            if (animNames.includes("Tickle_End")) {
+                                                player.animationState.setAnimation(0, "Tickle_End", false);
+                                                player.animationState.addAnimation(0, "Idle_1", true, 0);
+                                            } else {
+                                                player.animationState.setAnimation(0, "Idle_1", true);
                                             }
                                         }
-                                        clearTimeout(globalIdleTimer);
-                                        globalIdleTimer = setTimeout(playNextAnimation, 5000);
+                                    } else {
+                                        // 狀況 B：這是一次純粹的「點擊 (Tap)」(因為 dragDistance < 10)
+                                        if (hitZoneOnDown && hitZoneOnDown.name === "頭部") {
+                                            // 敲頭反應 (可根據角色的動畫名稱調整，通常為 Touch_Head 或 Touch_1)
+                                            if (animNames.includes("Touch_Head")) {
+                                                player.animationState.setAnimation(0, "Touch_Head", false);
+                                                player.animationState.addAnimation(0, "Idle_1", true, 0);
+                                            } else if (animNames.includes("Touch_1")) {
+                                                player.animationState.setAnimation(0, "Touch_1", false);
+                                                player.animationState.addAnimation(0, "Idle_1", true, 0);
+                                            }
+                                        } else if (hitZoneOnDown && hitZoneOnDown.name === "身體") {
+                                            // 身體搔癢反應
+                                            if (animNames.includes("Tickle")) {
+                                                player.animationState.setAnimation(0, "Tickle", false);
+                                                player.animationState.addAnimation(0, "Idle_1", true, 0);
+                                            } else if (animNames.includes("Touch_Body")) {
+                                                player.animationState.setAnimation(0, "Touch_Body", false);
+                                                player.animationState.addAnimation(0, "Idle_1", true, 0);
+                                            }
+                                        }
                                     }
+                                    
+                                    clearTimeout(globalIdleTimer);
+                                    globalIdleTimer = setTimeout(playNextAnimation, 5000);
                                 }
                             };
 
-                            // 綁定所有可能讓手指離開畫布的事件
+                            // 綁定放開事件
                             canvas.addEventListener('pointerup', handlePointerUp);
                             canvas.addEventListener('pointerout', handlePointerUp);
                             canvas.addEventListener('pointercancel', handlePointerUp);
@@ -1152,3 +1171,4 @@
     </footer>
 </body>
 </html>
+
