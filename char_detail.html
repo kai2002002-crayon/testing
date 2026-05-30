@@ -591,7 +591,7 @@
                         globalIdleTimer = setTimeout(playNextAnimation, 5000);
 
                         // 點擊畫布手動切換
-                        // 🌟 2 & 4. 終極整合：高畫質縮放 + 多指防呆 + 部位互動系統 (終極主從聯動字典版)
+                        // 🌟 2 & 4. 終極整合：高畫質縮放 + 多指防呆 + 部位互動系統 (返璞歸真．雙層優先級完美版)
                         const canvas = avatarBox.querySelector('canvas');
                         if (canvas) {
                             canvas.style.touchAction = 'none';
@@ -612,8 +612,10 @@
                             let hasTriggeredRub = false; 
                             let tickleTimer = null; 
                             
-                            // 🌟 核心：支援多骨骼精準同步移動
-                            let activeFaceBones = []; 
+                            // 🌟 核心：回歸第一次成功的單一骨骼操作，杜絕物理衝突！
+                            let activeFaceBone = null; 
+                            let initialBoneX = 0;
+                            let initialBoneY = 0;
 
                             // --- 🖱️ 電腦專用：滾輪縮放 ---
                             avatarBox.addEventListener('wheel', function(event) {
@@ -688,7 +690,7 @@
                                     startY = e.clientY;
                                     lastX = e.clientX;
                                     lastY = e.clientY;
-                                    activeFaceBones = [];
+                                    activeFaceBone = null;
                                     hasTriggeredRub = false;
                                     
                                     const rect = canvas.getBoundingClientRect();
@@ -696,83 +698,63 @@
 
                                     if (hitZoneOnDown && hitZoneOnDown.name === "頭部") {
                                         let minBoneDist = Infinity;
-                                        let bestGroup = null;
                                         
-                                        // 🌟 終極專屬聯動字典：只抓對的，絕不多抓！
-                                        const dragGroups = [
-                                            // 莎莉 Sally (特規：只要點擊左臉紅，就強制帶動 Face_Con，而且絕不抓右臉)
-                                            { condition: "Face_Con", triggers: ["Ball_L", "Ball_L_2"], targets: ["Face_Con", "Ball_L", "Ball_L_2"] },
-                                            { condition: "Face_Con", triggers: ["Ball_R", "Ball_R_2"], targets: ["Face_Con", "Ball_R", "Ball_R_2"] },
-                                            
-                                            // 洛涅 Lonne (S1)
-                                            { triggers: ["S1_Ball_L", "S1_Ball_L_CT"], targets: ["S1_Ball_L_CT", "S1_Ball_L"] },
-                                            { triggers: ["S1_Ball_R", "S1_Ball_R_CT"], targets: ["S1_Ball_R_CT", "S1_Ball_R"] },
-                                            
-                                            // 斯皮奇 Spitch (S2)
-                                            { triggers: ["S2_F_Ball_L", "S2_F_Ball_L_CT"], targets: ["S2_F_Ball_L_CT", "S2_F_Ball_L"] },
-                                            { triggers: ["S2_F_Ball_R", "S2_F_Ball_R_CT"], targets: ["S2_F_Ball_R_CT", "S2_F_Ball_R"] },
-                                            
-                                            // 希菲爾 Syphiel (S3)
-                                            { triggers: ["S3_F_Ball_L", "S3_F_Ball_L_CT"], targets: ["S3_F_Ball_L_CT", "S3_F_Ball_L"] },
-                                            { triggers: ["S3_F_Ball_R", "S3_F_Ball_R_CT"], targets: ["S3_F_Ball_R_CT", "S3_F_Ball_R"] },
-                                            
-                                            // 路易 Louis / 通用備用方案
-                                            { triggers: ["Ball_L", "Ball_L_CT"], targets: ["Ball_L_CT", "Ball_L"] },
-                                            { triggers: ["Ball_R", "Ball_R_CT"], targets: ["Ball_R_CT", "Ball_R"] }
+                                        // 🏆 第一優先級：面部網格控制器 (帶有 CT 或 Con)
+                                        // 只要抓到這個，臉頰就會完美連動，絕對不會發生「線色分離」！
+                                        const primaryControllers = [
+                                            "Face_Con",
+                                            "S1_Ball_L_CT", "S1_Ball_R_CT", 
+                                            "S2_F_Ball_L_CT", "S2_F_Ball_R_CT",
+                                            "S3_F_Ball_L_CT", "S3_F_Ball_R_CT",
+                                            "Ball_L_CT", "Ball_R_CT",
+                                            "Face_H_LCT", "Face_H_RCT"
                                         ];
-
-                                        // 掃描找出距離滑鼠最近的「觸發骨骼 (Trigger)」
-                                        for (let group of dragGroups) {
-                                            if (group.condition && !player.skeleton.findBone(group.condition)) continue;
-                                            
-                                            for (let tName of group.triggers) {
-                                                let bone = player.skeleton.findBone(tName);
-                                                if (bone) {
-                                                    const boneCanvasX = ((bone.worldX - baseViewport.x) / baseViewport.width) * rect.width;
-                                                    const boneCanvasY = rect.height - ((bone.worldY - baseViewport.y) / baseViewport.height) * rect.height;
-                                                    const dist = Math.hypot((e.clientX - rect.left) - boneCanvasX, (e.clientY - rect.top) - boneCanvasY);
-                                                    
-                                                    if (dist < minBoneDist) {
-                                                        minBoneDist = dist;
-                                                        bestGroup = group;
-                                                    }
+                                        
+                                        for (let bName of primaryControllers) {
+                                            let bone = player.skeleton.findBone(bName);
+                                            if (bone) {
+                                                const boneCanvasX = ((bone.worldX - baseViewport.x) / baseViewport.width) * rect.width;
+                                                const boneCanvasY = rect.height - ((bone.worldY - baseViewport.y) / baseViewport.height) * rect.height;
+                                                const dist = Math.hypot((e.clientX - rect.left) - boneCanvasX, (e.clientY - rect.top) - boneCanvasY);
+                                                
+                                                if (dist < minBoneDist) {
+                                                    minBoneDist = dist;
+                                                    activeFaceBone = bone;
                                                 }
                                             }
                                         }
 
                                         const maxPullRadius = 200 * currentZoom * (rect.height / baseViewport.height);
-                                        if (minBoneDist <= maxPullRadius && bestGroup) {
-                                            
-                                            // 收集該群組所有需要被移動的骨骼
-                                            let rawBones = bestGroup.targets.map(n => player.skeleton.findBone(n)).filter(b => b);
-                                            
-                                            // 🛡️ 族譜過濾器：如果 A 是 B 的父節點，只移動 A，防止雙重變形暴走
-                                            function isDescendant(child, potentialParent) {
-                                                let p = child.parent;
-                                                while (p) {
-                                                    if (p === potentialParent) return true;
-                                                    p = p.parent;
-                                                }
-                                                return false;
-                                            }
-
-                                            for (let bone of rawBones) {
-                                                let hasAncestor = false;
-                                                for (let other of rawBones) {
-                                                    if (bone !== other && isDescendant(bone, other)) {
-                                                        hasAncestor = true;
-                                                        break;
+                                        
+                                        // 🏆 第二優先級：如果附近根本沒有控制器，才降級抓純粹的面紅圖層
+                                        if (minBoneDist > maxPullRadius) {
+                                            minBoneDist = Infinity; 
+                                            const fallbackBones = [
+                                                "S1_Ball_L", "S1_Ball_R",
+                                                "S2_F_Ball_L", "S2_F_Ball_R",
+                                                "S3_F_Ball_L", "S3_F_Ball_R",
+                                                "Ball_L", "Ball_R"
+                                            ];
+                                            for (let bName of fallbackBones) {
+                                                let bone = player.skeleton.findBone(bName);
+                                                if (bone) {
+                                                    const boneCanvasX = ((bone.worldX - baseViewport.x) / baseViewport.width) * rect.width;
+                                                    const boneCanvasY = rect.height - ((bone.worldY - baseViewport.y) / baseViewport.height) * rect.height;
+                                                    const dist = Math.hypot((e.clientX - rect.left) - boneCanvasX, (e.clientY - rect.top) - boneCanvasY);
+                                                    if (dist < minBoneDist) {
+                                                        minBoneDist = dist;
+                                                        activeFaceBone = bone;
                                                     }
                                                 }
-                                                if (!hasAncestor) {
-                                                    // 🌟 記錄最初的 Local 座標
-                                                    activeFaceBones.push({
-                                                        bone: bone,
-                                                        initialX: bone.x,
-                                                        initialY: bone.y
-                                                    });
-                                                }
                                             }
+                                        }
+
+                                        // 記錄最終選定骨骼的初始狀態
+                                        if (minBoneDist <= maxPullRadius && activeFaceBone) {
+                                            initialBoneX = activeFaceBone.x;
+                                            initialBoneY = activeFaceBone.y;
+                                        } else {
+                                            activeFaceBone = null; 
                                         }
                                     }
                                 }
@@ -823,8 +805,8 @@
                                         }
                                     }
 
-                                    // 🌟 沿用您第一次成功的邏輯：操作 Local 座標！
-                                    if (hasTriggeredRub && hitZoneOnDown && hitZoneOnDown.name === "頭部" && activeFaceBones.length > 0) {
+                                    // 🌟 單一骨骼變形邏輯 (完美還原第一次成功的物理約束)
+                                    if (hasTriggeredRub && hitZoneOnDown && hitZoneOnDown.name === "頭部" && activeFaceBone) {
                                         const rect = canvas.getBoundingClientRect();
                                         const spineScaleX = baseViewport.width / rect.width / currentZoom;
                                         const spineScaleY = baseViewport.height / rect.height / currentZoom;
@@ -833,27 +815,23 @@
                                         let worldDx = (e.clientX - startX) * spineScaleX * stretchIntensity; 
                                         let worldDy = -(e.clientY - startY) * spineScaleY * stretchIntensity; 
                                         
-                                        for (let item of activeFaceBones) {
-                                            let bone = item.bone;
-                                            
-                                            // 1. 每次先退回初始點 (防變形疊加暴走)
-                                            bone.x = item.initialX;
-                                            bone.y = item.initialY;
-                                            bone.updateWorldTransform(); 
-                                            
-                                            // 2. 計算目標世界座標
-                                            let targetWorld = { 
-                                                x: bone.worldX + worldDx, 
-                                                y: bone.worldY + worldDy 
-                                            };
-                                            
-                                            // 3. 轉回局部座標，賦予骨骼
-                                            if (bone.parent) {
-                                                bone.parent.worldToLocal(targetWorld);
-                                            }
-                                            bone.x = targetWorld.x;
-                                            bone.y = targetWorld.y;
+                                        // 1. 退回初始點
+                                        activeFaceBone.x = initialBoneX;
+                                        activeFaceBone.y = initialBoneY;
+                                        activeFaceBone.updateWorldTransform(); 
+                                        
+                                        // 2. 計算目標世界座標
+                                        let targetWorld = { 
+                                            x: activeFaceBone.worldX + worldDx, 
+                                            y: activeFaceBone.worldY + worldDy 
+                                        };
+                                        
+                                        // 3. 轉回局部座標
+                                        if (activeFaceBone.parent) {
+                                            activeFaceBone.parent.worldToLocal(targetWorld);
                                         }
+                                        activeFaceBone.x = targetWorld.x;
+                                        activeFaceBone.y = targetWorld.y;
                                     }
 
                                     lastX = e.clientX;
@@ -876,11 +854,11 @@
                                     const animNames = player.skeleton.data.animations.map(a => a.name);
 
                                     // 🌟 完美歸位
-                                    for (let item of activeFaceBones) {
-                                        item.bone.x = item.initialX;
-                                        item.bone.y = item.initialY;
+                                    if (activeFaceBone) {
+                                        activeFaceBone.x = initialBoneX;
+                                        activeFaceBone.y = initialBoneY;
+                                        activeFaceBone = null;
                                     }
-                                    activeFaceBones = []; 
                                     
                                     clearTimeout(tickleTimer); 
 
@@ -901,6 +879,7 @@
                                             }
                                         }
                                     } else {
+                                        // 🌟 敲打動畫判定
                                         if (hitZoneOnDown && hitZoneOnDown.name === "頭部") {
                                             if (animNames.includes("Smash_End_1")) {
                                                 player.animationState.setAnimation(0, "Smash_End_1", false);
