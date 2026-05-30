@@ -609,13 +609,13 @@
                             let startX = 0, startY = 0; 
                             
                             let mouseWorldDx = 0, mouseWorldDy = 0;
-                            let activeFaceBones = []; 
+                            let activeFaceBones = []; // 儲存 { bone, weight } 的權重清單
                             
                             let hitZoneOnDown = null;
                             let hasTriggeredRub = false; 
                             let tickleTimer = null; 
 
-                            // --- 🌟 完美魔法：攔截渲染 ➡️ 動態疊加 ➡️ 立刻歸零防累積 ---
+                            // --- 🌟 完美魔法：攔截渲染 ➡️ 按距離權重疊加 ➡️ 立刻歸零 ---
                             const originalUpdateWorldTransform = player.skeleton.updateWorldTransform.bind(player.skeleton);
                             player.skeleton.updateWorldTransform = function() {
                                 originalUpdateWorldTransform();
@@ -623,12 +623,14 @@
                                 if (hasTriggeredRub && activeFaceBones.length > 0 && (mouseWorldDx !== 0 || mouseWorldDy !== 0)) {
                                     let savedStates = [];
                                     
-                                    for (let bone of activeFaceBones) {
+                                    for (let obj of activeFaceBones) {
+                                        let bone = obj.bone;
                                         savedStates.push({ bone: bone, x: bone.x, y: bone.y });
                                         
+                                        // 🌟 軟選擇核心：每個骨骼根據距離，承受不同比例的拉力！
                                         let targetWorld = { 
-                                            x: bone.worldX + mouseWorldDx, 
-                                            y: bone.worldY + mouseWorldDy 
+                                            x: bone.worldX + (mouseWorldDx * obj.weight), 
+                                            y: bone.worldY + (mouseWorldDy * obj.weight) 
                                         };
                                         
                                         if (bone.parent) bone.parent.worldToLocal(targetWorld);
@@ -725,49 +727,61 @@
                                     hasTriggeredRub = false;
                                     
                                     const rect = canvas.getBoundingClientRect();
-                                    hitZoneOnDown = getHitZone(e.clientX - rect.left, e.clientY - rect.top);
+                                    let clickX = e.clientX - rect.left;
+                                    let clickY = e.clientY - rect.top;
+                                    hitZoneOnDown = getHitZone(clickX, clickY);
 
                                     if (hitZoneOnDown && hitZoneOnDown.name === "頭部") {
-                                        let minBoneDist = Infinity;
                                         const allBoneNames = player.skeleton.bones.map(b => b.data.name);
                                         
-                                        // 🌟 終極地毯式掃描：只要名字有 Face 或 Ball 通通抓出來！
+                                        // 🛡️ 鐵壁過濾器：只允許純種控制器，絕對排除通用骨骼！
                                         let candidateNames = allBoneNames.filter(n => {
                                             const lower = n.toLowerCase();
-                                            if (lower.includes("face") || lower.includes("ball")) {
-                                                // 排除移動根節點、顏色特效等，避免整個身體飛出去
-                                                if (lower.includes("root") || lower.includes("move") || lower.includes("color") || lower.includes("sweat") || lower.includes("mask") || lower.includes("eff")) {
-                                                    return false;
-                                                }
-                                                return true;
+                                            // 排除危險分子：平移根節點、特效、純五官、頭髮
+                                            if (lower.includes("root") || lower.includes("move") || lower.includes("eff") || 
+                                                lower.includes("sweat") || lower.includes("color") || lower.includes("mask") || 
+                                                lower.includes("hair") || lower.includes("head") || lower.includes("eye") ||
+                                                lower.includes("tear") || lower.includes("mouth") || lower.includes("brow")) {
+                                                return false; 
                                             }
-                                            return false;
+                                            
+                                            // 必須是 Cheek (Ball) 或是 Controller (CT, Con)
+                                            const isCheek = lower.includes("ball");
+                                            const isController = lower.includes("ct") || lower.includes("con");
+                                            if (!isCheek && !isController) return false;
+                                            
+                                            // 必須與臉部有關
+                                            if (!lower.includes("face") && !lower.includes("ball") && !lower.includes("cheek")) return false;
+                                            return true;
                                         });
-                                        
-                                        let closestBoneName = null;
-                                        
+
+                                        let minBoneDist = Infinity;
+                                        let weightedBones = [];
+                                        const EFFECT_RADIUS = 350; // 🌟 軟選擇影響半徑（像素），剛好涵蓋半張臉
+
+                                        // 計算每根骨骼距離滑鼠的螢幕距離，賦予動態權重
                                         for (let bName of candidateNames) {
                                             let bone = player.skeleton.findBone(bName);
                                             if (bone) {
                                                 const boneCanvasX = ((bone.worldX - baseViewport.x) / baseViewport.width) * rect.width;
                                                 const boneCanvasY = rect.height - ((bone.worldY - baseViewport.y) / baseViewport.height) * rect.height;
-                                                const dist = Math.hypot((e.clientX - rect.left) - boneCanvasX, (e.clientY - rect.top) - boneCanvasY);
+                                                const dist = Math.hypot(boneCanvasX - clickX, boneCanvasY - clickY);
                                                 
-                                                if (dist < minBoneDist) {
-                                                    minBoneDist = dist;
-                                                    closestBoneName = bName; 
+                                                if (dist < minBoneDist) minBoneDist = dist;
+
+                                                // 距離越近權重越高，超出半徑則為 0
+                                                let weight = Math.max(0, 1 - (dist / EFFECT_RADIUS));
+                                                weight = Math.pow(weight, 1.2); // 加上平滑曲線，讓手感更 Q 彈
+
+                                                if (weight > 0) {
+                                                    weightedBones.push({ bone: bone, weight: weight });
                                                 }
                                             }
                                         }
 
-                                        const maxPullRadius = 280 * currentZoom * (rect.height / baseViewport.height);
-                                        if (minBoneDist > maxPullRadius) {
-                                            activeFaceBones = []; 
-                                        } else if (closestBoneName) {
-                                            // 🌟 霸道總裁綁定：不挑了，全部一起動！
-                                            let rawBones = candidateNames.map(n => player.skeleton.findBone(n)).filter(b => b);
-
-                                            // 🛡️ 智能族譜過濾器：防止父子疊加導致的雙重位移 (飛走)
+                                        // 如果有點中臉部周圍（150像素內）才觸發捏臉
+                                        if (minBoneDist < 150) {
+                                            // 🛡️ 族譜過濾器：防止父子骨骼雙重疊加變形！
                                             function isDescendant(child, potentialParent) {
                                                 let p = child.parent;
                                                 while (p) {
@@ -777,18 +791,17 @@
                                                 return false;
                                             }
 
-                                            // 篩選出所有「最高輩分」的骨骼，讓線條跟顏色完美同步移動！
                                             activeFaceBones = [];
-                                            for (let bone of rawBones) {
+                                            for (let obj of weightedBones) {
                                                 let hasAncestor = false;
-                                                for (let other of rawBones) {
-                                                    if (bone !== other && isDescendant(bone, other)) {
+                                                for (let otherObj of weightedBones) {
+                                                    if (obj.bone !== otherObj.bone && isDescendant(obj.bone, otherObj.bone)) {
                                                         hasAncestor = true;
                                                         break;
                                                     }
                                                 }
                                                 if (!hasAncestor) {
-                                                    activeFaceBones.push(bone);
+                                                    activeFaceBones.push(obj);
                                                 }
                                             }
                                         }
@@ -846,12 +859,11 @@
                                         const spineScaleX = baseViewport.width / rect.width / currentZoom;
                                         const spineScaleY = baseViewport.height / rect.height / currentZoom;
                                         
-                                        // 🌟 調降拉扯強度，讓整體手感更像捏 Q 彈臉頰，避免拉破圖
                                         const stretchIntensity = 1.0; 
                                         let rawDx = (e.clientX - startX) * spineScaleX * stretchIntensity; 
                                         let rawDy = -(e.clientY - startY) * spineScaleY * stretchIntensity; 
                                         
-                                        const maxStretch = 100; // 最大拉扯限制縮小到 100
+                                        const maxStretch = 100;
                                         const currentStretch = Math.hypot(rawDx, rawDy);
                                         if (currentStretch > maxStretch) {
                                             rawDx = (rawDx / currentStretch) * maxStretch;
