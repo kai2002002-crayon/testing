@@ -646,9 +646,11 @@
                                 let clickedPart = null;
                                 let minDistance = Infinity;
                                 const hitZones = [
-                                    { name: "頭部", bones: ["Character_Pat", "S3_Head"], radius: 220 },
+                                    // 🌟 修正：將半徑從 220 加大到 280，讓大頭角色的邊緣也能被輕鬆點到
+                                    { name: "頭部", bones: ["Character_Pat", "S3_Head"], radius: 280 },
                                     { name: "身體", bones: ["Character_Tickle", "S3_Body_1", "S3_Body_Root"], radius: 150 }
                                 ];
+                                // ... 後面不變
                                 hitZones.forEach(zone => {
                                     let targetBone = null;
                                     for (let bName of zone.bones) {
