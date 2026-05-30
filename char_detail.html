@@ -739,15 +739,19 @@
                                         }
 
                                         // 🛑 【關鍵防呆：右臉/頭髮保護機制】
+                                        // 由於上述骨骼都在左臉，我們設定一個合理的「捏臉判定半徑」
+                                        // 如果玩家點在右邊的頭髮上，距離左臉骨骼太遠，就會直接取消捏臉鎖定！
                                         const maxPullRadius = 150 * currentZoom * (rect.height / baseViewport.height);
                                         
                                         if (minBoneDist > maxPullRadius) {
                                             activeFaceBone = null; // 距離太遠，取消變形鎖定（只會觸發純粹的摸頭動畫）
+                                            // console.log("點擊在右側或頭髮，純摸頭不捏臉！");
+                                        } else {
+                                            // console.log("🤏 成功捏住左側嘟嘟臉骨骼:", activeFaceBone ? activeFaceBone.data.name : "無");
                                         }
                                     }
                                 }
                             });
-
                             // ✌️ 整合階段 2：移動
                             canvas.addEventListener('pointermove', (e) => {
                                 if (!pointers[e.pointerId]) return;
