@@ -608,9 +608,8 @@
                             let lastX = 0, lastY = 0;
                             let startX = 0, startY = 0; 
                             
-                            // 🌟 新增：專門管理拉扯狀態的變數
                             let mouseWorldDx = 0, mouseWorldDy = 0;
-                            let activeFaceBones = []; // 改為陣列，讓骨骼群組一起移動防撕裂！
+                            let activeFaceBones = []; // 儲存要連動的骨骼群組
                             
                             let hitZoneOnDown = null;
                             let hasTriggeredRub = false; 
@@ -619,34 +618,26 @@
                             // --- 🌟 完美魔法：攔截渲染 ➡️ 動態疊加 ➡️ 立刻歸零防累積 ---
                             const originalUpdateWorldTransform = player.skeleton.updateWorldTransform.bind(player.skeleton);
                             player.skeleton.updateWorldTransform = function() {
-                                // 1. 先讓 Spine 跑完它自己的動畫 (Touch_Idle)
                                 originalUpdateWorldTransform();
                                 
-                                // 2. 如果我們正在拉臉頰，強制把我們的滑鼠位移「疊加」上去
                                 if (hasTriggeredRub && activeFaceBones.length > 0 && (mouseWorldDx !== 0 || mouseWorldDy !== 0)) {
                                     let savedStates = [];
                                     
                                     for (let bone of activeFaceBones) {
-                                        // 記錄骨骼在這一幀最初的正確位置
                                         savedStates.push({ bone: bone, x: bone.x, y: bone.y });
                                         
-                                        // 計算疊加滑鼠位移後的新世界座標
                                         let targetWorld = { 
                                             x: bone.worldX + mouseWorldDx, 
                                             y: bone.worldY + mouseWorldDy 
                                         };
                                         
-                                        // 轉換回局部座標並賦予骨骼
                                         if (bone.parent) bone.parent.worldToLocal(targetWorld);
                                         bone.x = targetWorld.x;
                                         bone.y = targetWorld.y;
                                     }
                                     
-                                    // 3. 用疊加後的骨骼座標，再次刷新網格 (保證我們手拉的變形能顯示)
                                     originalUpdateWorldTransform();
                                     
-                                    // 4. 🌟【防回彈失敗關鍵】算完圖後，立刻把骨骼歸位！
-                                    // 這樣才不會讓位移量被永久累積，放手後就能完美恢復原狀！
                                     for (let state of savedStates) {
                                         state.bone.x = state.x;
                                         state.bone.y = state.y;
@@ -684,8 +675,8 @@
                                 let clickedPart = null;
                                 let minDistance = Infinity;
                                 const hitZones = [
-                                    { name: "頭部", bones: ["Character_Pat", "S3_Head"], radius: 280 }, 
-                                    { name: "身體", bones: ["Character_Tickle", "S3_Body_1", "S3_Body_Root"], radius: 150 }
+                                    { name: "頭部", bones: ["Character_Pat", "S3_Head", "S1_Head"], radius: 280 }, 
+                                    { name: "身體", bones: ["Character_Tickle", "S3_Body_1", "S1_Body_1"], radius: 150 }
                                 ];
                                 hitZones.forEach(zone => {
                                     let targetBone = null;
@@ -739,35 +730,43 @@
                                     if (hitZoneOnDown && hitZoneOnDown.name === "頭部") {
                                         let minBoneDist = Infinity;
                                         
-                                        // 🌟 【防撕裂核心】：將骨骼綁定分群！只要點中群組內任一骨骼，就讓整個群組一起連動
-                                        const candidateGroups = [
-                                            ["S1_Ball_L_CT", "S1_Ball_L", "S1_Ball_L_Root", "S1_Ball_Root"], 
-                                            ["S1_Ball_R_CT", "S1_Ball_R", "S1_Ball_R_Root"],
-                                            // 如果沒有臉頰骨骼，就強制將所有控制臉部網格的骨骼綁在一起移動！
-                                            ["S1_Face_HCT", "S1_Face_VCT", "S1_Face_BCT", "S1_Face", "S1_Face_Root"] 
-                                        ];
+                                        // 🌟 【全角色通用掃描法】：抓取這隻角色擁有的所有骨骼名稱
+                                        const allBoneNames = player.skeleton.bones.map(b => b.data.name);
                                         
-                                        for (let group of candidateGroups) {
-                                            for (let bName of group) {
-                                                let bone = player.skeleton.findBone(bName);
-                                                if (bone) {
-                                                    const boneCanvasX = ((bone.worldX - baseViewport.x) / baseViewport.width) * rect.width;
-                                                    const boneCanvasY = rect.height - ((bone.worldY - baseViewport.y) / baseViewport.height) * rect.height;
-                                                    const dist = Math.hypot((e.clientX - rect.left) - boneCanvasX, (e.clientY - rect.top) - boneCanvasY);
-                                                    
-                                                    if (dist < minBoneDist) {
-                                                        minBoneDist = dist;
-                                                        // 找出這個群組裡「存在於這隻角色身上的所有骨骼」，全部打包一起拉扯！
-                                                        activeFaceBones = group.map(name => player.skeleton.findBone(name)).filter(b => b);
-                                                    }
-                                                    break; // 找到該群組任一骨頭就算數，跳過後面的檢查
+                                        // 用關鍵字分類：過濾出控制骨骼 (不管前綴是 S1 還是 S3_F 通通抓得到)
+                                        const leftCheeks = allBoneNames.filter(n => n.includes("Ball_L_CT") || n.endsWith("Ball_L"));
+                                        const rightCheeks = allBoneNames.filter(n => n.includes("Ball_R_CT") || n.endsWith("Ball_R"));
+                                        const faceCtrls = allBoneNames.filter(n => n.includes("Face_HCT") || n.includes("Face_VCT") || n.includes("Face_BCT"));
+                                        
+                                        const candidateBones = [...leftCheeks, ...rightCheeks, ...faceCtrls];
+                                        let closestBoneName = null;
+                                        
+                                        for (let bName of candidateBones) {
+                                            let bone = player.skeleton.findBone(bName);
+                                            if (bone) {
+                                                const boneCanvasX = ((bone.worldX - baseViewport.x) / baseViewport.width) * rect.width;
+                                                const boneCanvasY = rect.height - ((bone.worldY - baseViewport.y) / baseViewport.height) * rect.height;
+                                                const dist = Math.hypot((e.clientX - rect.left) - boneCanvasX, (e.clientY - rect.top) - boneCanvasY);
+                                                
+                                                if (dist < minBoneDist) {
+                                                    minBoneDist = dist;
+                                                    closestBoneName = bName; 
                                                 }
                                             }
                                         }
 
                                         const maxPullRadius = 280 * currentZoom * (rect.height / baseViewport.height);
                                         if (minBoneDist > maxPullRadius) {
-                                            activeFaceBones = []; // 距離太遠則不捏臉，只播放摸頭
+                                            activeFaceBones = []; // 距離太遠則不捏臉
+                                        } else if (closestBoneName) {
+                                            // 🌟 【防撕裂魔法】：根據點擊到的部位，決定連動策略
+                                            if (faceCtrls.includes(closestBoneName)) {
+                                                // 點到整體臉部網格：將 HCT/VCT/BCT 一起連動，防止顏色與線條分離
+                                                activeFaceBones = faceCtrls.map(n => player.skeleton.findBone(n)).filter(b => b);
+                                            } else {
+                                                // 點到臉頰 (左或右)：只抓取「被點到的那一根單一控制骨」，防止父子疊加雙重位移！
+                                                activeFaceBones = [player.skeleton.findBone(closestBoneName)];
+                                            }
                                         }
                                     }
                                 }
@@ -823,7 +822,6 @@
                                         const spineScaleX = baseViewport.width / rect.width / currentZoom;
                                         const spineScaleY = baseViewport.height / rect.height / currentZoom;
                                         
-                                        // 計算限制長度，防止臉頰被拉到突破天際 (限制最多拉伸 150 單位的長度)
                                         const stretchIntensity = 1.3; 
                                         let rawDx = (e.clientX - startX) * spineScaleX * stretchIntensity; 
                                         let rawDy = -(e.clientY - startY) * spineScaleY * stretchIntensity; 
@@ -858,7 +856,6 @@
                                     isPointerDown = false;
                                     const animNames = player.skeleton.data.animations.map(a => a.name);
                     
-                                    // 🌟 放開滑鼠時直接將位移量歸零，骨架會瞬間完美回彈！
                                     mouseWorldDx = 0; 
                                     mouseWorldDy = 0;
                                     activeFaceBones = []; 
