@@ -609,7 +609,7 @@
                             let startX = 0, startY = 0; 
                             
                             let mouseWorldDx = 0, mouseWorldDy = 0;
-                            let activeFaceBones = []; // 儲存要連動的骨骼群組
+                            let activeFaceBones = []; 
                             
                             let hitZoneOnDown = null;
                             let hasTriggeredRub = false; 
@@ -675,8 +675,8 @@
                                 let clickedPart = null;
                                 let minDistance = Infinity;
                                 const hitZones = [
-                                    { name: "頭部", bones: ["Character_Pat", "S3_Head", "S1_Head"], radius: 280 }, 
-                                    { name: "身體", bones: ["Character_Tickle", "S3_Body_1", "S1_Body_1"], radius: 150 }
+                                    { name: "頭部", bones: ["Character_Pat", "S3_Head", "S1_Head", "Head"], radius: 280 }, 
+                                    { name: "身體", bones: ["Character_Tickle", "S3_Body_1", "S1_Body_1", "Body_1"], radius: 150 }
                                 ];
                                 hitZones.forEach(zone => {
                                     let targetBone = null;
@@ -729,16 +729,13 @@
 
                                     if (hitZoneOnDown && hitZoneOnDown.name === "頭部") {
                                         let minBoneDist = Infinity;
-                                        
-                                        // 🌟 【全角色通用掃描法】：抓取這隻角色擁有的所有骨骼名稱
                                         const allBoneNames = player.skeleton.bones.map(b => b.data.name);
                                         
-                                        // 用關鍵字分類：過濾出控制骨骼 (不管前綴是 S1 還是 S3_F 通通抓得到)
-                                        const leftCheeks = allBoneNames.filter(n => n.includes("Ball_L_CT") || n.endsWith("Ball_L"));
-                                        const rightCheeks = allBoneNames.filter(n => n.includes("Ball_R_CT") || n.endsWith("Ball_R"));
+                                        // 找出所有面部線條總控與臉頰顏色控制
                                         const faceCtrls = allBoneNames.filter(n => n.includes("Face_HCT") || n.includes("Face_VCT") || n.includes("Face_BCT"));
+                                        const cheekCtrls = allBoneNames.filter(n => n.includes("Ball_L_CT") || n.includes("Ball_R_CT") || (n.includes("Ball") && n.includes("CT")));
                                         
-                                        const candidateBones = [...leftCheeks, ...rightCheeks, ...faceCtrls];
+                                        const candidateBones = [...cheekCtrls, ...faceCtrls];
                                         let closestBoneName = null;
                                         
                                         for (let bName of candidateBones) {
@@ -757,15 +754,39 @@
 
                                         const maxPullRadius = 280 * currentZoom * (rect.height / baseViewport.height);
                                         if (minBoneDist > maxPullRadius) {
-                                            activeFaceBones = []; // 距離太遠則不捏臉
+                                            activeFaceBones = []; 
                                         } else if (closestBoneName) {
-                                            // 🌟 【防撕裂魔法】：根據點擊到的部位，決定連動策略
-                                            if (faceCtrls.includes(closestBoneName)) {
-                                                // 點到整體臉部網格：將 HCT/VCT/BCT 一起連動，防止顏色與線條分離
-                                                activeFaceBones = faceCtrls.map(n => player.skeleton.findBone(n)).filter(b => b);
-                                            } else {
-                                                // 點到臉頰 (左或右)：只抓取「被點到的那一根單一控制骨」，防止父子疊加雙重位移！
-                                                activeFaceBones = [player.skeleton.findBone(closestBoneName)];
+                                            // 🌟 核心防撕裂：永遠把面部線條總控 (HCT/VCT) 加入移動清單，確保線色合一！
+                                            let bonesToMoveNames = [...faceCtrls];
+                                            if (!bonesToMoveNames.includes(closestBoneName)) {
+                                                bonesToMoveNames.push(closestBoneName);
+                                            }
+                                            
+                                            let rawBones = bonesToMoveNames.map(n => player.skeleton.findBone(n)).filter(b => b);
+
+                                            // 🛡️ 核心防暴走族譜過濾器：檢查是否為父子關係
+                                            function isDescendant(child, potentialParent) {
+                                                let p = child.parent;
+                                                while (p) {
+                                                    if (p === potentialParent) return true;
+                                                    p = p.parent;
+                                                }
+                                                return false;
+                                            }
+
+                                            // 只有「不是別人兒子」的骨骼，才有資格被獨立加上位移！
+                                            activeFaceBones = [];
+                                            for (let bone of rawBones) {
+                                                let hasAncestor = false;
+                                                for (let other of rawBones) {
+                                                    if (bone !== other && isDescendant(bone, other)) {
+                                                        hasAncestor = true;
+                                                        break;
+                                                    }
+                                                }
+                                                if (!hasAncestor) {
+                                                    activeFaceBones.push(bone);
+                                                }
                                             }
                                         }
                                     }
