@@ -692,37 +692,38 @@
                                     initialPinchDistance = currentDistance;
 
                                 } else if (pointerKeys.length === 1 && isPointerDown) {
-                                    // ✋ 單指拖拉中 (撫摸判定)
+                                    // ✋ 單指拖拉中 (拉臉/撫摸判定)
                                     const dx = e.clientX - lastX;
                                     const dy = e.clientY - lastY;
                                     dragDistance += Math.sqrt(dx * dx + dy * dy);
-                                    lastX = e.clientX;
-                                    lastY = e.clientY;
-
-                                    if (dragDistance > 30 && !hasTriggeredRub && hitZoneOnDown) {
+                    
+                                    // 1. 偵測到移動並命中頭部，啟動拉扯狀態
+                                    if (dragDistance > 10 && !hasTriggeredRub && hitZoneOnDown && hitZoneOnDown.name === "頭部") {
                                         hasTriggeredRub = true;
                                         clearTimeout(globalIdleTimer);
-                                        const animNames = player.skeleton.data.animations.map(a => a.name);
-                                        
-                                        if (hitZoneOnDown.name === "頭部") {
-                                            const targetAnim = animNames.includes("Touch_Idle") ? "Touch_Idle" : 
-                                                              (animNames.filter(n => n.includes('Touch') && !n.includes('_End'))[0] || "Idle_1");
-                                            player.animationState.setAnimation(0, targetAnim, true);
+                                        player.animationState.setAnimation(0, "Touch_Idle", true);
+                                    }
 
-                                        } else if (hitZoneOnDown.name === "身體") {
-                                            if (animNames.includes("Tickle_Idle_1")) {
-                                                player.animationState.setAnimation(0, "Tickle_Idle_1", true);
-                                                tickleTimer = setTimeout(() => {
-                                                    if (isPointerDown && animNames.includes("Tickle_Idle_2")) {
-                                                        player.animationState.setAnimation(0, "Tickle_Idle_2", true);
-                                                    }
-                                                }, 5000);
-                                            } else {
-                                                const tickleAnims = animNames.filter(n => n.includes('Tickle') && !n.includes('_End'));
-                                                if (tickleAnims.length > 0) player.animationState.setAnimation(0, tickleAnims[Math.floor(Math.random() * tickleAnims.length)], true);
-                                            }
+                                    // 2. 如果正在拉扯頭部，實時更新骨骼位置
+                                    if (hasTriggeredRub && hitZoneOnDown && hitZoneOnDown.name === "頭部") {
+                                        const headBone = player.skeleton.findBone("S3_Head");
+                                        if (headBone) {
+                                            // 將螢幕座標轉換為骨架空間座標
+                                            const rect = canvas.getBoundingClientRect();
+                                            const normX = (e.clientX - rect.left) / rect.width;
+                                            const normY = (e.clientY - rect.top) / rect.height;
+                            
+                                            // 將手指移動量疊加到骨骼上 (設定一個拉伸係數)
+                                            headBone.x += dx * 0.5; 
+                                            headBone.y -= dy * 0.5; // Spine 座標 Y 軸通常向上
+                            
+                                            // 強制重新計算骨架位置
+                                            player.skeleton.updateWorldTransform();
                                         }
                                     }
+
+                                    lastX = e.clientX;
+                                    lastY = e.clientY;
                                 }
                             });
 
@@ -739,31 +740,24 @@
 
                                 if (pointerKeys.length === 0 && isPointerDown) {
                                     isPointerDown = false;
-                                    const animNames = player.skeleton.data.animations.map(a => a.name);
-
-                                    if (!hasTriggeredRub) {
-                                        // --- 單指：點擊邏輯 ---
-                                        clearTimeout(globalIdleTimer);
-                                        if (hitZoneOnDown) {
-                                            if (hitZoneOnDown.name === "頭部") {
-                                                const hasSmash1 = animNames.includes("Smash_End_1");
-                                                const hasSmash2 = animNames.includes("Smash_End_2");
-                                                if (hasSmash1 && hasSmash2) {
-                                                    player.animationState.setAnimation(0, "Smash_End_1", false);
-                                                    player.animationState.addAnimation(0, "Smash_End_2", true, 0); 
-                                                } else if (hasSmash1) {
-                                                    player.animationState.setAnimation(0, "Smash_End_1", true);
-                                                } else {
-                                                    playNextAnimation();
-                                                }
-                                            } else {
-                                                playNextAnimation(); 
-                                            }
-                                        } else {
-                                            playNextAnimation();
+                    
+                                    if (hasTriggeredRub && hitZoneOnDown && hitZoneOnDown.name === "頭部") {
+                                        // --- 放手：播放 Touch_End ---
+                                        const animNames = player.skeleton.data.animations.map(a => a.name);
+                        
+                                        // 先重置骨骼座標，避免角色臉歪掉
+                                        const headBone = player.skeleton.findBone("S3_Head");
+                                        if (headBone) {
+                                            headBone.x = 0; headBone.y = 0; 
+                                            player.skeleton.updateWorldTransform();
                                         }
-                                        globalIdleTimer = setTimeout(playNextAnimation, 5000);
-                                        
+
+                                        if (animNames.includes("Touch_End")) {
+                                            player.animationState.setAnimation(0, "Touch_End", false);
+                                            player.animationState.addAnimation(0, "Idle_1", true, 0);
+                                        } else {
+                                            player.animationState.setAnimation(0, "Idle_1", true);
+                                        }
                                     } else {
                                         // --- 單指：中斷撫摸邏輯 ---
                                         clearTimeout(tickleTimer); 
