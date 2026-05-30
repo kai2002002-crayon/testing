@@ -585,8 +585,8 @@
                             let isPointerDown = false;
                             let dragDistance = 0;
                             let lastX = 0, lastY = 0;
-                            let startX = 0, startY = 0; // 新增：記錄按下的初始位置
-                            let faceOffsetX = 0, faceOffsetY = 0; // 新增：記錄臉部拉扯的偏移量
+                            let startX = 0, startY = 0; 
+                            let faceOffsetX = 0, faceOffsetY = 0; 
                             let hitZoneOnDown = null;
                             let hasTriggeredRub = false; 
                             let tickleTimer = null; 
@@ -594,31 +594,29 @@
                             // --- 🌟 關鍵魔法：攔截 Spine 的渲染刷新，疊加拉臉變形 ---
                             const originalUpdateWorldTransform = player.skeleton.updateWorldTransform.bind(player.skeleton);
                             player.skeleton.updateWorldTransform = function() {
+                                let appliedBones = [];
+                                
                                 // 1. 在計算世界座標前，先加上我們手指的偏移量
                                 if (hasTriggeredRub && hitZoneOnDown && hitZoneOnDown.name === "頭部") {
+                                    // S1_Face 開頭的正是遊戲中用來控制網格變形的關鍵骨骼！
                                     const faceBones = ["S1_Face_HCT", "S1_Face_VCT", "S1_Face_BCT", "S3_Head"];
                                     for (let bName of faceBones) {
                                         let bone = player.skeleton.findBone(bName);
                                         if (bone) {
                                             bone.x += faceOffsetX;
-                                            bone.y += faceOffsetY; // Spine裡面Y軸可能是向上的
+                                            bone.y += faceOffsetY; // Spine裡面Y軸通常向上
+                                            appliedBones.push(bone);
                                         }
                                     }
                                 }
                                 
-                                // 2. 讓 Spine 計算最終座標
+                                // 2. 讓 Spine 計算最終座標 (渲染畫面)
                                 originalUpdateWorldTransform();
                                 
-                                // 3. 計算完畢後減去偏移量，避免污染骨架原始數據
-                                if (hasTriggeredRub && hitZoneOnDown && hitZoneOnDown.name === "頭部") {
-                                    const faceBones = ["S1_Face_HCT", "S1_Face_VCT", "S1_Face_BCT", "S3_Head"];
-                                    for (let bName of faceBones) {
-                                        let bone = player.skeleton.findBone(bName);
-                                        if (bone) {
-                                            bone.x -= faceOffsetX;
-                                            bone.y -= faceOffsetY;
-                                        }
-                                    }
+                                // 3. 計算完畢後立刻減去偏移量，避免數值無限疊加導致模型崩壞
+                                for (let bone of appliedBones) {
+                                    bone.x -= faceOffsetX;
+                                    bone.y -= faceOffsetY;
                                 }
                             };
                             // --------------------------------------------------------
@@ -739,7 +737,6 @@
                                         if (hitZoneOnDown.name === "頭部") {
                                             player.animationState.setAnimation(0, "Touch_Idle", true);
                                         } else if (hitZoneOnDown.name === "身體") {
-                                            // 身體：觸發 Tickle_Idle_1，並設定 5 秒後轉向 Tickle_Idle_2
                                             player.animationState.setAnimation(0, "Tickle_Idle_1", true);
                                             tickleTimer = setTimeout(() => {
                                                 const animNames = player.skeleton.data.animations.map(a => a.name);
@@ -750,10 +747,18 @@
                                         }
                                     }
 
-                                    // 更新臉部拉扯數值 (0.15是敏感度係數，Spine的Y是相反的)
+                                    // 🌟 精準坐標轉換魔法！將螢幕像素完美映射到 Spine 世界
                                     if (hasTriggeredRub && hitZoneOnDown && hitZoneOnDown.name === "頭部") {
-                                        faceOffsetX = (e.clientX - startX) * 0.15; 
-                                        faceOffsetY = -(e.clientY - startY) * 0.15; 
+                                        const rect = canvas.getBoundingClientRect();
+                                        // 計算畫面與 Spine 內部的縮放比例
+                                        const spineScaleX = baseViewport.width / rect.width / currentZoom;
+                                        const spineScaleY = baseViewport.height / rect.height / currentZoom;
+                                        
+                                        // 如果想要更誇張的橡皮臉效果，可以把 1.5 改成 2.0 或更大！
+                                        const stretchIntensity = 1.5; 
+
+                                        faceOffsetX = (e.clientX - startX) * spineScaleX * stretchIntensity; 
+                                        faceOffsetY = -(e.clientY - startY) * spineScaleY * stretchIntensity; 
                                     }
 
                                     lastX = e.clientX;
@@ -779,10 +784,9 @@
                                     faceOffsetX = 0; 
                                     faceOffsetY = 0;
                                     
-                                    clearTimeout(tickleTimer); // 只要放手，就清除搔癢 5 秒的定時器
+                                    clearTimeout(tickleTimer); 
 
                                     if (hasTriggeredRub) {
-                                        // 狀況 A：拉扯/長時間觸碰結束
                                         if (hitZoneOnDown && hitZoneOnDown.name === "頭部") {
                                             if (animNames.includes("Touch_End")) {
                                                 player.animationState.setAnimation(0, "Touch_End", false);
@@ -791,7 +795,6 @@
                                                 player.animationState.setAnimation(0, "Idle_1", true);
                                             }
                                         } else if (hitZoneOnDown && hitZoneOnDown.name === "身體") {
-                                            // 放手立刻觸發 Tickle_End
                                             if (animNames.includes("Tickle_End")) {
                                                 player.animationState.setAnimation(0, "Tickle_End", false);
                                                 player.animationState.addAnimation(0, "Idle_1", true, 0);
@@ -800,9 +803,7 @@
                                             }
                                         }
                                     } else {
-                                        // 狀況 B：單次點擊 (Tap)
                                         if (hitZoneOnDown && hitZoneOnDown.name === "頭部") {
-                                            // 連續觸發 Smash_End_1 然後 Smash_End_2
                                             if (animNames.includes("Smash_End_1")) {
                                                 player.animationState.setAnimation(0, "Smash_End_1", false);
                                                 if (animNames.includes("Smash_End_2")) {
@@ -827,7 +828,6 @@
                                 }
                             };
 
-                            // 綁定所有可能讓手指離開畫布的事件
                             canvas.addEventListener('pointerup', handlePointerUp);
                             canvas.addEventListener('pointerout', handlePointerUp);
                             canvas.addEventListener('pointercancel', handlePointerUp);
