@@ -646,8 +646,8 @@
                                 let clickedPart = null;
                                 let minDistance = Infinity;
                                 const hitZones = [
-                                    // 🌟 修正：將半徑從 220 加大到 280，讓大頭角色的邊緣也能被輕鬆點到
-                                    { name: "頭部", bones: ["Character_Pat", "S3_Head"], radius: 280 },
+                                    // 🌟 修正：將半徑從 220 加大到 300，讓大頭角色的邊緣也能被輕鬆點到
+                                    { name: "頭部", bones: ["Character_Pat", "S3_Head"], radius: 300 },
                                     { name: "身體", bones: ["Character_Tickle", "S3_Body_1", "S3_Body_Root"], radius: 150 }
                                 ];
                                 // ... 後面不變
@@ -717,7 +717,7 @@
                                             }
                                         }
 
-                                        const maxPullRadius = 280 * currentZoom * (rect.height / baseViewport.height);
+                                        const maxPullRadius = 300 * currentZoom * (rect.height / baseViewport.height);
                                         
                                         if (minBoneDist > maxPullRadius) {
                                             activeFaceBone = null; // 太遠就不捏臉
