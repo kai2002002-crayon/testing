@@ -591,7 +591,7 @@
                         globalIdleTimer = setTimeout(playNextAnimation, 5000);
 
                         // 點擊畫布手動切換
-                        // 🌟 2 & 4. 終極整合：高畫質縮放 + 多指防呆 + 部位互動系統 (返璞歸真．對照表版)
+                        // 🌟 2 & 4. 終極整合：高畫質縮放 + 多指防呆 + 部位互動系統 (返璞歸真．單一骨骼完美版)
                         const canvas = avatarBox.querySelector('canvas');
                         if (canvas) {
                             canvas.style.touchAction = 'none';
@@ -612,8 +612,10 @@
                             let hasTriggeredRub = false; 
                             let tickleTimer = null; 
                             
-                            // 🌟 核心：支援多骨骼同步移動，並記錄它們的初始局部座標
-                            let activeFaceBones = []; 
+                            // 🌟 核心：回歸第一次成功的單一骨骼操作
+                            let activeFaceBone = null; 
+                            let initialBoneX = 0;
+                            let initialBoneY = 0;
 
                             // --- 🖱️ 電腦專用：滾輪縮放 ---
                             avatarBox.addEventListener('wheel', function(event) {
@@ -688,7 +690,7 @@
                                     startY = e.clientY;
                                     lastX = e.clientX;
                                     lastY = e.clientY;
-                                    activeFaceBones = [];
+                                    activeFaceBone = null;
                                     hasTriggeredRub = false;
                                     
                                     const rect = canvas.getBoundingClientRect();
@@ -697,66 +699,36 @@
                                     if (hitZoneOnDown && hitZoneOnDown.name === "頭部") {
                                         let minBoneDist = Infinity;
                                         
-                                        // 🌟 終極對照表：硬刻所有已知角色的「面部線條總控」與「臉頰顏色控制器」
-                                        const faceMapping = [
-                                            // 洛涅 (Lonne)
-                                            "S1_Face_HCT", "S1_Face_VCT", "S1_Ball_L_CT", "S1_Ball_R_CT", 
-                                            // 希菲爾 (Syphiel)
-                                            "S3_Face_HCT", "S3_Face_VCT", "S3_F_Ball_L_CT", "S3_F_Ball_R_CT",
-                                            // 路易 (Louis)
-                                            "Face_HCT", "Face_VCT", "Ball_L_CT", "Ball_R_CT",
-                                            // 莎莉 (Sally) - 特殊的 Con 與 LCT
-                                            "Face_Con", "Face_H_LCT", "Face_H_RCT", "Face_V_UCT", "Face_V_DCT", "Ball_L", "Ball_R",
-                                            // 斯皮奇 (Spitch)
-                                            "S2_Face_HCT", "S2_Face_VCT", "S2_F_Ball_L_CT", "S2_F_Ball_R_CT"
+                                        // 🌟 終極清單：只抓最末端的「臉頰控制器」，絕對不碰 Face_HCT/VCT，避免整顆頭被平移！
+                                        const candidateBones = [
+                                            "S1_Ball_L_CT", "S1_Ball_R_CT",       // 洛涅
+                                            "S3_F_Ball_L_CT", "S3_F_Ball_R_CT",   // 希菲爾
+                                            "Ball_L_CT", "Ball_R_CT",             // 路易
+                                            "Face_H_LCT", "Face_H_RCT",           // 莎莉 (她的臉頰控制器名稱)
+                                            "S2_F_Ball_L_CT", "S2_F_Ball_R_CT"    // 斯皮奇
                                         ];
                                         
-                                        let rawBones = faceMapping.map(n => player.skeleton.findBone(n)).filter(b => b);
-
-                                        // 如果這隻角色存在於名單上，找出距離滑鼠最近的一根骨頭來判斷是否觸發
-                                        let closestBone = null;
-                                        for (let bone of rawBones) {
-                                            const boneCanvasX = ((bone.worldX - baseViewport.x) / baseViewport.width) * rect.width;
-                                            const boneCanvasY = rect.height - ((bone.worldY - baseViewport.y) / baseViewport.height) * rect.height;
-                                            const dist = Math.hypot((e.clientX - rect.left) - boneCanvasX, (e.clientY - rect.top) - boneCanvasY);
-                                            
-                                            if (dist < minBoneDist) {
-                                                minBoneDist = dist;
-                                                closestBone = bone;
+                                        for (let bName of candidateBones) {
+                                            let bone = player.skeleton.findBone(bName);
+                                            if (bone) {
+                                                const boneCanvasX = ((bone.worldX - baseViewport.x) / baseViewport.width) * rect.width;
+                                                const boneCanvasY = rect.height - ((bone.worldY - baseViewport.y) / baseViewport.height) * rect.height;
+                                                const dist = Math.hypot((e.clientX - rect.left) - boneCanvasX, (e.clientY - rect.top) - boneCanvasY);
+                                                
+                                                if (dist < minBoneDist) {
+                                                    minBoneDist = dist;
+                                                    activeFaceBone = bone;
+                                                }
                                             }
                                         }
 
-                                        const maxPullRadius = 250 * currentZoom * (rect.height / baseViewport.height);
-                                        if (minBoneDist <= maxPullRadius && closestBone) {
-                                            
-                                            // 🛡️ 族譜過濾器：防止父子疊加變形 (保留第一次成功的純粹性)
-                                            function isDescendant(child, potentialParent) {
-                                                let p = child.parent;
-                                                while (p) {
-                                                    if (p === potentialParent) return true;
-                                                    p = p.parent;
-                                                }
-                                                return false;
-                                            }
-
-                                            // 將該角色所有匹配到的控制器，去除父子重疊後，全部存入綁定陣列
-                                            for (let bone of rawBones) {
-                                                let hasAncestor = false;
-                                                for (let other of rawBones) {
-                                                    if (bone !== other && isDescendant(bone, other)) {
-                                                        hasAncestor = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (!hasAncestor) {
-                                                    // 🌟 記錄最初的 Local 座標！這是順滑不破圖的靈魂！
-                                                    activeFaceBones.push({
-                                                        bone: bone,
-                                                        initialX: bone.x,
-                                                        initialY: bone.y
-                                                    });
-                                                }
-                                            }
+                                        const maxPullRadius = 200 * currentZoom * (rect.height / baseViewport.height);
+                                        if (minBoneDist > maxPullRadius) {
+                                            activeFaceBone = null; 
+                                        } else if (activeFaceBone) {
+                                            // 🌟 記錄最初的 Local 座標
+                                            initialBoneX = activeFaceBone.x;
+                                            initialBoneY = activeFaceBone.y;
                                         }
                                     }
                                 }
@@ -788,7 +760,7 @@
                                     const dx = e.clientX - lastX;
                                     const dy = e.clientY - lastY;
                                     dragDistance += Math.sqrt(dx * dx + dy * dy);
-                    
+
                                     if (dragDistance > 10 && !hasTriggeredRub && hitZoneOnDown) {
                                         hasTriggeredRub = true;
                                         clearTimeout(globalIdleTimer);
@@ -807,38 +779,33 @@
                                         }
                                     }
 
-                                    // 🌟 沿用您第一次成功的邏輯：操作 Local 座標，拒絕暴力攔截！
-                                    if (hasTriggeredRub && hitZoneOnDown && hitZoneOnDown.name === "頭部" && activeFaceBones.length > 0) {
+                                    // 🌟 單一骨骼變形邏輯 (完全還原第一次的完美版本)
+                                    if (hasTriggeredRub && hitZoneOnDown && hitZoneOnDown.name === "頭部" && activeFaceBone) {
                                         const rect = canvas.getBoundingClientRect();
                                         const spineScaleX = baseViewport.width / rect.width / currentZoom;
                                         const spineScaleY = baseViewport.height / rect.height / currentZoom;
                                         
-                                        const stretchIntensity = 1.2; 
+                                        const stretchIntensity = 1.3; 
                                         let worldDx = (e.clientX - startX) * spineScaleX * stretchIntensity; 
                                         let worldDy = -(e.clientY - startY) * spineScaleY * stretchIntensity; 
                                         
-                                        // 讓所有負責臉部線條與顏色的骨骼，整齊劃一地移動
-                                        for (let item of activeFaceBones) {
-                                            let bone = item.bone;
-                                            
-                                            // 1. 退回初始點 (防暴走)
-                                            bone.x = item.initialX;
-                                            bone.y = item.initialY;
-                                            bone.updateWorldTransform(); 
-                                            
-                                            // 2. 計算目標世界座標
-                                            let targetWorld = { 
-                                                x: bone.worldX + worldDx, 
-                                                y: bone.worldY + worldDy 
-                                            };
-                                            
-                                            // 3. 轉回局部座標，賦予骨骼
-                                            if (bone.parent) {
-                                                bone.parent.worldToLocal(targetWorld);
-                                            }
-                                            bone.x = targetWorld.x;
-                                            bone.y = targetWorld.y;
+                                        // 1. 退回初始點
+                                        activeFaceBone.x = initialBoneX;
+                                        activeFaceBone.y = initialBoneY;
+                                        activeFaceBone.updateWorldTransform(); 
+                                        
+                                        // 2. 計算目標世界座標
+                                        let targetWorld = { 
+                                            x: activeFaceBone.worldX + worldDx, 
+                                            y: activeFaceBone.worldY + worldDy 
+                                        };
+                                        
+                                        // 3. 轉回局部座標
+                                        if (activeFaceBone.parent) {
+                                            activeFaceBone.parent.worldToLocal(targetWorld);
                                         }
+                                        activeFaceBone.x = targetWorld.x;
+                                        activeFaceBone.y = targetWorld.y;
                                     }
 
                                     lastX = e.clientX;
@@ -859,13 +826,13 @@
                                 if (pointerKeys.length === 0 && isPointerDown) {
                                     isPointerDown = false;
                                     const animNames = player.skeleton.data.animations.map(a => a.name);
-                    
-                                    // 🌟 完美歸位：放開滑鼠時，所有骨骼瞬間推回紀錄的初始點
-                                    for (let item of activeFaceBones) {
-                                        item.bone.x = item.initialX;
-                                        item.bone.y = item.initialY;
+
+                                    // 🌟 完美歸位
+                                    if (activeFaceBone) {
+                                        activeFaceBone.x = initialBoneX;
+                                        activeFaceBone.y = initialBoneY;
+                                        activeFaceBone = null;
                                     }
-                                    activeFaceBones = []; 
                                     
                                     clearTimeout(tickleTimer); 
 
@@ -878,12 +845,33 @@
                                                 player.animationState.setAnimation(0, "Idle_1", true);
                                             }
                                         } else if (hitZoneOnDown && hitZoneOnDown.name === "身體") {
-                                            // 身體邏輯省略，維持原樣
-                                            player.animationState.setAnimation(0, "Idle_1", true);
+                                            if (animNames.includes("Tickle_End")) {
+                                                player.animationState.setAnimation(0, "Tickle_End", false);
+                                                player.animationState.addAnimation(0, "Idle_1", true, 0);
+                                            } else {
+                                                player.animationState.setAnimation(0, "Idle_1", true);
+                                            }
                                         }
                                     } else {
-                                        // 點擊邏輯省略，維持原樣
-                                        player.animationState.setAnimation(0, "Idle_1", true);
+                                        // 🌟 修復敲打沒有反應的問題：恢復原有的點擊判定程式碼！
+                                        if (hitZoneOnDown && hitZoneOnDown.name === "頭部") {
+                                            if (animNames.includes("Smash_End_1")) {
+                                                player.animationState.setAnimation(0, "Smash_End_1", false);
+                                                if (animNames.includes("Smash_End_2")) {
+                                                    player.animationState.addAnimation(0, "Smash_End_2", false, 0);
+                                                }
+                                                player.animationState.addAnimation(0, "Idle_1", true, 0);
+                                            } else {
+                                                player.animationState.setAnimation(0, "Idle_1", true);
+                                            }
+                                        } else if (hitZoneOnDown && hitZoneOnDown.name === "身體") {
+                                            if (animNames.includes("Tickle_End")) {
+                                                player.animationState.setAnimation(0, "Tickle_End", false);
+                                                player.animationState.addAnimation(0, "Idle_1", true, 0);
+                                            } else {
+                                                player.animationState.setAnimation(0, "Idle_1", true);
+                                            }
+                                        }
                                     }
                                     
                                     clearTimeout(globalIdleTimer);
