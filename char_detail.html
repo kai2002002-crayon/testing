@@ -607,15 +607,38 @@
                             let dragDistance = 0;
                             let lastX = 0, lastY = 0;
                             let startX = 0, startY = 0; 
+                            let faceOffsetWorldX = 0, faceOffsetWorldY = 0; 
                             
                             let hitZoneOnDown = null;
                             let hasTriggeredRub = false; 
                             let tickleTimer = null; 
-                            
-                            // 🌟 新增：記錄臉頰骨骼最初的局部座標，用來完美歸位！
                             let activeFaceBone = null; 
-                            let initialBoneX = 0;
-                            let initialBoneY = 0;
+
+                            // --- 🌟 關鍵魔法：攔截 Spine 渲染，保證變形絕對不會被動畫覆蓋！ ---
+                            const originalUpdateWorldTransform = player.skeleton.updateWorldTransform.bind(player.skeleton);
+                            player.skeleton.updateWorldTransform = function() {
+                                // 1. 先讓 Spine 執行它原本的動畫計算
+                                originalUpdateWorldTransform();
+                                
+                                // 2. 如果正在捏臉，就把滑鼠的「位移量」強行疊加到動畫算好的位置上！
+                                if (hasTriggeredRub && activeFaceBone && (faceOffsetWorldX !== 0 || faceOffsetWorldY !== 0)) {
+                                    let targetWorld = { 
+                                        x: activeFaceBone.worldX + faceOffsetWorldX, 
+                                        y: activeFaceBone.worldY + faceOffsetWorldY 
+                                    };
+                                    
+                                    if (activeFaceBone.parent) {
+                                        activeFaceBone.parent.worldToLocal(targetWorld);
+                                    }
+                                    
+                                    activeFaceBone.x = targetWorld.x;
+                                    activeFaceBone.y = targetWorld.y;
+                                    
+                                    // 3. 用我們修改後的座標，重新計算一次這根骨頭對應的網格
+                                    originalUpdateWorldTransform();
+                                }
+                            };
+                            // --------------------------------------------------------
 
                             // --- 🖱️ 電腦專用：滾輪縮放 ---
                             avatarBox.addEventListener('wheel', function(event) {
@@ -646,11 +669,9 @@
                                 let clickedPart = null;
                                 let minDistance = Infinity;
                                 const hitZones = [
-                                    // 🌟 修正：將半徑從 220 加大到 300，讓大頭角色的邊緣也能被輕鬆點到
-                                    { name: "頭部", bones: ["Character_Pat", "S3_Head"], radius: 300 },
+                                    { name: "頭部", bones: ["Character_Pat", "S3_Head"], radius: 280 }, // 🌟 判定範圍加到極大！
                                     { name: "身體", bones: ["Character_Tickle", "S3_Body_1", "S3_Body_Root"], radius: 150 }
                                 ];
-                                // ... 後面不變
                                 hitZones.forEach(zone => {
                                     let targetBone = null;
                                     for (let bName of zone.bones) {
@@ -692,6 +713,8 @@
                                     startY = e.clientY;
                                     lastX = e.clientX;
                                     lastY = e.clientY;
+                                    faceOffsetWorldX = 0;
+                                    faceOffsetWorldY = 0;
                                     activeFaceBone = null;
                                     hasTriggeredRub = false;
                                     const rect = canvas.getBoundingClientRect();
@@ -700,8 +723,13 @@
                                     if (hitZoneOnDown && hitZoneOnDown.name === "頭部") {
                                         let minBoneDist = Infinity;
                                         
-                                        // 🌟 最終正解：鎖定韓國畫師專用的臉頰骨骼「Ball (볼)」！
-                                        const candidateBones = ["S1_Ball_L_CT", "S1_Ball_L", "S1_Ball_L_Root", "S1_Ball_R_CT", "S1_Ball_R_Root"];
+                                        // 🌟 網羅所有可能性！優先找臉頰(Ball)，沒有臉頰就找整體網格(Face_HCT)
+                                        const candidateBones = [
+                                            "S1_Ball_L_CT", "S1_Ball_L", "S1_Ball_L_Root", 
+                                            "S1_Ball_R_CT", "S1_Ball_R", "S1_Ball_R_Root", 
+                                            "S1_Ball_Root",
+                                            "S1_Face_HCT", "S1_Face_VCT", "S1_Face_BCT"
+                                        ];
                                         
                                         for (let bName of candidateBones) {
                                             let bone = player.skeleton.findBone(bName);
@@ -717,14 +745,10 @@
                                             }
                                         }
 
-                                        const maxPullRadius = 300 * currentZoom * (rect.height / baseViewport.height);
-                                        
+                                        // 🌟 容錯率大升級，只要點在臉部附近，就會無情吸附過去拉扯！
+                                        const maxPullRadius = 280 * currentZoom * (rect.height / baseViewport.height);
                                         if (minBoneDist > maxPullRadius) {
-                                            activeFaceBone = null; // 太遠就不捏臉
-                                        } else if (activeFaceBone) {
-                                            // 🌟 記住臉頰骨最初始的局部座標！
-                                            initialBoneX = activeFaceBone.x;
-                                            initialBoneY = activeFaceBone.y;
+                                            activeFaceBone = null; 
                                         }
                                     }
                                 }
@@ -775,34 +799,15 @@
                                         }
                                     }
 
-                                    // 🌟 拉臉變形核心邏輯
+                                    // 🌟 拉臉位移記錄：只負責記錄滑鼠移動了多少，實際變形交給渲染攔截器處理
                                     if (hasTriggeredRub && hitZoneOnDown && hitZoneOnDown.name === "頭部" && activeFaceBone) {
                                         const rect = canvas.getBoundingClientRect();
                                         const spineScaleX = baseViewport.width / rect.width / currentZoom;
                                         const spineScaleY = baseViewport.height / rect.height / currentZoom;
                                         
-                                        // 計算滑鼠在世界中的位移量
-                                        const stretchIntensity = 1.3; // 可以調整拉伸幅度
-                                        let worldDx = (e.clientX - startX) * spineScaleX * stretchIntensity; 
-                                        let worldDy = -(e.clientY - startY) * spineScaleY * stretchIntensity; 
-                                        
-                                        // 關鍵防暴走：先把骨骼重置回「剛點擊時」的初始狀態，然後再算加上位移後的位置
-                                        activeFaceBone.x = initialBoneX;
-                                        activeFaceBone.y = initialBoneY;
-                                        activeFaceBone.updateWorldTransform(); 
-                                        
-                                        let targetWorld = { 
-                                            x: activeFaceBone.worldX + worldDx, 
-                                            y: activeFaceBone.worldY + worldDy 
-                                        };
-                                        
-                                        // 將世界座標換算回局部座標，賦予給骨骼
-                                        if (activeFaceBone.parent) {
-                                            activeFaceBone.parent.worldToLocal(targetWorld);
-                                        }
-                                        
-                                        activeFaceBone.x = targetWorld.x;
-                                        activeFaceBone.y = targetWorld.y;
+                                        const stretchIntensity = 1.3; 
+                                        faceOffsetWorldX = (e.clientX - startX) * spineScaleX * stretchIntensity; 
+                                        faceOffsetWorldY = -(e.clientY - startY) * spineScaleY * stretchIntensity; 
                                     }
 
                                     lastX = e.clientX;
@@ -824,12 +829,10 @@
                                     isPointerDown = false;
                                     const animNames = player.skeleton.data.animations.map(a => a.name);
                     
-                                    // 🌟 完美歸位魔法：放開滑鼠時，強制把臉頰骨骼「推回」最初記錄的位置
-                                    if (activeFaceBone) {
-                                        activeFaceBone.x = initialBoneX;
-                                        activeFaceBone.y = initialBoneY;
-                                        activeFaceBone = null;
-                                    }
+                                    // 🌟 完美歸位：放開滑鼠時直接將位移量歸零，骨架就會在一瞬間彈回原本的動畫位置！
+                                    faceOffsetWorldX = 0; 
+                                    faceOffsetWorldY = 0;
+                                    activeFaceBone = null; 
                                     
                                     clearTimeout(tickleTimer); 
 
