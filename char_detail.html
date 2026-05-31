@@ -699,13 +699,6 @@
                                     if (hitZoneOnDown && hitZoneOnDown.name === "頭部") {
                                         let minBoneDist = Infinity;
                                         
-                                        // 🌟 終極真理：直接鎖定「神級官方通用骨」，極少數例外才查字典！
-                                        let targetBoneName = "Character_Ball_Move"; 
-                                        
-                                        if (CHAR_CONFIG[currentTargetName]) {
-                                            targetBoneName = CHAR_CONFIG[currentTargetName].faceBone;
-                                        }
-
                                         // 🌟 終極真理：教主下令，全員預設使用神級官方通用骨！
                                         let bone = player.skeleton.findBone("Character_Ball_Move");
 
