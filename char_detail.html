@@ -742,6 +742,25 @@
                                             activeFaceBone = null; 
                                         }
                                     }
+                                    else {
+                                        // ==========================================
+                                        // 👁️ 新增：點擊空白處，啟動眼球追蹤模式！
+                                        // ==========================================
+                                        // 建立可能控制眼球的骨骼字典庫 (從最常見到最極端)
+                                        const eyeBones = ["Character_Eye", "Eye_CT", "S1_Eye_CT", "S2_Eye_CT", "S3_Eye_CT", "Eye_Move", "Pupil_CT", "Pupil"];
+                                        activeEyeBone = null;
+    
+                                        for (let bName of eyeBones) {
+                                            activeEyeBone = player.skeleton.findBone(bName);
+                                            if (activeEyeBone) break; // 只要找到一根就停止尋找
+                                        }
+
+                                        if (activeEyeBone) {
+                                            isTrackingEye = true;
+                                            initialEyeX = activeEyeBone.x; // 記住眼球的初始位置
+                                            initialEyeY = activeEyeBone.y;
+                                        }
+                                    }
                                 }
                             });
 
@@ -889,51 +908,51 @@
                                     isPointerDown = false;
                                     const animNames = player.skeleton.data.animations.map(a => a.name);
 
-                                    // 🌟 完美歸位 -> 升級為「Q彈物理果凍引擎」
-                                    if (activeFaceBone) {
-                                        let bounceBone = activeFaceBone;
-                                        let targetX = initialBoneX;
-                                        let targetY = initialBoneY;
+                                    // ==========================================
+                                    // 🌟 升級版「Q彈物理果凍引擎」(雙材質獨立支援)
+                                    // ==========================================
+                                    if (activeFaceBone || activeEyeBone) {
+                                        // 1. 判斷目前操作的是臉還是眼
+                                        const isFace = activeFaceBone !== null;
     
-                                        // 放開滑鼠，解除綁定，讓骨頭進入自由落體/彈力狀態
+                                        let bounceBone = activeFaceBone || activeEyeBone;
+                                        let targetX = isFace ? initialBoneX : initialEyeX;
+                                        let targetY = isFace ? initialBoneY : initialEyeY;
+    
+                                        // 2. 解除綁定狀態
                                         activeFaceBone = null; 
+                                        activeEyeBone = null;
+                                        isTrackingEye = false;
 
-                                        // 物理參數 (教主可自行微調手感)
+                                        // 3. 🌟 核心：根據材質給予不同的物理公式
+                                        // 臉頰 (肉質)：拉力偏弱、阻力較大 -> 柔軟、Q彈、餘震多
+                                        // 眼球 (輕巧)：拉力極強、阻力較小 -> 清脆、俐落、回彈快
+                                        const tension = isFace ? 0.15 : 0.75;  
+                                        const friction = isFace ? 0.85 : 0.45; 
+
                                         let velX = 0;
                                         let velY = 0;
-                                        const tension = 0.1;  // 彈簧拉力 (數值越大，回彈速度越快)
-                                        const friction = 0.9; // 阻力摩擦 (數值越接近1越不會停，越接近0停越快)
 
                                         function applyBounce() {
                                             if (!bounceBone) return;
-
-                                            // 計算距離目標點的偏差值
                                             let dx = targetX - bounceBone.x;
                                             let dy = targetY - bounceBone.y;
 
-                                            // 彈簧公式：速度 = 速度 + (距離 * 拉力)
                                             velX += dx * tension;
                                             velY += dy * tension;
-        
-                                            // 阻力公式：速度 = 速度 * 摩擦力 (讓它慢慢停下來)
                                             velX *= friction;
                                             velY *= friction;
 
-                                            // 將算出的速度套用到骨頭上
                                             bounceBone.x += velX;
                                             bounceBone.y += velY;
 
-                                            // 如果還在晃動 (速度或距離大於 0.1)，就要求瀏覽器下一幀繼續算
                                             if (Math.abs(dx) > 0.1 || Math.abs(velX) > 0.1 || Math.abs(dy) > 0.1 || Math.abs(velY) > 0.1) {
                                                 requestAnimationFrame(applyBounce);
                                             } else {
-                                                // 晃動小到看不見時，才真正鎖死在原點，節省效能
                                                 bounceBone.x = targetX;
                                                 bounceBone.y = targetY;
                                             }
-                                       }
-    
-                                        // 啟動彈簧運算
+                                        }
                                         applyBounce();
                                     }
                                     
