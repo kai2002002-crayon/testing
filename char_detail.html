@@ -654,7 +654,7 @@
                                 let clickedPart = null;
                                 let minDistance = Infinity;
                                 const hitZones = [
-                                    { name: "頭部", bones: ["Character_Pat", "S3_Head", "S1_Head", "Head"], radius: 150 }, 
+                                    { name: "頭部", bones: ["Character_Pat", "S3_Head", "S1_Head", "Head"], radius: 100 }, 
                                     { name: "身體", bones: ["Character_Tickle", "S3_Body_1", "S1_Body_1", "Body_1"], radius: 150 }
                                 ];
                                 hitZones.forEach(zone => {
@@ -731,7 +731,7 @@
                                             activeFaceBone = bone;
                                         }
 
-                                        // 將抓取半徑設為 280，確保就算點擊遠處的右臉，也能牽引到主控網格
+                                        // 將抓取半徑設為 200，確保就算點擊遠處的右臉，也能牽引到主控網格
                                         const maxPullRadius = 200 * currentZoom * (rect.height / baseViewport.height);
                                         
                                         if (minBoneDist <= maxPullRadius && activeFaceBone) {
