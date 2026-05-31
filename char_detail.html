@@ -829,6 +829,38 @@
                                         activeFaceBone.x = initialBoneX + localDx;
                                         activeFaceBone.y = initialBoneY + localDy;
                                     }
+                                    // ==========================================
+                                    // 👁️ 新增：計算眼球追蹤軌跡
+                                    // ==========================================
+                                    if (isTrackingEye && activeEyeBone) {
+                                        const rect = canvas.getBoundingClientRect();
+    
+                                        // 取得眼球在目前畫布上的「螢幕中心點」
+                                       const boneCanvasX = ((activeEyeBone.worldX - baseViewport.x) / baseViewport.width) * rect.width;
+                                        const boneCanvasY = rect.height - ((activeEyeBone.worldY - baseViewport.y) / baseViewport.height) * rect.height;
+    
+                                        // 計算滑鼠距離眼球中心的方向向量
+                                        let dx = (e.clientX - rect.left) - boneCanvasX;
+                                        let dy = (e.clientY - rect.top) - boneCanvasY;
+    
+                                        // 轉換為 Spine 局部座標 
+                                        // (乘以 0.03 作為靈敏度，並因為 Spine 的 Y 軸與網頁相反，所以 Y 要加負號)
+                                        let localDx = dx * 0.03; 
+                                        let localDy = -dy * 0.03;
+
+                                        // 🛑 限制眼球最大移動半徑，避免瞳孔跑出眼白！(通常 10~15 最自然)
+                                        const MAX_EYE_RADIUS = 12;
+                                        let distance = Math.hypot(localDx, localDy);
+    
+                                        if (distance > MAX_EYE_RADIUS) {
+                                            localDx = (localDx / distance) * MAX_EYE_RADIUS;
+                                            localDy = (localDy / distance) * MAX_EYE_RADIUS;
+                                        }
+
+                                        // 實時更新眼球位置
+                                        activeEyeBone.x = initialEyeX + localDx;
+                                        activeEyeBone.y = initialEyeY + localDy;
+                                    }
 
                                     lastX = e.clientX;
                                     lastY = e.clientY;
