@@ -558,22 +558,26 @@
                     let initialBoneX = 0;
                     let initialBoneY = 0;
 
-                    let activeEyeBone = null;
-                    let initialEyeX = 0;
-                    let initialEyeY = 0;
+                    // 🌟 改為陣列，支援「雙眼獨立骨骼」(如洛涅)
+                    let activeEyeBones = []; 
+                    let initialEyePositions = []; 
                     let isTrackingEye = false;
-                    let eyePhysicsX = 0; 
+                    let eyePhysicsX = 0; // 改為「相對位移量」
                     let eyePhysicsY = 0;
 
                     // 🌟 底層劫持 (Monkey Patching)
                     const originalUpdate = player.skeleton.updateWorldTransform;
                     player.skeleton.updateWorldTransform = function() {
-                        if (activeEyeBone) {
-                            activeEyeBone.x = eyePhysicsX;
-                            activeEyeBone.y = eyePhysicsY;
+                        // 迴圈寫入所有被劫持的眼球 (單眼或雙眼都能完美應對)
+                        if (activeEyeBones.length > 0) {
+                            for (let i = 0; i < activeEyeBones.length; i++) {
+                                activeEyeBones[i].x = initialEyePositions[i].x + eyePhysicsX;
+                                activeEyeBones[i].y = initialEyePositions[i].y + eyePhysicsY;
+                            }
                         }
                         originalUpdate.call(this);
                     };
+                    // ==========================================
                     
                     // 骨架清單除錯
                     console.group("🦴 骨架清單");
@@ -757,30 +761,58 @@
                                         // ==========================================
                                         // 👁️ 新增：點擊空白處，啟動眼球追蹤模式！
                                         // ==========================================
-                                        // 建立可能控制眼球的骨骼字典庫 (從最常見到最極端)
-                                        const eyeBones = [
+                                        const masterEyeBones = [
                                             "Character_Eye_Move", "Character_Eye", "Eye_CT", 
                                             "S1_Eye_CT", "S2_Eye_CT", "S3_Eye_CT", 
                                             "S1_F_Eye_CT", "S2_F_Eye_CT", "S3_F_Eye_CT", 
                                             "F_Eye_CT", "Eye_Move"
                                         ];
-                                        activeEyeBone = null;
-    
-                                        for (let bName of eyeBones) {
-                                            activeEyeBone = player.skeleton.findBone(bName);
-                                            if (activeEyeBone) {
-                                                console.log("👁️ 成功劫持眼球控制器:", bName); // F12可看是否有抓到
+                                        // 洛涅專屬：獨立左右眼骨骼名稱
+                                        const leftEyeBones = ["S1_F_Eye_L", "S2_F_Eye_L", "S3_F_Eye_L", "F_Eye_L", "Eye_L"];
+                                        const rightEyeBones = ["S1_F_Eye_R", "S2_F_Eye_R", "S3_F_Eye_R", "F_Eye_R", "Eye_R"];
+
+                                        activeEyeBones = [];
+                                        initialEyePositions = [];
+
+                                        // 1. 先找有沒有「統一眼球控制器」
+                                        for (let bName of masterEyeBones) {
+                                            let bone = player.skeleton.findBone(bName);
+                                            if (bone) {
+                                                activeEyeBones.push(bone);
+                                                console.log("👁️ 成功劫持主眼球控制器:", bName);
                                                 break;
                                             }
                                         }
 
-                                        if (activeEyeBone) {
+                                        // 2. 如果沒有主控制器(例如洛涅)，就分別抓取左右眼！
+                                        if (activeEyeBones.length === 0) {
+                                            for (let bName of leftEyeBones) {
+                                                let bone = player.skeleton.findBone(bName);
+                                                if (bone) {
+                                                    activeEyeBones.push(bone);
+                                                    console.log("👁️ 成功劫持左眼:", bName);
+                                                    break;
+                                                }
+                                            }
+                                            for (let bName of rightEyeBones) {
+                                                let bone = player.skeleton.findBone(bName);
+                                                if (bone) {
+                                                    activeEyeBones.push(bone);
+                                                    console.log("👁️ 成功劫持右眼:", bName);
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+                                        if (activeEyeBones.length > 0) {
                                             isTrackingEye = true;
-                                            initialEyeX = activeEyeBone.x;
-                                            initialEyeY = activeEyeBone.y;
-                                            // 🌟 修復：按下的瞬間還沒有滑鼠位移，所以替身座標直接等於初始座標！
-                                            eyePhysicsX = initialEyeX;
-                                            eyePhysicsY = initialEyeY;
+                                            eyePhysicsX = 0; // 重置相對位移
+                                            eyePhysicsY = 0;
+    
+                                            // 記錄每一顆眼球的初始座標
+                                            for (let bone of activeEyeBones) {
+                                                initialEyePositions.push({ x: bone.x, y: bone.y });
+                                            }
                                         }
                                     }
                                 }
@@ -881,34 +913,31 @@
                                     // ==========================================
                                     // 👁️ 新增：計算眼球追蹤軌跡
                                     // ==========================================
-                                    if (isTrackingEye && activeEyeBone) {
+                                    if (isTrackingEye && activeEyeBones.length > 0) {
                                         const rect = canvas.getBoundingClientRect();
-    
-                                        // 取得眼球在目前畫布上的「螢幕中心點」
-                                       const boneCanvasX = ((activeEyeBone.worldX - baseViewport.x) / baseViewport.width) * rect.width;
-                                        const boneCanvasY = rect.height - ((activeEyeBone.worldY - baseViewport.y) / baseViewport.height) * rect.height;
-    
-                                        // 計算滑鼠距離眼球中心的方向向量
+
+                                        // 取得第一顆眼球作為計算基準
+                                        const refBone = activeEyeBones[0];
+                                        const boneCanvasX = ((refBone.worldX - baseViewport.x) / baseViewport.width) * rect.width;
+                                        const boneCanvasY = rect.height - ((refBone.worldY - baseViewport.y) / baseViewport.height) * rect.height;
+
                                         let dx = (e.clientX - rect.left) - boneCanvasX;
                                         let dy = (e.clientY - rect.top) - boneCanvasY;
-    
-                                        // 轉換為 Spine 局部座標 
-                                        // (乘以 0.03 作為靈敏度，並因為 Spine 的 Y 軸與網頁相反，所以 Y 要加負號)
+
                                         let localDx = dx * 0.03; 
                                         let localDy = -dy * 0.03;
 
-                                        // 🛑 限制眼球最大移動半徑，避免瞳孔跑出眼白！(通常 10~15 最自然)
                                         const MAX_EYE_RADIUS = 12;
                                         let distance = Math.hypot(localDx, localDy);
-    
+
                                         if (distance > MAX_EYE_RADIUS) {
                                             localDx = (localDx / distance) * MAX_EYE_RADIUS;
                                             localDy = (localDy / distance) * MAX_EYE_RADIUS;
                                         }
 
-                                        // 實時更新眼球位置
-                                        eyePhysicsX = initialEyeX + localDx;
-                                        eyePhysicsY = initialEyeY + localDy;
+                                        // 🌟 寫入「相對位移量」，底層劫持會自動幫所有眼球加上這個偏移！
+                                        eyePhysicsX = localDx;
+                                        eyePhysicsY = localDy;
                                     }
 
                                     lastX = e.clientX;
@@ -933,29 +962,26 @@
                                     // ==========================================
                                     // 🌟 升級版「Q彈物理果凍引擎」(雙材質獨立支援)
                                     // ==========================================
-                                    if (activeFaceBone || activeEyeBone) {
+                                    if (activeFaceBone || activeEyeBones.length > 0) {
                                         const isFace = activeFaceBone !== null;
-    
-                                        let targetX = isFace ? initialBoneX : initialEyeX;
-                                        let targetY = isFace ? initialBoneY : initialEyeY;
-    
-                                        // 記住是誰在彈
+
+                                        // 臉頰回歸絕對座標 initialBoneX/Y，眼球回歸相對位移 0
+                                        let targetX = isFace ? initialBoneX : 0;
+                                        let targetY = isFace ? initialBoneY : 0;
+
                                         let bouncingFaceBone = isFace ? activeFaceBone : null;
-    
-                                        // 如果是臉，立刻解除綁定；如果是眼球，等「彈完」才能解除，否則會被動畫瞬間洗掉
+
                                         if (isFace) activeFaceBone = null; 
                                         isTrackingEye = false;
 
-                                        // 獨立物理參數：臉頰軟Q，眼球俐落
                                         const tension = isFace ? 0.35 : 0.75;  
                                         const friction = isFace ? 0.65 : 0.45; 
                                         let velX = 0, velY = 0;
 
                                         function applyBounce() {
-                                            // 從實體或替身讀取現在的座標
                                             let currentX = isFace ? bouncingFaceBone.x : eyePhysicsX;
                                             let currentY = isFace ? bouncingFaceBone.y : eyePhysicsY;
-        
+
                                             let dx = targetX - currentX;
                                             let dy = targetY - currentY;
 
@@ -964,7 +990,6 @@
                                             velX *= friction;
                                             velY *= friction;
 
-                                            // 將速度套用到實體或替身上
                                             if (isFace) {
                                                 bouncingFaceBone.x += velX;
                                                 bouncingFaceBone.y += velY;
@@ -973,19 +998,18 @@
                                                 eyePhysicsY += velY;
                                             }
 
-                                            // 判斷是否還在震動
                                             if (Math.abs(dx) > 0.1 || Math.abs(velX) > 0.1 || Math.abs(dy) > 0.1 || Math.abs(velY) > 0.1) {
                                                 requestAnimationFrame(applyBounce);
                                             } else {
-                                                // 彈動結束，鎖死原點
                                                 if (isFace) {
                                                     bouncingFaceBone.x = targetX;
                                                     bouncingFaceBone.y = targetY;
                                                 } else {
                                                     eyePhysicsX = targetX;
                                                     eyePhysicsY = targetY;
-                                                    // 眼睛彈完了，正式放開劫持控制權，交還給系統待機動畫
-                                                    activeEyeBone = null; 
+                                                    // 🌟 眼睛彈完了，清空陣列，正式放開劫持控制權
+                                                    activeEyeBones = []; 
+                                                    initialEyePositions = [];
                                                 }
                                             }
                                         }
