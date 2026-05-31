@@ -830,7 +830,9 @@
                                            localDx = (localDx / rawDistance) * elasticDist;
                                            localDy = (localDy / rawDistance) * elasticDist;
                                        }
-                                       if (localDx > 0) localDx *= 0.01;
+                                       if (localDx > 0) {
+                                           localDx = 0;
+                                       }
 
                                        // ==========================================
                                        // 🌟 針對「往內推」的單向防禦 (選用，防止臉頰凹陷)
