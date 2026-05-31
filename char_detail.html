@@ -550,15 +550,28 @@
                 success: function (player) {
                     console.log(`✅ 載入成功: ${costumeKey}`);
                     window.myPlayer = player;
-                    // 🌟 核心 TA 魔法：底層劫持 (Monkey Patching)
-                    // 攔截 Spine 的世界座標更新，在最後一刻強制寫入我們的眼球物理數據！
+    
+                    // ==========================================
+                    // 🌟 全域共用變數與劫持魔法 (必須拉到最上方，讓 Spine 引擎看得見！)
+                    // ==========================================
+                    let activeFaceBone = null; 
+                    let initialBoneX = 0;
+                    let initialBoneY = 0;
+
+                    let activeEyeBone = null;
+                    let initialEyeX = 0;
+                    let initialEyeY = 0;
+                    let isTrackingEye = false;
+                    let eyePhysicsX = 0; 
+                    let eyePhysicsY = 0;
+
+                    // 🌟 底層劫持 (Monkey Patching)
                     const originalUpdate = player.skeleton.updateWorldTransform;
                     player.skeleton.updateWorldTransform = function() {
                         if (activeEyeBone) {
                             activeEyeBone.x = eyePhysicsX;
                             activeEyeBone.y = eyePhysicsY;
                         }
-                        // 寫入後，再放行讓 Spine 繼續結算
                         originalUpdate.call(this);
                     };
                     
@@ -623,21 +636,6 @@
                             let hasTriggeredRub = false; 
                             let tickleTimer = null; 
                             
-                            // 🌟 核心：單一骨骼操作，杜絕網格與面紅分離
-                            let activeFaceBone = null; 
-                            let initialBoneX = 0;
-                            let initialBoneY = 0;
-
-                            // ==========================================
-                            // 👁️ 新增：眼球追蹤專用變數
-                            // ==========================================
-                            let activeEyeBone = null;
-                            let initialEyeX = 0;
-                            let initialEyeY = 0;
-                            let isTrackingEye = false;
-                            let eyePhysicsX = 0; // 替身座標：用來保護數值不被動畫洗掉
-                            let eyePhysicsY = 0;
-
                             // --- 🖱️ 電腦專用：滾輪縮放 ---
                             avatarBox.addEventListener('wheel', function(event) {
                                 event.preventDefault();
