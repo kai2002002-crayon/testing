@@ -565,18 +565,25 @@
                     let eyePhysicsX = 0; // 改為「相對位移量」
                     let eyePhysicsY = 0;
 
-                    // 🌟 底層劫持 (Monkey Patching)
+                    // ==========================================
+                    // 🌟 強化版：強制覆蓋劫持 (確保數值不被動畫覆蓋)
+                    // ==========================================
                     const originalUpdate = player.skeleton.updateWorldTransform;
                     player.skeleton.updateWorldTransform = function() {
-                        // 迴圈寫入所有被劫持的眼球 (單眼或雙眼都能完美應對)
+                        // 1. 先執行原始的動畫計算
+                        originalUpdate.call(this);
+
+                        // 2. 「強行介入」：在動畫計算完成後，立刻修改骨骼數值
                         if (activeEyeBones.length > 0) {
                             for (let i = 0; i < activeEyeBones.length; i++) {
-                                activeEyeBones[i].x = initialEyePositions[i].x + eyePhysicsX;
-                                activeEyeBones[i].y = initialEyePositions[i].y + eyePhysicsY;
+                                let bone = activeEyeBones[i];
+                                // 直接修改 worldX/Y，讓它無法被後續流程還原
+                                bone.worldX += eyePhysicsX;
+                                bone.worldY += eyePhysicsY;
                             }
                         }
-                        originalUpdate.call(this);
                     };
+                    // ==========================================
                     // ==========================================
                     
                     // 骨架清單除錯
