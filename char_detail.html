@@ -742,8 +742,8 @@
                                             activeFaceBone = bone;
                                         }
 
-                                        // 將抓取半徑設為 250，確保就算點擊遠處的右臉，也能牽引到主控網格
-                                        const maxPullRadius = 250 * currentZoom * (rect.height / baseViewport.height);
+                                        // 將抓取半徑設為 280，確保就算點擊遠處的右臉，也能牽引到主控網格
+                                        const maxPullRadius = 280 * currentZoom * (rect.height / baseViewport.height);
                                         
                                         if (minBoneDist <= maxPullRadius && activeFaceBone) {
                                             // 🌟 記錄最初的 Local 座標，保證平滑位移不破圖
