@@ -723,7 +723,6 @@
                                             minBoneDist = Math.hypot((e.clientX - rect.left) - boneCanvasX, (e.clientY - rect.top) - boneCanvasY);
                                             activeFaceBone = bone;
                                         }
-                                        }
 
                                         // 將抓取半徑設為 280，確保就算點擊遠處的右臉，也能牽引到主控網格
                                         const maxPullRadius = 280 * currentZoom * (rect.height / baseViewport.height);
