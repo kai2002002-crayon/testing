@@ -803,12 +803,50 @@
                                             y: activeFaceBone.worldY + worldDy 
                                         };
                                         
-                                        // 3. 轉回局部座標
-                                        if (activeFaceBone.parent) {
-                                            activeFaceBone.parent.worldToLocal(targetWorld);
-                                        }
-                                        activeFaceBone.x = targetWorld.x;
-                                        activeFaceBone.y = targetWorld.y;
+                                        // 2. 計算目標世界座標
+                                        let targetWorld = { 
+                                           x: activeFaceBone.worldX + worldDx, 
+                                           y: activeFaceBone.worldY + worldDy 
+                                       };
+
+                                       // 3. 轉回局部座標
+                                       if (activeFaceBone.parent) {
+                                           activeFaceBone.parent.worldToLocal(targetWorld);
+                                       }
+
+                                       // ==========================================
+                                       // 🌟 終極防護：橡皮筋演算法 (防止臉皮被拉破)
+                                       // ==========================================
+                                       let localDx = targetWorld.x - initialBoneX;
+                                       let localDy = targetWorld.y - initialBoneY;
+
+                                       // 計算目前滑鼠想拉扯的「原始直線距離」
+                                       let rawDistance = Math.hypot(localDx, localDy);
+
+                                       // 🛑 設定最大極限半徑 (Spine局部座標單位)
+                                       // 這個數值設定為 30~45 最完美，能確保肉被拉起，但絕對不會超過鼻子！
+                                       const MAX_RADIUS = 35; 
+
+                                       if (rawDistance > 0) {
+                                           // 🧮 物理阻力公式：漸近線曲線 (1 - e^-x)
+                                           // 效果：一開始拉很輕鬆，越接近 MAX_RADIUS 阻力越大，永遠拉不破極限！
+                                           let elasticDist = MAX_RADIUS * (1 - Math.exp(-rawDistance / (MAX_RADIUS * 1.2)));
+    
+                                           // 依照原本的角度，將限制後的距離重新分配給 X 和 Y
+                                           localDx = (localDx / rawDistance) * elasticDist;
+                                           localDy = (localDy / rawDistance) * elasticDist;
+                                       }
+
+                                       // ==========================================
+                                       // 🌟 針對「往內推」的單向防禦 (選用，防止臉頰凹陷)
+                                       // 如果您連往內推（讓臉凹進去）都想限制，可以加上這行：
+                                       // 如果 x 方向位移小於 0 (假設向左推是負)，就將它大幅削弱，阻擋往內壓
+                                       if (localDx < 0) localDx *= 0.2; 
+                                       // ==========================================
+
+                                       // 套用最終安全且Ｑ彈的座標
+                                       activeFaceBone.x = initialBoneX + localDx;
+                                       activeFaceBone.y = initialBoneY + localDy;
                                     }
 
                                     lastX = e.clientX;
