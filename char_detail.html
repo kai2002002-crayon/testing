@@ -706,17 +706,23 @@
                                             targetBoneName = CHAR_CONFIG[currentTargetName].faceBone;
                                         }
 
-                                        let bone = player.skeleton.findBone(targetBoneName);
-                                        
-                                        // 💡 自動防呆備用方案：萬一連字典都沒寫到，自動嘗試抓取常見的右臉控制器
+                                        // 🌟 終極真理：教主下令，全員預設使用神級官方通用骨！
+                                        let bone = player.skeleton.findBone("Character_Ball_Move");
+
+                                        // 💡 終極防呆：以防萬一遇到那 1% 沒綁標準骨的極端特例（早期角色）
+                                        // 直接用迴圈掃描備用骨，連字典都不用建了！
                                         if (!bone) {
-                                            const fallbackBones = ["S1_Ball_R_CT", "S2_F_Ball_R_CT", "S3_F_Ball_R_CT", "Ball_R_CT"];
+                                            const fallbackBones = [
+                                                "S1_Ball_R_CT", "S2_F_Ball_R_CT", "S3_F_Ball_R_CT", 
+                                                "S1_F_Ball_R", "S3_F_Ball_R", "Ball_R_CT"
+                                            ];
                                             for (let bName of fallbackBones) {
                                                 bone = player.skeleton.findBone(bName);
                                                 if (bone) break;
                                             }
                                         }
 
+                                        // 找到骨頭後計算距離
                                         if (bone) {
                                             const boneCanvasX = ((bone.worldX - baseViewport.x) / baseViewport.width) * rect.width;
                                             const boneCanvasY = rect.height - ((bone.worldY - baseViewport.y) / baseViewport.height) * rect.height;
