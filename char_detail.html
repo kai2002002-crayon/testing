@@ -830,14 +830,14 @@
                                            localDx = (localDx / rawDistance) * elasticDist;
                                            localDy = (localDy / rawDistance) * elasticDist;
                                        }
+                                       if (localDx > 0) localDx *= 0.1;
+                                       }
 
                                        // ==========================================
                                        // 🌟 針對「往內推」的單向防禦 (選用，防止臉頰凹陷)
                                        // 如果您連往內推（讓臉凹進去）都想限制，可以加上這行：
                                        // 如果 x 方向位移小於 0 (假設向左推是負)，就將它大幅削弱，阻擋往內壓
-                                       if (localDx > 0) localDx *= 0.1; 
                                        // ==========================================
-
                                        // 套用最終安全且Ｑ彈的座標
                                        activeFaceBone.x = initialBoneX + localDx;
                                        activeFaceBone.y = initialBoneY + localDy;
@@ -862,11 +862,52 @@
                                     isPointerDown = false;
                                     const animNames = player.skeleton.data.animations.map(a => a.name);
 
-                                    // 🌟 完美歸位
+                                    // 🌟 完美歸位 -> 升級為「Q彈物理果凍引擎」
                                     if (activeFaceBone) {
-                                        activeFaceBone.x = initialBoneX;
-                                        activeFaceBone.y = initialBoneY;
-                                        activeFaceBone = null;
+                                        let bounceBone = activeFaceBone;
+                                        let targetX = initialBoneX;
+                                        let targetY = initialBoneY;
+    
+                                        // 放開滑鼠，解除綁定，讓骨頭進入自由落體/彈力狀態
+                                        activeFaceBone = null; 
+
+                                        // 物理參數 (教主可自行微調手感)
+                                        let velX = 0;
+                                        let velY = 0;
+                                        const tension = 0.35;  // 彈簧拉力 (數值越大，回彈速度越快)
+                                        const friction = 0.65; // 阻力摩擦 (數值越接近1越不會停，越接近0停越快)
+
+                                        function applyBounce() {
+                                            if (!bounceBone) return;
+
+                                            // 計算距離目標點的偏差值
+                                            let dx = targetX - bounceBone.x;
+                                            let dy = targetY - bounceBone.y;
+
+                                            // 彈簧公式：速度 = 速度 + (距離 * 拉力)
+                                            velX += dx * tension;
+                                            velY += dy * tension;
+        
+                                            // 阻力公式：速度 = 速度 * 摩擦力 (讓它慢慢停下來)
+                                            velX *= friction;
+                                            velY *= friction;
+
+                                            // 將算出的速度套用到骨頭上
+                                            bounceBone.x += velX;
+                                            bounceBone.y += velY;
+
+                                            // 如果還在晃動 (速度或距離大於 0.1)，就要求瀏覽器下一幀繼續算
+                                            if (Math.abs(dx) > 0.1 || Math.abs(velX) > 0.1 || Math.abs(dy) > 0.1 || Math.abs(velY) > 0.1) {
+                                                requestAnimationFrame(applyBounce);
+                                            } else {
+                                                // 晃動小到看不見時，才真正鎖死在原點，節省效能
+                                                bounceBone.x = targetX;
+                                                bounceBone.y = targetY;
+                                            }
+                                       }
+    
+                                        // 啟動彈簧運算
+                                        applyBounce();
                                     }
                                     
                                     clearTimeout(tickleTimer); 
