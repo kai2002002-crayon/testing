@@ -550,6 +550,17 @@
                 success: function (player) {
                     console.log(`✅ 載入成功: ${costumeKey}`);
                     window.myPlayer = player;
+                    // 🌟 核心 TA 魔法：底層劫持 (Monkey Patching)
+                    // 攔截 Spine 的世界座標更新，在最後一刻強制寫入我們的眼球物理數據！
+                    const originalUpdate = player.skeleton.updateWorldTransform;
+                    player.skeleton.updateWorldTransform = function() {
+                        if (activeEyeBone) {
+                            activeEyeBone.x = eyePhysicsX;
+                            activeEyeBone.y = eyePhysicsY;
+                        }
+                        // 寫入後，再放行讓 Spine 繼續結算
+                        originalUpdate.call(this);
+                    };
                     
                     // 骨架清單除錯
                     console.group("🦴 骨架清單");
@@ -624,6 +635,8 @@
                             let initialEyeX = 0;
                             let initialEyeY = 0;
                             let isTrackingEye = false;
+                            let eyePhysicsX = 0; // 替身座標：用來保護數值不被動畫洗掉
+                            let eyePhysicsY = 0;
 
                             // --- 🖱️ 電腦專用：滾輪縮放 ---
                             avatarBox.addEventListener('wheel', function(event) {
@@ -747,18 +760,29 @@
                                         // 👁️ 新增：點擊空白處，啟動眼球追蹤模式！
                                         // ==========================================
                                         // 建立可能控制眼球的骨骼字典庫 (從最常見到最極端)
-                                        const eyeBones = ["Character_Eye", "Eye_CT", "S1_Eye_CT", "S2_Eye_CT", "S3_Eye_CT", "Eye_Move", "Pupil_CT", "Pupil"];
+                                        const eyeBones = [
+                                            "Character_Eye_Move", "Character_Eye", "Eye_CT", 
+                                            "S1_Eye_CT", "S2_Eye_CT", "S3_Eye_CT", 
+                                            "S1_F_Eye_CT", "S2_F_Eye_CT", "S3_F_Eye_CT", 
+                                            "F_Eye_CT", "Eye_Move"
+                                        ];
                                         activeEyeBone = null;
     
                                         for (let bName of eyeBones) {
                                             activeEyeBone = player.skeleton.findBone(bName);
-                                            if (activeEyeBone) break; // 只要找到一根就停止尋找
+                                            if (activeEyeBone) {
+                                                console.log("👁️ 成功劫持眼球控制器:", bName); // F12可看是否有抓到
+                                                break;
+                                            }
                                         }
 
                                         if (activeEyeBone) {
                                             isTrackingEye = true;
-                                            initialEyeX = activeEyeBone.x; // 記住眼球的初始位置
+                                            initialEyeX = activeEyeBone.x;
                                             initialEyeY = activeEyeBone.y;
+                                            // 同步替身座標
+                                            eyePhysicsX = initialEyeX + localDx;
+                                            eyePhysicsY = initialEyeY + localDy;
                                         }
                                     }
                                 }
@@ -912,45 +936,59 @@
                                     // 🌟 升級版「Q彈物理果凍引擎」(雙材質獨立支援)
                                     // ==========================================
                                     if (activeFaceBone || activeEyeBone) {
-                                        // 1. 判斷目前操作的是臉還是眼
                                         const isFace = activeFaceBone !== null;
     
-                                        let bounceBone = activeFaceBone || activeEyeBone;
                                         let targetX = isFace ? initialBoneX : initialEyeX;
                                         let targetY = isFace ? initialBoneY : initialEyeY;
     
-                                        // 2. 解除綁定狀態
-                                        activeFaceBone = null; 
-                                        activeEyeBone = null;
+                                        // 記住是誰在彈
+                                        let bouncingFaceBone = isFace ? activeFaceBone : null;
+    
+                                        // 如果是臉，立刻解除綁定；如果是眼球，等「彈完」才能解除，否則會被動畫瞬間洗掉
+                                        if (isFace) activeFaceBone = null; 
                                         isTrackingEye = false;
 
-                                        // 3. 🌟 核心：根據材質給予不同的物理公式
-                                        // 臉頰 (肉質)：拉力偏弱、阻力較大 -> 柔軟、Q彈、餘震多
-                                        // 眼球 (輕巧)：拉力極強、阻力較小 -> 清脆、俐落、回彈快
-                                        const tension = isFace ? 0.15 : 0.75;  
-                                        const friction = isFace ? 0.85 : 0.45; 
-
-                                        let velX = 0;
-                                        let velY = 0;
+                                        // 獨立物理參數：臉頰軟Q，眼球俐落
+                                        const tension = isFace ? 0.35 : 0.75;  
+                                        const friction = isFace ? 0.65 : 0.45; 
+                                        let velX = 0, velY = 0;
 
                                         function applyBounce() {
-                                            if (!bounceBone) return;
-                                            let dx = targetX - bounceBone.x;
-                                            let dy = targetY - bounceBone.y;
+                                            // 從實體或替身讀取現在的座標
+                                            let currentX = isFace ? bouncingFaceBone.x : eyePhysicsX;
+                                            let currentY = isFace ? bouncingFaceBone.y : eyePhysicsY;
+        
+                                            let dx = targetX - currentX;
+                                            let dy = targetY - currentY;
 
                                             velX += dx * tension;
                                             velY += dy * tension;
                                             velX *= friction;
                                             velY *= friction;
 
-                                            bounceBone.x += velX;
-                                            bounceBone.y += velY;
+                                            // 將速度套用到實體或替身上
+                                            if (isFace) {
+                                                bouncingFaceBone.x += velX;
+                                                bouncingFaceBone.y += velY;
+                                            } else {
+                                                eyePhysicsX += velX;
+                                                eyePhysicsY += velY;
+                                            }
 
+                                            // 判斷是否還在震動
                                             if (Math.abs(dx) > 0.1 || Math.abs(velX) > 0.1 || Math.abs(dy) > 0.1 || Math.abs(velY) > 0.1) {
                                                 requestAnimationFrame(applyBounce);
                                             } else {
-                                                bounceBone.x = targetX;
-                                                bounceBone.y = targetY;
+                                                // 彈動結束，鎖死原點
+                                                if (isFace) {
+                                                    bouncingFaceBone.x = targetX;
+                                                    bouncingFaceBone.y = targetY;
+                                                } else {
+                                                    eyePhysicsX = targetX;
+                                                    eyePhysicsY = targetY;
+                                                    // 眼睛彈完了，正式放開劫持控制權，交還給系統待機動畫
+                                                    activeEyeBone = null; 
+                                                }
                                             }
                                         }
                                         applyBounce();
