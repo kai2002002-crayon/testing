@@ -817,7 +817,7 @@
                                         let localDy = targetWorld.y - initialBoneY;
                                         let rawDistance = Math.hypot(localDx, localDy);
 
-                                        const MAX_RADIUS = 35; // 臉頰最大外拉極限
+                                        const MAX_RADIUS = 55; // 臉頰最大外拉極限
 
                                         if (rawDistance > 0) {
                                             let elasticDist = MAX_RADIUS * (1 - Math.exp(-rawDistance / (MAX_RADIUS * 1.2)));
