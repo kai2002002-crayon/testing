@@ -617,6 +617,14 @@
                             let initialBoneX = 0;
                             let initialBoneY = 0;
 
+                            // ==========================================
+                            // 👁️ 新增：眼球追蹤專用變數
+                            // ==========================================
+                            let activeEyeBone = null;
+                            let initialEyeX = 0;
+                            let initialEyeY = 0;
+                            let isTrackingEye = false;
+
                             // --- 🖱️ 電腦專用：滾輪縮放 ---
                             avatarBox.addEventListener('wheel', function(event) {
                                 event.preventDefault();
