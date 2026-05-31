@@ -665,7 +665,7 @@
                                 let clickedPart = null;
                                 let minDistance = Infinity;
                                 const hitZones = [
-                                    { name: "頭部", bones: ["Character_Pat", "S3_Head", "S1_Head", "Head"], radius: 100 }, 
+                                    { name: "頭部", bones: ["Character_Pat", "S3_Head", "S1_Head", "Head"], radius: 220 }, 
                                     { name: "身體", bones: ["Character_Tickle", "S3_Body_1", "S1_Body_1", "Body_1"], radius: 150 }
                                 ];
                                 hitZones.forEach(zone => {
@@ -778,9 +778,9 @@
                                             isTrackingEye = true;
                                             initialEyeX = activeEyeBone.x;
                                             initialEyeY = activeEyeBone.y;
-                                            // 同步替身座標
-                                            eyePhysicsX = initialEyeX + localDx;
-                                            eyePhysicsY = initialEyeY + localDy;
+                                            // 🌟 修復：按下的瞬間還沒有滑鼠位移，所以替身座標直接等於初始座標！
+                                            eyePhysicsX = initialEyeX;
+                                            eyePhysicsY = initialEyeY;
                                         }
                                     }
                                 }
@@ -907,8 +907,8 @@
                                         }
 
                                         // 實時更新眼球位置
-                                        activeEyeBone.x = initialEyeX + localDx;
-                                        activeEyeBone.y = initialEyeY + localDy;
+                                        eyePhysicsX = initialEyeX + localDx;
+                                        eyePhysicsY = initialEyeY + localDy;
                                     }
 
                                     lastX = e.clientX;
