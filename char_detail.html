@@ -699,30 +699,30 @@
                                     if (hitZoneOnDown && hitZoneOnDown.name === "頭部") {
                                         let minBoneDist = Infinity;
                                         
-                                        // 🌟 終極真理名單：只收錄真正的「網格控制器」與「官方互動骨」
-                                        // 嚴格禁止純面紅骨骼 (Ball_R)，保證面紅絕對不會單獨飛出臉外！
-                                        // 🌟 終極真理名單：順應遊戲原生設計，徹底剔除不可拉扯的左臉！
-                                        // 只保留官方專用互動骨與「遠處右臉」的網格控制器
-                                        const trueControllers = [
-                                            "Character_Ball_Move", // 神級官方通用互動骨 (傑德、莎莉等都有)
-                                            "S1_Ball_R_CT", "S1_F_Ball_R_CT", 
-                                            "S2_F_Ball_R_CT", "Ball_R_Root", "S1_Ball_R_Root",
-                                            "S3_F_Ball_R_CT", "S1_F_Ball_R_Root", "S2_F_Ball_R_Root", "S3_F_Ball_R_Root", "S3_F_Ball_Root",
-                                            "Ball_R_CT", "Face_CT"
-                                        ];
+                                        // 🌟 終極真理：直接鎖定「神級官方通用骨」，極少數例外才查字典！
+                                        let targetBoneName = "Character_Ball_Move"; 
                                         
-                                        for (let bName of trueControllers) {
-                                            let bone = player.skeleton.findBone(bName);
-                                            if (bone) {
-                                                const boneCanvasX = ((bone.worldX - baseViewport.x) / baseViewport.width) * rect.width;
-                                                const boneCanvasY = rect.height - ((bone.worldY - baseViewport.y) / baseViewport.height) * rect.height;
-                                                const dist = Math.hypot((e.clientX - rect.left) - boneCanvasX, (e.clientY - rect.top) - boneCanvasY);
-                                                
-                                                if (dist < minBoneDist) {
-                                                    minBoneDist = dist;
-                                                    activeFaceBone = bone;
-                                                }
+                                        if (CHAR_CONFIG[currentTargetName]) {
+                                            targetBoneName = CHAR_CONFIG[currentTargetName].faceBone;
+                                        }
+
+                                        let bone = player.skeleton.findBone(targetBoneName);
+                                        
+                                        // 💡 自動防呆備用方案：萬一連字典都沒寫到，自動嘗試抓取常見的右臉控制器
+                                        if (!bone) {
+                                            const fallbackBones = ["S1_Ball_R_CT", "S2_F_Ball_R_CT", "S3_F_Ball_R_CT", "Ball_R_CT"];
+                                            for (let bName of fallbackBones) {
+                                                bone = player.skeleton.findBone(bName);
+                                                if (bone) break;
                                             }
+                                        }
+
+                                        if (bone) {
+                                            const boneCanvasX = ((bone.worldX - baseViewport.x) / baseViewport.width) * rect.width;
+                                            const boneCanvasY = rect.height - ((bone.worldY - baseViewport.y) / baseViewport.height) * rect.height;
+                                            minBoneDist = Math.hypot((e.clientX - rect.left) - boneCanvasX, (e.clientY - rect.top) - boneCanvasY);
+                                            activeFaceBone = bone;
+                                        }
                                         }
 
                                         // 將抓取半徑設為 280，確保就算點擊遠處的右臉，也能牽引到主控網格
