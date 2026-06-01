@@ -165,7 +165,7 @@
         const db = firebase.firestore();
 
         // ==========================================
-        // 📚 角色巨型字典庫 (維持教主的原始資料不變)
+        // 📚 角色巨型字典庫
         // ==========================================
         const SPINE_MAP = {
             "洛涅": "Rohne", "薇薇": "Vivi", "艾爾芬": "Erpin", "錫安": "xXionx", "伊弗利特": "Ifrit", "伊德": "Ed", "佩佩": "Velvet", "佩斯塔": "Festa",
@@ -291,7 +291,7 @@
             "Leets": "嗨，教主！您過的好嗎？我今天也完成了一天的鍛鍊，然後努力地四處尋找下一個對手！我絕對不是窩在家裡被路德訓斥才被趕出來的！……所以說啊，教團裡會不會有什麼值得一戰的事情啊？啊，我並不是希望有那種事情才這麼說的！只是覺得突然有點事情發生也不錯……呵呵，總之，有什麼事情一定要找我唷，教主！",
             "Levi": "以前我做過「幸運信」寫作的工讀生……但要說給誰寫信，這還是第一次，或者說真的很久沒寫過了。啊，我之前寫過一封魔女升級審核用的請願書……那麼，這應該是我第一次懷著愉快心情寫的信了吧！多虧教主大人設置了宴會廳，讓我能嘗到各式各樣的料理。也因為這樣，我充滿了力量，甚至多接了兩份兼職呢！\n心懷感謝，萊薇敬上。",
             "MaestroMK2": "#include<stdio.h>\nint main(){\n    printf(\"\\x54\\x68\\x61\\x6E\\x6B\\x20\\x79\\x6F\\x75\\x2E\\x20\\x48\\x75\\x6D\\x61\\x6E\\x2E\");\n    return 0;\n}",
-            "Mago": "教主大人，您那裡還好嗎？我的牧場最近天氣非常好，大樹下總是有涼爽的樹蔭，柔和的微風還帶著花香撲鼻而來。坐在樹蔭下，真的能感受到一種前所未有的平靜。和朋友們一起躺著休息時，我想到了教主大人。大家都說很想見您，我也是。所以寫下這封信，希望能早日見到您。",
+            "Mago": "教主大人，您那裡還好嗎？我的牧場最近天氣非常好，大樹下總是有涼爽的樹蔭，柔和的微風還帶著花香撲鼻而來。坐在樹蔭下，真的能感受到一種前所未有的平靜。和朋友們一起躺着休息時，我想到了教主大人。大家都說很想見您，我也是。所以寫下這封信，希望能早日見到您。",
             "Marie": "教主大人。我們的回憶總是少不了炸彈呢。我突然想到了一個全新的炸彈點子。我要先去把它做出來，然後再繼續寫。做好了。這顆炸彈被我設計成在教主大人收到並讀完這封信後會爆炸。至於我打算把它裝在哪裡……那是秘密！下次一定要告訴我對這顆炸彈的感想哦？那麼，祝您爆彈愉快！",
             "Mayo": "致教主：最近聽說您到處忙個不停。我可不喜歡我的收藏品有任何刮痕，也不喜歡被其他人染上指紋。包裝損壞更是不行。所以，教主最好乖乖待在教團裡。這也是因為收藏品也需要有社會地位和體面，才特地把你視作教團的一部分。記住，不要到處亂跑，只能待在教團裡。別忘了，教主是我的收藏品。",
             "Meluna": "以我的身份來說，寄出私人的信件其實非常少見。但教主您是特別的存在。您是我們公司的顧問，也是我的朋友。還有……我也不知道該怎麼形容，教主就是教主嘛。莫納蒂姆的一切都變化得非常快，有時候真的讓人感到疲憊。所以教主能不能一直保持您那特別的模樣呢？看完這封信後，請把它燒掉。因為要是筆跡外流，可能會引發一些麻煩事。",
@@ -404,22 +404,17 @@
             "skill_passive_伊弗利特": "https://i.postimg.cc/wRKb1DXf/yi-fu-li-te4.png", "skill_passive_伊德": "https://i.postimg.cc/hQ9ZThs0/yi-de4.png", "skill_passive_佩佩": "https://i.postimg.cc/grRTfBpx/pei-pei4.png", "skill_passive_佩斯塔": "https://i.postimg.cc/jCNFGkTW/pei-si-ta4.png", "skill_passive_修帕": "https://i.postimg.cc/qgn59ZrZ/xiu-pa4.png", "skill_passive_傑德": "https://i.postimg.cc/ppH6xYXR/jie-de4.png", "skill_passive_優米": "https://i.postimg.cc/ykyrNgkX/you-mi4.png", "skill_passive_劉美美": "https://i.postimg.cc/vctSmgc6/liu-mei-mei4.png", "skill_passive_加薇雅": "https://i.postimg.cc/2LpX1nQ4/jia-wei-ya4.png", "skill_passive_卡洛特": "https://i.postimg.cc/D4VYS1rQ/ka-luo-te4.jpg", "skill_passive_卡蓮": "https://i.postimg.cc/RJrbWw7Q/ka-lian4.png", "skill_passive_喬菲": "https://i.postimg.cc/1fQjPc5S/qiao-fei4.png", "skill_passive_基狄恩": "https://i.postimg.cc/7fkWDMPt/ji-di-en4.png", "skill_passive_大師2號": "https://i.postimg.cc/GT0S4vFF/da-shi2hao4.png", "skill_passive_大木頭": "https://i.postimg.cc/XBMDr9fd/da-mu-tou4.png", "skill_passive_奈雅": "https://i.postimg.cc/grRTfBp6/nai-ya4.png", "skill_passive_奶油": "https://i.postimg.cc/30Mbk2XF/nai-you4.png", "skill_passive_寧琉": "https://i.postimg.cc/mty6rztr/ning-liu4.jpg", "skill_passive_布蘭切": "https://i.postimg.cc/bSXFZ1x3/bu-lan-qie4.png", "skill_passive_希拉": "https://i.postimg.cc/Cnjrkd7W/xi-la4.png", "skill_passive_希爾德": "https://i.postimg.cc/ctQkw6Td/xi-er-de4.png", "skill_passive_希瑟圖": "https://i.postimg.cc/tnhvW7Dj/xi-se-tu4.png", "skill_passive_希菲爾": "https://i.postimg.cc/vxW2fDXw/xi-fei-er4.png", "skill_passive_帕特拉": "https://i.postimg.cc/hhx5H3nQ/pa-te-la4.png", "skill_passive_庫洛艾": "https://i.postimg.cc/7b7WpQ4R/ku-luo-ai4.png", "skill_passive_康娜": "https://i.postimg.cc/BX0VscZV/kang-na4.png", "skill_passive_愛麗絲": "https://i.postimg.cc/MvSFxbKT/ai-li-si4.png", "skill_passive_斑尼": "https://i.postimg.cc/LnpbRB6R/ban-ni4.png", "skill_passive_斯皮奇": "https://i.postimg.cc/BX0VscQJ/si-pi-qi4.png", "skill_passive_斯諾奇": "https://i.postimg.cc/crSbZM4C/si-nuo-qi4.jpg", "skill_passive_柯米": "https://i.postimg.cc/Z03M1DmP/ke-mi4.png", "skill_passive_桃桃": "https://i.postimg.cc/w3JGSbzS/tao-tao4.png", "skill_passive_梅森": "https://i.postimg.cc/ppH6xYVg/mei-sen4.png", "skill_passive_梅露娜": "https://i.postimg.cc/crSbZM12/mei-lu-na4.png", "skill_passive_泰達": "https://i.postimg.cc/9zTnvN2S/tai-da4.png", "skill_passive_洛涅": "https://i.postimg.cc/Hj5hfPmt/luo-nie4.png", "skill_passive_海莉": "https://i.postimg.cc/RNBD9QCP/hai-li4.png", "skill_passive_珀榭": "https://i.postimg.cc/MXRFhrwt/po-xie4.png", "skill_passive_琳": "https://i.postimg.cc/PPQFqpPj/lin4.png", "skill_passive_瑟琳娜": "https://i.postimg.cc/YhzySGht/se-lin-na4.jpg", "skill_passive_瑪約": "https://i.postimg.cc/2V7X5bV6/ma-yue4.png", "skill_passive_瑪麗": "https://i.postimg.cc/xc3FdJcH/ma-li4.png", "skill_passive_皮可菈": "https://i.postimg.cc/1VxY8DGB/pi-ke-la4.png", "skill_passive_盧波": "https://i.postimg.cc/PPQFqpPY/lu-bo4.png", "skill_passive_米雪": "https://i.postimg.cc/5QwKLjg8/mi-xue4.png", "skill_passive_綾": "https://i.postimg.cc/ZCxDqBCB/ling4.png", "skill_passive_羽伊": "https://i.postimg.cc/sGpH71mw/yu-yi4.png", "skill_passive_艾斯皮": "https://i.postimg.cc/Zvrsp0Hw/ai-si-pi4.png", "skill_passive_艾爾芬": "https://i.postimg.cc/9wGgZzbS/ai-er-fen4.png", "skill_passive_艾琳娜": "https://i.postimg.cc/BPx7Htp7/ai-lin-na4.png", "skill_passive_艾皮卡": "https://i.postimg.cc/1Vp7w4BB/ai-pi-ka4.png", "skill_passive_艾舒爾": "https://i.postimg.cc/fSxqmkCg/ai-shu-er4.png", "skill_passive_艾蜜莉雅": "https://i.postimg.cc/YL1DYjRT/ai-mi-li-ya4.png", "skill_passive_芙莉可": "https://i.postimg.cc/3WpcPbhg/fu-li-ke4.png", "skill_passive_茱蜜": "https://i.postimg.cc/1fQjPcRB/zhu-mi4.png", "skill_passive_莉茲": "https://i.postimg.cc/bshB8HY7/li-zi4.png", "skill_passive_莎莉": "https://i.postimg.cc/RNBD9QV5/sha-li4.png", "skill_passive_萊薇": "https://i.postimg.cc/JGL2mc4h/lai-wei4.png", "skill_passive_蒂亞娜": "https://i.postimg.cc/gnHB0XnY/di-ya-na4.png", "skill_passive_薇薇": "https://i.postimg.cc/MnZ3f6Qj/wei-wei4.png", "skill_passive_謝蒂": "https://i.postimg.cc/pmVc5WFF/xie-di4.png", "skill_passive_貝魯": "https://i.postimg.cc/FkjC31GQ/bei-lu4.png", "skill_passive_貝麗塔": "https://i.postimg.cc/9wGgZz1W/bei-li-ta4.png", "skill_passive_路德": "https://i.postimg.cc/rKNYp0Kz/lu-de4.png", "skill_passive_路易": "https://i.postimg.cc/crB5Jgrx/lu-yi4.png", "skill_passive_錫安": "https://i.postimg.cc/dLjS0kLj/xi-an4.png", "skill_passive_阿萊特": "https://i.postimg.cc/YjgsJy7Y/a-lai-te4.png", "skill_passive_雷吉": "https://i.postimg.cc/MvmrGMvp/lei-ji4.png", "skill_passive_馬爾": "https://i.postimg.cc/6yXmwL6M/ma-er4.png"
         };
 
-        // ==========================================
-        // 🌟 核心升級：大圖示懸浮提示標籤 (Tooltip)
-        // ==========================================
         const updateTag = (id, label, value, prefix) => {
             const el = document.getElementById(id);
             const iconUrl = ICON_MAP[`${prefix}_${value}`] || "";
             
             if (!iconUrl) {
-                el.classList.add('hidden'); // 如果沒圖示，就隱藏整個容器
+                el.classList.add('hidden');
                 return;
             }
 
-            // 💡 優化：直接重置並賦予基礎的相對定位，省去移除幾十個 CSS class 的麻煩
             el.className = 'relative group flex items-center justify-center'; 
 
-            // 渲染大圖示與懸浮 Tooltip 結構
             el.innerHTML = `
                 <img src="${iconUrl}" 
                      alt="${label}" 
@@ -454,9 +449,6 @@
         let globalSpinePlayer = null;
         let globalIdleTimer = null;
         
-        // ==========================================
-        // 🎁 珍藏品切換頁籤邏輯
-        // ==========================================
         let currentTab = 'thought';
 
         function switchPresentTab(tab) {
@@ -469,7 +461,6 @@
             
             const inactiveClass = "flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300";
 
-            // 清除背景圖，統一使用簡潔風格
             presentTextWrapper.style.backgroundImage = 'none';
             presentText.className = "text-sm md:text-base leading-relaxed w-full drop-shadow-md text-gray-700 dark:text-gray-300";
 
@@ -484,16 +475,12 @@
             }
         }
         
-        // ==========================================
-        // 🌟 Spine 獨立渲染邏輯 (支援換裝與同資料夾讀取)
-        // ==========================================
         function loadSpineAnimation(costumeKey) {
             const avatarBox = document.getElementById('charAvatar');
             const baseFolderKey = SPINE_MAP[currentTargetName]; 
             
             clearTimeout(globalIdleTimer);
 
-            // 🌟 關鍵防崩潰修復：先正規銷毀舊的 Spine 實例，釋放 WebGL 記憶體
             if (window.globalSpinePlayer) {
                 window.globalSpinePlayer.dispose();
                 window.globalSpinePlayer = null;
@@ -501,7 +488,6 @@
             
             avatarBox.innerHTML = ''; 
 
-            // 隨機背景魔法：僅在首次進入或無背景時賦予背景，避免每次換裝都閃爍切換背景
             if (!avatarBox.style.backgroundImage && LOBBY_BACKGROUNDS && LOBBY_BACKGROUNDS.length > 0) {
                 const randomBg = LOBBY_BACKGROUNDS[Math.floor(Math.random() * LOBBY_BACKGROUNDS.length)];
                 avatarBox.style.backgroundImage = `url('${randomBg}')`;
@@ -511,12 +497,10 @@
                 avatarBox.classList.add('overflow-hidden', 'rounded-2xl', 'shadow-inner');
             }
 
-            // 2. 恢復你確定「正式版能跑」的穩定初始化參數
             window.globalSpinePlayer = new spine.SpinePlayer(avatarBox, {
                 skelUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.skel.bytes`,
                 atlasUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.atlas.txt`,
                 
-                // 🚨 救命關鍵：絕對不能刪除這行，Spine 需要它來計算畫布大小並打底！
                 animation: "Idle_1",     
                 
                 premultipliedAlpha: true,
@@ -529,47 +513,10 @@
                     console.log(`✅ 載入成功: ${costumeKey}`);
                     window.myPlayer = player;
     
-                    // ==========================================
-                    // 🌟 全域共用變數與劫持魔法 (必須拉到最上方，讓 Spine 引擎看得見！)
-                    // ==========================================
                     let activeFaceBone = null; 
                     let initialBoneX = 0;
                     let initialBoneY = 0;
 
-                    // 🌟 改為陣列，支援「雙眼獨立骨骼」(如洛涅)
-                    let activeEyeBones = []; 
-                    let initialEyePositions = []; 
-                    let isTrackingEye = false;
-                    let eyePhysicsX = 0; // 改為「相對位移量」
-                    let eyePhysicsY = 0;
-
-                    // ==========================================
-                    // 🌟 強化版：強制覆蓋劫持 (確保數值不被動畫覆蓋)
-                    // ==========================================
-                    const originalUpdate = player.skeleton.updateWorldTransform;
-                    player.skeleton.updateWorldTransform = function() {
-                        // 1. 先執行原始的動畫計算
-                        originalUpdate.call(this);
-
-                        // 2. 「強行介入」：在動畫計算完成後，立刻修改骨骼數值
-                        if (activeEyeBones.length > 0) {
-                            for (let i = 0; i < activeEyeBones.length; i++) {
-                                let bone = activeEyeBones[i];
-                                // 直接修改 worldX/Y，讓它無法被後續流程還原
-                                bone.worldX += eyePhysicsX;
-                                bone.worldY += eyePhysicsY;
-                            }
-                        }
-                    };
-                    // ==========================================
-                    // ==========================================
-                    
-                    // 骨架清單除錯
-                    console.group("🦴 骨架清單");
-                    player.skeleton.bones.forEach(b => console.log(b.data.name));
-                    console.groupEnd();
-                    
-                    // 🌟 1. 皮膚換裝邏輯
                     const skins = player.skeleton.data.skins;
                     if (skins && skins.length > 1) {
                         const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default');
@@ -579,13 +526,11 @@
                         }
                     }
                     
-                    // 🌟 2. 動作輪播邏輯
                     const animations = player.skeleton.data.animations;
                     if (animations && animations.length > 0) {
                         const animNames = animations.map(a => a.name);
                         const playList = animNames;
 
-                        // 🌟 封裝：將輪播重啟邏輯抽離成獨立函數
                         function startRandomAnimationLoop() {
                             clearTimeout(globalIdleTimer);
                             globalIdleTimer = setTimeout(playNextAnimation, 5000);
@@ -594,27 +539,21 @@
                         function playNextAnimation() {
                             const targetAnims = playList.length > 0 ? playList : ['Idle_1'];
     
-                            // 隨機抽取下一個動畫
                             const randomIndex = Math.floor(Math.random() * targetAnims.length);
                             const nextAnim = targetAnims[randomIndex];
     
                             console.log(`🎲 隨機輪播: ${nextAnim}`);
                             player.animationState.setAnimation(0, nextAnim, true); 
     
-                            // 使用封裝的函數重啟計時器
                             startRandomAnimationLoop();
                         }
 
-                        // 首次啟動輪播
                         startRandomAnimationLoop();
 
-                        // 點擊畫布手動切換
-                        // 🌟 2 & 4. 終極整合：高畫質縮放 + 多指防呆 + 部位互動系統 (究極返璞歸真．唯一正解版)
                         const canvas = avatarBox.querySelector('canvas');
                         if (canvas) {
                             canvas.style.touchAction = 'none';
 
-                            // 💡 共用變數
                             let currentZoom = 1.0;
                             const ZOOM_ANCHOR_Y = 600; 
                             const baseViewport = { x: -400, y: 0, width: 800, height: 1000 }; 
@@ -630,7 +569,6 @@
                             let hasTriggeredRub = false; 
                             let tickleTimer = null; 
                             
-                            // --- 🖱️ 電腦專用：滾輪縮放 ---
                             avatarBox.addEventListener('wheel', function(event) {
                                 event.preventDefault();
                                 currentZoom = event.deltaY < 0 ? Math.min(currentZoom + 0.1, 4.0) : Math.max(currentZoom - 0.1, 0.5);
@@ -642,7 +580,6 @@
                                 }
                             }, { passive: false });
 
-                            // --- 🔄 雙擊重置 ---
                             avatarBox.addEventListener('dblclick', function() {
                                 currentZoom = 1.0;
                                 if (player.skeleton) {
@@ -653,7 +590,6 @@
                                 }
                             });
 
-                            // 輔助函式：計算點擊部位
                             function getHitZone(mouseX, mouseY) {
                                 const rect = canvas.getBoundingClientRect();
                                 let clickedPart = null;
@@ -685,7 +621,6 @@
                                 return clickedPart;
                             }
 
-                            // 👆 整合階段 1：按下
                             canvas.addEventListener('pointerdown', (e) => {
                                 pointers[e.pointerId] = { x: e.clientX, y: e.clientY }; 
                                 const pointerKeys = Object.keys(pointers);
@@ -712,11 +647,8 @@
                                     if (hitZoneOnDown && hitZoneOnDown.name === "頭部") {
                                         let minBoneDist = Infinity;
                                         
-                                        // 🌟 終極真理：教主下令，全員預設使用神級官方通用骨！
                                         let bone = player.skeleton.findBone("Character_Ball_Move");
 
-                                        // 💡 終極防呆：以防萬一遇到那 1% 沒綁標準骨的極端特例（早期角色）
-                                        // 直接用迴圈掃描備用骨，連字典都不用建了！
                                         if (!bone) {
                                             const fallbackBones = [
                                                 "S1_Ball_R_CT", "S2_F_Ball_R_CT", "S3_F_Ball_R_CT", 
@@ -728,7 +660,6 @@
                                             }
                                         }
 
-                                        // 找到骨頭後計算距離
                                         if (bone) {
                                             const boneCanvasX = ((bone.worldX - baseViewport.x) / baseViewport.width) * rect.width;
                                             const boneCanvasY = rect.height - ((bone.worldY - baseViewport.y) / baseViewport.height) * rect.height;
@@ -736,79 +667,18 @@
                                             activeFaceBone = bone;
                                         }
 
-                                        // 將抓取半徑設為 280，確保就算點擊遠處的右臉，也能牽引到主控網格
                                         const maxPullRadius = 280 * currentZoom * (rect.height / baseViewport.height);
                                         
                                         if (minBoneDist <= maxPullRadius && activeFaceBone) {
-                                            // 🌟 記錄最初的 Local 座標，保證平滑位移不破圖
                                             initialBoneX = activeFaceBone.x;
                                             initialBoneY = activeFaceBone.y;
                                         } else {
                                             activeFaceBone = null; 
                                         }
                                     }
-                                    else {
-                                        // ==========================================
-                                        // 👁️ 新增：點擊空白處，啟動眼球追蹤模式！
-                                        // ==========================================
-                                        const masterEyeBones = [
-                                            "Character_Eye_Move", "Character_Eye", "Eye_CT", 
-                                            "S1_Eye_CT", "S2_Eye_CT", "S3_Eye_CT", 
-                                            "S1_F_Eye_CT", "S2_F_Eye_CT", "S3_F_Eye_CT", 
-                                            "F_Eye_CT", "Eye_Move"
-                                        ];
-                                        // 洛涅專屬：獨立左右眼骨骼名稱
-                                        const leftEyeBones = ["S1_F_Eye_L", "S2_F_Eye_L", "S3_F_Eye_L", "F_Eye_L", "Eye_L"];
-                                        const rightEyeBones = ["S1_F_Eye_R", "S2_F_Eye_R", "S3_F_Eye_R", "F_Eye_R", "Eye_R"];
-
-                                        activeEyeBones = [];
-                                        initialEyePositions = [];
-
-                                        // 1. 先找有沒有「統一眼球控制器」
-                                        for (let bName of masterEyeBones) {
-                                            let bone = player.skeleton.findBone(bName);
-                                            if (bone) {
-                                                activeEyeBones.push(bone);
-                                                console.log("👁️ 成功劫持主眼球控制器:", bName);
-                                                break;
-                                            }
-                                        }
-
-                                        // 2. 如果沒有主控制器(例如洛涅)，就分別抓取左右眼！
-                                        if (activeEyeBones.length === 0) {
-                                            for (let bName of leftEyeBones) {
-                                                let bone = player.skeleton.findBone(bName);
-                                                if (bone) {
-                                                    activeEyeBones.push(bone);
-                                                    console.log("👁️ 成功劫持左眼:", bName);
-                                                    break;
-                                                }
-                                            }
-                                            for (let bName of rightEyeBones) {
-                                                let bone = player.skeleton.findBone(bName);
-                                                if (bone) {
-                                                    activeEyeBones.push(bone);
-                                                    console.log("👁️ 成功劫持右眼:", bName);
-                                                    break;
-                                                }
-                                            }
-                                        }
-
-                                        if (activeEyeBones.length > 0) {
-                                            isTrackingEye = true;
-                                            eyePhysicsX = 0; // 重置相對位移
-                                            eyePhysicsY = 0;
-    
-                                            // 記錄每一顆眼球的初始座標
-                                            for (let bone of activeEyeBones) {
-                                                initialEyePositions.push({ x: bone.x, y: bone.y });
-                                            }
-                                        }
-                                    }
                                 }
                             });
 
-                            // ✌️ 整合階段 2：移動
                             canvas.addEventListener('pointermove', (e) => {
                                 if (!pointers[e.pointerId]) return;
                                 pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
@@ -853,42 +723,33 @@
                                         }
                                     }
 
-                                    // 🌟 單一骨骼變形邏輯 (完美還原第一次成功的物理約束)
                                     if (hasTriggeredRub && hitZoneOnDown && hitZoneOnDown.name === "頭部" && activeFaceBone) {
                                         const rect = canvas.getBoundingClientRect();
                                         const spineScaleX = baseViewport.width / rect.width / currentZoom;
                                         const spineScaleY = baseViewport.height / rect.height / currentZoom;
                                         
                                         const stretchIntensity = 1.3; 
-                                        // 1. 計算滑鼠在世界座標的真實位移
                                         let worldDx = (e.clientX - startX) * spineScaleX * stretchIntensity;
                                         let worldDy = -(e.clientY - startY) * spineScaleY * stretchIntensity;
 
-                                        // ==========================================
-                                        // 🌟 絕對防禦：在「螢幕真實方向」擋下往內壓的動作！
-                                        // 因為捏的是右臉(螢幕左側)，滑鼠往右(worldDx > 0)就是往臉裡面壓
                                         if (worldDx > 0) {
-                                            worldDx = 0; // 絕對鎖死 X 軸往內推的力道！
+                                            worldDx = 0; 
                                         }
-                                        // ==========================================
 
-                                        // 2. 將防禦後的安全座標轉交給目標點
                                         let targetWorld = { 
                                             x: activeFaceBone.worldX + worldDx, 
                                             y: activeFaceBone.worldY + worldDy 
                                         };
 
-                                        // 3. 轉回局部座標
                                         if (activeFaceBone.parent) {
                                             activeFaceBone.parent.worldToLocal(targetWorld);
                                         }
 
-                                        // 4. 橡皮筋極限拉扯運算 (防止拉破圖)
                                         let localDx = targetWorld.x - initialBoneX;
                                         let localDy = targetWorld.y - initialBoneY;
                                         let rawDistance = Math.hypot(localDx, localDy);
 
-                                        const MAX_RADIUS = 55; // 臉頰最大外拉極限
+                                        const MAX_RADIUS = 55; 
 
                                         if (rawDistance > 0) {
                                             let elasticDist = MAX_RADIUS * (1 - Math.exp(-rawDistance / (MAX_RADIUS * 1.2)));
@@ -896,38 +757,8 @@
                                             localDy = (localDy / rawDistance) * elasticDist;
                                         }
 
-                                        // 5. 最終完美賦值
                                         activeFaceBone.x = initialBoneX + localDx;
                                         activeFaceBone.y = initialBoneY + localDy;
-                                    }
-                                    // ==========================================
-                                    // 👁️ 新增：計算眼球追蹤軌跡
-                                    // ==========================================
-                                    if (isTrackingEye && activeEyeBones.length > 0) {
-                                        const rect = canvas.getBoundingClientRect();
-
-                                        // 取得第一顆眼球作為計算基準
-                                        const refBone = activeEyeBones[0];
-                                        const boneCanvasX = ((refBone.worldX - baseViewport.x) / baseViewport.width) * rect.width;
-                                        const boneCanvasY = rect.height - ((refBone.worldY - baseViewport.y) / baseViewport.height) * rect.height;
-
-                                        let dx = (e.clientX - rect.left) - boneCanvasX;
-                                        let dy = (e.clientY - rect.top) - boneCanvasY;
-
-                                        let localDx = dx * 0.03; 
-                                        let localDy = -dy * 0.03;
-
-                                        const MAX_EYE_RADIUS = 12;
-                                        let distance = Math.hypot(localDx, localDy);
-
-                                        if (distance > MAX_EYE_RADIUS) {
-                                            localDx = (localDx / distance) * MAX_EYE_RADIUS;
-                                            localDy = (localDy / distance) * MAX_EYE_RADIUS;
-                                        }
-
-                                        // 🌟 寫入「相對位移量」，底層劫持會自動幫所有眼球加上這個偏移！
-                                        eyePhysicsX = localDx;
-                                        eyePhysicsY = localDy;
                                     }
 
                                     lastX = e.clientX;
@@ -935,7 +766,6 @@
                                 }
                             });
 
-                            // 🤟 整合階段 3：放開
                             const handlePointerUp = (e) => {
                                 delete pointers[e.pointerId];
                                 const pointerKeys = Object.keys(pointers);
@@ -949,28 +779,20 @@
                                     isPointerDown = false;
                                     const animNames = player.skeleton.data.animations.map(a => a.name);
 
-                                    // ==========================================
-                                    // 🌟 升級版「Q彈物理果凍引擎」(雙材質獨立支援)
-                                    // ==========================================
-                                    if (activeFaceBone || activeEyeBones.length > 0) {
-                                        const isFace = activeFaceBone !== null;
+                                    if (activeFaceBone) {
+                                        let targetX = initialBoneX;
+                                        let targetY = initialBoneY;
 
-                                        // 臉頰回歸絕對座標 initialBoneX/Y，眼球回歸相對位移 0
-                                        let targetX = isFace ? initialBoneX : 0;
-                                        let targetY = isFace ? initialBoneY : 0;
+                                        let bouncingFaceBone = activeFaceBone;
+                                        activeFaceBone = null; 
 
-                                        let bouncingFaceBone = isFace ? activeFaceBone : null;
-
-                                        if (isFace) activeFaceBone = null; 
-                                        isTrackingEye = false;
-
-                                        const tension = isFace ? 0.35 : 0.75;  
-                                        const friction = isFace ? 0.65 : 0.45; 
+                                        const tension = 0.35;  
+                                        const friction = 0.65; 
                                         let velX = 0, velY = 0;
 
                                         function applyBounce() {
-                                            let currentX = isFace ? bouncingFaceBone.x : eyePhysicsX;
-                                            let currentY = isFace ? bouncingFaceBone.y : eyePhysicsY;
+                                            let currentX = bouncingFaceBone.x;
+                                            let currentY = bouncingFaceBone.y;
 
                                             let dx = targetX - currentX;
                                             let dy = targetY - currentY;
@@ -980,27 +802,14 @@
                                             velX *= friction;
                                             velY *= friction;
 
-                                            if (isFace) {
-                                                bouncingFaceBone.x += velX;
-                                                bouncingFaceBone.y += velY;
-                                            } else {
-                                                eyePhysicsX += velX;
-                                                eyePhysicsY += velY;
-                                            }
+                                            bouncingFaceBone.x += velX;
+                                            bouncingFaceBone.y += velY;
 
                                             if (Math.abs(dx) > 0.1 || Math.abs(velX) > 0.1 || Math.abs(dy) > 0.1 || Math.abs(velY) > 0.1) {
                                                 requestAnimationFrame(applyBounce);
                                             } else {
-                                                if (isFace) {
-                                                    bouncingFaceBone.x = targetX;
-                                                    bouncingFaceBone.y = targetY;
-                                                } else {
-                                                    eyePhysicsX = targetX;
-                                                    eyePhysicsY = targetY;
-                                                    // 🌟 眼睛彈完了，清空陣列，正式放開劫持控制權
-                                                    activeEyeBones = []; 
-                                                    initialEyePositions = [];
-                                                }
+                                                bouncingFaceBone.x = targetX;
+                                                bouncingFaceBone.y = targetY;
                                             }
                                         }
                                         applyBounce();
@@ -1025,7 +834,6 @@
                                             }
                                         }
                                     } else {
-                                        // 🌟 敲打動畫判定
                                         if (hitZoneOnDown && hitZoneOnDown.name === "頭部") {
                                             if (animNames.includes("Smash_End_1")) {
                                                 player.animationState.setAnimation(0, "Smash_End_1", false);
@@ -1046,7 +854,6 @@
                                         }
                                     }
                                     
-                                    // 使用封裝的函數重啟計時器
                                     startRandomAnimationLoop();
                                 }
                             };
@@ -1065,9 +872,6 @@
             });
         }
 
-        // ==========================================
-        // 👗 換裝按鈕渲染與點擊邏輯
-        // ==========================================
         function renderCostumeButtons(charName) {
             const container = document.getElementById('costumeButtonsContainer');
             const costumes = COSTUME_MAP[charName];
@@ -1089,12 +893,10 @@
         }
 
         function changeCostume(costumeKey, btnElement) {
-            // 💡 優化：使用 classList 操作，更安全乾淨
             document.querySelectorAll('.costume-btn').forEach(btn => {
                 btn.classList.remove('bg-amber-500', 'text-white', 'border-amber-600', 'shadow-sm');
                 btn.classList.add('bg-white', 'dark:bg-slate-700', 'text-gray-700', 'dark:text-gray-200', 'border-gray-300', 'dark:border-slate-600', 'hover:bg-amber-100', 'dark:hover:bg-slate-600');
             });
-            // 套用選取樣式
             btnElement.classList.remove('bg-white', 'dark:bg-slate-700', 'text-gray-700', 'dark:text-gray-200', 'border-gray-300', 'dark:border-slate-600', 'hover:bg-amber-100', 'dark:hover:bg-slate-600');
             btnElement.classList.add('bg-amber-500', 'text-white', 'border-amber-600', 'shadow-sm');
 
@@ -1120,7 +922,6 @@
             const spineKey = SPINE_MAP[currentCharData.name];
 
             if (spineKey) {
-                // 🎁 珍藏品邏輯
                 const presentLeft = document.getElementById('presentLeft');
                 const presentRight = document.getElementById('presentRight');
                 const presentContainer = document.getElementById('presentContainer');
@@ -1396,7 +1197,7 @@
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => {
                 document.getElementById('commentContent').value = '';
-                document.getElementById('charCount').innerText = '0 / 500'; // 🌟 加上這行，重置字數提示
+                document.getElementById('charCount').innerText = '0 / 500'; 
                 btn.disabled = false;
                 btn.innerHTML = '送出評價 🚀';
                 btn.classList.replace('bg-gray-400', 'bg-amber-500');
