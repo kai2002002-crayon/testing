@@ -820,17 +820,21 @@
         function renderSkills(charName) {
             const skillsContainer = document.getElementById('skillsContainer');
             
-            if (typeof characterSkills === 'undefined') {
-                skillsContainer.innerHTML = `<div class="p-4 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 font-bold border border-red-200 dark:border-red-800 rounded-xl text-center">❌ ${getI18n('error_no_skill_data') || "找不到 skill.js 資料，請確認檔案存在。"}</div>`;
-                return;
-            }
-            
-            // 嘗試找到對應角色技能，這裡我們統一使用 charName 搜尋，實際專案請根據 skill.js 結構調整
-            const charSkillData = characterSkills.find(s => s.name.trim() === charName);
-
-            const displayTitle = (window.currentLang === 'ja' && charSkillData.name_ja) 
-                     ? charSkillData.name_ja 
-                     : charSkillData.name;
+            // 確保 characterSkills 已經被載入
+    if (typeof characterSkills === 'undefined') {
+        skillsContainer.innerHTML = "❌ 找不到技能資料，請確認檔案已載入";
+        return;
+    }
+    
+    // 搜尋角色
+    const charSkillData = characterSkills.find(s => s.name.trim() === charName);
+    
+    if (charSkillData) {
+        // --- 重點修改區域 ---
+        // 如果是日文模式，且資料裡有 name_ja，就顯示 name_ja，否則顯示原名
+        const displayTitle = (window.currentLang === 'ja' && charSkillData.name_ja) 
+                             ? charSkillData.name_ja 
+                             : charSkillData.name;
             
             if (charSkillData) {
                 const makeStatChips = (statsArray) => {
@@ -1086,23 +1090,19 @@
 
             // 動態根據語系載入技能資料庫腳本，載入完成後執行 renderSkills
             const skillScript = document.createElement('script');
-        // 修正：使用 === 進行嚴格相等判斷
-        if (window.currentLang === "ja") {
-            skillScript.src = "skill_ja.js";
-        } else {
-            skillScript.src = "skill.js";
-        }
+// 動態決定要載入哪一個檔案
+skillScript.src = (window.currentLang === "ja") ? "skill_ja.js" : "skill.js";
 
-        skillScript.onload = () => {
-            renderSkills(currentTargetName);
-        };
+skillScript.onload = () => {
+    // 檔案載入完成後，直接呼叫渲染
+    renderSkills(currentTargetName);
+};
 
-        // 如果檔案真的載入失敗，我們加個錯誤偵測來看看
-        skillScript.onerror = () => {
-            console.error("❌ 無法載入技能檔案，請檢查檔案名稱是否為 skill_ja.js");
-        };
+skillScript.onerror = () => {
+    console.error("❌ 技能檔案載入失敗，請檢查檔案名稱與路徑");
+};
 
-        document.head.appendChild(skillScript);;
+document.head.appendChild(skillScript);
 
             loadComments(currentTargetName);
             switchPresentTab('thought'); 
