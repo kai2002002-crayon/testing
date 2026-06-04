@@ -17,13 +17,17 @@
         const isDarkMode = localStorage.getItem('theme') === 'dark' || 
                            (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
         if (isDarkMode) { document.documentElement.classList.add('dark'); }
+        
+        // i18n 語言設定
+        window.currentLang = localStorage.getItem('app_lang') || "zh-TW";
+        document.documentElement.lang = window.currentLang === "ja" ? "ja" : "zh-TW";
     </script>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@esotericsoftware/spine-player@4.1.23/dist/spine-player.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@esotericsoftware/spine-player@4.1.23/dist/iife/spine-player.min.js"></script>
 
+    <script src="i18n.js"></script>
     <script src="data.js"></script>
-    <script src="skill.js"></script>
     
     <script src="spine_name.js"></script>
     <script src="costume_name.js"></script>
@@ -46,13 +50,33 @@
             display: none !important;
             opacity: 0 !important;
         }
+        /* 背景動態縮放動畫 */
+        .animated-bg {
+            position: relative;
+            z-index: 1; 
+        }
+        .animated-bg::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: var(--bg-image);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -1; 
+            animation: slowZoom 10s ease-in-out infinite alternate; 
+        }
+        @keyframes slowZoom {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.30); }
+        }
     </style>
 </head>
 <body class="p-4 sm:p-8 bg-[#fcf8f2] dark:bg-slate-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
 
     <div id="mainContainer" class="max-w-4xl mx-auto bg-white/90 dark:bg-slate-800/95 backdrop-blur-md p-6 rounded-2xl shadow-md border-4 border-amber-400 dark:border-slate-600 transition-colors">
         
-        <button onclick="window.close()" class="mb-4 px-4 py-2 bg-amber-500 text-white text-xs font-bold rounded-xl shadow hover:bg-amber-600 dark:bg-slate-700 dark:hover:bg-slate-600 transition">
+        <button onclick="window.close()" data-i18n="btn_close" class="mb-4 px-4 py-2 bg-amber-500 text-white text-xs font-bold rounded-xl shadow hover:bg-amber-600 dark:bg-slate-700 dark:hover:bg-slate-600 transition">
             ⬅️ 關閉此頁
         </button>
 
@@ -63,7 +87,7 @@
             </div>
             
             <div class="text-center sm:text-left w-full mt-2 sm:mt-0">
-                <h1 id="charName" class="text-3xl font-extrabold text-amber-950 dark:text-amber-400 mb-4 tracking-tight">載入中...</h1>
+                <h1 id="charName" data-i18n="loading" class="text-3xl font-extrabold text-amber-950 dark:text-amber-400 mb-4 tracking-tight">載入中...</h1>
                 <div class="flex justify-center sm:justify-start gap-5 sm:gap-4 pt-3 flex-wrap">
                     <div id="charPersonality"></div>
                     <div id="charRace"></div>
@@ -74,18 +98,18 @@
         </div>
 
         <div class="mb-8">
-            <h2 class="text-lg font-bold text-amber-900 dark:text-amber-400 mb-3 flex items-center gap-1">🖍️ 金蠟筆分佈詳情</h2>
+            <h2 class="text-lg font-bold text-amber-900 dark:text-amber-400 mb-3 flex items-center gap-1" data-i18n="stats_detail">🖍️ 金蠟筆分佈詳情</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="bg-amber-50/60 dark:bg-slate-700/50 border border-amber-200 dark:border-slate-600 p-3 rounded-xl">
-                    <h3 class="font-bold text-amber-800 dark:text-amber-300 text-sm mb-2 border-b border-amber-200 dark:border-slate-600 pb-1">🥇 第一層屬性</h3>
+                    <h3 class="font-bold text-amber-800 dark:text-amber-300 text-sm mb-2 border-b border-amber-200 dark:border-slate-600 pb-1" data-i18n="layer1">🥇 第一層屬性</h3>
                     <ul id="layer1List" class="space-y-1 text-xs font-medium text-gray-700 dark:text-gray-300 list-disc list-inside"></ul>
                 </div>
                 <div class="bg-orange-50/60 dark:bg-slate-700/50 border border-orange-200 dark:border-slate-600 p-3 rounded-xl">
-                    <h3 class="font-bold text-orange-800 dark:text-orange-300 text-sm mb-2 border-b border-orange-200 dark:border-slate-600 pb-1">🥈 第二層屬性</h3>
+                    <h3 class="font-bold text-orange-800 dark:text-orange-300 text-sm mb-2 border-b border-orange-200 dark:border-slate-600 pb-1" data-i18n="layer2">🥈 第二層屬性</h3>
                     <ul id="layer2List" class="space-y-1 text-xs font-medium text-gray-700 dark:text-gray-300 list-disc list-inside"></ul>
                 </div>
                 <div class="bg-red-50/60 dark:bg-slate-700/50 border border-red-200 dark:border-slate-600 p-3 rounded-xl">
-                    <h3 class="font-bold text-red-800 dark:text-red-300 text-sm mb-2 border-b border-red-200 dark:border-slate-600 pb-1">🥉 第三層屬性</h3>
+                    <h3 class="font-bold text-red-800 dark:text-red-300 text-sm mb-2 border-b border-red-200 dark:border-slate-600 pb-1" data-i18n="layer3">🥉 第三層屬性</h3>
                     <ul id="layer3List" class="space-y-1 text-xs font-medium text-gray-700 dark:text-gray-300 list-disc list-inside"></ul>
                 </div>
             </div>
@@ -94,7 +118,7 @@
         <div class="mt-8 bg-gradient-to-br from-amber-50 to-rose-50 dark:from-gray-800/80 dark:to-gray-800/80 backdrop-blur border border-rose-200 dark:border-gray-700/50 rounded-2xl p-6 shadow-xl transition-colors duration-300">
             <div class="flex items-center gap-3 mb-4">
                 <span class="text-2xl">🎁</span>
-                <h3 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-orange-400 dark:from-pink-400 dark:to-purple-400">
+                <h3 data-i18n="treasure" class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-orange-400 dark:from-pink-400 dark:to-purple-400">
                     坨坨珍藏品
                 </h3>
             </div>
@@ -103,20 +127,20 @@
         
                 <div id="presentLeft" class="w-full md:w-1/3 flex flex-col items-center gap-3 transition-all duration-300">
                     <div id="presentContainer" class="w-full flex justify-center items-center overflow-hidden">
-                        <p class="text-orange-400 dark:text-gray-500 text-sm animate-pulse">寶箱開啟中...</p>
+                        <p data-i18n="opening" class="text-orange-400 dark:text-gray-500 text-sm animate-pulse">寶箱開啟中...</p>
                     </div>
                     <div id="presentName" class="hidden text-center font-bold text-rose-900 dark:text-rose-200 bg-rose-100/50 dark:bg-rose-900/30 px-3 py-1 rounded-lg border border-rose-200 dark:border-rose-800 text-sm"></div>
                 </div>
 
                 <div id="presentRight" class="w-full md:w-2/3 flex flex-col gap-3 transition-all duration-300">
                     <div class="flex gap-2">
-                        <button id="btnLetter" onclick="switchPresentTab('letter')" class="flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-rose-500 text-white shadow-md">坨坨情信</button>
-                        <button id="btnThought" onclick="switchPresentTab('thought')" class="flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300">教主感想</button>
+                        <button id="btnLetter" onclick="switchPresentTab('letter')" data-i18n="btn_letter" class="flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-rose-500 text-white shadow-md">坨坨情信</button>
+                        <button id="btnThought" onclick="switchPresentTab('thought')" data-i18n="btn_thought" class="flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300">教主感想</button>
                     </div>
 
                     <div id="presentTextContainer" class="relative rounded-xl border border-rose-200 dark:border-gray-700 overflow-hidden transition-all duration-300 bg-rose-50 dark:bg-gray-800 flex flex-col min-h-[160px]">
                         <div id="presentTextWrapper" class="relative z-20 flex-1 w-full p-5 flex flex-col transition-all">
-                            <p id="presentText" class="text-sm md:text-base leading-relaxed w-full drop-shadow-md text-gray-700 dark:text-gray-300">請選擇顯示內容...</p>
+                            <p id="presentText" data-i18n="select_content" class="text-sm md:text-base leading-relaxed w-full drop-shadow-md text-gray-700 dark:text-gray-300">請選擇顯示內容...</p>
                         </div>
                     </div>
                 </div>
@@ -125,21 +149,22 @@
         </div>
         
         <div class="mt-6 pt-6 border-t-2 border-amber-200 dark:border-slate-700">
-            <h2 class="text-xl font-black text-amber-950 dark:text-amber-400 mb-4 flex items-center gap-1.5">⚔️ 技能詳細資料</h2>
+            <h2 data-i18n="skill_title" class="text-xl font-black text-amber-950 dark:text-amber-400 mb-4 flex items-center gap-1.5">⚔️ 技能詳細資料</h2>
             <div id="skillsContainer" class="space-y-5">
-                <div class="text-sm text-gray-500">技能載入中...</div>
+                <div data-i18n="skill_loading" class="text-sm text-gray-500">技能載入中...</div>
             </div>
         </div>
 
         <div class="mt-8 pt-8 border-t-4 border-dashed border-amber-200 dark:border-slate-700">
-            <h2 class="text-xl font-black text-amber-950 dark:text-amber-400 mb-4 flex items-center gap-1.5">💬 玩家評價與心得</h2>
+            <h2 data-i18n="review_title" class="text-xl font-black text-amber-950 dark:text-amber-400 mb-4 flex items-center gap-1.5">💬 玩家評價與心得</h2>
             
             <div class="bg-amber-50/80 dark:bg-slate-700/60 p-4 rounded-xl border border-amber-300 dark:border-slate-600 mb-6 shadow-sm transition-colors">
-                <input type="text" id="commentAuthor" placeholder="您的暱稱 (留白將以匿名顯示)" class="w-full sm:w-1/2 mb-3 px-3 py-2 text-sm font-bold text-amber-900 dark:text-white placeholder-amber-700/50 dark:placeholder-gray-400 rounded-lg border border-amber-300 dark:border-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-slate-800 shadow-inner">
+                <input type="text" id="commentAuthor" data-i18n="author_ph" placeholder="您的暱稱 (留白將以匿名顯示)" class="w-full sm:w-1/2 mb-3 px-3 py-2 text-sm font-bold text-amber-900 dark:text-white placeholder-amber-700/50 dark:placeholder-gray-400 rounded-lg border border-amber-300 dark:border-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-slate-800 shadow-inner">
                 <textarea id="commentContent" 
                           rows="3"
                           maxlength="500"
                           oninput="document.getElementById('charCount').innerText = this.value.length + ' / 500'"
+                          data-i18n="comment_ph"
                           placeholder="寫下您對這位坨坨的評價、組隊心得或是發廚發言..."
                           class="w-full mb-1 px-3 py-2 text-sm font-medium text-gray-800 dark:text-gray-200 rounded-lg border border-amber-300 dark:border-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-slate-800 resize-none shadow-inner"></textarea>
                 
@@ -148,19 +173,97 @@
                 </div>
 
                 <div class="flex justify-end">
-                    <button onclick="submitComment()" id="submitCommentBtn" class="px-5 py-2 bg-amber-500 text-white text-sm font-bold rounded-xl shadow-md hover:bg-amber-600 dark:bg-amber-600 dark:hover:bg-amber-500 transition transform active:scale-95">
+                    <button onclick="submitComment()" id="submitCommentBtn" data-i18n="btn_submit" class="px-5 py-2 bg-amber-500 text-white text-sm font-bold rounded-xl shadow-md hover:bg-amber-600 dark:bg-amber-600 dark:hover:bg-amber-500 transition transform active:scale-95">
                         送出評價 🚀
                     </button>
                 </div>
             </div>
 
             <div id="commentsList" class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
-                <div class="text-center text-sm font-bold text-gray-500 py-6">連線至留言板中...</div>
+                <div data-i18n="comment_loading" class="text-center text-sm font-bold text-gray-500 py-6">連線至留言板中...</div>
             </div>
         </div>
     </div>
 
     <script>
+        // 補充多語系字典 (若 i18n.js 內沒有這些詞彙)
+        const LOCAL_DICT = {
+            "zh-TW": {
+                btn_close: "⬅️ 關閉此頁",
+                loading: "載入中...",
+                stats_detail: "🖍️ 金蠟筆分佈詳情",
+                layer1: "🥇 第一層屬性",
+                layer2: "🥈 第二層屬性",
+                layer3: "🥉 第三層屬性",
+                treasure: "🎁 坨坨珍藏品",
+                opening: "寶箱開啟中...",
+                btn_letter: "坨坨情信",
+                btn_thought: "教主感想",
+                select_content: "請選擇顯示內容...",
+                skill_title: "⚔️ 技能詳細資料",
+                skill_loading: "技能載入中...",
+                review_title: "💬 玩家評價與心得",
+                author_ph: "您的暱稱 (留白將以匿名顯示)",
+                comment_ph: "寫下您對這位坨坨的評價、組隊心得或是發廚發言...",
+                btn_submit: "送出評價 🚀",
+                submitting: "傳送中... ⏳",
+                comment_loading: "連線至留言板中...",
+                normal_atk: "普通攻擊",
+                passive_skill: "被動技能",
+                basic: "【基本】",
+                enhanced: "【強化】",
+                no_letter: "（這隻坨坨好像還沒寫信給你呢...）",
+                no_thought: "（教主目前還沒寫下對這個珍藏品的感想呢...）",
+                treasure_delivering: "珍藏品正在送遞中..."
+            },
+            "ja": {
+                btn_close: "⬅️ 閉じる",
+                loading: "ロード中...",
+                stats_detail: "🖍️ クレヨン分布詳細",
+                layer1: "🥇 第1層ステータス",
+                layer2: "🥈 第2層ステータス",
+                layer3: "🥉 第3層ステータス",
+                treasure: "🎁 使徒のコレクション",
+                opening: "宝箱を開けています...",
+                btn_letter: "使徒の手紙",
+                btn_thought: "教主の感想",
+                select_content: "表示内容を選択してください...",
+                skill_title: "⚔️ スキル詳細",
+                skill_loading: "スキルをロード中...",
+                review_title: "💬 プレイヤーの評価とヒント",
+                author_ph: "ニックネーム (空欄で匿名)",
+                comment_ph: "この使徒の評価、パーティ編成のヒント、または愛をシェアしましょう...",
+                btn_submit: "評価を送信 🚀",
+                submitting: "送信中... ⏳",
+                comment_loading: "メッセージボードに接続中...",
+                normal_atk: "通常攻撃",
+                passive_skill: "パッシブスキル",
+                basic: "【基本】",
+                enhanced: "【強化】",
+                no_letter: "（この使徒はまだ手紙を書いていないようです...）",
+                no_thought: "（教主はまだこのコレクションについての感想を書いていません...）",
+                treasure_delivering: "コレクションを配達中..."
+            }
+        };
+
+        function getI18n(key) {
+            if (typeof LANG_DICT !== 'undefined' && LANG_DICT[window.currentLang] && LANG_DICT[window.currentLang][key]) {
+                return LANG_DICT[window.currentLang][key];
+            }
+            return LOCAL_DICT[window.currentLang] ? (LOCAL_DICT[window.currentLang][key] || key) : key;
+        }
+
+        function applyI18n() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                    el.placeholder = getI18n(key);
+                } else {
+                    el.innerHTML = getI18n(key);
+                }
+            });
+        }
+
         // 初始化 Firebase
         firebaseConfig = {
             apiKey: "AIzaSyDhv8D2pY_0M56UJrDTQw0RGPHA-BkXU8Y",
@@ -234,14 +337,21 @@
             presentTextWrapper.style.backgroundImage = 'none';
             presentText.className = "text-sm md:text-base leading-relaxed w-full drop-shadow-md text-gray-700 dark:text-gray-300";
 
+            // 支援多語系的文字讀取
+            const langDataL = LETTER_MAP[window.currentLang] || LETTER_MAP["zh-TW"];
+            const langDataT = THOUGHT_MAP[window.currentLang] || THOUGHT_MAP["zh-TW"];
+            
+            const defaultNoLetter = getI18n('no_letter');
+            const defaultNoThought = getI18n('no_thought');
+
             if (tab === 'letter') {
                 btnLetter.className = "flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-rose-500 text-white shadow-md";
                 btnThought.className = inactiveClass;
-                presentText.innerHTML = (LETTER_MAP[spineKey] || "（這隻坨坨好像還沒寫信給你呢...）").replace(/\n/g, '<br>');
+                presentText.innerHTML = (langDataL[spineKey] || defaultNoLetter).replace(/\n/g, '<br>');
             } else {
                 btnThought.className = "flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-amber-500 text-white shadow-md";
                 btnLetter.className = inactiveClass;
-                presentText.innerHTML = (THOUGHT_MAP[spineKey] || "（教主目前還沒寫下對這個珍藏品的感想呢...）").replace(/\n/g, '<br>');
+                presentText.innerHTML = (langDataT[spineKey] || defaultNoThought).replace(/\n/g, '<br>');
             }
         }
         
@@ -258,13 +368,10 @@
             
             avatarBox.innerHTML = ''; 
 
-            if (!avatarBox.style.backgroundImage && LOBBY_BACKGROUNDS && LOBBY_BACKGROUNDS.length > 0) {
+            if (!avatarBox.style.getPropertyValue('--bg-image') && typeof LOBBY_BACKGROUNDS !== 'undefined' && LOBBY_BACKGROUNDS.length > 0) {
                 const randomBg = LOBBY_BACKGROUNDS[Math.floor(Math.random() * LOBBY_BACKGROUNDS.length)];
-                avatarBox.style.backgroundImage = `url('${randomBg}')`;
-                avatarBox.style.backgroundSize = 'cover';       
-                avatarBox.style.backgroundPosition = 'center';  
-                avatarBox.style.backgroundRepeat = 'no-repeat'; 
-                avatarBox.classList.add('overflow-hidden', 'rounded-2xl', 'shadow-inner');
+                avatarBox.style.setProperty('--bg-image', `url('${randomBg}')`);
+                avatarBox.classList.add('animated-bg', 'overflow-hidden', 'rounded-2xl', 'shadow-inner');
             }
 
             window.globalSpinePlayer = new spine.SpinePlayer(avatarBox, {
@@ -292,7 +399,8 @@
                         const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default');
                         if (targetSkin) {
                             player.skeleton.setSkinByName(targetSkin.name);
-                            player.skeleton.setSlotsToSetupPose();
+                            player.skeleton.setToSetupPose(); 
+                            player.skeleton.updateWorldTransform(); 
                         }
                     }
                     
@@ -312,7 +420,6 @@
                             const randomIndex = Math.floor(Math.random() * targetAnims.length);
                             const nextAnim = targetAnims[randomIndex];
     
-                            console.log(`🎲 隨機輪播: ${nextAnim}`);
                             player.animationState.setAnimation(0, nextAnim, true); 
     
                             startRandomAnimationLoop();
@@ -339,7 +446,7 @@
                             let hasTriggeredRub = false; 
                             let tickleTimer = null; 
                             
-                            avatarBox.addEventListener('wheel', function(event) {
+                            canvas.addEventListener('wheel', function(event) {
                                 event.preventDefault();
                                 currentZoom = event.deltaY < 0 ? Math.min(currentZoom + 0.1, 4.0) : Math.max(currentZoom - 0.1, 0.5);
                                 if (player.skeleton) {
@@ -350,7 +457,7 @@
                                 }
                             }, { passive: false });
 
-                            avatarBox.addEventListener('dblclick', function() {
+                            canvas.addEventListener('dblclick', function() {
                                 currentZoom = 1.0;
                                 if (player.skeleton) {
                                     player.skeleton.scaleX = 1.0;
@@ -536,114 +643,114 @@
                                 }
                             });
 
-                            // 🚫 定義「絕對不該被隨機觸發」的特殊動作黑名單
                             const EXCLUDED_RANDOM_ANIMS = [
-                            "Smash_End_1",   // 敲頭動作1
-                            "Idle_1"         // 預設待機 (避免隨機抽到自己，看起來像沒反應)
-                        ];
+                                "Smash_End_1",   
+                                "Idle_1"         
+                            ];
 
-                        const handlePointerUp = (e) => {
-                            delete pointers[e.pointerId];
-                            const pointerKeys = Object.keys(pointers);
+                            const handlePointerUp = (e) => {
+                                delete pointers[e.pointerId];
+                                const pointerKeys = Object.keys(pointers);
 
-                            if (pointerKeys.length === 1) {
-                                isPointerDown = false;
-                                return;
-                            }
-
-                            if (pointerKeys.length === 0 && isPointerDown) {
-                                isPointerDown = false;
-                                const allAnimNames = player.skeleton.data.animations.map(a => a.name);
-
-                                // --- 1. 處理臉部回彈效果 (不變) ---
-                                if (activeFaceBone) {
-                                    let targetX = initialBoneX;
-                                    let targetY = initialBoneY;
-                                    let bouncingFaceBone = activeFaceBone;
-                                    activeFaceBone = null; 
-
-                                    const tension = 0.35;  
-                                    const friction = 0.65; 
-                                    let velX = 0, velY = 0;
-
-                                    function applyBounce() {
-                                        let currentX = bouncingFaceBone.x;
-                                        let currentY = bouncingFaceBone.y;
-
-                                        let dx = targetX - currentX;
-                                        let dy = targetY - currentY;
-
-                                        velX += dx * tension;
-                                        velY += dy * tension;
-                                        velX *= friction;
-                                        velY *= friction;
-
-                                        bouncingFaceBone.x += velX;
-                                        bouncingFaceBone.y += velY;
-
-                                        if (Math.abs(dx) > 0.1 || Math.abs(velX) > 0.1 || Math.abs(dy) > 0.1 || Math.abs(velY) > 0.1) {
-                                            requestAnimationFrame(applyBounce);
-                                        } else {
-                                            bouncingFaceBone.x = targetX;
-                                            bouncingFaceBone.y = targetY;
-                                        }
-                                    }
-                                    applyBounce();
+                                if (pointerKeys.length === 1) {
+                                    isPointerDown = false;
+                                    return;
                                 }
-        
-                                clearTimeout(tickleTimer); 
 
-                                // --- 2. 處理動畫觸發邏輯 ---
-                                if (hasTriggeredRub) {
-                                    // 【狀況 A】長按/撫摸後的釋放邏輯
-                                    if (hitZoneOnDown && hitZoneOnDown.name === "頭部") {
-                                        if (allAnimNames.includes("Touch_End")) {
-                                            player.animationState.setAnimation(0, "Touch_End", false);
-                                        } else {
-                                            player.animationState.setAnimation(0, "Idle_1", true);
-                                        }
-                                    } else if (hitZoneOnDown && hitZoneOnDown.name === "身體") {
-                                        if (allAnimNames.includes("Tickle_End")) {
-                                            player.animationState.setAnimation(0, "Tickle_End", false);
-                                        } else {
-                                            player.animationState.setAnimation(0, "Idle_1", true);
-                                        }
-                                    }
-                                    player.animationState.addAnimation(0, "Idle_1", true, 0);
+                                if (pointerKeys.length === 0 && isPointerDown) {
+                                    isPointerDown = false;
+                                    const allAnimNames = player.skeleton.data.animations.map(a => a.name);
 
-                                } else {
-                                    // 【狀況 B】短點擊的邏輯
-                                    if (hitZoneOnDown && hitZoneOnDown.name === "頭部") {
-                                        // 🎯 點擊頭部：專屬觸發 Smash 動作
-                                        if (allAnimNames.includes("Smash_End_1")) {
-                                            player.animationState.setAnimation(0, "Smash_End_1", false);
-                                            if (allAnimNames.includes("Smash_End_2")) {
-                                                player.animationState.addAnimation(0, "Smash_End_2", false, 0);
+                                    if (activeFaceBone) {
+                                        let targetX = initialBoneX;
+                                        let targetY = initialBoneY;
+                                        let bouncingFaceBone = activeFaceBone;
+                                        activeFaceBone = null; 
+
+                                        const tension = 0.35;  
+                                        const friction = 0.65; 
+                                        let velX = 0, velY = 0;
+
+                                        function applyBounce() {
+                                            let currentX = bouncingFaceBone.x;
+                                            let currentY = bouncingFaceBone.y;
+
+                                            let dx = targetX - currentX;
+                                            let dy = targetY - currentY;
+
+                                            velX += dx * tension;
+                                            velY += dy * tension;
+                                            velX *= friction;
+                                            velY *= friction;
+
+                                            bouncingFaceBone.x += velX;
+                                            bouncingFaceBone.y += velY;
+
+                                            if (Math.abs(dx) > 0.1 || Math.abs(velX) > 0.1 || Math.abs(dy) > 0.1 || Math.abs(velY) > 0.1) {
+                                                requestAnimationFrame(applyBounce);
+                                            } else {
+                                                bouncingFaceBone.x = targetX;
+                                                bouncingFaceBone.y = targetY;
                                             }
-                                            player.animationState.addAnimation(0, "Idle_1", true, 0);
-                                        } else {
-                                            player.animationState.setAnimation(0, "Idle_1", true);
                                         }
+                                        applyBounce();
+                                    }
+        
+                                    clearTimeout(tickleTimer); 
+                                    clearTimeout(globalIdleTimer); 
+
+                                    if (hasTriggeredRub) {
+                                        if (hitZoneOnDown && hitZoneOnDown.name === "頭部") {
+                                            if (allAnimNames.includes("Touch_End")) {
+                                                player.animationState.setAnimation(0, "Touch_End", false);
+                                            } else {
+                                                player.animationState.setAnimation(0, "Idle_1", true);
+                                            }
+                                        } else if (hitZoneOnDown && hitZoneOnDown.name === "身體") {
+                                            if (allAnimNames.includes("Tickle_End")) {
+                                                player.animationState.setAnimation(0, "Tickle_End", false);
+                                            } else {
+                                                player.animationState.setAnimation(0, "Idle_1", true);
+                                            }
+                                        }
+                                        player.animationState.addAnimation(0, "Idle_1", true, 0);
+                        
+                                        startRandomAnimationLoop();
+
                                     } else {
-                                        // 🎲 點擊身體 或 其他空白處：隨機轉換動作 (嚴格排除黑名單)
-                                        const safeAnims = allAnimNames.filter(name => !EXCLUDED_RANDOM_ANIMS.includes(name));
-                
-                                        if (safeAnims.length > 0) {
-                                            // 從安全清單中隨機抽取一個動作播放，播完後接回 Idle_1
-                                            const randomAnim = safeAnims[Math.floor(Math.random() * safeAnims.length)];
-                                            console.log(`🎲 點擊觸發隨機動作: ${randomAnim}`);
-                                            player.animationState.setAnimation(0, randomAnim, false);
-                                            player.animationState.addAnimation(0, "Idle_1", true, 0);
+                                        if (hitZoneOnDown && hitZoneOnDown.name === "頭部") {
+                                            if (allAnimNames.includes("Smash_End_1")) {
+                                               player.animationState.setAnimation(0, "Smash_End_1", false);
+                                                if (allAnimNames.includes("Smash_End_2")) {
+                                                    player.animationState.addAnimation(0, "Smash_End_2", false, 0);
+                                                }
+                                                player.animationState.addAnimation(0, "Idle_1", true, 0);
+                                            } else {
+                                                player.animationState.setAnimation(0, "Idle_1", true);
+                                            }
+                            
+                                            startRandomAnimationLoop();
+                            
                                         } else {
-                                            player.animationState.setAnimation(0, "Idle_1", true);
+                                            const safeAnims = allAnimNames.filter(name => !EXCLUDED_RANDOM_ANIMS.includes(name));
+                            
+                                            if (safeAnims.length > 0) {
+                                                const randomAnim = safeAnims[Math.floor(Math.random() * safeAnims.length)];
+                                                player.animationState.setAnimation(0, randomAnim, true);
+                            
+                                                globalIdleTimer = setTimeout(() => {
+                                                    player.animationState.setAnimation(0, "Idle_1", true);
+                                                    startRandomAnimationLoop();
+                                                }, 5000);
+                            
+                                            } else {
+                                                player.animationState.setAnimation(0, "Idle_1", true);
+                                                startRandomAnimationLoop();
+                                            }
                                         }
                                     }
                                 }
-        
-                                // 點擊結束後，重新啟動放置時的隨機動畫計時器
-                                startRandomAnimationLoop();
-                            }
-                        };
+                            };
                             canvas.addEventListener('pointerup', handlePointerUp);
                             canvas.addEventListener('pointerout', handlePointerUp);
                             canvas.addEventListener('pointercancel', handlePointerUp);
@@ -651,7 +758,7 @@
                     }
                 },
                 error: function (player, reason) {
-                    console.error("❌ Spine 載入失敗:", reason);
+                    console.error("❌ Spine Load Error:", reason);
                     const imgUrl = IMAGE_MAP[`avatar_${currentCharData.name}`];
                     avatarBox.innerHTML = imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-cover">` : currentCharData.name.charAt(0);
                 }
@@ -689,21 +796,163 @@
             loadSpineAnimation(costumeKey);
         }
 
+        // 獨立出技能渲染函式，確保資料載入完成後能正確執行
+        function renderSkills(charName) {
+            const skillsContainer = document.getElementById('skillsContainer');
+            
+            if (typeof characterSkills === 'undefined') {
+                skillsContainer.innerHTML = `<div class="p-4 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 font-bold border border-red-200 dark:border-red-800 rounded-xl text-center">❌ ${getI18n('error_no_skill_data') || "找不到 skill.js 資料，請確認檔案存在。"}</div>`;
+                return;
+            }
+            
+            // 嘗試找到對應角色技能，這裡我們統一使用 charName 搜尋，實際專案請根據 skill.js 結構調整
+            const charSkillData = characterSkills.find(s => s.name.trim() === charName);
+            
+            if (charSkillData) {
+                const makeStatChips = (statsArray) => {
+                    if (!statsArray || statsArray.length === 0) return '';
+                    
+                    let processedStats = [];
+                    statsArray.forEach(stat => {
+                        if (typeof stat === 'string') {
+                            processedStats.push(...stat.split(/[、,，]/).map(s => s.trim()).filter(Boolean));
+                        } else {
+                            processedStats.push(stat);
+                        }
+                    });
+                    
+                    if (processedStats.length === 0) return '';
+                    return `<div class="flex flex-wrap gap-1.5 mt-2">` + 
+                        processedStats.map(stat => `<span class="px-2 py-0.5 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 text-[11px] font-bold rounded-md shadow-sm">${stat}</span>`).join('') + 
+                        `</div>`;
+                };
+
+                const renderUnifiedSkill = (skillObj) => {
+                    if (!skillObj || skillObj === "無") return "";
+                    
+                    if (typeof skillObj === 'string') {
+                        let desc = skillObj;
+                        let stats = [];
+                        
+                        const bracketMatches = skillObj.match(/\[(.*?)\]/g);
+                        if (bracketMatches) {
+                            bracketMatches.forEach(match => {
+                                stats.push(match.replace(/[\[\]]/g, '').trim());
+                                desc = desc.replace(match, '').trim();
+                            });
+                        } 
+                        else if (skillObj.includes('|')) {
+                            const parts = skillObj.split('|');
+                            desc = parts[0].trim();
+                            stats = parts.length > 1 ? parts[1].split(/[,、，]/).map(s => s.trim()).filter(Boolean) : [];
+                        }
+
+                        return `<p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${desc}</p>
+                                ${makeStatChips(stats)}`;
+                    }
+                    
+                    return `<p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${skillObj.desc || ''}</p>
+                            ${makeStatChips(skillObj.stats)}`;
+                };
+
+                const normalAttackIcon = charSkillData.attribute === "物理" ? SKILL_ICONS["attack_物理"] : SKILL_ICONS["attack_魔法"];
+                const normalSkillIcon = SKILL_ICONS[`skill_normal_${charName}`] || "";
+                const ultSkillIcon = SKILL_ICONS[`hover_avatar_${charName}`] || "";
+                const passiveSkillIcon = SKILL_ICONS[`skill_passive_${charName}`] || "";
+
+                const enhancedData = charSkillData.normalAttack.enhanced;
+                const hasEnhanced = enhancedData && enhancedData !== "無" && (typeof enhancedData === 'string' ? true : enhancedData.desc !== "無");
+                
+                const txtNormalAtk = getI18n('normal_atk');
+                const txtPassive = getI18n('passive_skill');
+                const txtBasic = getI18n('basic');
+                const txtEnhanced = getI18n('enhanced');
+
+                let html = `
+                    <div class="bg-slate-50 dark:bg-slate-700/40 border-2 border-slate-300 dark:border-slate-600 rounded-xl p-4 shadow-sm">
+                        <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-600 pb-2 mb-3">
+                            <div class="flex items-center gap-2">
+                                ${normalAttackIcon ? `<img src="${normalAttackIcon}" class="w-8 h-8 rounded-lg shadow-sm border border-slate-300 dark:border-slate-600">` : `<span>🎯</span>`}
+                                <span class="font-extrabold text-slate-800 dark:text-slate-200 text-base">${txtNormalAtk}</span>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <p class="text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">${txtBasic}</p>
+                                ${renderUnifiedSkill(charSkillData.normalAttack.basic)}
+                            </div>
+                            ${hasEnhanced ? `
+                            <div>
+                                <p class="text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">${txtEnhanced}</p>
+                                ${renderUnifiedSkill(charSkillData.normalAttack.enhanced)}
+                            </div>` : ''}
+                        </div>
+                    </div>
+                `;
+
+                html += `
+                    <div class="bg-emerald-50/80 dark:bg-emerald-900/20 border-2 border-emerald-300 dark:border-emerald-700 rounded-xl p-4 shadow-sm">
+                        <div class="flex justify-between items-center border-b border-emerald-200 dark:border-emerald-800 pb-2 mb-3">
+                            <div class="flex items-center gap-2">
+                                ${normalSkillIcon ? `<img src="${normalSkillIcon}" class="w-8 h-8 rounded-lg shadow-sm border border-emerald-300 dark:border-emerald-700">` : `<span>🟢</span>`}
+                                <span class="font-extrabold text-emerald-800 dark:text-emerald-300 text-base">${charSkillData.normalSkill.name}</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.normalSkill.desc}</p>
+                        ${makeStatChips(charSkillData.normalSkill.stats)}
+                    </div>
+                `;
+
+                html += `
+                    <div class="bg-violet-50/80 dark:bg-violet-900/20 border-2 border-violet-300 dark:border-violet-700 rounded-xl p-4 shadow-sm">
+                        <div class="flex justify-between items-center border-b border-violet-200 dark:border-violet-800 pb-2 mb-3">
+                            <div class="flex items-center gap-2">
+                                ${ultSkillIcon ? `<img src="${ultSkillIcon}" class="w-8 h-8 rounded-lg shadow-sm border border-violet-300 dark:border-violet-700">` : `<span>🔥</span>`}
+                                <span class="font-extrabold text-violet-800 dark:text-violet-300 text-base">${charSkillData.ultimateSkill.name}</span>
+                            </div>
+                            <span class="px-2 py-0.5 bg-violet-600 dark:bg-violet-500 text-white font-black text-[10px] rounded-md shadow-sm">CD: ${charSkillData.ultimateSkill.cooldown || "N/A"}</span>
+                        </div>
+                        <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.ultimateSkill.desc}</p>
+                        ${makeStatChips(charSkillData.ultimateSkill.stats)}
+                    </div>
+                `;
+
+                html += `
+                    <div class="bg-amber-50/70 dark:bg-amber-900/20 border-2 border-amber-300 dark:border-amber-700 rounded-xl p-4 shadow-sm">
+                        <div class="flex justify-between items-center border-b border-amber-200 dark:border-amber-800 pb-2 mb-3">
+                            <div class="flex items-center gap-2">
+                                ${passiveSkillIcon ? `<img src="${passiveSkillIcon}" class="w-8 h-8 rounded-lg shadow-sm border border-amber-300 dark:border-amber-700">` : `<span>✨</span>`}
+                                <span class="font-extrabold text-amber-800 dark:text-amber-300 text-base">${txtPassive}</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.passiveSkill.desc}</p>
+                        ${makeStatChips(charSkillData.passiveSkill.stats)}
+                    </div>
+                `;
+                
+                skillsContainer.innerHTML = html;
+            } else {
+                skillsContainer.innerHTML = `<div class="p-4 bg-gray-50 dark:bg-slate-700 text-gray-500 dark:text-gray-400 font-bold border border-gray-200 dark:border-slate-600 rounded-xl text-center">⚠️ ${getI18n('error_char_skill_not_found') || "找不到此角色的技能資料"}</div>`;
+            }
+        }
+
         window.onload = function() {
+            applyI18n(); // 應用介面多國語言替換
+            
             const urlParams = new URLSearchParams(window.location.search);
             currentTargetName = urlParams.get('char')?.trim();
 
-            if (!currentTargetName) { renderError("❌ 未指定角色，請從主頁點擊角色按鈕進入。"); return; }
-            if (typeof INITIAL_DATA === 'undefined') { renderError("❌ 載入失敗：找不到 INITIAL_DATA。"); return; }
+            if (!currentTargetName) { renderError(getI18n('error_no_char') || "❌ 未指定角色，請從主頁點擊角色按鈕進入。"); return; }
+            if (typeof INITIAL_DATA === 'undefined') { renderError(getI18n('error_no_data') || "❌ 載入失敗：找不到 INITIAL_DATA。"); return; }
 
             currentCharData = INITIAL_DATA.find(c => c.name.trim() === currentTargetName);
-            if (!currentCharData) { renderError(`❌ 找不到名稱為「${currentTargetName}」的角色資料。`); return; }
+            if (!currentCharData) { renderError(`${getI18n('error_char_not_found') || "❌ 找不到角色資料: "}${currentTargetName}`); return; }
 
-            document.getElementById('charName').innerText = currentCharData.name;
-            updateTag('charPersonality', '性格', currentCharData.personality, 'personality');
-            updateTag('charRace', '種族', currentCharData.race, 'race');
-            updateTag('charPosition', '站位', currentCharData.position, 'position');
-            updateTag('charJob', '職業', currentCharData.job, 'job');
+            document.getElementById('charName').innerText = currentCharData.name; // 這裡若有對應翻譯檔也可轉譯
+            updateTag('charPersonality', getI18n('stats_personality') || '性格', currentCharData.personality, 'personality');
+            updateTag('charRace', getI18n('stats_race') || '種族', currentCharData.race, 'race');
+            updateTag('charPosition', getI18n('stats_position') || '站位', currentCharData.position, 'position');
+            updateTag('charJob', getI18n('stats_job') || '職業', currentCharData.job, 'job');
 
             const spineKey = SPINE_MAP[currentCharData.name];
 
@@ -716,28 +965,23 @@
                 const DEFAULT_NO_PRESENT_URL = "https://i.postimg.cc/qtwD6bsq/Icon-Present.png";
     
                 let finalImgUrl = DEFAULT_NO_PRESENT_URL;
-                let presentDisplayName = "珍藏品正在送遞中..."; 
+                let presentDisplayName = getI18n('treasure_delivering'); 
                 let isHasPresent = false;
 
                 if (PRESENT_MAP[spineKey]) {
                     finalImgUrl = PRESENT_MAP[spineKey].url;
                     isHasPresent = true;
-
+        
+                    // i18n 動態取出 name 中的語系字串，或是退回舊版字串格式
                     const pNameData = PRESENT_MAP[spineKey].name;
-    
                     if (pNameData) {
                         if (typeof pNameData === 'object') {
-                            // 📖 情況 A：新版多語系格式 (根據當前語言抓取)
                             presentDisplayName = pNameData[window.currentLang] || pNameData["zh-TW"];
-                        } else if (typeof pNameData === 'string' && pNameData.trim() !== "") {
-                            // 📖 情況 B：舊版純字串格式
-                            presentDisplayName = pNameData;
                         } else {
-                            // 📖 情況 C：空白字串
-                            presentDisplayName = getI18n('treasure') || `${currentCharData.name}的珍藏品`;
+                            presentDisplayName = pNameData;
                         }
                     } else {
-                        presentDisplayName = getI18n('treasure') || `${currentCharData.name}的珍藏品`;
+                        presentDisplayName = `${currentCharData.name} - Present`;
                     }
                 }
 
@@ -761,7 +1005,7 @@
                     presentNameBox.classList.remove('hidden');
                 }
 
-                const altText = isHasPresent ? `${currentCharData.name} - ${presentDisplayName}` : "珍藏品正在送遞中";
+                const altText = isHasPresent ? `${currentCharData.name} - ${presentDisplayName}` : "No Present";
                 const imgClass = isHasPresent 
                     ? "w-32 h-32 md:w-40 md:h-40 object-contain transition-transform duration-300 hover:scale-110 drop-shadow-md"
                     : "w-24 h-24 md:w-32 md:h-32 object-contain opacity-70 animate-pulse"; 
@@ -772,7 +1016,7 @@
                              alt="${altText}" 
                              class="${imgClass}"
                              loading="lazy"
-                             onerror="if(this.src != '${DEFAULT_NO_PRESENT_URL}') this.src='${DEFAULT_NO_PRESENT_URL}'; else this.parentElement.innerHTML='<p class=\\'text-gray-500 text-sm\\'>⚠️ 珍藏品載入錯誤</p>'">
+                             onerror="if(this.src != '${DEFAULT_NO_PRESENT_URL}') this.src='${DEFAULT_NO_PRESENT_URL}'; else this.parentElement.innerHTML='<p class=\\'text-gray-500 text-sm\\'>⚠️ Image Error</p>'">
                     `;
                 }
 
@@ -813,94 +1057,16 @@
 
             document.title = `${currentCharData.name} - 角色詳細資料`;
 
-            const skillsContainer = document.getElementById('skillsContainer');
-            
-            if (typeof characterSkills === 'undefined') {
-                skillsContainer.innerHTML = `<div class="p-4 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 font-bold border border-red-200 dark:border-red-800 rounded-xl text-center">❌ 找不到 skill.js 資料，請確認檔案存在。</div>`;
-            } else {
-                const charSkillData = characterSkills.find(s => s.name.trim() === currentTargetName);
-                
-                if (charSkillData) {
-                    let html = "";
-                    const makeStatChips = (statsArray) => {
-                        if (!statsArray || statsArray.length === 0) return '';
-                        return `<div class="flex flex-wrap gap-1.5 mt-2">` + 
-                            statsArray.map(stat => `<span class="px-2 py-0.5 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 text-[11px] font-bold rounded-md shadow-sm">${stat}</span>`).join('') + 
-                            `</div>`;
-                    };
-
-                    const normalAttackIcon = charSkillData.attribute === "物理" ? SKILL_ICONS["attack_物理"] : SKILL_ICONS["attack_魔法"];
-                    const normalSkillIcon = SKILL_ICONS[`skill_normal_${currentTargetName}`] || "";
-                    const ultSkillIcon = SKILL_ICONS[`hover_avatar_${currentTargetName}`] || "";
-                    const passiveSkillIcon = SKILL_ICONS[`skill_passive_${currentTargetName}`] || "";
-
-                    html += `
-                        <div class="bg-slate-50 dark:bg-slate-700/40 border-2 border-slate-300 dark:border-slate-600 rounded-xl p-4 shadow-sm">
-                            <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-600 pb-2 mb-3">
-                                <div class="flex items-center gap-2">
-                                    ${normalAttackIcon ? `<img src="${normalAttackIcon}" class="w-8 h-8 rounded-lg shadow-sm border border-slate-300 dark:border-slate-600">` : `<span>🎯</span>`}
-                                    <span class="font-extrabold text-slate-800 dark:text-slate-200 text-base">普通攻擊</span>
-                                </div>
-                            </div>
-                            <div class="space-y-4">
-                                <div>
-                                    <p class="text-xs font-bold text-slate-700 dark:text-slate-300">【基本】</p>
-                                    ${renderSkillContent(charSkillData.normalAttack.basic)}
-                                </div>
-                                ${charSkillData.normalAttack.enhanced !== "無" ? `
-                                <div>
-                                    <p class="text-xs font-bold text-slate-700 dark:text-slate-300">【強化】</p>
-                                    ${renderSkillContent(charSkillData.normalAttack.enhanced)}
-                                </div>` : ''}
-                            </div>
-                        </div>
-                    `;
-
-                    html += `
-                        <div class="bg-emerald-50/80 dark:bg-emerald-900/20 border-2 border-emerald-300 dark:border-emerald-700 rounded-xl p-4 shadow-sm">
-                            <div class="flex justify-between items-center border-b border-emerald-200 dark:border-emerald-800 pb-2 mb-3">
-                                <div class="flex items-center gap-2">
-                                    ${normalSkillIcon ? `<img src="${normalSkillIcon}" class="w-8 h-8 rounded-lg shadow-sm border border-emerald-300 dark:border-emerald-700">` : `<span>🟢</span>`}
-                                    <span class="font-extrabold text-emerald-800 dark:text-emerald-300 text-base">${charSkillData.normalSkill.name}</span>
-                                </div>
-                            </div>
-                            <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.normalSkill.desc}</p>
-                            ${makeStatChips(charSkillData.normalSkill.stats)}
-                        </div>
-                    `;
-
-                    html += `
-                        <div class="bg-violet-50/80 dark:bg-violet-900/20 border-2 border-violet-300 dark:border-violet-700 rounded-xl p-4 shadow-sm">
-                            <div class="flex justify-between items-center border-b border-violet-200 dark:border-violet-800 pb-2 mb-3">
-                                <div class="flex items-center gap-2">
-                                    ${ultSkillIcon ? `<img src="${ultSkillIcon}" class="w-8 h-8 rounded-lg shadow-sm border border-violet-300 dark:border-violet-700">` : `<span>🔥</span>`}
-                                    <span class="font-extrabold text-violet-800 dark:text-violet-300 text-base">${charSkillData.ultimateSkill.name}</span>
-                                </div>
-                                <span class="px-2 py-0.5 bg-violet-600 dark:bg-violet-500 text-white font-black text-[10px] rounded-md shadow-sm">CD: ${charSkillData.ultimateSkill.cooldown}</span>
-                            </div>
-                            <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.ultimateSkill.desc}</p>
-                            ${makeStatChips(charSkillData.ultimateSkill.stats)}
-                        </div>
-                    `;
-
-                    html += `
-                        <div class="bg-amber-50/70 dark:bg-amber-900/20 border-2 border-amber-300 dark:border-amber-700 rounded-xl p-4 shadow-sm">
-                            <div class="flex justify-between items-center border-b border-amber-200 dark:border-amber-800 pb-2 mb-3">
-                                <div class="flex items-center gap-2">
-                                    ${passiveSkillIcon ? `<img src="${passiveSkillIcon}" class="w-8 h-8 rounded-lg shadow-sm border border-amber-300 dark:border-amber-700">` : `<span>✨</span>`}
-                                    <span class="font-extrabold text-amber-800 dark:text-amber-300 text-base">被動技能</span>
-                                </div>
-                            </div>
-                            <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.passiveSkill.desc}</p>
-                            ${makeStatChips(charSkillData.passiveSkill.stats)}
-                        </div>
-                    `;
-                    
-                    skillsContainer.innerHTML = html;
-                } else {
-                    skillsContainer.innerHTML = `<div class="p-4 bg-gray-50 dark:bg-slate-700 text-gray-500 dark:text-gray-400 font-bold border border-gray-200 dark:border-slate-600 rounded-xl text-center">⚠️ 找不到「${currentTargetName}」的技能資料，請確認 skill.js 中有此角色。</div>`;
-                }
-            }
+            // 動態根據語系載入技能資料庫腳本，載入完成後執行 renderSkills
+            const skillScript = document.createElement('script');
+            skillScript.src = window.currentLang === "ja" ? "skill_ja.js" : "skill.js";
+            skillScript.onload = () => {
+                renderSkills(currentTargetName);
+            };
+            skillScript.onerror = () => {
+                document.getElementById('skillsContainer').innerHTML = `<div class="p-4 bg-red-50 text-red-600 font-bold border rounded-xl text-center">❌ ${getI18n('error_no_skill_data') || "無法載入技能檔案"}</div>`;
+            };
+            document.head.appendChild(skillScript);
 
             loadComments(currentTargetName);
             switchPresentTab('thought'); 
@@ -911,7 +1077,8 @@
             let anonId = localStorage.getItem('trickcal_anon_id');
             if (!anonId) {
                 const randomNum = Math.floor(Math.random() * 9000) + 1000;
-                anonId = `匿名教主#${randomNum}`;
+                const prefix = window.currentLang === "ja" ? "匿名教主" : "匿名教主";
+                anonId = `${prefix}#${randomNum}`;
                 localStorage.setItem('trickcal_anon_id', anonId);
             }
             return anonId;
@@ -925,16 +1092,17 @@
                   const list = document.getElementById('commentsList');
                   
                   if (snapshot.empty) {
-                      list.innerHTML = `<div class="text-center text-sm font-bold text-gray-400 dark:text-gray-500 py-8 bg-gray-50 dark:bg-slate-800/50 rounded-xl border border-dashed border-gray-200 dark:border-slate-600">目前還沒有評價，來搶頭香吧！ 🐾</div>`;
+                      const noDataMsg = getI18n('no_comment_hint') || "目前還沒有評價，來搶頭香吧！ 🐾";
+                      list.innerHTML = `<div class="text-center text-sm font-bold text-gray-400 dark:text-gray-500 py-8 bg-gray-50 dark:bg-slate-800/50 rounded-xl border border-dashed border-gray-200 dark:border-slate-600">${noDataMsg}</div>`;
                       return;
                   }
                   
                   let html = "";
                   snapshot.forEach(doc => {
                       const data = doc.data();
-                      const timeString = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString('zh-TW', {
+                      const timeString = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString(window.currentLang === 'ja' ? 'ja-JP' : 'zh-TW', {
                           month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                      }) : "剛剛";
+                      }) : (getI18n('time_just_now') || "剛剛");
                       
                       html += `
                           <div class="bg-white dark:bg-slate-700/80 p-3 sm:p-4 rounded-xl border border-gray-200 dark:border-slate-600 shadow-sm transition hover:shadow-md">
@@ -951,23 +1119,8 @@
                   list.innerHTML = html;
               }, (error) => {
                   console.error("讀取留言失敗:", error);
-                  list.innerHTML = `<div class="text-center text-red-500 dark:text-red-400 font-bold text-sm py-4">讀取留言失敗，請確認資料庫權限設定。</div>`;
+                  list.innerHTML = `<div class="text-center text-red-500 dark:text-red-400 font-bold text-sm py-4">${getI18n('error_load_comment') || "讀取留言失敗，請確認資料庫權限設定。"}</div>`;
               });
-        }
-
-        function renderSkillContent(text) {
-            if (!text) return "";
-            const parts = text.split('|');
-            const description = parts[0].trim();
-            const effects = parts.length > 1 ? parts[1].split(/[,、]/).filter(p => p.trim() !== "") : [];
-
-            let html = `<p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${description}</p>`;
-            if (effects.length > 0) {
-                html += `<div class="flex flex-wrap gap-1.5 mt-2">` + 
-                    effects.map(eff => `<span class="px-2 py-0.5 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 text-[11px] font-bold rounded-md shadow-sm">${eff.trim()}</span>`).join('') + 
-                    `</div>`;
-            }
-            return html;
         }
 
         function submitComment() {
@@ -979,11 +1132,11 @@
             const contentInput = document.getElementById('commentContent').value.trim();
             const btn = document.getElementById('submitCommentBtn');
 
-            if (!contentInput) { alert('請輸入評價內容！'); return; }
-            if (contentInput.length > 500) { alert('評價內容太長囉，請縮減至 500 字以內！'); return; }
+            if (!contentInput) { alert(getI18n('alert_empty_comment') || '請輸入評價內容！'); return; }
+            if (contentInput.length > 500) { alert(getI18n('alert_comment_too_long') || '評價內容太長囉，請縮減至 500 字以內！'); return; }
 
             btn.disabled = true;
-            btn.innerHTML = '傳送中... ⏳';
+            btn.innerHTML = getI18n('submitting');
             btn.classList.replace('bg-amber-500', 'bg-gray-400');
             btn.classList.replace('dark:bg-amber-600', 'dark:bg-gray-500');
 
@@ -996,14 +1149,14 @@
                 document.getElementById('commentContent').value = '';
                 document.getElementById('charCount').innerText = '0 / 500'; 
                 btn.disabled = false;
-                btn.innerHTML = '送出評價 🚀';
+                btn.innerHTML = getI18n('btn_submit');
                 btn.classList.replace('bg-gray-400', 'bg-amber-500');
                 btn.classList.replace('dark:bg-gray-500', 'dark:bg-amber-600');
             }).catch(err => {
                 console.error("留言失敗:", err);
-                alert("留言失敗，請稍後再試！");
+                alert(getI18n('alert_comment_failed') || "留言失敗，請稍後再試！");
                 btn.disabled = false;
-                btn.innerHTML = '送出評價 🚀';
+                btn.innerHTML = getI18n('btn_submit');
                 btn.classList.replace('bg-gray-400', 'bg-amber-500');
                 btn.classList.replace('dark:bg-gray-500', 'dark:bg-amber-600');
             });
@@ -1011,9 +1164,9 @@
     </script>
     <footer class="mt-12 mb-6 text-center border-t border-gray-200 dark:border-gray-700 pt-6">
         <div class="flex flex-col gap-1 text-[11px] text-gray-500 dark:text-gray-400 opacity-80">
-            <p data-lang-key="footer_author">📝 記事本製作者: 冷笑話幽靈</p>
-            <p data-lang-key="footer_copyright">© 遊戲版權: EpidGames & Bilibili</p>
-            <p data-lang-key="footer_lastupdate">最後更新日期：2026/05/26</p>
+            <p data-i18n="footer_author">📝 記事本製作者: 冷笑話幽靈</p>
+            <p data-i18n="footer_copyright">© 遊戲版權: EpidGames & Bilibili</p>
+            <p data-i18n="footer_lastupdate">最後更新日期：2026/05/26</p>
         </div>
     </footer>
 </body>
