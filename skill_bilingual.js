@@ -2049,7 +2049,7 @@ const characterSkillsData = {
           "冷卻時間：12秒"
         ]
       }
-    }
+    },
 {
       "name": "路德",
       "attribute": "物理",
