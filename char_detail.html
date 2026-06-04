@@ -1059,14 +1059,23 @@
 
             // 動態根據語系載入技能資料庫腳本，載入完成後執行 renderSkills
             const skillScript = document.createElement('script');
-            skillScript.src = window.currentLang === "ja" ? "skill_ja.js" : "skill.js";
-            skillScript.onload = () => {
-                renderSkills(currentTargetName);
-            };
-            skillScript.onerror = () => {
-                document.getElementById('skillsContainer').innerHTML = `<div class="p-4 bg-red-50 text-red-600 font-bold border rounded-xl text-center">❌ ${getI18n('error_no_skill_data') || "無法載入技能檔案"}</div>`;
-            };
-            document.head.appendChild(skillScript);
+        // 修正：使用 === 進行嚴格相等判斷
+        if (window.currentLang === "ja") {
+            skillScript.src = "skill_ja.js";
+        } else {
+            skillScript.src = "skill.js";
+        }
+
+        skillScript.onload = () => {
+            renderSkills(currentTargetName);
+        };
+
+        // 如果檔案真的載入失敗，我們加個錯誤偵測來看看
+        skillScript.onerror = () => {
+            console.error("❌ 無法載入技能檔案，請檢查檔案名稱是否為 skill_ja.js");
+        };
+
+        document.head.appendChild(skillScript);;
 
             loadComments(currentTargetName);
             switchPresentTab('thought'); 
