@@ -1,6 +1,7 @@
 const characterSkills = [
     {
-      "name": "ベリータ",
+	  "name": "貝麗塔",
+      "name_ja": "ベリータ",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "爆撃魔法を発動させて敵に範囲魔法ダメージを与える。 [魔法ダメージ：75%]",
@@ -29,7 +30,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "ユミミ",
+	  "name": "劉美美",
+      "name_ja": "ユミミ",
       "attribute": "物理",
       "normalAttack": {
         "basic": "射程距離内で最も離れている敵に矢を発射して物理ダメージを与える。 [物理ダメージ：100%]",
@@ -58,7 +60,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "マスター2",
+	  "name": "大師2號",
+      "name_ja": "マスター2",
       "attribute": "物理",
       "normalAttack": {
         "basic": "拳を振るい、敵に物理ダメージを与える。 [物理ダメージ：175%]",
@@ -92,7 +95,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "メゾン",
+	  "name": "梅森",
+      "name_ja": "メゾン",
       "attribute": "物理",
       "normalAttack": {
         "basic": "手裏剣を投げ、敵に物理ダメージを与える。 [物理ダメージ：60%]",
@@ -122,7 +126,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "イフリート",
+	  "name": "伊弗利特",
+      "name_ja": "イフリート",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "剣を振るい、敵に魔法ダメージを与える。 [魔法ダメージ：100%]",
@@ -158,7 +163,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "シュパ",
+	  "name": "修帕",
+      "name_ja": "シュパ",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "敵に郵便物を飛ばして魔法ダメージを与える。 [魔法ダメージ：55%]",
@@ -193,7 +199,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "バター",
+	  "name": "奶油",
+      "name_ja": "バター",
       "attribute": "物理",
       "normalAttack": {
         "basic": "敵に大きな石を発射して物理ダメージを与える。 [物理ダメージ：100%]",
@@ -226,7 +233,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "トト",
+	  "name": "桃桃",
+      "name_ja": "トト",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "敵に電気手裏剣を2回投げ、魔法ダメージを与える。 [総魔法ダメージ：150%]",
@@ -269,7 +277,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "セリーナ",
+	  "name": "瑟琳娜",
+      "name_ja": "セリーナ",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "敵に袖を振るい、魔法ダメージを2回与える。 [総魔法ダメージ：75%]",
@@ -304,7 +313,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "ユイ",
+	  "name": "羽伊",
+      "name_ja": "ユイ",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "精霊魔法を放って敵に魔法ダメージを与える。 [魔法ダメージ：100%]",
@@ -339,7 +349,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "エピカ",
+	  "name": "艾皮卡",
+      "name_ja": "エピカ",
       "attribute": "物理",
       "normalAttack": {
         "basic": "エピコンに敵を攻撃させ、物理ダメージを与える。 [物理ダメージ：100%]",
@@ -374,7 +385,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "ミンス",
+	  "name": "米雪",
+      "name_ja": "ミンス",
       "attribute": "物理",
       "normalAttack": {
         "basic": "剣を振るって敵に物理ダメージを与える。 [物理ダメージ：75%]",
@@ -403,7 +415,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "ジュミ",
+	  "name": "茱蜜",
+      "name_ja": "ジュミ",
       "attribute": "物理",
       "normalAttack": {
         "basic": "針を飛ばして敵に物理ダメージを与える。 [物理ダメージ：120%]",
@@ -436,7 +449,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "リン",
+	  "name": "琳",
+      "name_ja": "リン",
       "attribute": "物理",
       "normalAttack": {
         "basic": "鎌を薙ぎ払って敵に範囲物理ダメージを与え、一定確率で苦痛を付与する。 [苦痛：回復量が減少し、1秒ごとにダメージを受ける。] [物理ダメージ：100%] [苦痛の持続時間：2秒]",
@@ -472,8 +486,44 @@ const characterSkills = [
         ]
       }
     },
+	{
+	  "name": "莉絲蒂",
+      "name_ja": "リスティ",
+      "attribute": "物理",
+      "normalAttack": {
+        "basic": "敵に飲み干した缶を投げて、物理ダメージを与える。 [物理ダメージ:80%]",
+        "enhanced": "4回攻撃するごとに敵をハッキングし、確定会心物理ダメージを与える。 [物理ダメージ: 120%]"
+      },
+      "normalSkill": {
+        "name": "テクノマンシー",
+        "desc": "敵を撃破できなかった場合、最大3回まで敵を再サーチし、範囲物理ダメージを与える。最後の一撃はより高いダメージを与える。",
+        "stats": [
+          "物理ダメージ: 317%",
+	  "最後の一撃の物理ダメージ: 648%"
+        ]
+      },
+      "ultimateSkill": {
+        "name": "ボクセルグリッチ",
+        "desc": "残りHP割合が最も低い敵3体にブロックを10個ずつ落として、物理ダメージを与える。最後のブロックはより高いダメージを与え、気絶を付与する。スキル発動中に対象が変更される場合もあ",
+        "stats": [
+          "気絕:行動不能状態になる。",
+	  "ブロックにつき物理ダメージ: 77%",
+	  "最後のブロックの物理ダメージ: 309%",
+	  "気絶の持続時間:3秒"
+        ],
+        "cooldown": "26秒"
+      },
+      "passiveSkill": {
+        "desc": "高学年スキル気組の持続時間が変更される。",
+        "stats": [
+          "気絕:行動不能状になる。",
+	  "気絶の持続時間:6.8秒"
+        ]
+      }
+    },
       {
-      "name": "フリコ",
+	  "name": "芙莉可"
+      "name_ja": "フリコ",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "追跡する蔓を発射し、敵に魔法ダメージを与える。 [魔法ダメージ：75%]",
@@ -508,7 +558,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "アヤ",
+	  "name": "綾",
+      "name_ja": "アヤ",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "氷刃雪花を振って敵に魔法ダメージを2回与える。 [総魔法ダメージ：100%]",
@@ -545,7 +596,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "パトラ",
+	  "name": "帕特拉",
+      "name_ja": "パトラ",
       "attribute": "物理",
       "normalAttack": {
         "basic": "フライ返しで叩きつけて敵に物理ダメージを与える。 [物理ダメージ：50%]",
@@ -576,6 +628,7 @@ const characterSkills = [
       }
     },
     {
+	  "name": "梅露娜",
       "name": "メルーナ",
       "attribute": "魔法",
       "normalAttack": {
@@ -608,7 +661,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "ジェイド",
+	  "name": "傑德",
+      "name_ja": "ジェイド",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "呪文を唱えて最も近い単体対象に魔法ダメージを与える。 [魔法ダメージ：75%]",
@@ -640,7 +694,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "エスピ",
+	  "name": "艾斯皮",
+      "name_ja": "エスピ",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "ろうそくを飛ばし、敵に魔法ダメージを与える。 [魔法ダメージ：75%]",
@@ -673,7 +728,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "レジ",
+	  "name": "雷吉",
+      "name_ja": "レジ",
       "attribute": "物理",
       "normalAttack": {
         "basic": "レーザーを発射して敵に範囲物理ダメージを与える。 [物理ダメージ：80%]",
@@ -704,7 +760,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "マヨ",
+	  "name": "瑪約",
+      "name_ja": "マヨ",
       "attribute": "物理",
       "normalAttack": {
         "basic": "吹き矢を飛ばして敵に物理ダメージを与える。 [物理ダメージ：100%]",
@@ -739,7 +796,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "リズ",
+	  "name": "莉茲",
+      "name_ja": "リズ",
       "attribute": "物理",
       "normalAttack": {
         "basic": "大剣を薙ぎ払って敵に範囲物理ダメージを2回与える。2回目はより高いダメージを与える。 [物理ダメージ：60%] [2回目の物理ダメージ：90%]",
@@ -776,7 +834,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "シェディ",
+	  "name": "謝蒂",
+      "name_ja": "シェディ",
       "attribute": "物理",
       "normalAttack": {
         "basic": "鎖鎌を振り回して敵に物理ダメージを与える。 [物理ダメージ：175%]",
@@ -810,7 +869,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "ネル",
+	  "name": "寧琉",
+      "name_ja": "ネル",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "斧を振り回して敵に魔法ダメージを与える。 [魔法ダメージ：80%]",
@@ -844,7 +904,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "クロエ",
+	  "name": "庫洛艾",
+      "name_ja": "クロエ",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "腕を振って敵に魔法ダメージを与える。 ぬいぐるみの意志発動時は効果が変更される。 ぬいぐるみの意志発動すると腕を振って敵に魔法ダメージを3回与え、最後の打撃はより広範囲の魔法ダメージとなる。 [ぬいぐるの意志：基本攻撃の効果が変更される。] [魔法ダメージ：125%] [ぬいぐるの意志の魔法ダメージ：192%] [ぬいぐるの意志の最後の魔法ダメージ：288%]",
@@ -879,7 +940,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "シセツ",
+	  "name": "希瑟圖",
+      "name_ja": "シセツ",
       "attribute": "物理",
       "normalAttack": {
         "basic": "敵にガラクタを投げつけてダメージを与える。 [物理ダメージ: 110%]",
@@ -912,7 +974,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "アリス",
+	  "name": "愛麗絲",
+      "name_ja": "アリス",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "カードを投げつけて敵に魔法ダメージを与える。 [魔法ダメージ：100%]",
@@ -958,7 +1021,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "ディアナ",
+	  "name": "蒂亞娜",
+      "name_ja": "ディアナ",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "呪文を発射し、敵に魔法ダメージを与える。 [魔法ダメージ：75%]",
@@ -989,42 +1053,9 @@ const characterSkills = [
         ]
       }
     },
-    {
-      "name": "リスティ",
-      "attribute": "物理",
-      "normalAttack": {
-        "basic": "敵に飲み干した缶を投げて、物理ダメージを与える。 [物理ダメージ:80%]",
-        "enhanced": "4回攻撃するごとに敵をハッキングし、確定会心物理ダメージを与える。 [物理ダメージ: 120%]"
-      },
-      "normalSkill": {
-        "name": "テクノマンシー",
-        "desc": "敵を撃破できなかった場合、最大3回まで敵を再サーチし、範囲物理ダメージを与える。最後の一撃はより高いダメージを与える。",
-        "stats": [
-          "物理ダメージ: 317%",
-	  "最後の一撃の物理ダメージ: 648%"
-        ]
-      },
-      "ultimateSkill": {
-        "name": "ボクセルグリッチ",
-        "desc": "残りHP割合が最も低い敵3体にブロックを10個ずつ落として、物理ダメージを与える。最後のブロックはより高いダメージを与え、気絶を付与する。スキル発動中に対象が変更される場合もあ",
-        "stats": [
-          "気絕:行動不能状態になる。",
-	  "ブロックにつき物理ダメージ: 77%",
-	  "最後のブロックの物理ダメージ: 309%",
-	  "気絶の持続時間:3秒"
-        ],
-        "cooldown": "26秒"
-      },
-      "passiveSkill": {
-        "desc": "高学年スキル気組の持続時間が変更される。",
-        "stats": [
-          "気絕:行動不能状になる。",
-	  "気絶の持続時間:6.8秒"
-        ]
-      }
-    },
-{
-      "name": "ナヤ",
+	{
+	  "name": "奈雅"
+      "name_ja": "ナヤ",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "水鉄砲を発射して敵にダメージを与える。 [魔法ダメージ：45%]",
@@ -1054,7 +1085,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "キャロット",
+	  "name": "卡洛特",
+      "name_ja": "キャロット",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "サトウキビを投げつけて敵に魔法ダメージを与える。 [魔法ダメージ：85%]",
@@ -1089,7 +1121,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "ビビ",
+	  "name": "薇薇",
+      "name_ja": "ビビ",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "刀を撮り敵に魔法ダメージを2回与える。 [総魔法ダメージ: 75%]",
@@ -1123,7 +1156,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "ヘイリー",
+	  "name": "海莉",
+      "name_ja": "ヘイリー",
       "attribute": "物理",
       "normalAttack": {
         "basic": "敵に鞭を振るい、範囲物理ダメージを与える。 [物理ダメージ：85%]",
@@ -1157,7 +1191,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "ロネ",
+	  "name": "洛涅",
+      "name_ja": "ロネ",
       "attribute": "物理",
       "normalAttack": {
         "basic": "剣を振り回して敵に物理ダメージを与える。 [物理ダメージ：150%]",
@@ -1193,7 +1228,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "ガヴィア",
+	  "name": "加薇雅",
+      "name_ja": "ガヴィア",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "岩石を突き出し、敵に魔法ダメージを与える。 [魔法ダメージ：100%]",
@@ -1228,7 +1264,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "スピッキー",
+	  "name": "斯皮奇",
+      "name_ja": "スピッキー",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "かぼちゃを発射し、敵に魔法ダメージを与える [魔法ダメージ：75%]",
@@ -1258,7 +1295,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "ベルフェ",
+	  "name": "大木頭",
+      "name_ja": "ベルフェ",
       "attribute": "物理",
       "normalAttack": {
         "basic": "拳を振るい、敵に物理ダメージを与える。 [物理ダメージ：100%]",
@@ -1290,7 +1328,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "アレート",
+	  "name": "阿萊特",
+      "name_ja": "アレート",
       "attribute": "物理",
       "normalAttack": {
         "basic": "盾で叩きつけて敵にダメージを与える。 [物理ダメージ：100%]",
@@ -1323,7 +1362,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "サリー",
+	  "name": "莎莉",
+      "name_ja": "サリー",
       "attribute": "物理",
       "normalAttack": {
         "basic": "鎌を振り回して敵に物理ダメージを与える。 [物理ダメージ：70%]",
@@ -1354,7 +1394,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "ルイ",
+	  "name": "路易",
+      "name_ja": "ルイ",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "呪文を発射し、敵に魔法ダメージを与える。 [魔法ダメージ：100%]",
@@ -1383,7 +1424,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "イード",
+	  "name": "伊德",
+      "name_ja": "イード",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "敵にレーザーを4回発射して魔法ダメージを与える。 [総魔法ダメージ：120%]",
@@ -1420,7 +1462,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "エレナ",
+	  "name": "艾琳娜",
+      "name_ja": "エレナ",
       "attribute": "物理",
       "normalAttack": {
         "basic": "エネルギー弾を発射して敵に物理ダメージを3回与える。最後の一撃はより高いダメージを与える。 [物理ダメージ：90%] [最後の一撃の物理ダメージ：60%]",
@@ -1452,7 +1495,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "ペペ",
+	  "name": "佩佩",
+      "name_ja": "ベルベット",
       "attribute": "物理",
       "normalAttack": {
         "basic": "斧を振るい、敵に範囲物理ダメージを与える。 [物理ダメージ：125%]",
@@ -1489,7 +1533,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "シラ",
+	  "name": "希拉",
+      "name_ja": "シラ",
       "attribute": "物理",
       "normalAttack": {
         "basic": "矢を発射し、指定された射程距離内で最も離れている敵に物理ダメージを与える。 [物理ダメージ：150%]",
@@ -1518,6 +1563,7 @@ const characterSkills = [
       }
     },
     {
+	  "name": "皮可菈",
       "name": "ピコラ",
       "attribute": "魔法",
       "normalAttack": {
@@ -1555,7 +1601,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "アメリア",
+	  "name": "艾蜜莉雅",
+      "name_ja": "アメリア",
       "attribute": "物理",
       "normalAttack": {
         "basic": "敵にレーザーを発射して範囲物理ダメージを与える。 [物理ダメージ: 100%]",
@@ -1592,8 +1639,9 @@ const characterSkills = [
         ]
       }
     },
-{
-      "name": "スノーキー",
+	{
+	  "name": "斯諾奇",
+      "name_ja": "スノーキー",
       "attribute": "物理",
       "normalAttack": {
         "basic": "敵を素早く蹴り、物理ダメージを3回与える。 [総物理ダメージ：225%]",
@@ -1632,7 +1680,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "ベル",
+	  "name": "貝魯",
+      "name_ja": "ベル",
       "attribute": "物理",
       "normalAttack": {
         "basic": "斧を投げつけ、敵に物理ダメージを与える。 [物理ダメージ：75%]",
@@ -1662,7 +1711,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "フェスタ",
+	  "name": "佩斯塔",
+      "name_ja": "フェスタ",
       "attribute": "物理",
       "normalAttack": {
         "basic": "ギターで敵を叩きつけダメージを与える。 [物理ダメージ：150%]",
@@ -1694,7 +1744,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "ジョフィ",
+	  "name": "喬菲",
+      "name_ja": "ジョフィ",
       "attribute": "物理",
       "normalAttack": {
         "basic": "斧を振り回して敵に物理ダメージを与える。 [物理ダメージ：100%]",
@@ -1723,7 +1774,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "レヴィ",
+	  "name": "萊薇",
+      "name_ja": "レヴィ",
       "attribute": "物理",
       "normalAttack": {
         "basic": "ダガーを振るい、敵に物理ダメージを与える。 [物理ダメージ：100%]",
@@ -1755,7 +1807,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "カレン",
+	  "name": "卡蓮",
+      "name_ja": "カレン",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "呪文を唱えて敵に魔法ダメージを与える。 [魔法ダメージ：100%]",
@@ -1784,7 +1837,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "ブランシェ",
+	  "name": "布蘭切",
+      "name_ja": "ブランシェ",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "敵に青い薔薇を飛ばして魔法ダメージを与える。 [魔法ダメージ：60%]",
@@ -1818,7 +1872,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "ヨミ",
+	  "name": "優米",
+      "name_ja": "ヨミ",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "呪文を発射し、敵に魔法ダメージを与える。 [魔法ダメージ：60%]",
@@ -1854,7 +1909,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "ヒルデ",
+	  "name": "希爾德",
+      "name_ja": "ヒルデ",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "銃型注射器を発射して敵に魔法ダメージを与える。 [魔法ダメージ：100%]",
@@ -1887,7 +1943,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "ポシェット",
+	  "name": "珀榭",
+      "name_ja": "ポシェット",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "ポーションを投げつけて敵に魔法ダメージを与える。 [魔法ダメージ：100%]",
@@ -1921,7 +1978,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "エシュール",
+	  "name": "艾舒爾",
+      "name_ja": "エシュール",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "炎の呪文を発射して、敵に魔法ダメージを与え、火傷を付与する。 [火傷：1秒ごとにダメージを受ける。] [火傷の持続時間：2秒] [魔法ダメージ：75%]",
@@ -1955,7 +2013,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "シルフィエン",
+	  "name": "希菲爾",
+      "name_ja": "シルフィエン",
       "attribute": "物理",
       "normalAttack": {
         "basic": "短剣を投げつけ、敵に物理ダメージを与える [物理ダメージ：100%]",
@@ -1986,7 +2045,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "エルフィン",
+	  "name": "艾爾芬",
+      "name_ja": "エルフィン",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "魔力弾を発射して敵に魔法ダメージを与える。 [魔法ダメージ：100%]",
@@ -2016,7 +2076,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "マーゴ",
+	  "name": "馬爾",
+      "name_ja": "マーゴ",
       "attribute": "魔法",
       "normalAttack": {
         "basic": "呪文を発射し、敵に魔法ダメージを与える。 [魔法ダメージ：100%]",
@@ -2046,7 +2107,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "ルード",
+	  "name": "路德",
+      "name_ja": "ルード",
       "attribute": "物理",
       "normalAttack": {
         "basic": "拳を振るい、敵に物理ダメージを与える。 [物理ダメージ：100%]",
@@ -2089,7 +2151,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "カンナ",
+	  "name": "康娜",
+      "name_ja": "カンナ",
       "attribute": "物理",
       "normalAttack": {
         "basic": "攻撃力が最も高い対象に砲弾を発射し、範囲物理ダメージを与える。 [物理ダメージ：125%]",
@@ -2119,7 +2182,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "ベニー",
+	  "name": "斑尼",
+      "name_ja": "ベニー",
       "attribute": "物理",
       "normalAttack": {
         "basic": "斧を振り回して敵に物理ダメージを与える。 [物理ダメージ：100%]",
@@ -2154,7 +2218,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "ルボ",
+	  "name": "盧波",
+      "name_ja": "ルボ",
       "attribute": "物理",
       "normalAttack": {
         "basic": "短剣を振るい、敵に2回物理ダメージを与える。 [総物理ダメージ：100%]",
@@ -2185,7 +2250,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "ティダ",
+	  "name": "泰達",
+      "name_ja": "ティダ",
       "attribute": "物理",
       "normalAttack": {
         "basic": "弾丸を発射し、敵に物理ダメージを与える。 [物理ダメージ：100%]",
@@ -2214,7 +2280,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "マリー",
+	  "name": "瑪麗",
+      "name_ja": "マリー",
       "attribute": "物理",
       "normalAttack": {
         "basic": "敵に爆弾を投げつけて物理ダメージを与える。 [物理ダメージ：75%]",
@@ -2246,7 +2313,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "シオン",
+	  "name": "錫安",
+      "name_ja": "シオン",
       "attribute": "物理",
       "normalAttack": {
         "basic": "弾丸を発射し、指定された射程距離内で最も離れている敵に物理ダメージを与える。 [物理ダメージ：200%]",
@@ -2280,7 +2348,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "ギデオン",
+	  "name": "基狄恩",
+      "name_ja": "ギデオン",
       "attribute": "物理",
       "normalAttack": {
         "basic": "短剣を振るい、敵に物理ダメージを与える。 [物理ダメージ：100%]",
@@ -2310,7 +2379,8 @@ const characterSkills = [
       }
     },
     {
-      "name": "コミ",
+	  "name": "柯米",
+      "name_ja": "コミ",
       "attribute": "物理",
       "normalAttack": {
         "basic": "敵を枕で殴りつけて物理ダメージを与える。 [物理ダメージ：150%]",
