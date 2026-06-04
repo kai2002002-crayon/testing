@@ -2044,7 +2044,7 @@ const characterSkillsData = [
         ]
       }
     }
-{
+    {
       "name": "路德",
       "attribute": "物理",
       "normalAttack": {
