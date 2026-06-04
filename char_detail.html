@@ -948,7 +948,7 @@
             currentCharData = INITIAL_DATA.find(c => c.name.trim() === currentTargetName);
             if (!currentCharData) { renderError(`${getI18n('error_char_not_found') || "❌ 找不到角色資料: "}${currentTargetName}`); return; }
 
-            document.getElementById('charName').innerText = currentCharData.name; // 這裡若有對應翻譯檔也可轉譯
+            document.getElementById('charName').innerText = getI18n(`char_name_${currentCharData.name}`) || currentCharData.name; // 這裡若有對應翻譯檔也可轉譯
             updateTag('charPersonality', getI18n('stats_personality') || '性格', currentCharData.personality, 'personality');
             updateTag('charRace', getI18n('stats_race') || '種族', currentCharData.race, 'race');
             updateTag('charPosition', getI18n('stats_position') || '站位', currentCharData.position, 'position');
