@@ -19,7 +19,7 @@
         if (isDarkMode) { document.documentElement.classList.add('dark'); }
         
         // i18n 語言設定
-        window.currentLang = localStorage.getItem('app_lang') || "zh-TW";
+        window.currentLang = localStorage.getItem('user_lang') || "zh-TW";
         document.documentElement.lang = window.currentLang === "ja" ? "ja" : "zh-TW";
     </script>
 
