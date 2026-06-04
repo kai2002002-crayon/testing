@@ -279,7 +279,7 @@
 
 
 // 取得使用者設定的語言，預設為 "zh-TW"
-const currentLang = localStorage.getItem('app_lang') || 'zh-TW';
+let currentLang = localStorage.getItem('app_lang') || "zh-TW";
 
 // 🌟 建立一個翻譯小工具函式 (超級好用)
 // 以後只要呼叫 t("洛涅")，它就會自動根據當前語言給你對應的翻譯！
