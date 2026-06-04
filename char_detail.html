@@ -722,11 +722,22 @@
                 if (PRESENT_MAP[spineKey]) {
                     finalImgUrl = PRESENT_MAP[spineKey].url;
                     isHasPresent = true;
-        
-                    if (PRESENT_MAP[spineKey].name && PRESENT_MAP[spineKey].name.trim() !== "") {
-                        presentDisplayName = PRESENT_MAP[spineKey].name;
+
+                    const pNameData = PRESENT_MAP[spineKey].name;
+    
+                    if (pNameData) {
+                        if (typeof pNameData === 'object') {
+                            // 📖 情況 A：新版多語系格式 (根據當前語言抓取)
+                            presentDisplayName = pNameData[window.currentLang] || pNameData["zh-TW"];
+                        } else if (typeof pNameData === 'string' && pNameData.trim() !== "") {
+                            // 📖 情況 B：舊版純字串格式
+                            presentDisplayName = pNameData;
+                        } else {
+                            // 📖 情況 C：空白字串
+                            presentDisplayName = getI18n('treasure') || `${currentCharData.name}的珍藏品`;
+                        }
                     } else {
-                        presentDisplayName = `${currentCharData.name}的珍藏品`;
+                        presentDisplayName = getI18n('treasure') || `${currentCharData.name}的珍藏品`;
                     }
                 }
 
