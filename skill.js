@@ -1,4 +1,4 @@
-const characterSkillsData = [
+const characterSkills = [
     {
       "name": "貝麗塔",
       "attribute": "魔法",
