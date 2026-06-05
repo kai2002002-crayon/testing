@@ -68,7 +68,8 @@
 
     <div id="mainContainer" class="max-w-4xl mx-auto bg-white/90 dark:bg-slate-800/95 backdrop-blur-md p-6 rounded-2xl shadow-md border-4 border-amber-400 dark:border-slate-600 transition-colors">
         
-        <button onclick="window.close()" data-i18n="btn_close" class="mb-4 px-4 py-2 bg-amber-500 text-white text-xs font-bold rounded-xl shadow hover:bg-amber-600 dark:bg-slate-700 dark:hover:bg-slate-600 transition">
+        <!-- 更新 data-i18n 鍵值對應 LANG_DICT -->
+        <button onclick="window.close()" data-i18n="btn_close_page" class="mb-4 px-4 py-2 bg-amber-500 text-white text-xs font-bold rounded-xl shadow hover:bg-amber-600 dark:bg-slate-700 dark:hover:bg-slate-600 transition">
             ⬅️ 關閉此頁
         </button>
 
@@ -90,18 +91,18 @@
         </div>
 
         <div class="mb-8">
-            <h2 class="text-lg font-bold text-amber-900 dark:text-amber-400 mb-3 flex items-center gap-1" data-i18n="stats_detail">🖍️ 金蠟筆分佈詳情</h2>
+            <h2 class="text-lg font-bold text-amber-900 dark:text-amber-400 mb-3 flex items-center gap-1" data-i18n="crayon_detail_title">🖍️ 金蠟筆分佈詳情</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="bg-amber-50/60 dark:bg-slate-700/50 border border-amber-200 dark:border-slate-600 p-3 rounded-xl">
-                    <h3 class="font-bold text-amber-800 dark:text-amber-300 text-sm mb-2 border-b border-amber-200 dark:border-slate-600 pb-1" data-i18n="layer1">🥇 第一層屬性</h3>
+                    <h3 class="font-bold text-amber-800 dark:text-amber-300 text-sm mb-2 border-b border-amber-200 dark:border-slate-600 pb-1" data-i18n="layer_1_stats">🥇 第一層屬性</h3>
                     <ul id="layer1List" class="space-y-1 text-xs font-medium text-gray-700 dark:text-gray-300 list-disc list-inside"></ul>
                 </div>
                 <div class="bg-orange-50/60 dark:bg-slate-700/50 border border-orange-200 dark:border-slate-600 p-3 rounded-xl">
-                    <h3 class="font-bold text-orange-800 dark:text-orange-300 text-sm mb-2 border-b border-orange-200 dark:border-slate-600 pb-1" data-i18n="layer2">🥈 第二層屬性</h3>
+                    <h3 class="font-bold text-orange-800 dark:text-orange-300 text-sm mb-2 border-b border-orange-200 dark:border-slate-600 pb-1" data-i18n="layer_2_stats">🥈 第二層屬性</h3>
                     <ul id="layer2List" class="space-y-1 text-xs font-medium text-gray-700 dark:text-gray-300 list-disc list-inside"></ul>
                 </div>
                 <div class="bg-red-50/60 dark:bg-slate-700/50 border border-red-200 dark:border-slate-600 p-3 rounded-xl">
-                    <h3 class="font-bold text-red-800 dark:text-red-300 text-sm mb-2 border-b border-red-200 dark:border-slate-600 pb-1" data-i18n="layer3">🥉 第三層屬性</h3>
+                    <h3 class="font-bold text-red-800 dark:text-red-300 text-sm mb-2 border-b border-red-200 dark:border-slate-600 pb-1" data-i18n="layer_3_stats">🥉 第三層屬性</h3>
                     <ul id="layer3List" class="space-y-1 text-xs font-medium text-gray-700 dark:text-gray-300 list-disc list-inside"></ul>
                 </div>
             </div>
@@ -110,7 +111,7 @@
         <div class="mt-8 bg-gradient-to-br from-amber-50 to-rose-50 dark:from-gray-800/80 dark:to-gray-800/80 backdrop-blur border border-rose-200 dark:border-gray-700/50 rounded-2xl p-6 shadow-xl transition-colors duration-300">
             <div class="flex items-center gap-3 mb-4">
                 <span class="text-2xl">🎁</span>
-                <h3 data-i18n="treasure" class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-orange-400 dark:from-pink-400 dark:to-purple-400">
+                <h3 data-i18n="present_title" class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-orange-400 dark:from-pink-400 dark:to-purple-400">
                     坨坨珍藏品
                 </h3>
             </div>
@@ -119,7 +120,7 @@
         
                 <div id="presentLeft" class="w-full md:w-1/3 flex flex-col items-center gap-3 transition-all duration-300">
                     <div id="presentContainer" class="w-full flex justify-center items-center overflow-hidden">
-                        <p data-i18n="opening" class="text-orange-400 dark:text-gray-500 text-sm animate-pulse">寶箱開啟中...</p>
+                        <p data-i18n="present_loading" class="text-orange-400 dark:text-gray-500 text-sm animate-pulse">寶箱開啟中...</p>
                     </div>
                     <div id="presentName" class="hidden text-center font-bold text-rose-900 dark:text-rose-200 bg-rose-100/50 dark:bg-rose-900/30 px-3 py-1 rounded-lg border border-rose-200 dark:border-rose-800 text-sm"></div>
                 </div>
@@ -132,7 +133,7 @@
 
                     <div id="presentTextContainer" class="relative rounded-xl border border-rose-200 dark:border-gray-700 overflow-hidden transition-all duration-300 bg-rose-50 dark:bg-gray-800 flex flex-col min-h-[160px]">
                         <div id="presentTextWrapper" class="relative z-20 flex-1 w-full p-5 flex flex-col transition-all">
-                            <p id="presentText" data-i18n="select_content" class="text-sm md:text-base leading-relaxed w-full drop-shadow-md text-gray-700 dark:text-gray-300">請選擇顯示內容...</p>
+                            <p id="presentText" data-i18n="present_select_hint" class="text-sm md:text-base leading-relaxed w-full drop-shadow-md text-gray-700 dark:text-gray-300">請選擇顯示內容...</p>
                         </div>
                     </div>
                 </div>
@@ -141,22 +142,22 @@
         </div>
         
         <div class="mt-6 pt-6 border-t-2 border-amber-200 dark:border-slate-700">
-            <h2 data-i18n="skill_title" class="text-xl font-black text-amber-950 dark:text-amber-400 mb-4 flex items-center gap-1.5">⚔️ 技能詳細資料</h2>
+            <h2 data-i18n="skill_detail_title" class="text-xl font-black text-amber-950 dark:text-amber-400 mb-4 flex items-center gap-1.5">⚔️ 技能詳細資料</h2>
             <div id="skillsContainer" class="space-y-5">
                 <div data-i18n="skill_loading" class="text-sm text-gray-500">技能載入中...</div>
             </div>
         </div>
 
         <div class="mt-8 pt-8 border-t-4 border-dashed border-amber-200 dark:border-slate-700">
-            <h2 data-i18n="review_title" class="text-xl font-black text-amber-950 dark:text-amber-400 mb-4 flex items-center gap-1.5">💬 玩家評價與心得</h2>
+            <h2 data-i18n="comment_title" class="text-xl font-black text-amber-950 dark:text-amber-400 mb-4 flex items-center gap-1.5">💬 玩家評價與心得</h2>
             
             <div class="bg-amber-50/80 dark:bg-slate-700/60 p-4 rounded-xl border border-amber-300 dark:border-slate-600 mb-6 shadow-sm transition-colors">
-                <input type="text" id="commentAuthor" data-i18n="author_ph" placeholder="您的暱稱 (留白將以匿名顯示)" class="w-full sm:w-1/2 mb-3 px-3 py-2 text-sm font-bold text-amber-900 dark:text-white placeholder-amber-700/50 dark:placeholder-gray-400 rounded-lg border border-amber-300 dark:border-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-slate-800 shadow-inner">
+                <input type="text" id="commentAuthor" data-i18n="comment_author_placeholder" placeholder="您的暱稱 (留白將以匿名顯示)" class="w-full sm:w-1/2 mb-3 px-3 py-2 text-sm font-bold text-amber-900 dark:text-white placeholder-amber-700/50 dark:placeholder-gray-400 rounded-lg border border-amber-300 dark:border-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-slate-800 shadow-inner">
                 <textarea id="commentContent" 
                           rows="3"
                           maxlength="500"
                           oninput="document.getElementById('charCount').innerText = this.value.length + ' / 500'"
-                          data-i18n="comment_ph"
+                          data-i18n="comment_content_placeholder"
                           placeholder="寫下您對這位坨坨的評價、組隊心得或是發廚發言..."
                           class="w-full mb-1 px-3 py-2 text-sm font-medium text-gray-800 dark:text-gray-200 rounded-lg border border-amber-300 dark:border-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-slate-800 resize-none shadow-inner"></textarea>
                 
@@ -165,7 +166,7 @@
                 </div>
 
                 <div class="flex justify-end">
-                    <button onclick="submitComment()" id="submitCommentBtn" data-i18n="btn_submit" class="px-5 py-2 bg-amber-500 text-white text-sm font-bold rounded-xl shadow-md hover:bg-amber-600 dark:bg-amber-600 dark:hover:bg-amber-500 transition transform active:scale-95">
+                    <button onclick="submitComment()" id="submitCommentBtn" data-i18n="btn_submit_comment" class="px-5 py-2 bg-amber-500 text-white text-sm font-bold rounded-xl shadow-md hover:bg-amber-600 dark:bg-amber-600 dark:hover:bg-amber-500 transition transform active:scale-95">
                         送出評價 🚀
                     </button>
                 </div>
@@ -178,73 +179,27 @@
     </div>
 
     <script>
-        const NAME_MAP = {
-            "zh-TW": { "洛涅": "洛涅", "薇薇": "薇薇", "艾爾芬": "艾爾芬", "錫安": "錫安", "伊弗利特": "伊弗利特", "伊德": "伊德", "佩佩": "佩佩", "佩斯塔": "佩斯塔",
-                "修帕": "修帕", "傑德": "傑德", "優米": "優米", "劉美美": "劉美美", "加薇雅": "加薇雅", "卡洛特": "卡洛特", "卡蓮": "卡蓮", "喬菲": "喬菲",
-                "基狄恩": "基狄恩", "大師2號": "大師2號", "大木頭": "大木頭", "奈雅": "奈雅", "奶油": "奶油", "布蘭切": "布蘭切", "希拉": "希拉", "希爾德": "希爾德",
-                "希瑟圖": "希瑟圖", "希菲爾": "希菲爾", "帕特拉": "帕特拉", "庫洛艾": "庫洛艾", "康娜": "康娜", "愛麗絲": "愛麗絲", "斑尼": "斑尼", "斯皮奇": "斯皮奇",
-                "斯諾奇": "斯諾奇", "柯米": "柯米", "桃桃": "桃桃", "梅森": "梅森", "梅露娜": "梅露娜", "海莉": "海莉", "珀榭": "珀榭", "琳": "琳",
-                "瑟琳娜": "瑟琳娜", "瑪約": "瑪約", "瑪麗": "瑪麗", "皮可菈": "皮可菈", "盧波": "盧波", "米雪": "米雪", "綾": "綾", "羽伊": "羽伊",
-                "艾斯皮": "艾斯皮", "艾琳娜": "艾琳娜", "艾皮卡": "艾皮卡", "艾舒爾": "艾舒爾", "艾蜜莉雅": "艾蜜莉雅", "芙莉可": "芙莉可", "茱蜜": "茱蜜", "莉茲": "莉茲",
-                "莎莉": "莎莉", "萊薇": "萊薇", "蒂亞娜": "蒂亞娜", "謝蒂": "謝蒂", "貝魯": "貝魯", "貝麗塔": "貝麗塔", "路德": "路德", "路易": "路易",
-                "阿萊特": "阿萊特", "雷吉": "雷吉", "馬爾": "馬爾", "泰達": "泰達", "寧琉": "寧琉", "莉絲蒂": "莉絲蒂"},
-            "ja": {"洛涅": "ローネ", "薇薇": "ヴィヴィ", "艾爾芬": "エルフィン", "錫安": "シオン・ザ・DB", "伊弗利特": "イフリート", "伊德": "イード", "佩佩": "ベルベット", "佩斯塔": "フェスタ",
-                "修帕": "シュパン", "傑德": "ジェイド", "優米": "ヨミ", "劉美美": "ユミミ", "加薇雅": "ガヴィア", "卡洛特": "キャロット", "卡蓮": "カレン", "喬菲": "チョッピー",
-                "基狄恩": "ギデオン", "大師2號": "マエストロMK2", "大木頭": "ビッグウッド", "奈雅": "ナイア", "奶油": "バター", "布蘭切": "ブランセ", "希拉": "シーラ", "希爾德": "ヒルデ",
-                "希瑟圖": "シスト", "希菲爾": "シルフィール", "帕特拉": "パトラ", "庫洛艾": "クロエ", "康娜": "カンナ", "愛麗絲": "アリス", "斑尼": "ベニー", "斯皮奇": "スピッキー",
-                "斯諾奇": "スノキー", "柯米": "コミー", "桃桃": "モモ", "梅森": "メゾン", "梅露娜": "メロナ", "海莉": "ヘイリー", "珀榭": "ポーシャー", "琳": "リム",
-                "瑟琳娜": "セリーネ", "瑪約": "マヨ", "瑪麗": "マリー", "皮可菈": "ピコラ", "盧波": "ルポ", "米雪": "ミンス", "綾": "アヤ", "羽伊": "ウイ",
-                "艾斯皮": "エスピー", "艾琳娜": "エレナ", "艾皮卡": "エピカ", "艾舒爾": "エシュール", "艾蜜莉雅": "アメリア", "芙莉可": "フリックル", "茱蜜": "ジュビー", "莉茲": "リッツ",
-                "莎莉": "サリー", "萊薇": "レヴィ", "蒂亞娜": "ディアナ", "謝蒂": "シェイディ", "貝魯": "ベル", "貝麗塔": "ベリータ", "路德": "ルード", "路易": "キュウイ",
-                "阿萊特": "アレット", "雷吉": "レイジー", "馬爾": "マーゴ", "泰達": "タイダー", "寧琉": "ネル", "莉絲蒂": "リスティ"}
-        };
-
-        // 🌟 解決問題二：新增專用翻譯字典，翻譯種族、職業、服裝與金蠟筆屬性
-        const TERM_MAP = {
-            "ja": {
-                "攻擊": "攻撃", "防禦": "防御", "血量": "HP", "爆擊": "クリティカル", "爆抗": "クリ抵抗",
-                "預設": "デフォルト", "服裝": "衣装",
-                "天真": "純真", "冷靜": "冷静", "狂亂": "狂気", "活潑": "活発", "憂鬱": "憂鬱",
-                "前排": "前衛", "中排": "中衛", "後排": "後衛",
-                "戰士": "戦士", "坦克": "タンク", "射手": "射手", "魔法師": "魔法使い", "輔助": "サポーター",
-                "精靈": "エルフ", "獸人": "獣人", "妖精": "妖精", "龍族": "竜族", "鬼怪": "幽霊", "精靈(靈)": "精霊", "魔女": "魔女", "人類": "人間", "???": "???"
-            }
-        };
-
-        const UI_DICT = {
-            "ja": {
-                "stats_personality": "性格",
-                "stats_race": "種族",
-                "stats_position": "ポジション",
-                "stats_job": "職業"
-            }
-        };
-
-        function t(text) {
-            if (window.currentLang === 'ja' && TERM_MAP['ja'][text]) {
-                return TERM_MAP['ja'][text];
-            }
-            return text; // 找不到翻譯就回傳原文
-        }
-
+        // 【優化】直接利用 data_core.js 裡的 LANG_DICT，刪除多餘的重複字典
+        
         function getI18n(key) {
             if (typeof LANG_DICT !== 'undefined' && LANG_DICT[window.currentLang] && LANG_DICT[window.currentLang][key]) {
                 return LANG_DICT[window.currentLang][key];
             }
-            if (UI_DICT[window.currentLang] && UI_DICT[window.currentLang][key]) {
-                return UI_DICT[window.currentLang][key];
-            }
-            return key; 
+            return key; // 找不到翻譯就回傳原文
         }
 
-        // 🌟 解決問題一：防呆機制，若字典缺字則保留原本 HTML 裡的中文，不會變成英文 ID
+        // 用來翻譯屬性資料 (如"攻擊", "天真", "前排")，因為你的 LANG_DICT 已經包含了這些，直接調用
+        function t(text) {
+            return getI18n(text);
+        }
+
         function applyI18n() {
             try {
                 document.querySelectorAll('[data-i18n]').forEach(el => {
                     const key = el.getAttribute('data-i18n');
                     const text = getI18n(key);
                     
-                    if (text === key) return; // 💡 找不到翻譯，直接略過，保留預設中文！
+                    if (text === key) return; // 💡 找不到對應的翻譯，保留原本 HTML 裡的中文，不會變成英文 ID
                     
                     if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
                         el.placeholder = text;
@@ -334,11 +289,11 @@
             const langDataL = (typeof LETTER_MAP !== 'undefined' && LETTER_MAP[window.currentLang]) ? LETTER_MAP[window.currentLang] : ((typeof LETTER_MAP !== 'undefined') ? LETTER_MAP["zh-TW"] : {});
             const langDataT = (typeof THOUGHT_MAP !== 'undefined' && THOUGHT_MAP[window.currentLang]) ? THOUGHT_MAP[window.currentLang] : ((typeof THOUGHT_MAP !== 'undefined') ? THOUGHT_MAP["zh-TW"] : {});
             
-            // 加入防呆：如果翻譯失敗，預設回傳中文
-            let defaultNoLetter = getI18n('no_letter');
-            if(defaultNoLetter === 'no_letter') defaultNoLetter = '沒有信件';
-            let defaultNoThought = getI18n('no_thought');
-            if(defaultNoThought === 'no_thought') defaultNoThought = '沒有感想';
+            // 替換為你的字典對應的 key
+            let defaultNoLetter = getI18n('no_letter_hint');
+            if(defaultNoLetter === 'no_letter_hint') defaultNoLetter = '（這隻坨坨好像還沒寫信給你呢...）';
+            let defaultNoThought = getI18n('no_thought_hint');
+            if(defaultNoThought === 'no_thought_hint') defaultNoThought = '（教主目前還沒寫下對這個珍藏品的感想呢...）';
 
             if (tab === 'letter') {
                 btnLetter.className = "flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-rose-500 text-white shadow-md";
@@ -744,7 +699,10 @@
             container.classList.remove('hidden');
             let html = '';
             costumes.forEach((costumeKey, idx) => {
-                let displayName = idx === 0 ? t("預設") : `${t("服裝")}${idx}`;
+                let displayName = idx === 0 ? t("costume_default") : `${t("costume_prefix")}${idx}`;
+                if (displayName === "costume_default") displayName = "預設";
+                if (displayName.includes("costume_prefix")) displayName = `服裝${idx}`;
+
                 let activeStyle = idx === 0 ? 'bg-amber-500 text-white border-amber-600 shadow-sm' : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-slate-600 hover:bg-amber-100 dark:hover:bg-slate-600';
                 
                 html += `<button onclick="changeCostume('${costumeKey}', this)" class="costume-btn px-4 py-1.5 text-xs font-bold rounded-lg border ${activeStyle}">${displayName}</button>`;
@@ -836,14 +794,14 @@
                     const enhancedData = charSkillData.normalAttack.enhanced;
                     const hasEnhanced = enhancedData && enhancedData !== "無" && (typeof enhancedData === 'string' ? true : enhancedData.desc !== "無");
                     
-                    let txtNormalAtk = getI18n('normal_atk');
-                    if(txtNormalAtk === 'normal_atk') txtNormalAtk = '普通攻擊';
-                    let txtPassive = getI18n('passive_skill');
-                    if(txtPassive === 'passive_skill') txtPassive = '被動技能';
-                    let txtBasic = getI18n('basic');
-                    if(txtBasic === 'basic') txtBasic = '一般';
-                    let txtEnhanced = getI18n('enhanced');
-                    if(txtEnhanced === 'enhanced') txtEnhanced = '強化';
+                    let txtNormalAtk = getI18n('skill_normal_attack');
+                    if(txtNormalAtk === 'skill_normal_attack') txtNormalAtk = '普通攻擊';
+                    let txtPassive = getI18n('skill_passive');
+                    if(txtPassive === 'skill_passive') txtPassive = '被動技能';
+                    let txtBasic = getI18n('skill_basic');
+                    if(txtBasic === 'skill_basic') txtBasic = '【基本】';
+                    let txtEnhanced = getI18n('skill_enhanced');
+                    if(txtEnhanced === 'skill_enhanced') txtEnhanced = '【強化】';
 
                     let html = `
                         <div class="bg-slate-50 dark:bg-slate-700/40 border-2 border-slate-300 dark:border-slate-600 rounded-xl p-4 shadow-sm">
@@ -926,9 +884,7 @@
             currentCharData = INITIAL_DATA.find(c => c.name.trim() === currentTargetName);
             if (!currentCharData) { renderError(`${getI18n('error_char_not_found') || "❌ 找不到角色資料: "}${currentTargetName}`); return; }
 
-            const displayName = (window.currentLang === 'ja' && NAME_MAP['ja'][currentCharData.name]) 
-                                ? NAME_MAP['ja'][currentCharData.name] 
-                                : currentCharData.name;
+            const displayName = getI18n(currentCharData.name);
             document.getElementById('charName').innerText = displayName;
 
             let pLabel = getI18n('stats_personality'); if(pLabel === 'stats_personality') pLabel = '性格';
@@ -952,8 +908,8 @@
                 const DEFAULT_NO_PRESENT_URL = "https://i.postimg.cc/qtwD6bsq/Icon-Present.png";
     
                 let finalImgUrl = DEFAULT_NO_PRESENT_URL;
-                let presentDisplayName = getI18n('treasure_delivering'); 
-                if (presentDisplayName === 'treasure_delivering') presentDisplayName = '未配發寶物';
+                let presentDisplayName = getI18n('present_delivering'); 
+                if (presentDisplayName === 'present_delivering') presentDisplayName = '未配發寶物';
 
                 let isHasPresent = false;
 
@@ -1044,7 +1000,7 @@
             renderCrayonList('layer2List', currentCharData.layer2);
             renderCrayonList('layer3List', currentCharData.layer3);
 
-            document.title = `${currentCharData.name} - 角色詳細資料`;
+            document.title = `${currentCharData.name} - ${getI18n('page_title_char_detail')}`;
 
             renderSkills(currentTargetName);
 
@@ -1057,8 +1013,9 @@
             let anonId = localStorage.getItem('trickcal_anon_id');
             if (!anonId) {
                 const randomNum = Math.floor(Math.random() * 9000) + 1000;
-                const prefix = window.currentLang === "ja" ? "匿名教主" : "匿名教主";
-                anonId = `${prefix}#${randomNum}`;
+                let prefix = getI18n('anonymous_leader');
+                if(prefix === 'anonymous_leader') prefix = "匿名教主#";
+                anonId = `${prefix}${randomNum}`;
                 localStorage.setItem('trickcal_anon_id', anonId);
             }
             return anonId;
@@ -1124,8 +1081,8 @@
             if (!contentInput) { alert(alertEmpty); return; }
             if (contentInput.length > 500) { alert(alertTooLong); return; }
 
-            let textSubmitting = getI18n('submitting'); if(textSubmitting==='submitting') textSubmitting='傳送中...';
-            let textSubmitBtn = getI18n('btn_submit'); if(textSubmitBtn==='btn_submit') textSubmitBtn='送出評價 🚀';
+            let textSubmitting = getI18n('btn_submitting'); if(textSubmitting==='btn_submitting') textSubmitting='傳送中... ⏳';
+            let textSubmitBtn = getI18n('btn_submit_comment'); if(textSubmitBtn==='btn_submit_comment') textSubmitBtn='送出評價 🚀';
 
             btn.disabled = true;
             btn.innerHTML = textSubmitting;
