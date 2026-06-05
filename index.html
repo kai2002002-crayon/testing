@@ -347,7 +347,7 @@
             <div class="flex flex-col gap-1 text-[11px] text-gray-500 dark:text-gray-400 opacity-80">
                 <p data-lang-key="footer_author">📝 記事本製作者: 冷笑話幽靈</p>
                 <p data-lang-key="footer_copyright">© 遊戲版權: EpidGames & Bilibili</p>
-                <p data-lang-key="footer_lastupdate">最後更新日期：2026/05/26</p>
+                <p data-lang-key="footer_lastupdate">最後更新日期：06/06/2026</p>
             </div>
         </footer>
         
@@ -405,9 +405,12 @@ function changeLanguage(lang) {
     // 取得安全字典 (避開 en 導致的 undefined 錯誤)
     const safeLang = (typeof LANG_DICT !== 'undefined' && LANG_DICT[lang]) ? lang : 'zh-TW';
     const dict = typeof LANG_DICT !== 'undefined' ? LANG_DICT[safeLang] : {};
-
+    const statusText = document.getElementById('authStatusText');
+    if (statusText) {
+        statusText.innerText = t("auth_online_title");
+    }
     document.title = t('app_title') || dict.app_title || "嘟嘟臉金蠟筆記事本";
-
+    
     // 替換靜態標籤
     document.querySelectorAll('[data-lang-key]').forEach(el => {
         const key = el.getAttribute('data-lang-key');
@@ -1182,9 +1185,14 @@ function changeLanguage(lang) {
                     updateAuthButtonUI(user); 
                     if (user) {
                         currentUser = user;
+                        // 修改後的 JavaScript 渲染邏輯
                         document.getElementById('userStatus').innerHTML = `
-                            <span class="block font-bold text-green-700 dark:text-green-500 whitespace-nowrap">${t('auth_online_title')}</span>
-                            <span class="text-[10px] sm:text-[11px] text-gray-500 dark:text-gray-400 truncate max-w-[120px]">${user.displayName || '教主'}</span>
+                            <span id="authStatusText" class="block font-bold text-green-700 dark:text-green-500 whitespace-nowrap" data-i18n="auth_online_title">
+                                ${t('auth_online_title')}
+                            </span>
+                            <span class="text-[10px] sm:text-[11px] text-gray-500 dark:text-gray-400 truncate max-w-[120px]">
+                                ${user.displayName || '教主'}
+                            </span>
                         `;
                         db.collection("player_boards").doc(user.uid).get().then(doc => {
                             if (doc.exists && doc.data().states) {
