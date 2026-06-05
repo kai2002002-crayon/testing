@@ -504,9 +504,6 @@
             });
         }
 
-        // 啟動翻譯功能
-        changeLanguage(currentLang);
-
         function toggleStatsPanel() {
             isStatsOpen = !isStatsOpen;
             const body = document.getElementById("statsPanelBody");
@@ -1073,28 +1070,37 @@
             });
         }
 
-        try {
-            initStates();
-            buildFilterPanel();
-            renderMatrix();
-            calculateStats();
-            
-            if (!isStatsOpen) {
-                const body = document.getElementById("statsPanelBody");
-                const icon = document.getElementById("statsToggleIcon");
-                if(body) {
-                    body.classList.add("hidden");
-                    body.classList.remove("grid");
-                    icon.innerText = "▶";
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                // 1. 防呆檢查：確認核心資料是否有成功載入
+                if (typeof INITIAL_DATA === 'undefined') {
+                    throw new Error("找不到 INITIAL_DATA，請確認 data_core.js 是否載入成功！");
+                }
+
+                // 2. 初始化存檔狀態
+                initStates();
+                
+                // 3. 啟動翻譯 (這行會自動觸發 renderMatrix, buildFilterPanel 等畫面渲染，不用再寫第二次)
+                changeLanguage(currentLang);
+                
+                // 4. 處理統計面板預設的收起/展開狀態
+                if (!isStatsOpen) {
+                    const body = document.getElementById("statsPanelBody");
+                    const icon = document.getElementById("statsToggleIcon");
+                    if(body) {
+                        body.classList.add("hidden");
+                        body.classList.remove("grid");
+                        icon.innerText = "▶";
+                    }
+                }
+            } catch (e) {
+                const errBanner = document.getElementById('errorBanner');
+                if(errBanner) {
+                    errBanner.innerHTML = `⚠️ 畫面繪製失敗: ${e.message}`;
+                    errBanner.classList.remove('hidden');
                 }
             }
-        } catch (e) {
-            const errBanner = document.getElementById('errorBanner');
-            if(errBanner) {
-                errBanner.innerHTML = `⚠️ 畫面繪製失敗: ${e.message}`;
-                errBanner.classList.remove('hidden');
-            }
-        }
+        });
 
         function handleAuth() {
             if (!auth) {
