@@ -2749,7 +2749,7 @@ const characterSkills = [
         "desc": "会心が増加する。",
         "stats": [
           "会心増加：42%"
-        ]
+        ]}
         }
       }
     },
