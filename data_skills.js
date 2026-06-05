@@ -2687,6 +2687,7 @@ const characterSkills = [
           "防御力：42%"
         ]
         }
+		}
       }
     },
     {
