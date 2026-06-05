@@ -3286,7 +3286,6 @@ const characterSkills = [
         ]}
       }
     },
-	{
 	"ja": {
       "normalAttack": {
         "basic": "敵を素早く蹴り、物理ダメージを3回与える。 [総物理ダメージ：225%]",
