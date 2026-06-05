@@ -387,8 +387,12 @@
             return LANG_DICT[currentLang][key] || LANG_DICT["zh-TW"][key] || key;
         }
 
+        // 修改後的 changeLanguage 函數
         function changeLanguage(lang) {
-            currentLang = lang;
+            // 1. 不要直接賦值給可能為 const 的 currentLang
+            // 2. 改為使用 window.currentLang 確保它是全域變數，或是改用其他變數名稱
+            window.currentLang = lang; 
+    
             localStorage.setItem('user_lang', lang);
             document.title = t('app_title');
             document.querySelectorAll('[data-lang-key]').forEach(el => {
