@@ -1092,7 +1092,8 @@
             renderCrayonList('layer2List', currentCharData.layer2);
             renderCrayonList('layer3List', currentCharData.layer3);
 
-            document.title = `${currentCharData.name} - ${getI18n('page_title_char_detail')}`;
+            // 把它改成這樣（使用翻譯後的 displayName）：
+            document.title = `${displayName} - ${getI18n('page_title_char_detail')}`;
 
             renderSkills(currentTargetName);
 
