@@ -390,12 +390,17 @@
 
         // 修改後的 changeLanguage 函數
         function changeLanguage(lang) {
-            // 1. 不要直接賦值給可能為 const 的 currentLang
-            // 2. 改為使用 window.currentLang 確保它是全域變數，或是改用其他變數名稱
+            // 1. 更新全域變數與儲存設定
             window.currentLang = lang; 
-    
             localStorage.setItem('user_lang', lang);
-            document.title = t('app_title');
+    
+            // 【新增】確保網頁本身的語系標籤也跟著切換，這對某些瀏覽器字體渲染很重要
+            document.documentElement.lang = lang === "ja" ? "ja" : "zh-TW"; 
+
+            // 2. 更新靜態標題與 HTML 標籤
+            document.title = t('app_title') || LANG_DICT[lang].app_title;
+    
+            // 執行你原本的文字替換邏輯
             document.querySelectorAll('[data-lang-key]').forEach(el => {
                 const key = el.getAttribute('data-lang-key');
                 if (LANG_DICT[lang] && LANG_DICT[lang][key]) {
@@ -403,8 +408,9 @@
                 }
             });
 
+            // 3. 更新特定的 UI 元素
             const searchInput = document.getElementById('searchInput');
-            if (searchInput) searchInput.placeholder = t('filter_search_placeholder');
+            if (searchInput) searchInput.placeholder = t('filter_search_placeholder') || LANG_DICT[lang].filter_search_placeholder;
 
             const xLink = document.getElementById('dynamicXLink');
             if (xLink) {
@@ -412,12 +418,18 @@
                 xLink.innerText = LANG_DICT[lang].x_label;
             }
 
-            buildFilterPanel();
-            renderMatrix();
-            calculateStats();
-            updateAuthButtonUI(currentUser);
+            // 4. 重新繪製動態畫面 (讓你不需要按 F5)
+            if (typeof INITIAL_DATA !== 'undefined') {
+                buildFilterPanel();
+                renderMatrix();
+                calculateStats();
+            }
+    
+            // 5. 更新登入狀態按鈕 UI
+            if (typeof updateAuthButtonUI === 'function' && typeof currentUser !== 'undefined') {
+                updateAuthButtonUI(currentUser);
+            }
         }
-
         // ==========================================
         // 深色模式初始化與切換邏輯
         // ==========================================
