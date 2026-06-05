@@ -26,18 +26,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@esotericsoftware/spine-player@4.1.23/dist/spine-player.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@esotericsoftware/spine-player@4.1.23/dist/iife/spine-player.min.js"></script>
 
-    <script src="i18n.js"></script>
-    <script src="data.js"></script>
-    
-    <script src="spine_name.js"></script>
-    <script src="costume_name.js"></script>
-    <script src="lobby_bg.js"></script>
-    <script src="present_icon.js"></script>
     <script src="letter_content.js"></script>
     <script src="thought_content.js"></script>
-    <script src="avatar_image.js"></script>
-    <script src="icon.js"></script>
-    <script src="all_skill_icon.js"></script>
+    <script src="data_skills.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     
@@ -826,15 +817,17 @@
         return;
     }
     
-    // 搜尋角色
-    const charSkillData = characterSkills.find(s => s.name.trim() === charName);
-    
-    if (charSkillData) {
-        // --- 重點修改區域 ---
-        // 如果是日文模式，且資料裡有 name_ja，就顯示 name_ja，否則顯示原名
-        const displayTitle = (window.currentLang === 'ja' && charSkillData.name_ja) 
-                             ? charSkillData.name_ja 
-                             : charSkillData.name;
+    // 1. 搜尋角色基底資料 (包含外部的 name, attribute 和內部的 skills)
+        const charBaseData = characterSkills.find(s => s.name.trim() === charName);
+        
+        if (charBaseData) {
+            // 2. ✨ 動態抓取目前語系的技能內容！如果切換到日文就抓 ja，預設抓 zh-TW
+            const charSkillData = charBaseData.skills[window.currentLang] || charBaseData.skills["zh-TW"];
+
+            // 3. 判斷顯示名稱
+            const displayTitle = (window.currentLang === 'ja' && charBaseData.name_ja) 
+                                 ? charBaseData.name_ja 
+                                 : charBaseData.name;
             
             if (charSkillData) {
                 const makeStatChips = (statsArray) => {
@@ -883,7 +876,8 @@
                             ${makeStatChips(skillObj.stats)}`;
                 };
 
-                const normalAttackIcon = charSkillData.attribute === "物理" ? SKILL_ICONS["attack_物理"] : SKILL_ICONS["attack_魔法"];
+                // ✨ 注意：因為我們把 attribute 放在外層（全語言共用），所以要改從 charBaseData 拿！
+                const normalAttackIcon = charBaseData.attribute === "物理" ? SKILL_ICONS["attack_物理"] : SKILL_ICONS["attack_魔法"];
                 const normalSkillIcon = SKILL_ICONS[`skill_normal_${charName}`] || "";
                 const ultSkillIcon = SKILL_ICONS[`hover_avatar_${charName}`] || "";
                 const passiveSkillIcon = SKILL_ICONS[`skill_passive_${charName}`] || "";
@@ -1088,21 +1082,8 @@
 
             document.title = `${currentCharData.name} - 角色詳細資料`;
 
-            // 動態根據語系載入技能資料庫腳本，載入完成後執行 renderSkills
-            const skillScript = document.createElement('script');
-// 動態決定要載入哪一個檔案
-skillScript.src = (window.currentLang === "ja") ? "skill_ja.js" : "skill.js";
-
-skillScript.onload = () => {
-    // 檔案載入完成後，直接呼叫渲染
-    renderSkills(currentTargetName);
-};
-
-skillScript.onerror = () => {
-    console.error("❌ 技能檔案載入失敗，請檢查檔案名稱與路徑");
-};
-
-document.head.appendChild(skillScript);
+            // 因為已經在 head 載入 data_skills.js，直接呼叫渲染即可！
+            renderSkills(currentTargetName);
 
             loadComments(currentTargetName);
             switchPresentTab('thought'); 
