@@ -6,8 +6,7 @@
     <title>角色詳細資料</title>
     <script src="data_core.js"></script>
     <script src="data_skills.js"></script>
-    <script src="letter_content.js"></script>
-    <script src="thought_content.js"></script>
+    <script src="data_collectibles.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://firebasestorage.googleapis.com">
     <link rel="preconnect" href="https://i.postimg.cc">
@@ -720,7 +719,37 @@
 
             loadSpineAnimation(costumeKey);
         }
+        // 🌟 專屬函數：渲染珍藏品與信件區塊
+        function renderCollectibles(charName) {
+            // 取得當前語言 (如果找不到預設為 zh-TW)
+            const lang = window.currentLang || 'zh-TW';
+    
+            // 防呆：如果該語言在 THOUGHT_MAP 裡還沒準備好 (例如切到 en 但沒英文)，強制退回中文
+            const safeLang = (typeof THOUGHT_MAP !== 'undefined' && THOUGHT_MAP[lang]) ? lang : 'zh-TW';
 
+            // 1. 渲染珍藏品圖示與名稱
+            if (typeof PRESENT_MAP !== 'undefined' && PRESENT_MAP[charName]) {
+                const presentData = PRESENT_MAP[charName];
+                const presentImg = document.getElementById('present_image');
+                const presentName = document.getElementById('present_name');
+        
+                if (presentImg) presentImg.src = presentData.url;
+                // 讀取對應語言的名稱，如果沒有則退回中文
+                if (presentName) presentName.innerText = presentData.name[safeLang] || presentData.name['zh-TW'];
+            }
+
+            // 2. 渲染教主心聲
+            if (typeof THOUGHT_MAP !== 'undefined' && THOUGHT_MAP[safeLang] && THOUGHT_MAP[safeLang][charName]) {
+                const thoughtText = document.getElementById('thought_text');
+                if (thoughtText) thoughtText.innerText = THOUGHT_MAP[safeLang][charName];
+            }
+
+            // 3. 渲染坨坨情信
+            if (typeof LETTER_MAP !== 'undefined' && LETTER_MAP[safeLang] && LETTER_MAP[safeLang][charName]) {
+                const letterText = document.getElementById('letter_text');
+                if (letterText) letterText.innerText = LETTER_MAP[safeLang][charName];
+            }
+        }
         function renderSkills(charName) {
             const skillsContainer = document.getElementById('skillsContainer');
             
@@ -871,9 +900,66 @@
                 }
             }
         }
+        // ==========================================
+        // 🌟 專為詳細頁設計的動態語言切換函數
+        // ==========================================
+        window.changeLanguage = function(lang) {
+            window.currentLang = lang;
+            document.documentElement.lang = lang === "ja" ? "ja" : "zh-TW";
+            
+            if (!currentCharData) return;
 
+            // 1. 更新純靜態文字 (使用 data-i18n 的標籤)
+            applyI18n();
+            
+            // 2. 重新渲染角色名稱與標題
+            const displayName = getI18n(currentCharData.name);
+            document.getElementById('charName').innerText = displayName;
+            document.title = `${displayName} - ${getI18n('page_title_char_detail') || '詳細資料'}`;
+
+            // 3. 重新渲染上方屬性標籤 (性格、種族等)
+            let pLabel = getI18n('stats_personality'); if(pLabel === 'stats_personality') pLabel = '性格';
+            let rLabel = getI18n('stats_race'); if(rLabel === 'stats_race') rLabel = '種族';
+            let posLabel = getI18n('stats_position'); if(posLabel === 'stats_position') posLabel = '站位';
+            let jLabel = getI18n('stats_job'); if(jLabel === 'stats_job') jLabel = '職業';
+
+            updateTag('charPersonality', pLabel, currentCharData.personality, 'personality');
+            updateTag('charRace', rLabel, currentCharData.race, 'race');
+            updateTag('charPosition', posLabel, currentCharData.position, 'position');
+            updateTag('charJob', jLabel, currentCharData.job, 'job');
+
+            // 4. 重新渲染金蠟筆格屬性列表
+            const renderCrayonList = (elementId, array) => {
+                const ul = document.getElementById(elementId);
+                ul.innerHTML = array.map(attr => `<li>${t(attr)}</li>`).join('');
+            };
+            renderCrayonList('layer1List', currentCharData.layer1);
+            renderCrayonList('layer2List', currentCharData.layer2);
+            renderCrayonList('layer3List', currentCharData.layer3);
+
+            // 5. 重新渲染技能說明
+            renderSkills(currentTargetName);
+
+            // 6. 🌟 重新渲染珍藏品、信件，並刷新當前選中的分頁文字
+            renderCollectibles(currentTargetName);
+            switchPresentTab(currentTab);
+        };
+
+        // ==========================================
+        // 🌟 神奇連動：監聽其他分頁(主頁)的語言切換
+        // ==========================================
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'user_lang' && e.newValue && e.newValue !== window.currentLang) {
+                console.log(`📡 偵測到主頁將語言切換至 ${e.newValue}，自動同步更新！`);
+                changeLanguage(e.newValue);
+            }
+        });
+
+
+        // (這下面是你原本的 window.onload = function() { ... )
         window.onload = function() {
             applyI18n(); 
+ 
             
             const urlParams = new URLSearchParams(window.location.search);
             currentTargetName = urlParams.get('char')?.trim();
