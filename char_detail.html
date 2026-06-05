@@ -179,12 +179,18 @@
 
     <script>
         // 【優化】直接利用 data_core.js 裡的 LANG_DICT，刪除多餘的重複字典
-        
+        // 💡 升級版：加入清除空白與安全語系防呆機制
         function getI18n(key) {
-            if (typeof LANG_DICT !== 'undefined' && LANG_DICT[window.currentLang] && LANG_DICT[window.currentLang][key]) {
-                return LANG_DICT[window.currentLang][key];
+            if (!key) return key;
+            const cleanKey = String(key).trim(); // 清除字尾多餘空白
+            
+            // 如果找不到該語言的字典，預設退回 zh-TW
+            const safeLang = (typeof LANG_DICT !== 'undefined' && LANG_DICT[window.currentLang]) ? window.currentLang : 'zh-TW';
+            
+            if (typeof LANG_DICT !== 'undefined' && LANG_DICT[safeLang] && LANG_DICT[safeLang][cleanKey]) {
+                return LANG_DICT[safeLang][cleanKey];
             }
-            return key; // 找不到翻譯就回傳原文
+            return cleanKey; // 找不到翻譯就回傳原文
         }
 
         // 用來翻譯屬性資料 (如"攻擊", "天真", "前排")，因為你的 LANG_DICT 已經包含了這些，直接調用
