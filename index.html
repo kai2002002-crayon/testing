@@ -379,7 +379,7 @@
             console.log(`🚀 已在背景悄悄預載了 ${charName} 的動畫檔案！`);
         }
         
-        let currentLang = localStorage.getItem('user_lang') || 'zh-TW';
+        window.currentLang = localStorage.getItem('user_lang') || "zh-TW";
         document.getElementById('langSelect').value = currentLang;
 
         function t(key) {
