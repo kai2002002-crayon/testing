@@ -287,3 +287,4 @@ const COSTUME_MAP = {
     "艾爾芬": ["Erpin", "ErpinSkin1", "ErpinSkin2", "ErpinSkin3", "ErpinSkin4"], "莉絲蒂": ["Risty", "RistySkin1", "RistySkin2"]
 };
 
+console.log("LANG_DICT 內容:", LANG_DICT);
