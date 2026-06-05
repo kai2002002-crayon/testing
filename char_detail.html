@@ -203,9 +203,26 @@
         };
 
         function getI18n(key) {
+            try {
+        console.log("開始執行翻譯...");
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            // 加入檢查，避免報錯
+            const text = getI18n(key);
+            if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                el.placeholder = text;
+            } else {
+                el.innerHTML = text;
+            }
+        });
+        console.log("翻譯完成！");
+    } catch (e) {
+        console.error("翻譯功能出錯了，但我們將繼續執行後續動作:", e);
+    }
             if (typeof LANG_DICT !== 'undefined' && LANG_DICT[window.currentLang] && LANG_DICT[window.currentLang][key]) {
                 return LANG_DICT[window.currentLang][key];
             }
+            return key; // 若找不到則回傳 Key 本身
             return LOCAL_DICT[window.currentLang] ? (LOCAL_DICT[window.currentLang][key] || key) : key;
         }
 
