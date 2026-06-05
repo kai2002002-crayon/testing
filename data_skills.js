@@ -2618,6 +2618,7 @@ const characterSkills = [
           "魔法被ダメージ量減少：46%"
         ]
         }
+        }
       }
     },
     {
