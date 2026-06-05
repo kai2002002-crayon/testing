@@ -250,42 +250,44 @@
             </div>
             
             <div id="filterPanelBody" class="space-y-3 text-xs mt-3">
-                <div class="flex items-start gap-2 flex-wrap sm:flex-nowrap">
+                <div class="flex items-start gap-2 w-full">
                     <span class="font-bold text-gray-500 dark:text-gray-400 shrink-0 w-16 pt-1 whitespace-nowrap" data-lang-key="stats_personality">🔮 性格：</span>
-                    <div id="filter_personality" class="flex flex-wrap gap-1.5"></div>
+                    <div id="filter_personality" class="flex flex-wrap gap-1.5 flex-1"></div>
                 </div>
-                <div class="flex items-start gap-2 flex-wrap sm:flex-nowrap">
+                <div class="flex items-start gap-2 w-full">
                     <span class="font-bold text-gray-500 dark:text-gray-400 shrink-0 w-16 pt-1 whitespace-nowrap" data-lang-key="stats_race">🧬 種族：</span>
-                    <div id="filter_race" class="flex flex-wrap gap-1.5"></div>
+                    <div id="filter_race" class="flex flex-wrap gap-1.5 flex-1"></div>
                 </div>
-                <div class="flex items-start gap-2 flex-wrap sm:flex-nowrap">
+                <div class="flex items-start gap-2 w-full">
                     <span class="font-bold text-gray-500 dark:text-gray-400 shrink-0 w-16 pt-1 whitespace-nowrap" data-lang-key="stats_position">🗺️ 站位：</span>
-                    <div id="filter_position" class="flex flex-wrap gap-1.5"></div>
+                    <div id="filter_position" class="flex flex-wrap gap-1.5 flex-1"></div>
                 </div>
-                <div class="flex items-start gap-2 flex-wrap sm:flex-nowrap">
+                <div class="flex items-start gap-2 w-full">
                     <span class="font-bold text-gray-500 dark:text-gray-400 shrink-0 w-16 pt-1 whitespace-nowrap" data-lang-key="stats_job">⚔️ 職業：</span>
-                    <div id="filter_job" class="flex flex-wrap gap-1.5"></div>
+                    <div id="filter_job" class="flex flex-wrap gap-1.5 flex-1"></div>
                 </div>
-                <div class="flex flex-col sm:flex-row items-start gap-2 border-t border-dashed border-gray-100 dark:border-gray-700 pt-2">
+    
+                <div class="flex flex-col sm:flex-row items-start gap-2 border-t border-dashed border-gray-100 dark:border-gray-700 pt-2 w-full">
                     <span class="font-bold text-amber-800 dark:text-amber-500 shrink-0 w-16 pt-1 flex items-center gap-0.5 whitespace-nowrap" data-lang-key="stats_cell">🖍️ 金蠟筆格：</span>
-                    <div class="flex flex-col gap-2 w-full">
-                        <div class="flex items-center gap-1.5 flex-wrap">
-                            <span class="text-[11px] text-gray-400 dark:text-gray-500 font-medium bg-gray-50 dark:bg-gray-700 px-1 rounded whitespace-nowrap" data-lang-key="stats_level">指定層數:</span>
-                            <div id="filter_gridLayer" class="flex flex-wrap gap-1"></div>
+                    <div class="flex flex-col gap-2 flex-1 w-full">
+                        <div class="flex items-center sm:items-start gap-1.5 w-full">
+                            <span class="text-[11px] text-gray-400 dark:text-gray-500 font-medium bg-gray-50 dark:bg-gray-700 px-1 rounded whitespace-nowrap mt-0.5" data-lang-key="stats_level">指定層數:</span>
+                            <div id="filter_gridLayer" class="flex flex-wrap gap-1.5 flex-1"></div>
                         </div>
-                        <div class="flex items-center gap-1.5 flex-wrap">
-                            <span class="text-[11px] text-gray-400 dark:text-gray-500 font-medium bg-gray-50 dark:bg-gray-700 px-1 rounded whitespace-nowrap" data-lang-key="cell_kind">格子種類:</span>
-                            <div id="filter_gridType" class="flex flex-wrap gap-1.5"></div>
+                        <div class="flex items-center sm:items-start gap-1.5 w-full">
+                            <span class="text-[11px] text-gray-400 dark:text-gray-500 font-medium bg-gray-50 dark:bg-gray-700 px-1 rounded whitespace-nowrap mt-0.5" data-lang-key="cell_kind">格子種類:</span>
+                            <div id="filter_gridType" class="flex flex-wrap gap-1.5 flex-1"></div>
                         </div>
                     </div>
                 </div>
-                <div class="flex flex-col sm:flex-row items-start gap-2 border-t border-dashed border-gray-100 dark:border-gray-700 pt-2">
+    
+                <div class="flex flex-col sm:flex-row items-start gap-2 border-t border-dashed border-gray-100 dark:border-gray-700 pt-2 w-full">
                     <span class="font-bold text-blue-700 dark:text-blue-400 shrink-0 w-16 pt-1 flex items-center gap-0.5 whitespace-nowrap" data-lang-key="filter_display_mode">👁️ 版面顯示：</span>
-                    <div id="filter_displayMode" class="flex flex-wrap gap-1.5 w-full">
-                        <button id="btn_disp_all" onclick="setDisplayMode('all')" class="inline-flex items-center justify-center gap-1 px-2 py-0.5 rounded border text-[10px] sm:text-[11px] font-bold transition bg-blue-500 text-white border-blue-600 shadow-sm" data-lang-key="filter_btn_show_all">顯示全部</button>
-                        <button id="btn_disp_1" onclick="setDisplayMode('1')" class="inline-flex items-center justify-center gap-1 px-2 py-0.5 rounded border text-[10px] sm:text-[11px] font-medium transition bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600" data-lang-key="filter_btn_show_1">僅第一層</button>
-                        <button id="btn_disp_2" onclick="setDisplayMode('2')" class="inline-flex items-center justify-center gap-1 px-2 py-0.5 rounded border text-[10px] sm:text-[11px] font-medium transition bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600" data-lang-key="filter_btn_show_2">僅第二層</button>
-                        <button id="btn_disp_3" onclick="setDisplayMode('3')" class="inline-flex items-center justify-center gap-1 px-2 py-0.5 rounded border text-[10px] sm:text-[11px] font-medium transition bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600" data-lang-key="filter_btn_show_3">僅第三層</button>
+                    <div id="filter_displayMode" class="flex flex-wrap gap-1.5 flex-1 w-full">
+                        <button id="btn_disp_all" onclick="setDisplayMode('all')" class="whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-bold transition bg-blue-500 text-white border-blue-600 shadow-sm" data-lang-key="filter_btn_show_all">顯示全部</button>
+                        <button id="btn_disp_1" onclick="setDisplayMode('1')" class="whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-medium transition bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600" data-lang-key="filter_btn_show_1">僅第一層</button>
+                        <button id="btn_disp_2" onclick="setDisplayMode('2')" class="whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-medium transition bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600" data-lang-key="filter_btn_show_2">僅第二層</button>
+                        <button id="btn_disp_3" onclick="setDisplayMode('3')" class="whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-medium transition bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600" data-lang-key="filter_btn_show_3">僅第三層</button>
                     </div>
                 </div>
             </div>
@@ -485,9 +487,9 @@ function changeLanguage(lang) {
             "爆抗": { unopened: "bg-purple-50/70 text-purple-800 border-purple-200 hover:bg-purple-100/60 dark:bg-gray-700 dark:text-purple-400 dark:border-gray-600 dark:hover:bg-gray-600", opened: "bg-purple-500 text-white font-bold shadow-sm hover:bg-purple-600 border-purple-600 dark:border-purple-500" }
         };
 
-        const btnActiveStyle = "whitespace-nowrap inline-flex items-center justify-center gap-1 px-2 py-0.5 rounded border text-[11px] font-bold transition bg-amber-500 text-white border-amber-600 shadow-sm";
-        const btnInactiveStyle = "whitespace-nowrap inline-flex items-center justify-center gap-1 px-2 py-0.5 rounded border text-[11px] font-medium transition bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600";
-        const btnDispActiveStyle = "whitespace-nowrap inline-flex items-center justify-center gap-1 px-2 py-0.5 rounded border text-[11px] font-bold transition bg-blue-500 text-white border-blue-600 shadow-sm";
+       const btnActiveStyle = "whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-bold transition bg-amber-500 text-white border-amber-600 shadow-sm";
+       const btnInactiveStyle = "whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-medium transition bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600";
+       const btnDispActiveStyle = "whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-bold transition bg-blue-500 text-white border-blue-600 shadow-sm";
 
         const storageKey = 'trickcal_matrix_saved_states_iron_v26';
         let savedStates = {};
@@ -708,7 +710,7 @@ function changeLanguage(lang) {
                 keys[category].forEach(val => {
                     const btn = document.createElement("button");
                     btn.id = `btn_filter_${category}_${val}`;
-                    btn.className = btnInactiveStyle.replace("whitespace-nowrap", "") + " text-[10px] sm:text-[11px] leading-tight px-1.5";
+                    btn.className = btnInactiveStyle;
                     btn.onclick = () => selectFilter(category, val);
                     
                     let keyName = val;
