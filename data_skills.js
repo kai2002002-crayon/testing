@@ -338,7 +338,6 @@ const characterSkills = [
           "技能移動速度提升：50%"
         ]
         }
-      }
     },
         "ja": {
       "normalAttack": {
