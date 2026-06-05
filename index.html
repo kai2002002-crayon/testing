@@ -383,53 +383,62 @@
         window.currentLang = localStorage.getItem('user_lang') || "zh-TW";
         document.getElementById('langSelect').value = currentLang;
 
-        function t(key) {
-            if (!LANG_DICT[currentLang]) return key;
-            return LANG_DICT[currentLang][key] || LANG_DICT["zh-TW"][key] || key;
+        // 💡 強化版翻譯函數：加入 .trim() 去除多餘空白，並防止字典找不到時出錯
+function t(key) {
+    if (!key) return key;
+    const lang = window.currentLang || 'zh-TW';
+    const cleanKey = String(key).trim(); // 自動清除字尾多餘的空白
+    
+    // 防呆機制：如果選擇了沒有字典的語言（如 en），預設拿 zh-TW 的翻譯來墊檔
+    const safeLang = (typeof LANG_DICT !== 'undefined' && LANG_DICT[lang]) ? lang : 'zh-TW';
+    
+    if (typeof LANG_DICT !== 'undefined' && LANG_DICT[safeLang] && LANG_DICT[safeLang][cleanKey]) {
+        return LANG_DICT[safeLang][cleanKey];
+    }
+    return cleanKey; 
+}
+
+// 💡 強化版語言切換：防止讀取 official_x_url 時當機
+function changeLanguage(lang) {
+    window.currentLang = lang; 
+    localStorage.setItem('user_lang', lang);
+    document.documentElement.lang = lang === "ja" ? "ja" : "zh-TW"; 
+
+    // 取得安全字典 (避開 en 導致的 undefined 錯誤)
+    const safeLang = (typeof LANG_DICT !== 'undefined' && LANG_DICT[lang]) ? lang : 'zh-TW';
+    const dict = typeof LANG_DICT !== 'undefined' ? LANG_DICT[safeLang] : {};
+
+    document.title = t('app_title') || dict.app_title || "嘟嘟臉金蠟筆記事本";
+
+    // 替換靜態標籤
+    document.querySelectorAll('[data-lang-key]').forEach(el => {
+        const key = el.getAttribute('data-lang-key');
+        if (dict[key]) {
+            el.innerText = dict[key];
         }
+    });
 
-        // 修改後的 changeLanguage 函數
-        function changeLanguage(lang) {
-            // 1. 更新全域變數與儲存設定
-            window.currentLang = lang; 
-            localStorage.setItem('user_lang', lang);
-    
-            // 【新增】確保網頁本身的語系標籤也跟著切換，這對某些瀏覽器字體渲染很重要
-            document.documentElement.lang = lang === "ja" ? "ja" : "zh-TW"; 
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.placeholder = t('filter_search_placeholder') || dict.filter_search_placeholder || "搜尋坨坨...";
 
-            // 2. 更新靜態標題與 HTML 標籤
-            document.title = t('app_title') || LANG_DICT[lang].app_title;
-    
-            // 執行你原本的文字替換邏輯
-            document.querySelectorAll('[data-lang-key]').forEach(el => {
-                const key = el.getAttribute('data-lang-key');
-                if (LANG_DICT[lang] && LANG_DICT[lang][key]) {
-                    el.innerText = LANG_DICT[lang][key];
-                }
-            });
+    // 🌟 修改這裡：如果 dict.official_x_url 找不到，會給預設值，不會再報錯當機！
+    const xLink = document.getElementById('dynamicXLink');
+    if (xLink) {
+        xLink.href = dict.official_x_url || "https://x.com/trickcal_TW";
+        xLink.innerText = dict.x_label || "台港澳服官方X";
+    }
 
-            // 3. 更新特定的 UI 元素
-            const searchInput = document.getElementById('searchInput');
-            if (searchInput) searchInput.placeholder = t('filter_search_placeholder') || LANG_DICT[lang].filter_search_placeholder;
+    // 重新繪製動態畫面 (現在它絕對能順利執行到了！)
+    if (typeof INITIAL_DATA !== 'undefined') {
+        buildFilterPanel();
+        renderMatrix();
+        calculateStats();
+    }
 
-            const xLink = document.getElementById('dynamicXLink');
-            if (xLink) {
-                xLink.href = LANG_DICT[lang].official_x_url;
-                xLink.innerText = LANG_DICT[lang].x_label;
-            }
-
-            // 4. 重新繪製動態畫面 (讓你不需要按 F5)
-            if (typeof INITIAL_DATA !== 'undefined') {
-                buildFilterPanel();
-                renderMatrix();
-                calculateStats();
-            }
-    
-            // 5. 更新登入狀態按鈕 UI
-            if (typeof updateAuthButtonUI === 'function' && typeof currentUser !== 'undefined') {
-                updateAuthButtonUI(currentUser);
-            }
-        }
+    if (typeof updateAuthButtonUI === 'function' && typeof currentUser !== 'undefined') {
+        updateAuthButtonUI(currentUser);
+    }
+}
         // ==========================================
         // 深色模式初始化與切換邏輯
         // ==========================================
@@ -931,7 +940,7 @@
                     const displayClass = (currentLang === 'en') ? 'hidden' : 'flex';
 
                     detailBtn.className = `w-8 sm:w-10 shrink-0 ${displayClass} items-center justify-center bg-amber-500/10 hover:bg-amber-300 dark:bg-gray-700/50 dark:hover:bg-gray-600 border-r border-amber-200/50 dark:border-gray-600 transition-colors cursor-pointer group`;
-                    detailBtn.title = `查看 ${t(char.name)} 的詳細資料`;
+                    detailBtn.title = (window.currentLang === 'ja') ? `${t(char.name)}の詳細データを見る` : `查看 ${t(char.name)} 的詳細資料`;
 
                     detailBtn.innerHTML = `
                         <img src="https://i.postimg.cc/T1Y9CC22/Album-Icon-Info.png" 
