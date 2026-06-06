@@ -437,8 +437,6 @@ new spine.SpinePlayer("topRunnerContainer", {
     }
     try {
         const skins = player.skeleton.data.skins;
-        if (skins && skins.length > 0) {
-            // 嘗試設定皮膚
             const targetSkin = skins.find(s => s.name === 'Normal') || skins[0];
             player.skeleton.setSkinByName(targetSkin.name);
             player.skeleton.setToSetupPose();
