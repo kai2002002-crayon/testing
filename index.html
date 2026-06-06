@@ -31,7 +31,15 @@
             /* 跑到螢幕最左側外面 (假設寬度 300px 就退到 -300px) */
             100% { transform: translateX(-300px); }
         }
-
+        /* 讓頂部跑酷小人的畫布強制填滿容器，並確保背景透明 */
+        #topRunnerContainer canvas {
+            width: 100% !important;
+            height: 100% !important;
+            display: block !important;
+        }
+        #topRunnerContainer .spine-player-canvas {
+            background-color: transparent !important;
+        }
         .runner-active {
             /* 12秒跑完一次螢幕，線性等速，無限循環 */
             animation: runAcrossScreen 12s linear infinite; 
@@ -403,10 +411,11 @@
                 animation: "Move", // 這裡指定播放跑步動作
                 backgroundColor: "#00000000",
                 alpha: true,
-                premultipliedAlpha: true,
+                premultipliedAlpha: false,
                 showControls: false,
                 // 🔍 戰鬥小人通常比較小，如果畫面太小，可以把這裡的 width/height 數字縮小來達成「放大」效果
-                viewport: { x: -200, y: -50, width: 400, height: 400 }, 
+                // viewport: { x: -200, y: -50, width: 400, height: 400 }, 
+                viewport: { transitionTime: 0 },
                 success: function (player) {
                     const skins = player.skeleton.data.skins;
                     if (skins && skins.length > 0) {
@@ -424,8 +433,7 @@
                     player.animationState.setAnimation(0, "Move", true);
 
                     // 賦予 CSS 動畫 class，讓他開始在螢幕上跑！
-                    document.getElementById('topRunnerContainer').classList.add('runner-active');
-                    
+                    // document.getElementById('topRunnerContainer').classList.add('runner-active');
                     console.log(`🏃 頂部跑酷生成：${charName}`);
                 },
                 error: function (player, reason) {
