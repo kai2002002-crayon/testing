@@ -416,8 +416,8 @@
                     // 🔄 轉向設定：水平翻轉面朝左邊
                     player.skeleton.scaleX = -1; 
 
-                    // 🏃‍♂️ 【關鍵新增】強制指定播放 "move" 動作，true 代表無限循環！
-                    player.animationState.setAnimation(0, "move", true);
+                    // 🏃‍♂️ 【關鍵新增】強制指定播放 "Move" 動作，true 代表無限循環！
+                    player.animationState.setAnimation(0, "Move", true);
 
                     // 賦予 CSS 動畫 class，讓他開始在螢幕上跑！
                     document.getElementById('topRunnerContainer').classList.add('runner-active');
