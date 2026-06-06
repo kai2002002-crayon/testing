@@ -419,7 +419,7 @@
                 success: function (player) {
                     const skins = player.skeleton.data.skins;
                     if (skins && skins.length > 0) {
-                        const targetSkin = skins.find(s => s.name === 'Normal' || s.name === 'default') || skins[0];
+                        const targetSkin = skins.find(s => s.name === 'Normal' || s.name === 'Default') || skins[0];
                         if (targetSkin) {
                             player.skeleton.setSkinByName(targetSkin.name);
                             player.skeleton.setToSetupPose();
