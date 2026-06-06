@@ -421,32 +421,41 @@
             transitionTime: 0 
             // 💡 刪除 width/height，讓它自動填滿 div
         },
-        success: function (player) {
-            console.log(`Spine 成功載入: ${charName}`);
-            
-            // 關鍵檢查：Skin 是否需要設定
-            const skins = player.skeleton.data.skins;
-            if (skins && skins.length > 0) {
-                // 優先找 Normal，沒有就找第一個
-                const targetSkin = skins.find(s => s.name === 'Normal') || skins[0];
-                player.skeleton.setSkinByName(targetSkin.name);
-                player.skeleton.setToSetupPose();
-            }
+success: function (player) {
+    console.log(`Spine 成功載入: ${charName}`);
+    
+    // 💡 1. 移除 player.resize()，這不是函數
+    
+    // 💡 2. 確保骨架有載入，如果沒有 Skeleton 資料，直接停止
+    if (!player.skeleton) {
+        console.error("Skeleton 資料未產生");
+        return;
+    }
 
-            // 強制設定大小 (保險起見，這段程式碼直接強制縮放 skeleton)
-            player.skeleton.scaleX = -1; // 轉向
-            
-            // 嘗試播放動作
-            player.animationState.setAnimation(0, "Move", true);
-            
-            // 強制讓畫布重新計算大小
-            player.resize();
-            
-            console.log("動畫已啟動，檢查節點資訊:", player.skeleton);
-        },
-        error: function (player, reason) {
-            console.error("Spine 錯誤:", reason);
+    try {
+        const skins = player.skeleton.data.skins;
+        if (skins && skins.length > 0) {
+            // 嘗試設定皮膚
+            const targetSkin = skins.find(s => s.name === 'Normal') || skins[0];
+            player.skeleton.setSkinByName(targetSkin.name);
+            player.skeleton.setToSetupPose();
         }
+
+        player.skeleton.scaleX = -1; 
+        
+        // 💡 3. 檢查動作是否存在再播放
+        const animName = "Move";
+        const anim = player.skeleton.data.findAnimation(animName);
+        if (anim) {
+            player.animationState.setAnimation(0, animName, true);
+        } else {
+            console.warn(`找不到動畫: ${animName}，嘗試播放第一個動作`);
+            player.animationState.setAnimation(0, player.skeleton.data.animations[0].name, true);
+        }
+    } catch (e) {
+        console.error("設定骨架時發生錯誤:", e);
+    }
+},
     });
 }
         // 📝 建立一個記憶清單，記住哪些角色已經預載過了
