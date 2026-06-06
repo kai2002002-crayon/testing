@@ -24,6 +24,27 @@
     <link rel="stylesheet" href="https://unpkg.com/@esotericsoftware/spine-player@4.1/dist/spine-player.css">
     <script src="https://unpkg.com/@esotericsoftware/spine-player@4.1/dist/iife/spine-player.js"></script>
     <style>
+        /* 🌟 頂部跑酷動畫 */
+        @keyframes runAcrossScreen {
+            /* 從螢幕最右側外面開始 */
+            0% { transform: translateX(100vw); }
+            /* 跑到螢幕最左側外面 (假設寬度 300px 就退到 -300px) */
+            100% { transform: translateX(-300px); }
+        }
+
+        .runner-active {
+            /* 12秒跑完一次螢幕，線性等速，無限循環 */
+            animation: runAcrossScreen 12s linear infinite; 
+        }
+
+        /* 隱藏跑酷容器內 Spine Player 的預設 UI (進度條、Logo等) */
+        #topRunnerContainer .spine-player-loading,
+        #topRunnerContainer .spine-player-progress,
+        #topRunnerContainer .spine-player-progress-bar,
+        #topRunnerContainer .spine-player-controls {
+            display: none !important;
+            opacity: 0 !important;
+        }
         :root {
             --user-bg-image: url('https://i.postimg.cc/fTJ36ZFT/CG-Schedule-Rim.png'); 
         }
@@ -178,6 +199,9 @@
     </style>
 </head>
 <body class="p-3 sm:p-6 md:p-8 text-gray-800 dark:text-gray-100">
+    <div id="topRunnerTrack" class="fixed top-0 left-0 w-full h-24 z-50 pointer-events-none overflow-visible">
+        <div id="topRunnerContainer" class="absolute bottom-0 w-[200px] h-[200px]"></div>
+    </div>
     <div id="loader" class="fixed inset-0 bg-[#fcf8f2] dark:bg-slate-900 z-[9999] flex items-center justify-center">
         <div class="animate-bounce text-2xl">🖍️</div>
     </div>
@@ -353,7 +377,58 @@
         
     </div>
 
-    <script>       
+    <script>
+        // 🌟 初始化頂部跑酷小人
+        function initTopRunner() {
+            // 確保資料庫存在且有角色
+            if (typeof INITIAL_DATA === 'undefined' || INITIAL_DATA.length === 0) return;
+
+            // 1. 隨機抽選一位角色
+            const randomCharData = INITIAL_DATA[Math.floor(Math.random() * INITIAL_DATA.length)];
+            const charName = randomCharData.name;
+            const folderKey = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[charName] : charName;
+
+            // 📂 2. 設定戰鬥 SD 檔案路徑 (請依據你的實際資料夾結構修改)
+            // 假設你的戰鬥小人都放在 "spine_sd" 資料夾，並且預設服裝叫做 "Normal"
+            const sdSkelUrl = `./spine_sd/${folderKey}/Normal.skel.bytes`;
+            const sdAtlasUrl = `./spine_sd/${folderKey}/Normal.atlas.txt`;
+
+            new spine.SpinePlayer("topRunnerContainer", {
+                skelUrl: sdSkelUrl,
+                atlasUrl: sdAtlasUrl,
+                animation: "move", // 這裡指定播放跑步動作
+                backgroundColor: "#00000000",
+                alpha: true,
+                premultipliedAlpha: true,
+                showControls: false,
+                // 🔍 戰鬥小人通常比較小，如果畫面太小，可以把這裡的 width/height 數字縮小來達成「放大」效果
+                viewport: { x: -200, y: -50, width: 400, height: 400 }, 
+                success: function (player) {
+                    const skins = player.skeleton.data.skins;
+                    if (skins && skins.length > 0) {
+                        const targetSkin = skins.find(s => s.name === 'Normal' || s.name === 'default') || skins[0];
+                        if (targetSkin) {
+                            player.skeleton.setSkinByName(targetSkin.name);
+                            player.skeleton.setToSetupPose();
+                        }
+                    }
+
+                    // 🔄 轉向設定：水平翻轉面朝左邊
+                    player.skeleton.scaleX = -1; 
+
+                    // 🏃‍♂️ 【關鍵新增】強制指定播放 "move" 動作，true 代表無限循環！
+                    player.animationState.setAnimation(0, "move", true);
+
+                    // 賦予 CSS 動畫 class，讓他開始在螢幕上跑！
+                    document.getElementById('topRunnerContainer').classList.add('runner-active');
+                    
+                    console.log(`🏃 頂部跑酷生成：${charName}`);
+                },
+                error: function (player, reason) {
+                    console.warn(`頂部跑酷載入失敗 (${charName})，可能該角色尚無 SD 檔案:`, reason);
+                }
+            });
+        }
         // 📝 建立一個記憶清單，記住哪些角色已經預載過了
         const preloadedSpines = new Set(); 
 
@@ -467,6 +542,8 @@ function changeLanguage(lang) {
         }
         window.addEventListener('load', () => {
             document.getElementById('loader').style.display = 'none';
+            // 🚀 在畫面載入完成時，順便啟動頂部跑酷小人
+            initTopRunner();
         });
     </script>
 
