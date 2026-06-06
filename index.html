@@ -409,23 +409,32 @@
         return;
     }
 
-    new spine.SpinePlayer("topRunnerContainer", {
-        skelUrl: sdSkelUrl,
-        atlasUrl: sdAtlasUrl,
-        animation: "Move",
-        backgroundColor: "#00000000", // 透明
-        alpha: true,
-        premultipliedAlpha: false,    // 確保這裡與 Rim 設定一致
-        showControls: false,
-        viewport: { 
-            transitionTime: 0 
-            // 💡 刪除 width/height，讓它自動填滿 div
-        },
-success: function (player) {
-    console.log(`Spine 成功載入: ${charName}`);
+new spine.SpinePlayer("topRunnerContainer", {
+    skelUrl: sdSkelUrl,
+    atlasUrl: sdAtlasUrl,
+    animation: "Move",
+    backgroundColor: "#FF0000", // 設為紅色底，確保你看得到畫布
+    alpha: true,
+    premultipliedAlpha: false,
+    showControls: true,        // 打開控制列，讓我們測試「手動播放」
     
-    // 💡 1. 移除 player.resize()，這不是函數
-    
+    // 強制定義 viewport，把攝影機直接對準畫面中心
+    viewport: {
+        x: -100, y: -100,
+        width: 200, height: 200,
+        padLeft: 0, padRight: 0, padTop: 0, padBottom: 0
+    },
+
+    success: function (player) {
+        console.log("Spine 渲染啟動！");
+        
+        // 強制歸零所有骨架位置
+        player.skeleton.setToSetupPose();
+        
+        // 循環播放第一個動畫
+        const firstAnim = player.skeleton.data.animations[0].name;
+        player.animationState.setAnimation(0, firstAnim, true);
+    }
     // 💡 2. 確保骨架有載入，如果沒有 Skeleton 資料，直接停止
     if (!player.skeleton) {
         console.error("Skeleton 資料未產生");
