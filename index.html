@@ -435,12 +435,6 @@ new spine.SpinePlayer("topRunnerContainer", {
         const firstAnim = player.skeleton.data.animations[0].name;
         player.animationState.setAnimation(0, firstAnim, true);
     }
-    // 💡 2. 確保骨架有載入，如果沒有 Skeleton 資料，直接停止
-    if (!player.skeleton) {
-        console.error("Skeleton 資料未產生");
-        return;
-    }
-
     try {
         const skins = player.skeleton.data.skins;
         if (skins && skins.length > 0) {
