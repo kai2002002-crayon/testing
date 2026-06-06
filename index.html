@@ -392,55 +392,63 @@
     <script>
         // 🌟 初始化頂部跑酷小人
         function initTopRunner() {
-            // 確保資料庫存在且有角色
-            if (typeof INITIAL_DATA === 'undefined' || INITIAL_DATA.length === 0) return;
+    if (typeof INITIAL_DATA === 'undefined' || INITIAL_DATA.length === 0) return;
 
-            // 1. 隨機抽選一位角色
-            const randomCharData = INITIAL_DATA[Math.floor(Math.random() * INITIAL_DATA.length)];
-            const charName = randomCharData.name;
-            const folderKey = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[charName] : charName;
+    const randomCharData = INITIAL_DATA[Math.floor(Math.random() * INITIAL_DATA.length)];
+    const charName = randomCharData.name;
+    const folderKey = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[charName] : charName;
 
-            // 📂 2. 設定戰鬥 SD 檔案路徑 (請依據你的實際資料夾結構修改)
-            // 所有檔案集中於 spine_sd_assets 資料夾，檔名直接對應 SPINE_MAP 的 folderKey
-            const sdSkelUrl = `./spine_sd_assets/${folderKey}.skel.bytes`;
-            const sdAtlasUrl = `./spine_sd_assets/${folderKey}.atlas.txt`;;
+    const sdSkelUrl = `./spine_sd_assets/${folderKey}.skel.bytes`;
+    const sdAtlasUrl = `./spine_sd_assets/${folderKey}.atlas.txt`;
 
-            new spine.SpinePlayer("topRunnerContainer", {
-                skelUrl: sdSkelUrl,
-                atlasUrl: sdAtlasUrl,
-                animation: "Move", // 這裡指定播放跑步動作
-                backgroundColor: "#00000000",
-                alpha: true,
-                premultipliedAlpha: false,
-                showControls: false,
-                // 🔍 戰鬥小人通常比較小，如果畫面太小，可以把這裡的 width/height 數字縮小來達成「放大」效果
-                // viewport: { x: -200, y: -50, width: 400, height: 400 }, 
-                viewport: { transitionTime: 0 },
-                success: function (player) {
-                    const skins = player.skeleton.data.skins;
-                    if (skins && skins.length > 0) {
-                        const targetSkin = skins.find(s => s.name === 'Normal' || s.name === 'Default') || skins[0];
-                        if (targetSkin) {
-                            player.skeleton.setSkinByName(targetSkin.name);
-                            player.skeleton.setToSetupPose();
-                        }
-                    }
+    const container = document.getElementById("topRunnerContainer");
+    
+    // 檢查容器是否抓到了
+    if (!container) {
+        console.error("找不到 topRunnerContainer 元素！");
+        return;
+    }
 
-                    // 🔄 轉向設定：水平翻轉面朝左邊
-                    player.skeleton.scaleX = -1; 
+    new spine.SpinePlayer("topRunnerContainer", {
+        skelUrl: sdSkelUrl,
+        atlasUrl: sdAtlasUrl,
+        animation: "Move",
+        backgroundColor: "#00000000", // 透明
+        alpha: true,
+        premultipliedAlpha: false,    // 確保這裡與 Rim 設定一致
+        showControls: false,
+        viewport: { 
+            transitionTime: 0 
+            // 💡 刪除 width/height，讓它自動填滿 div
+        },
+        success: function (player) {
+            console.log(`Spine 成功載入: ${charName}`);
+            
+            // 關鍵檢查：Skin 是否需要設定
+            const skins = player.skeleton.data.skins;
+            if (skins && skins.length > 0) {
+                // 優先找 Normal，沒有就找第一個
+                const targetSkin = skins.find(s => s.name === 'Normal') || skins[0];
+                player.skeleton.setSkinByName(targetSkin.name);
+                player.skeleton.setToSetupPose();
+            }
 
-                    // 🏃‍♂️ 【關鍵新增】強制指定播放 "Move" 動作，true 代表無限循環！
-                    player.animationState.setAnimation(0, "Move", true);
-
-                    // 賦予 CSS 動畫 class，讓他開始在螢幕上跑！
-                    // document.getElementById('topRunnerContainer').classList.add('runner-active');
-                    console.log(`🏃 頂部跑酷生成：${charName}`);
-                },
-                error: function (player, reason) {
-                    console.warn(`頂部跑酷載入失敗 (${charName})，可能該角色尚無 SD 檔案:`, reason);
-                }
-            });
+            // 強制設定大小 (保險起見，這段程式碼直接強制縮放 skeleton)
+            player.skeleton.scaleX = -1; // 轉向
+            
+            // 嘗試播放動作
+            player.animationState.setAnimation(0, "Move", true);
+            
+            // 強制讓畫布重新計算大小
+            player.resize();
+            
+            console.log("動畫已啟動，檢查節點資訊:", player.skeleton);
+        },
+        error: function (player, reason) {
+            console.error("Spine 錯誤:", reason);
         }
+    });
+}
         // 📝 建立一個記憶清單，記住哪些角色已經預載過了
         const preloadedSpines = new Set(); 
 
