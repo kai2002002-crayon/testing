@@ -389,9 +389,9 @@
             const folderKey = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[charName] : charName;
 
             // 📂 2. 設定戰鬥 SD 檔案路徑 (請依據你的實際資料夾結構修改)
-            // 假設你的戰鬥小人都放在 "spine_sd" 資料夾，並且預設服裝叫做 "Normal"
-            const sdSkelUrl = `./spine_sd/${folderKey}/Normal.skel.bytes`;
-            const sdAtlasUrl = `./spine_sd/${folderKey}/Normal.atlas.txt`;
+            // 所有檔案集中於 spine_sd_assets 資料夾，檔名直接對應 SPINE_MAP 的 folderKey
+            const sdSkelUrl = `./spine_sd_assets/${folderKey}.skel.bytes`;
+            const sdAtlasUrl = `./spine_sd_assets/${folderKey}.atlas.txt`;;
 
             new spine.SpinePlayer("topRunnerContainer", {
                 skelUrl: sdSkelUrl,
