@@ -42,8 +42,11 @@
         #topRunnerContainer .spine-player-progress,
         #topRunnerContainer .spine-player-progress-bar,
         #topRunnerContainer .spine-player-controls {
-            display: none !important;
-            opacity: 0 !important;
+            display: flex !important; /* 讓轉圈圈正常顯示 */
+            position: absolute !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
         }
         :root {
             --user-bg-image: url('https://i.postimg.cc/fTJ36ZFT/CG-Schedule-Rim.png'); 
@@ -199,8 +202,9 @@
     </style>
 </head>
 <body class="p-3 sm:p-6 md:p-8 text-gray-800 dark:text-gray-100">
-    <div id="topRunnerTrack" class="fixed top-0 left-0 w-full h-24 z-50 pointer-events-none overflow-visible">
-        <div id="topRunnerContainer" class="w-full h-48 relative overflow-hidden bg-transparent"></div>
+    <div class="w-full flex justify-center py-4">
+        <div id="topRunnerContainer" class="w-[200px] h-[200px] relative">
+            </div>
     </div>
     <div id="loader" class="fixed inset-0 bg-[#fcf8f2] dark:bg-slate-900 z-[9999] flex items-center justify-center">
         <div class="animate-bounce text-2xl">🖍️</div>
