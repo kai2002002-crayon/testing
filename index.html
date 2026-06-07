@@ -24,20 +24,11 @@
     <link rel="stylesheet" href="https://unpkg.com/@esotericsoftware/spine-player@4.1/dist/spine-player.css">
     <script src="https://unpkg.com/@esotericsoftware/spine-player@4.1/dist/iife/spine-player.js"></script>
     <style>
-        /* 🌟 頂部跑酷動畫 */
-        @keyframes runAcrossScreen {
-            /* 從 right: -150px 原地出發 */
-            0% { transform: translateX(0); }
-            /* 向左移動整個螢幕寬度 + 小人本身的寬度 */
-            100% { transform: translateX(calc(-100vw - 150px)); }
+        #topRunnerContainer canvas {
+            width: 100% !important;
+            height: 100% !important;
+            display: block !important;
         }
-
-        .runner-active {
-            /* 12秒跑完一次螢幕，線性等速，無限循環 */
-            animation: runAcrossScreen 12s linear infinite; 
-        }
-
-        /* 確保畫布背景透明 */
         #topRunnerContainer .spine-player-canvas {
             background-color: transparent !important;
         }
@@ -200,15 +191,8 @@
 <body class="p-3 sm:p-6 md:p-8 text-gray-800 dark:text-gray-100">
     
     <!-- 🌟 跑酷專屬軌道 (修正 WebGL 消失問題) -->
-    <div class="fixed top-0 left-0 w-full h-[150px] z-[100] pointer-events-none">
-        <!-- 外層：負責「移動」，初始位置放在畫面右外側 (-150px) -->
-        <div id="runnerTrack" class="absolute top-0 w-[150px] h-[150px]" style="right: -150px;">
-            <!-- 內層：負責「翻轉」，讓小人面朝左邊 -->
-            <div class="w-full h-full" style="transform: scaleX(-1);">
-                <!-- 核心畫布：只負責讓 Spine 渲染，不受干擾 -->
-                <div id="topRunnerContainer" class="w-full h-full relative"></div>
-            </div>
-        </div>
+    <div class="fixed top-0 left-0 w-full h-[300px] z-[100] flex justify-center items-start pointer-events-auto">
+        <div id="topRunnerContainer" class="w-[300px] h-[300px] relative"></div>
     </div>
 
     <div id="loader" class="fixed inset-0 bg-[#fcf8f2] dark:bg-slate-900 z-[9999] flex items-center justify-center">
@@ -387,7 +371,7 @@
     </div>
 
     <script>
-        // 🌟 初始化頂部跑酷小人 (完全解耦防呆版)
+        // 🌟 初始化頂部跑酷小人 (除錯面板開啟版)
         function initTopRunner() {
             if (typeof INITIAL_DATA === 'undefined' || INITIAL_DATA.length === 0) return;
 
@@ -405,15 +389,15 @@
                 backgroundColor: "#00000000",
                 alpha: true,
                 premultipliedAlpha: false,
-                showControls: false, 
+                showControls: true,  // 💡 開啟控制面板！
                 viewport: { transitionTime: 0 },
                 success: function (player) {
-                    console.log(`🏃 頂部跑酷載入成功：${charName}`);
+                    console.log(`🏃 頂部跑酷測試載入成功：${charName}`);
                     
                     try {
                         const skins = player.skeleton.data.skins;
                         if (skins && skins.length > 0) {
-                            const targetSkin = skins.find(s => s.name === 'default') || skins.find(s => s.name === 'Normal') || skins[0];
+                            const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name === 'default') || skins[0];
                             if (targetSkin) {
                                 player.skeleton.setSkinByName(targetSkin.name);
                                 player.skeleton.setToSetupPose();
@@ -423,17 +407,17 @@
                         console.warn("Skin 切換失敗", e);
                     }
 
+                    // 強制播 Move
                     player.animationState.setAnimation(0, "Move", true);
 
-                    // 💡 注意這裡：我們把動畫 class 加在最外層的 runnerTrack 上
-                    document.getElementById('runnerTrack').classList.add('runner-active');
+                    // 💡 把這行註解掉或刪掉，我們不加 CSS 跑酷，讓他停在原地！
+                    // document.getElementById('runnerTrack').classList.add('runner-active');
                 },
                 error: function (player, reason) {
                     console.warn(`頂部跑酷載入失敗:`, reason);
                 }
             });
         }
-
         // 📝 建立一個記憶清單，記住哪些角色已經預載過了
         const preloadedSpines = new Set(); 
 
