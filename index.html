@@ -183,12 +183,9 @@
 </head>
 <body class="p-3 sm:p-6 md:p-8 text-gray-800 dark:text-gray-100">
     
-    <!-- 🌟 跑酷專屬軌道 (修正太空漫步版) -->
     <div class="fixed top-0 left-0 w-full h-[150px] z-[100] pointer-events-none overflow-hidden">
-        <!-- 軌道層：負責控制向左跑與淡入淡出 -->
         <div id="runnerTrack" class="absolute top-0 w-[150px] h-[150px]" style="right: 0px; transform: translateX(0); opacity: 0;">
-            <!-- 畫布層：強制加上 scaleX(-1) 讓他面朝左邊 -->
-            <div id="topRunnerContainer" class="w-full h-full relative" style="transform: scaleX(1);"></div>
+            <div id="topRunnerContainer" class="w-full h-full relative"></div>
         </div>
     </div>
 
