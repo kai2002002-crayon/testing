@@ -183,12 +183,14 @@
 </head>
 <body class="p-3 sm:p-6 md:p-8 text-gray-800 dark:text-gray-100">
     
+    <!-- 🌟 跑酷專屬軌道 (原生面朝左，點擊互動版) -->
     <div class="fixed top-0 left-0 w-full h-[150px] z-[100] pointer-events-none overflow-hidden">
-        <div id="runnerTrack" class="absolute top-0 w-[150px] h-[150px]" style="right: 0px; transform: translateX(0); opacity: 0;">
+        <!-- 軌道層：加入 pointer-events-auto 讓他可以被點擊，並加上 cursor-pointer -->
+        <div id="runnerTrack" class="absolute top-0 w-[150px] h-[150px] pointer-events-auto cursor-pointer" style="right: 0px; transform: translateX(0); opacity: 0;">
+            <!-- 畫布層 -->
             <div id="topRunnerContainer" class="w-full h-full relative"></div>
         </div>
     </div>
-
     <div id="loader" class="fixed inset-0 bg-[#fcf8f2] dark:bg-slate-900 z-[9999] flex items-center justify-center">
         <div class="animate-bounce text-2xl">🖍️</div>
     </div>
@@ -365,7 +367,7 @@
     </div>
 
     <script>
-        // 🌟 初始化頂部跑酷小人 (Spawn -> Move -> Die 螢幕內演出版)
+        // 🌟 初始化頂部跑酷小人 (Spawn -> Move -> Groggy互動 -> Die 完整演出版)
         function initTopRunner() {
             if (typeof INITIAL_DATA === 'undefined' || INITIAL_DATA.length === 0) return;
 
@@ -379,7 +381,7 @@
             new spine.SpinePlayer("topRunnerContainer", {
                 skelUrl: sdSkelUrl,
                 atlasUrl: sdAtlasUrl,
-                animation: "Spawn", // 初始化撐開相機
+                animation: "Spawn",
                 skin: "Normal",
                 backgroundColor: "#00000000",
                 alpha: true,
@@ -387,7 +389,7 @@
                 showControls: false,
                 viewport: { transitionTime: 0 },
                 success: function (player) {
-                    console.log(`🏃 頂部跑酷演出開始：${charName}`);
+                    console.log(`🏃 跑酷彩蛋啟動 (加入點擊互動)：${charName}`);
                     
                     try {
                         const skins = player.skeleton.data.skins;
@@ -403,56 +405,86 @@
                     }
 
                     const track = document.getElementById('runnerTrack');
+                    
+                    // 💡 狀態管理器：防止連點干擾演出
+                    let currentPhase = "init"; // init, spawn, move, groggy, die
+                    let runAnimation = null;   // 控制軌道移動的動畫物件
+                    let groggyTimeout = null;  // 控制 5 秒暈眩的定時器
+
+                    // 👆 綁定點擊事件：當處於 Move (奔跑) 狀態時觸發
+                    track.onclick = () => {
+                        if (currentPhase === "move") {
+                            currentPhase = "groggy"; // 鎖定狀態，防止連點
+                            
+                            // 1. 暫停畫面上的位移
+                            if (runAnimation) runAnimation.pause();
+                            
+                            // 2. 播放暈眩動作 (Groggy)
+                            try { player.animationState.setAnimation(0, "Groggy", true); } catch(e){}
+
+                            // 3. 停留 5 秒後恢復
+                            groggyTimeout = setTimeout(() => {
+                                currentPhase = "move"; // 解除鎖定
+                                try { player.animationState.setAnimation(0, "Move", true); } catch(e){}
+                                // 繼續剩下的路程
+                                if (runAnimation) runAnimation.play(); 
+                            }, 5000);
+                        }
+                    };
 
                     // 🎬 核心劇本
                     function playLifecycleSequence() {
-                        // 1. 瞬間回到最右側 (隱形狀態下瞬間移動)
+                        // 初始化重置 (清空上一輪的參數)
+                        currentPhase = "init";
+                        if (groggyTimeout) clearTimeout(groggyTimeout);
+                        if (runAnimation) runAnimation.cancel();
+                        
                         track.style.transition = 'none';
                         track.style.transform = 'translateX(0)';
                         
-                        // 給瀏覽器 50 毫秒處理位移後，開始演出
                         setTimeout(() => {
                             // 淡入顯示
                             track.style.transition = 'opacity 0.3s ease-in';
                             track.style.opacity = '1';
-
-                            // 2. 播放 Spawn (登場)
+                            
+                            currentPhase = "spawn";
                             let spawnTrack = null;
                             try { spawnTrack = player.animationState.setAnimation(0, "Spawn", false); } catch(e){}
                             let spawnDuration = (spawnTrack && spawnTrack.animation ? spawnTrack.animation.duration : 1.5) * 1000;
 
-                            // 等待 Spawn 播完...
                             setTimeout(() => {
-                                // 3. 播放 Move (奔跑)
+                                currentPhase = "move";
                                 try { player.animationState.setAnimation(0, "Move", true); } catch(e){}
                                 
-                                // 移動到最左側 (螢幕寬度 100vw，扣掉小人本身的 150px 剛好貼齊左邊)
-                                track.style.transition = 'transform 10s linear';
-                                track.style.transform = 'translateX(calc(-100vw + 150px))';
+                                // 💡 改用 Web Animations API (Element.animate) 來控制移動
+                                // 這樣我們才能在點擊時隨時呼叫 .pause() 和 .play()
+                                runAnimation = track.animate([
+                                    { transform: 'translateX(0)' },
+                                    { transform: 'translateX(calc(-100vw + 150px))' }
+                                ], {
+                                    duration: 10000,   // 跑完全程 10 秒
+                                    fill: 'forwards'   // 結束時停在最後一個畫面
+                                });
 
-                                // 跑 10 秒...
-                                setTimeout(() => {
-                                    // 4. 播放 Die (死亡)
+                                // 當位移真正結束時 (它會自動扣除你在 Groggy 暫停花費的時間！)
+                                runAnimation.onfinish = () => {
+                                    currentPhase = "die";
                                     let dieTrack = null;
                                     try { dieTrack = player.animationState.setAnimation(0, "Die", false); } catch(e){}
                                     let dieDuration = (dieTrack && dieTrack.animation ? dieTrack.animation.duration : 2.0) * 1000;
 
-                                    // 等 Die 播完...
                                     setTimeout(() => {
-                                        // 5. 淡出隱藏
                                         track.style.transition = 'opacity 0.5s ease-out';
                                         track.style.opacity = '0';
                                         
-                                        // 等待完全透明後，重新開始整個流程！
                                         setTimeout(() => {
                                             playLifecycleSequence();
                                         }, 600);
                                         
-                                    }, dieDuration); // 依照 Die 實際秒數等待
+                                    }, dieDuration);
+                                };
 
-                                }, 10000); // Move 奔跑的時間 (10秒)
-
-                            }, spawnDuration); // 依照 Spawn 實際秒數等待
+                            }, spawnDuration);
 
                         }, 50);
                     }
