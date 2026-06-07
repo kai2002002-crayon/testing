@@ -26,10 +26,10 @@
     <style>
         /* 🌟 頂部跑酷動畫 */
         @keyframes runAcrossScreen {
-            /* 從螢幕最右側外面開始，並使用 scaleX(-1) 讓整個畫布水平翻轉 */
-            0% { transform: translateX(100vw) scaleX(-1); }
-            /* 跑到螢幕最左側外面 */
-            100% { transform: translateX(-150px) scaleX(-1); }
+            /* 從 right: -150px 原地出發 */
+            0% { transform: translateX(0); }
+            /* 向左移動整個螢幕寬度 + 小人本身的寬度 */
+            100% { transform: translateX(calc(-100vw - 150px)); }
         }
 
         .runner-active {
@@ -37,12 +37,7 @@
             animation: runAcrossScreen 12s linear infinite; 
         }
 
-        /* 確保畫布填滿容器且背景透明 */
-        #topRunnerContainer canvas {
-            width: 100% !important;
-            height: 100% !important;
-            display: block !important;
-        }
+        /* 確保畫布背景透明 */
         #topRunnerContainer .spine-player-canvas {
             background-color: transparent !important;
         }
@@ -204,8 +199,16 @@
 </head>
 <body class="p-3 sm:p-6 md:p-8 text-gray-800 dark:text-gray-100">
     
-    <div class="fixed top-0 left-0 w-full h-[150px] z-[100] pointer-events-none overflow-hidden">
-        <div id="topRunnerContainer" class="absolute top-0 left-0 w-[150px] h-[150px]"></div>
+    <!-- 🌟 跑酷專屬軌道 (修正 WebGL 消失問題) -->
+    <div class="fixed top-0 left-0 w-full h-[150px] z-[100] pointer-events-none">
+        <!-- 外層：負責「移動」，初始位置放在畫面右外側 (-150px) -->
+        <div id="runnerTrack" class="absolute top-0 w-[150px] h-[150px]" style="right: -150px;">
+            <!-- 內層：負責「翻轉」，讓小人面朝左邊 -->
+            <div class="w-full h-full" style="transform: scaleX(-1);">
+                <!-- 核心畫布：只負責讓 Spine 渲染，不受干擾 -->
+                <div id="topRunnerContainer" class="w-full h-full relative"></div>
+            </div>
+        </div>
     </div>
 
     <div id="loader" class="fixed inset-0 bg-[#fcf8f2] dark:bg-slate-900 z-[9999] flex items-center justify-center">
@@ -384,7 +387,7 @@
     </div>
 
     <script>
-        // 🌟 初始化頂部跑酷小人 (修復相機偏移版)
+        // 🌟 初始化頂部跑酷小人 (完全解耦防呆版)
         function initTopRunner() {
             if (typeof INITIAL_DATA === 'undefined' || INITIAL_DATA.length === 0) return;
 
@@ -407,7 +410,6 @@
                 success: function (player) {
                     console.log(`🏃 頂部跑酷載入成功：${charName}`);
                     
-                    // 1. 安全套用 Skin (防呆)
                     try {
                         const skins = player.skeleton.data.skins;
                         if (skins && skins.length > 0) {
@@ -418,22 +420,16 @@
                             }
                         }
                     } catch (e) {
-                        console.warn("Skin 切換失敗，保持預設", e);
+                        console.warn("Skin 切換失敗", e);
                     }
 
-                    // 2. 安全播放動作
-                    try {
-                        player.animationState.setAnimation(0, "Move", true);
-                    } catch (e) {
-                        console.warn("無法播放 Move 動作", e);
-                    }
+                    player.animationState.setAnimation(0, "Move", true);
 
-                    // 3. 掛上 CSS 讓小人跑起來！
-                    // (小提醒：因為動畫設定為 12 秒跑一趟，重新整理後大約要等 1~2 秒，他才會從螢幕最右邊緣「滑」進來喔！)
-                    document.getElementById('topRunnerContainer').classList.add('runner-active');
+                    // 💡 注意這裡：我們把動畫 class 加在最外層的 runnerTrack 上
+                    document.getElementById('runnerTrack').classList.add('runner-active');
                 },
                 error: function (player, reason) {
-                    console.warn(`頂部跑酷載入失敗 (${charName}):`, reason);
+                    console.warn(`頂部跑酷載入失敗:`, reason);
                 }
             });
         }
