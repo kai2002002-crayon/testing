@@ -364,7 +364,7 @@
     </div>
 
     <script>
-        // 🌟 初始化頂部跑酷小人 (除錯面板開啟版)
+        // 🌟 初始化頂部跑酷小人 (強制 Normal 顯形版)
         function initTopRunner() {
             if (typeof INITIAL_DATA === 'undefined' || INITIAL_DATA.length === 0) return;
 
@@ -379,32 +379,32 @@
                 skelUrl: sdSkelUrl,
                 atlasUrl: sdAtlasUrl,
                 animation: "Move", 
+                skin: "Normal",      // 💡 關鍵修復 1：一開始初始化就強制讀取 Normal 皮膚，讓相機抓對大小！
                 backgroundColor: "#00000000",
                 alpha: true,
                 premultipliedAlpha: false,
-                showControls: true,  // 💡 開啟控制面板！
+                showControls: true,  // 保持控制台開啟，方便觀察
                 viewport: { transitionTime: 0 },
                 success: function (player) {
                     console.log(`🏃 頂部跑酷測試載入成功：${charName}`);
                     
+                    // 雙重保險：如果在某些特殊情況下沒有成功套用 Normal，我們手動再套一次
                     try {
                         const skins = player.skeleton.data.skins;
                         if (skins && skins.length > 0) {
                             const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name === 'default') || skins[0];
                             if (targetSkin) {
                                 player.skeleton.setSkinByName(targetSkin.name);
-                                player.skeleton.setToSetupPose();
+                                player.skeleton.setSlotsToSetupPose(); // 💡 關鍵修復 2：切換皮膚後，必須重置所有插槽，否則裝備會隱形！
                             }
                         }
                     } catch (e) {
                         console.warn("Skin 切換失敗", e);
                     }
 
-                    // 強制播 Move
+                    // 強制播放 Move 動畫並確保播放器處於啟動狀態
                     player.animationState.setAnimation(0, "Move", true);
-
-                    // 💡 把這行註解掉或刪掉，我們不加 CSS 跑酷，讓他停在原地！
-                    // document.getElementById('runnerTrack').classList.add('runner-active');
+                    player.play(); 
                 },
                 error: function (player, reason) {
                     console.warn(`頂部跑酷載入失敗:`, reason);
