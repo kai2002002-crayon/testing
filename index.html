@@ -461,7 +461,7 @@
                                 // 💡 自動偵測裝置寬度，設定不同跑酷速度
                                 // 手機(小於 768px)設為 7 秒，電腦設為 12 秒
                                 const isMobile = window.matchMedia("(max-width: 768px)").matches;
-                                const runDuration = isMobile ? 7000 : 12000; 
+                                const runDuration = isMobile ? 6000 : 12000; 
 
                                 // 改用 Web Animations API，並套用偵測到的時間
                                 runAnimation = track.animate([
