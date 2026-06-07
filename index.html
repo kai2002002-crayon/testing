@@ -26,10 +26,10 @@
     <style>
         /* 🌟 頂部跑酷動畫 */
         @keyframes runAcrossScreen {
-            /* 從螢幕最右側外面開始 */
-            0% { transform: translateX(100vw); }
-            /* 跑到螢幕最左側外面 (剛好等於小人的寬度 -150px) */
-            100% { transform: translateX(-150px); }
+            /* 從螢幕最右側外面開始，並使用 scaleX(-1) 讓整個畫布水平翻轉 */
+            0% { transform: translateX(100vw) scaleX(-1); }
+            /* 跑到螢幕最左側外面 */
+            100% { transform: translateX(-150px) scaleX(-1); }
         }
 
         .runner-active {
@@ -384,7 +384,7 @@
     </div>
 
     <script>
-        // 🌟 初始化頂部跑酷小人 (正式完成版)
+        // 🌟 初始化頂部跑酷小人 (修復相機偏移版)
         function initTopRunner() {
             if (typeof INITIAL_DATA === 'undefined' || INITIAL_DATA.length === 0) return;
 
@@ -402,28 +402,34 @@
                 backgroundColor: "#00000000",
                 alpha: true,
                 premultipliedAlpha: false,
-                showControls: true, // 💡 隱藏控制面板，讓畫面乾淨
+                showControls: false, 
                 viewport: { transitionTime: 0 },
                 success: function (player) {
-                    console.log(`🏃 頂部跑酷生成：${charName}`);
+                    console.log(`🏃 頂部跑酷載入成功：${charName}`);
                     
-                    // 💡 自動選擇合適的 Skin (優先找 Normal 或 default)
-                    const skins = player.skeleton.data.skins;
-                    if (skins && skins.length > 0) {
-                        const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name === 'default') || skins[0];
-                        if (targetSkin) {
-                            player.skeleton.setSkinByName(targetSkin.name);
-                            player.skeleton.setToSetupPose();
+                    // 1. 安全套用 Skin (防呆)
+                    try {
+                        const skins = player.skeleton.data.skins;
+                        if (skins && skins.length > 0) {
+                            const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name === 'default') || skins[0];
+                            if (targetSkin) {
+                                player.skeleton.setSkinByName(targetSkin.name);
+                                player.skeleton.setToSetupPose();
+                            }
                         }
+                    } catch (e) {
+                        console.warn("Skin 切換失敗，保持預設", e);
                     }
 
-                    // 💡 轉向設定：水平翻轉，讓他面向左邊跑
-                    player.skeleton.scaleX = -1; 
+                    // 2. 安全播放動作
+                    try {
+                        player.animationState.setAnimation(0, "Move", true);
+                    } catch (e) {
+                        console.warn("無法播放 Move 動作", e);
+                    }
 
-                    // 💡 強制無限循環播放 Move 動作
-                    player.animationState.setAnimation(0, "Move", true);
-
-                    // 💡 賦予 CSS 動畫 class，讓他開始在螢幕上移動
+                    // 3. 掛上 CSS 讓小人跑起來！
+                    // (小提醒：因為動畫設定為 12 秒跑一趟，重新整理後大約要等 1~2 秒，他才會從螢幕最右邊緣「滑」進來喔！)
                     document.getElementById('topRunnerContainer').classList.add('runner-active');
                 },
                 error: function (player, reason) {
