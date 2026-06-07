@@ -183,10 +183,10 @@
 </head>
 <body class="p-3 sm:p-6 md:p-8 text-gray-800 dark:text-gray-100">
     
-    <!-- 🌟 跑酷專屬軌道 (JS 劇本演出版) -->
-    <div class="fixed top-0 left-0 w-full h-[150px] z-[100] pointer-events-none">
-        <!-- 外層軌道：初始停留在最右側外面，交由 JS 控制移動 -->
-        <div id="runnerTrack" class="absolute top-0 w-[150px] h-[150px]" style="right: -150px; transform: translateX(0);">
+    <!-- 🌟 跑酷專屬軌道 (螢幕內演出版 - 防 WebGL 消失) -->
+    <div class="fixed top-0 left-0 w-full h-[150px] z-[100] pointer-events-none overflow-hidden">
+        <!-- 軌道：起點設在畫面最右側 (完全在可見範圍內) -->
+        <div id="runnerTrack" class="absolute top-0 w-[150px] h-[150px]" style="right: 0px; transform: translateX(0); opacity: 0;">
             <!-- 翻轉層：讓小人面朝左邊 -->
             <div class="w-full h-full" style="transform: scaleX(-1);">
                 <div id="topRunnerContainer" class="w-full h-full relative"></div>
@@ -370,7 +370,7 @@
     </div>
 
     <script>
-        // 🌟 初始化頂部跑酷小人 (Spawn -> Move -> Die 完美演出版)
+        // 🌟 初始化頂部跑酷小人 (Spawn -> Move -> Die 螢幕內演出版)
         function initTopRunner() {
             if (typeof INITIAL_DATA === 'undefined' || INITIAL_DATA.length === 0) return;
 
@@ -384,12 +384,12 @@
             new spine.SpinePlayer("topRunnerContainer", {
                 skelUrl: sdSkelUrl,
                 atlasUrl: sdAtlasUrl,
-                animation: "Spawn", // 💡 一開始強制載入 Spawn 來撐開相機視野！
+                animation: "Spawn", // 初始化撐開相機
                 skin: "Normal",
                 backgroundColor: "#00000000",
                 alpha: true,
                 premultipliedAlpha: false,
-                showControls: false, // 💡 正式關閉控制台
+                showControls: false,
                 viewport: { transitionTime: 0 },
                 success: function (player) {
                     console.log(`🏃 頂部跑酷演出開始：${charName}`);
@@ -409,45 +409,60 @@
 
                     const track = document.getElementById('runnerTrack');
 
-                    // 🎬 劇本演出函數
+                    // 🎬 核心劇本
                     function playLifecycleSequence() {
-                        // 1. 重置軌道到畫面最右側 (瞬間移動，不加動畫)
+                        // 1. 瞬間回到最右側 (隱形狀態下瞬間移動)
                         track.style.transition = 'none';
                         track.style.transform = 'translateX(0)';
-
-                        // 2. 播放 Spawn (登場動作)
-                        let spawnTrack = null;
-                        try { spawnTrack = player.animationState.setAnimation(0, "Spawn", false); } catch(e){}
-                        // 抓取該角色 Spawn 動畫的精準秒數 (若抓不到預設給 1.5 秒)
-                        let spawnDuration = (spawnTrack && spawnTrack.animation ? spawnTrack.animation.duration : 1.5) * 1000;
-
-                        // 等待 Spawn 播完...
+                        
+                        // 給瀏覽器 50 毫秒處理位移後，開始演出
                         setTimeout(() => {
-                            // 3. 播放 Move (開始奔跑)
-                            try { player.animationState.setAnimation(0, "Move", true); } catch(e){}
-                            
-                            // 賦予 CSS 平滑過渡效果，讓他用 10 秒鐘跑到畫面最左側
-                            track.style.transition = 'transform 10s linear';
-                            track.style.transform = 'translateX(calc(-100vw - 150px))';
+                            // 淡入顯示
+                            track.style.transition = 'opacity 0.3s ease-in';
+                            track.style.opacity = '1';
 
-                            // 等待 10 秒跑完...
+                            // 2. 播放 Spawn (登場)
+                            let spawnTrack = null;
+                            try { spawnTrack = player.animationState.setAnimation(0, "Spawn", false); } catch(e){}
+                            let spawnDuration = (spawnTrack && spawnTrack.animation ? spawnTrack.animation.duration : 1.5) * 1000;
+
+                            // 等待 Spawn 播完...
                             setTimeout(() => {
-                                // 4. 播放 Die (死亡結尾)
-                                let dieTrack = null;
-                                try { dieTrack = player.animationState.setAnimation(0, "Die", false); } catch(e){}
-                                let dieDuration = (dieTrack && dieTrack.animation ? dieTrack.animation.duration : 2.0) * 1000;
+                                // 3. 播放 Move (奔跑)
+                                try { player.animationState.setAnimation(0, "Move", true); } catch(e){}
+                                
+                                // 移動到最左側 (螢幕寬度 100vw，扣掉小人本身的 150px 剛好貼齊左邊)
+                                track.style.transition = 'transform 10s linear';
+                                track.style.transform = 'translateX(calc(-100vw + 150px))';
 
-                                // 等待 Die 播完，稍微停頓 0.5 秒後，重新開始整個輪迴！
+                                // 跑 10 秒...
                                 setTimeout(() => {
-                                    playLifecycleSequence();
-                                }, dieDuration + 500);
+                                    // 4. 播放 Die (死亡)
+                                    let dieTrack = null;
+                                    try { dieTrack = player.animationState.setAnimation(0, "Die", false); } catch(e){}
+                                    let dieDuration = (dieTrack && dieTrack.animation ? dieTrack.animation.duration : 2.0) * 1000;
 
-                            }, 10000); // Move 奔跑的時間 (10秒)
+                                    // 等 Die 播完...
+                                    setTimeout(() => {
+                                        // 5. 淡出隱藏
+                                        track.style.transition = 'opacity 0.5s ease-out';
+                                        track.style.opacity = '0';
+                                        
+                                        // 等待完全透明後，重新開始整個流程！
+                                        setTimeout(() => {
+                                            playLifecycleSequence();
+                                        }, 600);
+                                        
+                                    }, dieDuration); // 依照 Die 實際秒數等待
 
-                        }, spawnDuration); // 依照 Spawn 實際秒數等待
+                                }, 10000); // Move 奔跑的時間 (10秒)
+
+                            }, spawnDuration); // 依照 Spawn 實際秒數等待
+
+                        }, 50);
                     }
 
-                    // 🚀 開始執行劇本！
+                    // 🚀 開始執行循環劇本！
                     playLifecycleSequence();
                 },
                 error: function (player, reason) {
