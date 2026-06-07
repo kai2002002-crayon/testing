@@ -80,7 +80,10 @@
             </div>
             
             <div class="text-center sm:text-left w-full mt-2 sm:mt-0">
-                <h1 id="charName" data-i18n="loading" class="text-3xl font-extrabold text-amber-950 dark:text-amber-400 mb-4 tracking-tight">載入中...</h1>
+                <h1 id="charName" data-i18n="loading" class="text-3xl font-extrabold text-amber-950 dark:text-amber-400 mb-1 tracking-tight">載入中...</h1>
+                
+                <div id="charStars" class="flex justify-center sm:justify-start items-center min-h-[28px] mb-3"></div>
+
                 <div class="flex justify-center sm:justify-start gap-5 sm:gap-4 pt-3 flex-wrap">
                     <div id="charPersonality"></div>
                     <div id="charRace"></div>
@@ -289,6 +292,32 @@
                     </div>
                 </div>
             `;
+        }
+
+        // 🌟 新增：渲染角色星數 (稀有度)
+        function renderStars(charName) {
+            const starsContainer = document.getElementById('charStars');
+            if (!starsContainer) return;
+
+            // 預設為 3 星
+            let grade = "3"; 
+            if (typeof GRADE_MAP !== 'undefined' && GRADE_MAP[charName]) {
+                grade = GRADE_MAP[charName];
+            }
+
+            let starIconUrl = "";
+            if (typeof ICON_MAP !== 'undefined') {
+                starIconUrl = ICON_MAP[`grade_${grade}`];
+            }
+
+            if (starIconUrl) {
+                // 顯示對應的星數圖片
+                starsContainer.innerHTML = `<img src="${starIconUrl}" class="h-6 sm:h-7 object-contain drop-shadow-md" alt="${grade} Stars">`;
+            } else {
+                // 找不到圖片的備用方案：印出文字星星
+                const starCount = parseInt(grade) || 3;
+                starsContainer.innerHTML = `<span class="text-amber-500 dark:text-amber-400 text-xl sm:text-2xl tracking-widest drop-shadow-sm">${'★'.repeat(starCount)}</span>`;
+            }
         }
 
         // 🌟 新增：渲染額外情報 (簡介、CV、料理、打工)
@@ -999,7 +1028,8 @@
             updateTag('charPosition', posLabel, currentCharData.position, 'position');
             updateTag('charJob', jLabel, currentCharData.job, 'job');
 
-            // 🚀 重新渲染額外情報 (簡介、CV、料理、打工)
+            // 🚀 重新渲染額外情報與星數
+            renderStars(currentTargetName);
             renderExtraInfo(currentTargetName);
 
             const renderCrayonList = (elementId, array) => {
@@ -1048,7 +1078,8 @@
             updateTag('charPosition', posLabel, currentCharData.position, 'position');
             updateTag('charJob', jLabel, currentCharData.job, 'job');
 
-            // 🚀 初次渲染額外情報 (簡介、CV、料理、打工)
+            // 🚀 初次渲染額外情報與星數
+            renderStars(currentTargetName);
             renderExtraInfo(currentTargetName);
 
             const spineKey = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[currentCharData.name] : currentCharData.name;
