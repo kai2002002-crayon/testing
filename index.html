@@ -183,9 +183,15 @@
 </head>
 <body class="p-3 sm:p-6 md:p-8 text-gray-800 dark:text-gray-100">
     
-    <!-- 🌟 跑酷專屬軌道 (修正 WebGL 消失問題) -->
-    <div class="fixed top-0 left-0 w-full h-[300px] z-[100] flex justify-center items-start pointer-events-auto">
-        <div id="topRunnerContainer" class="w-[300px] h-[300px] relative"></div>
+    <!-- 🌟 跑酷專屬軌道 (JS 劇本演出版) -->
+    <div class="fixed top-0 left-0 w-full h-[150px] z-[100] pointer-events-none">
+        <!-- 外層軌道：初始停留在最右側外面，交由 JS 控制移動 -->
+        <div id="runnerTrack" class="absolute top-0 w-[150px] h-[150px]" style="right: -150px; transform: translateX(0);">
+            <!-- 翻轉層：讓小人面朝左邊 -->
+            <div class="w-full h-full" style="transform: scaleX(-1);">
+                <div id="topRunnerContainer" class="w-full h-full relative"></div>
+            </div>
+        </div>
     </div>
 
     <div id="loader" class="fixed inset-0 bg-[#fcf8f2] dark:bg-slate-900 z-[9999] flex items-center justify-center">
@@ -364,7 +370,7 @@
     </div>
 
     <script>
-        // 🌟 初始化頂部跑酷小人 (強制 Normal 顯形版)
+        // 🌟 初始化頂部跑酷小人 (Spawn -> Move -> Die 完美演出版)
         function initTopRunner() {
             if (typeof INITIAL_DATA === 'undefined' || INITIAL_DATA.length === 0) return;
 
@@ -378,33 +384,71 @@
             new spine.SpinePlayer("topRunnerContainer", {
                 skelUrl: sdSkelUrl,
                 atlasUrl: sdAtlasUrl,
-                animation: "Move", 
-                skin: "Normal",      // 💡 關鍵修復 1：一開始初始化就強制讀取 Normal 皮膚，讓相機抓對大小！
+                animation: "Spawn", // 💡 一開始強制載入 Spawn 來撐開相機視野！
+                skin: "Normal",
                 backgroundColor: "#00000000",
                 alpha: true,
                 premultipliedAlpha: false,
-                showControls: true,  // 保持控制台開啟，方便觀察
+                showControls: false, // 💡 正式關閉控制台
                 viewport: { transitionTime: 0 },
                 success: function (player) {
-                    console.log(`🏃 頂部跑酷測試載入成功：${charName}`);
+                    console.log(`🏃 頂部跑酷演出開始：${charName}`);
                     
-                    // 雙重保險：如果在某些特殊情況下沒有成功套用 Normal，我們手動再套一次
                     try {
                         const skins = player.skeleton.data.skins;
                         if (skins && skins.length > 0) {
                             const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name === 'default') || skins[0];
                             if (targetSkin) {
                                 player.skeleton.setSkinByName(targetSkin.name);
-                                player.skeleton.setSlotsToSetupPose(); // 💡 關鍵修復 2：切換皮膚後，必須重置所有插槽，否則裝備會隱形！
+                                player.skeleton.setSlotsToSetupPose();
                             }
                         }
                     } catch (e) {
                         console.warn("Skin 切換失敗", e);
                     }
 
-                    // 強制播放 Move 動畫並確保播放器處於啟動狀態
-                    player.animationState.setAnimation(0, "Move", true);
-                    player.play(); 
+                    const track = document.getElementById('runnerTrack');
+
+                    // 🎬 劇本演出函數
+                    function playLifecycleSequence() {
+                        // 1. 重置軌道到畫面最右側 (瞬間移動，不加動畫)
+                        track.style.transition = 'none';
+                        track.style.transform = 'translateX(0)';
+
+                        // 2. 播放 Spawn (登場動作)
+                        let spawnTrack = null;
+                        try { spawnTrack = player.animationState.setAnimation(0, "Spawn", false); } catch(e){}
+                        // 抓取該角色 Spawn 動畫的精準秒數 (若抓不到預設給 1.5 秒)
+                        let spawnDuration = (spawnTrack && spawnTrack.animation ? spawnTrack.animation.duration : 1.5) * 1000;
+
+                        // 等待 Spawn 播完...
+                        setTimeout(() => {
+                            // 3. 播放 Move (開始奔跑)
+                            try { player.animationState.setAnimation(0, "Move", true); } catch(e){}
+                            
+                            // 賦予 CSS 平滑過渡效果，讓他用 10 秒鐘跑到畫面最左側
+                            track.style.transition = 'transform 10s linear';
+                            track.style.transform = 'translateX(calc(-100vw - 150px))';
+
+                            // 等待 10 秒跑完...
+                            setTimeout(() => {
+                                // 4. 播放 Die (死亡結尾)
+                                let dieTrack = null;
+                                try { dieTrack = player.animationState.setAnimation(0, "Die", false); } catch(e){}
+                                let dieDuration = (dieTrack && dieTrack.animation ? dieTrack.animation.duration : 2.0) * 1000;
+
+                                // 等待 Die 播完，稍微停頓 0.5 秒後，重新開始整個輪迴！
+                                setTimeout(() => {
+                                    playLifecycleSequence();
+                                }, dieDuration + 500);
+
+                            }, 10000); // Move 奔跑的時間 (10秒)
+
+                        }, spawnDuration); // 依照 Spawn 實際秒數等待
+                    }
+
+                    // 🚀 開始執行劇本！
+                    playLifecycleSequence();
                 },
                 error: function (player, reason) {
                     console.warn(`頂部跑酷載入失敗:`, reason);
