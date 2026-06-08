@@ -383,14 +383,14 @@
             // ✨ 關鍵微調 1：出生位置 (右側)
             // 數字越「負」(例如 -180px)，起點越往畫面右側外隱藏
             // =======================================================
-            const startRightOffset = isMobile ? '-150px' : '-80px'; 
+            const startRightOffset = isMobile ? '-140px' : '-100px'; 
             track.style.right = startRightOffset;
 
             // =======================================================
             // ✨ 關鍵微調 2：死亡位置 (左側)
             // 數字越「小」(例如 30px)，停下來的位置越貼近左邊螢幕邊緣
             // =======================================================
-            const endLeftPos = isMobile ? '40px' : '100px'; 
+            const endLeftPos = isMobile ? '30px' : '120px'; 
 
             // 在載入新角色前，徹底清除上一輪的動畫殘留與強制隱藏
             track.style.opacity = '0';
