@@ -185,7 +185,7 @@
     
     <!-- 🌟 跑酷專屬軌道 (原生面朝左，點擊互動版) -->
     <div class="fixed top-0 left-0 w-full h-[150px] z-[100] pointer-events-none overflow-hidden">
-        <div id="runnerTrack" class="absolute top-0 w-[150px] h-[150px] pointer-events-auto cursor-pointer" style="right: -50px; transform: translateX(0); opacity: 0;">
+        <div id="runnerTrack" class="absolute top-0 w-[250px] h-[150px] pointer-events-auto cursor-pointer" style="right: -50px; transform: translateX(0); opacity: 0;">
             <div style="width: 100%; height: 100%; transform: scale(0.75); transform-origin: center;">
                 <div id="topRunnerContainer" class="w-full h-full relative"></div>
             </div>
@@ -410,10 +410,10 @@
         
                 // ✨ 關鍵修改：設定固定的攝影機視角，關閉自動縮放
                 viewport: { 
-                    x: -400,        // 鏡頭中心的 X 偏移 (通常設為負的寬度一半)
-                    y: -150,           // 鏡頭的 Y 基準線 (通常是角色腳底 0)
-                    width: 1200,     // 🌟 鏡頭的固定寬度 (數字越大，整體小人看起來越小)
-                    height: 1200,    // 🌟 鏡頭的固定高度
+                    x: -800,        // 鏡頭中心的 X 偏移 (通常設為負的寬度一半)
+                    y: -250,           // 鏡頭的 Y 基準線 (通常是角色腳底 0)
+                    width: 2500,     // 🌟 鏡頭的固定寬度 (數字越大，整體小人看起來越小)
+                    height: 15000,    // 🌟 鏡頭的固定高度
                     padLeft: "0%", 
                     padRight: "0%", 
                     padTop: "0%", 
