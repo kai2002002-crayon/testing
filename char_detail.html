@@ -415,7 +415,7 @@
                 </div>
             `;
         };
-
+```javascript
         const escapeHTML = (str) => {
             return str.replace(/[&<>'"]/g, 
                 tag => ({
@@ -423,8 +423,7 @@
                 }[tag])
             );
         };
-        ```javascript
-        // 🌟 新增：根據種族設定背景圖
+
         // 🌟 新增：根據種族設定背景圖
         const updateRaceBackground = (raceName) => {
             const bgDiv = document.getElementById('raceBackground');
