@@ -185,7 +185,7 @@
     
     <!-- 🌟 跑酷專屬軌道 (原生面朝左，點擊互動版) -->
     <div class="fixed top-0 left-0 w-full h-[150px] z-[100] pointer-events-none overflow-hidden">
-        <div id="runnerTrack" class="absolute top-0 w-[150px] h-[150px] pointer-events-auto cursor-pointer" style="right: -250px; transform: translateX(0); opacity: 0;">
+        <div id="runnerTrack" class="absolute top-0 w-[250px] h-[150px] pointer-events-auto cursor-pointer" style="right: 0px; transform: translateX(0); opacity: 0;">
             <div style="width: 100%; height: 100%; transform: scale(0.75); transform-origin: center;">
                 <div id="topRunnerContainer" class="w-full h-full relative"></div>
             </div>
@@ -482,11 +482,10 @@
                             const isMobile = window.matchMedia("(max-width: 768px)").matches;
                             const runDuration = isMobile ? 6000 : 12000; 
 
-                            // ✨ 關鍵修改：改變動畫的終點距離
                             runAnimation = track.animate([
                                 { transform: 'translateX(0)' },
-                                // 將 + 60px 改成 + 150px，讓他提早停下，保留空間在螢幕內往後彈！
-                                { transform: 'translateX(calc(-100vw + 60px))' } 
+                                // ✨ 關鍵修改 1：讓他跑到幾乎貼近左邊螢幕邊緣才停下來
+                                { transform: 'translateX(calc(-100vw + 220px))' } 
                             ], {
                                 duration: runDuration, 
                                 fill: 'forwards'
@@ -498,16 +497,16 @@
                                 try { dieTrack = player.animationState.setAnimation(0, "Die", false); } catch(e){}
                                 let dieDuration = (dieTrack && dieTrack.animation ? dieTrack.animation.duration : 2.0) * 1000;
 
+                                // ✨ 關鍵修改 2：在 dieDuration 後面加上 + 400，讓他徹底死透、躺平 0.4 秒後才開始淡出
                                 setTimeout(() => {
-                                    track.style.transition = 'opacity 0.5s ease-out';
+                                    track.style.transition = 'opacity 0.6s ease-out'; // 淡出時間也稍微拉長變 0.6s
                                     track.style.opacity = '0';
                             
                                     setTimeout(() => {
-                                        // 動畫徹底消失後，呼叫自己，重新抽一個新角色載入
                                         initTopRunner();
                                     }, 600);
                             
-                                }, dieDuration);
+                                }, dieDuration + 200); 
                             };
 
                         }, spawnDuration);
