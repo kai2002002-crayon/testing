@@ -328,17 +328,29 @@
             document.getElementById('charCV').innerText = cvText;
 
             // ==========================================
-            // ✨ 修正區塊：渲染簡介
+            // ✨ 修正區塊：渲染簡介 (字體大小分層排版)
             // ==========================================
-            // 💡 修正 1：利用 SPINE_MAP 將中文名稱轉為英文 Key (例如: 愛麗絲 -> Alice)
             const introKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
-
             const safeLang = (typeof INTRO_MAP !== 'undefined' && INTRO_MAP[window.currentLang]) ? window.currentLang : 'zh-TW';
             let introText = "（資料建檔中...）";
             
             if (typeof INTRO_MAP !== 'undefined' && INTRO_MAP[safeLang] && INTRO_MAP[safeLang][introKey]) {
-                // 💡 修正 2：將資料中的 \n 轉換為 <br>，確保網頁能正確顯示換行
-                introText = INTRO_MAP[safeLang][introKey].replace(/\n/g, '<br>');
+                let rawText = INTRO_MAP[safeLang][introKey];
+                let lines = rawText.split('\n'); // 透過換行符號將文字切成陣列
+                
+                if (lines.length >= 3) {
+                    // 第一行：最大、最粗 (稱號)
+                    let titleText = `<span class="block text-lg sm:text-xl font-black text-amber-950 dark:text-amber-300 mb-1">${lines[0]}</span>`;
+                    // 第二行：稍微大一點、粗體 (名言/台詞)
+                    let quoteText = `<span class="block text-base sm:text-lg font-bold text-amber-700 dark:text-amber-500 mb-3">${lines[1]}</span>`;
+                    // 第三行以後：一般大小，並加一條淡淡的頂部虛線分隔 (詳細介紹)
+                    let descText = `<span class="block text-sm text-gray-700 dark:text-gray-300 leading-relaxed border-t border-dashed border-amber-200 dark:border-slate-600 pt-3">${lines.slice(2).join('<br>')}</span>`;
+                    
+                    introText = titleText + quoteText + descText;
+                } else {
+                    // 如果沒有標準的3行格式，則退回原來的直接換行顯示
+                    introText = rawText.replace(/\n/g, '<br>');
+                }
             }
             document.getElementById('charIntro').innerHTML = introText;
             // ==========================================
