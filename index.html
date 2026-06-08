@@ -390,7 +390,7 @@
             // ✨ 關鍵微調 2：死亡位置 (左側)
             // 數字越「小」(例如 30px)，停下來的位置越貼近左邊螢幕邊緣
             // =======================================================
-            const endLeftPos = isMobile ? '35px' : '115px'; 
+            const endLeftPos = isMobile ? '35px' : '110px'; 
 
             // 在載入新角色前，徹底清除上一輪的動畫殘留與強制隱藏
             track.style.opacity = '0';
@@ -483,7 +483,7 @@
                             currentPhase = "move";
                             try { player.animationState.setAnimation(0, "Move", true); } catch(e){}
                             
-                            const runDuration = isMobile ? 6000 : 12000; 
+                            const runDuration = isMobile ? 6000 : 14000; 
 
                             // 應用剛剛設定好的動態終點
                             runAnimation = track.animate([
