@@ -185,7 +185,7 @@
     
     <!-- 🌟 跑酷專屬軌道 (原生面朝左，點擊互動版) -->
     <div class="fixed top-0 left-0 w-full h-[150px] z-[100] pointer-events-none overflow-hidden">
-        <div id="runnerTrack" class="absolute top-0 w-[250px] h-[150px] pointer-events-auto cursor-pointer" style="right: -50px; transform: translateX(0); opacity: 0;">
+        <div id="runnerTrack" class="absolute top-0 w-[250px] h-[150px] pointer-events-auto cursor-pointer" style="right: -250px; transform: translateX(0); opacity: 0;">
             <div style="width: 100%; height: 100%; transform: scale(0.75); transform-origin: center;">
                 <div id="topRunnerContainer" class="w-full h-full relative"></div>
             </div>
@@ -478,13 +478,15 @@
                         setTimeout(() => {
                             currentPhase = "move";
                             try { player.animationState.setAnimation(0, "Move", true); } catch(e){}
-                    
+
                             const isMobile = window.matchMedia("(max-width: 768px)").matches;
                             const runDuration = isMobile ? 6000 : 12000; 
 
+                            // ✨ 關鍵修改：改變動畫的終點距離
                             runAnimation = track.animate([
                                 { transform: 'translateX(0)' },
-                                { transform: 'translateX(calc(-100vw + 60px))' }
+                                // 將 + 60px 改成 + 150px，讓他提早停下，保留空間在螢幕內往後彈！
+                                { transform: 'translateX(calc(-100vw + 150px))' } 
                             ], {
                                 duration: runDuration, 
                                 fill: 'forwards'
