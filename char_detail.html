@@ -35,6 +35,32 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     
     <style>
+        /* 🌟 新增：種族專屬背景的平鋪與移動動畫 */
+        #raceBackground {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -10; /* 確保它在最底層 */
+            background-repeat: repeat;
+            background-size: 250px; /* 這裡可以調整圖案的縮放大小 */
+            /* 調整透明度，才不會讓背景圖太搶眼影響文字閱讀 */
+            opacity: 0.15; 
+            /* 執行動畫：40秒跑完一圈，無限循環，保持等速(linear) */
+            animation: raceBgPan 40s linear infinite;
+        }
+
+        /* 深色模式時，稍微把透明度再調低一點 */
+        .dark #raceBackground {
+            opacity: 0.08;
+        }
+
+        /* 背景移動軌跡：(左上 -> 左下 -> 右下 -> 右上 -> 回原點) */
+        @keyframes raceBgPan {
+            0%   { background-position: 0px 0px; }
+            25%  { background-position: -200px 200px; }
+            50%  { background-position: 0px 400px; }
+            75%  { background-position: 200px 200px; }
+            100% { background-position: 0px 0px; }
+        }
         body { font-family: 'Noto Sans TC', sans-serif; }
         .spine-player-controls { display: none !important; }
         .costume-btn { transition: all 0.2s ease; }
@@ -66,6 +92,8 @@
     </style>
 </head>
 <body class="p-4 sm:p-8 bg-[#fcf8f2] dark:bg-slate-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
+
+    <div id="raceBackground"></div>
 
     <div id="mainContainer" class="max-w-4xl mx-auto bg-white/90 dark:bg-slate-800/95 backdrop-blur-md p-6 rounded-2xl shadow-md border-4 border-amber-400 dark:border-slate-600 transition-colors">
         
@@ -395,7 +423,19 @@
                 }[tag])
             );
         };
-
+        ```javascript
+        // 🌟 新增：根據種族設定背景圖
+        const updateRaceBackground = (raceName) => {
+            const bgDiv = document.getElementById('raceBackground');
+            if (bgDiv && typeof CHAR_BACKGROUNDS !== 'undefined' && CHAR_BACKGROUNDS[raceName]) {
+                const bgUrl = CHAR_BACKGROUNDS[raceName];
+                bgDiv.style.backgroundImage = `url('${bgUrl}')`;
+            } else {
+                // 如果找不到該種族的背景 (或發生錯誤)，就清空背景
+                if(bgDiv) bgDiv.style.backgroundImage = 'none';
+            }
+        };
+        
         let currentTargetName = "";
         let currentCharData = null;
         let globalSpinePlayer = null;
@@ -1048,7 +1088,7 @@
             updateTag('charRace', rLabel, currentCharData.race, 'race');
             updateTag('charPosition', posLabel, currentCharData.position, 'position');
             updateTag('charJob', jLabel, currentCharData.job, 'job');
-
+            updateRaceBackground(currentCharData.race);
             // 🚀 重新渲染額外情報與星數
             renderStars(currentTargetName);
             renderExtraInfo(currentTargetName);
@@ -1098,7 +1138,8 @@
             updateTag('charRace', rLabel, currentCharData.race, 'race');
             updateTag('charPosition', posLabel, currentCharData.position, 'position');
             updateTag('charJob', jLabel, currentCharData.job, 'job');
-
+            updateRaceBackground(currentCharData.race);
+            
             // 🚀 初次渲染額外情報與星數
             renderStars(currentTargetName);
             renderExtraInfo(currentTargetName);
