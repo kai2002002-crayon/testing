@@ -373,10 +373,16 @@
         function initTopRunner() {
             if (typeof INITIAL_DATA === 'undefined' || INITIAL_DATA.length === 0) return;
 
-            // 1. 清理上一輪的角色 (超級重要！避免 WebGL 記憶體洩漏與畫面重疊)
             const container = document.getElementById('topRunnerContainer');
             const track = document.getElementById('runnerTrack');
-            
+
+            // ✨ 關鍵修復：在載入新角色前，徹底清除上一輪的動畫殘留與強制隱藏
+            track.style.opacity = '0';
+            track.style.transition = 'none';
+            track.getAnimations().forEach(anim => anim.cancel()); // 砍掉上一輪 fill: 'forwards' 的鎖定狀態
+            track.style.transform = 'translateX(0)';              // 安心將軌道拉回最右側原點
+
+            // 1. 清理上一輪的角色 (避免 WebGL 記憶體洩漏與畫面重疊)
             if (currentRunnerPlayer) {
                 try { currentRunnerPlayer.dispose(); } catch(e) {}
                 currentRunnerPlayer = null;
@@ -404,7 +410,7 @@
                 viewport: { transitionTime: 0 },
                 success: function (player) {
                     console.log(`🏃 跑酷小人進場：${charName}`);
-                    
+            
                     try {
                         const skins = player.skeleton.data.skins;
                         if (skins && skins.length > 0) {
@@ -427,10 +433,10 @@
                     track.onclick = () => {
                         if (currentPhase === "move") {
                             currentPhase = "groggy"; // 鎖定狀態，防止連點
-                            
+                    
                             // 1. 暫停畫面上的位移
                             if (runAnimation) runAnimation.pause();
-                            
+                    
                             // 2. 播放暈眩動作 (Groggy)
                             try { player.animationState.setAnimation(0, "Groggy", true); } catch(e){}
 
@@ -444,15 +450,13 @@
                         }
                     };
 
-                    // 🎬 直接開始劇本演出 (不再包裝成 playLifecycleSequence)
-                    track.style.transition = 'none';
-                    track.style.transform = 'translateX(0)';
-                    
+                    // 🎬 開始劇本演出
+                    // 這裡不需要再重設一次 transform，因為最上面已經做過了
                     setTimeout(() => {
                         // 淡入顯示
                         track.style.transition = 'opacity 0.3s ease-in';
                         track.style.opacity = '1';
-                        
+                
                         currentPhase = "spawn";
                         let spawnTrack = null;
                         try { spawnTrack = player.animationState.setAnimation(0, "Spawn", false); } catch(e){}
@@ -461,7 +465,7 @@
                         setTimeout(() => {
                             currentPhase = "move";
                             try { player.animationState.setAnimation(0, "Move", true); } catch(e){}
-                            
+                    
                             const isMobile = window.matchMedia("(max-width: 768px)").matches;
                             const runDuration = isMobile ? 6000 : 12000; 
 
@@ -482,12 +486,12 @@
                                 setTimeout(() => {
                                     track.style.transition = 'opacity 0.5s ease-out';
                                     track.style.opacity = '0';
-                                    
+                            
                                     setTimeout(() => {
-                                        // ✨ 關鍵修改：動畫徹底消失後，呼叫自己，重新抽一個新角色載入！
+                                        // 動畫徹底消失後，呼叫自己，重新抽一個新角色載入
                                         initTopRunner();
                                     }, 600);
-                                    
+                            
                                 }, dieDuration);
                             };
 
@@ -497,7 +501,7 @@
                 },
                 error: function (player, reason) {
                     console.warn(`頂部跑酷載入失敗:`, reason);
-                    // 萬一該角色沒檔案報錯了，等 3 秒後自動重骰下一位，避免跑酷小人永遠罷工
+                    // 萬一該角色沒檔案報錯了，等 3 秒後自動重骰下一位
                     setTimeout(initTopRunner, 3000);
                 }
             });
