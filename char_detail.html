@@ -321,18 +321,27 @@
         }
 
         // 🌟 新增：渲染額外情報 (簡介、CV、料理、打工)
+        // 🌟 新增：渲染額外情報 (簡介、CV、料理、打工)
         function renderExtraInfo(charName) {
             // 1. 渲染 CV (找不到預設 ???)
             const cvText = (typeof CV_MAP !== 'undefined' && CV_MAP[charName]) ? CV_MAP[charName] : "???";
             document.getElementById('charCV').innerText = cvText;
 
-            // 2. 渲染簡介 (從 data_intro.js 的 INTRO_MAP 抓取)
+            // ==========================================
+            // ✨ 修正區塊：渲染簡介
+            // ==========================================
+            // 💡 修正 1：利用 SPINE_MAP 將中文名稱轉為英文 Key (例如: 愛麗絲 -> Alice)
+            const introKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
+
             const safeLang = (typeof INTRO_MAP !== 'undefined' && INTRO_MAP[window.currentLang]) ? window.currentLang : 'zh-TW';
             let introText = "（資料建檔中...）";
-            if (typeof INTRO_MAP !== 'undefined' && INTRO_MAP[safeLang] && INTRO_MAP[safeLang][charName]) {
-                introText = INTRO_MAP[safeLang][charName];
+            
+            if (typeof INTRO_MAP !== 'undefined' && INTRO_MAP[safeLang] && INTRO_MAP[safeLang][introKey]) {
+                // 💡 修正 2：將資料中的 \n 轉換為 <br>，確保網頁能正確顯示換行
+                introText = INTRO_MAP[safeLang][introKey].replace(/\n/g, '<br>');
             }
             document.getElementById('charIntro').innerHTML = introText;
+            // ==========================================
 
             // 3. 處理料理與獎勵 (從 REWARD_MAP 取中文 Key -> 找 ICON_MAP -> 找 LANG_DICT 翻譯)
             let foodUrl = "";
