@@ -425,14 +425,16 @@
         };
         ```javascript
         // 🌟 新增：根據種族設定背景圖
+        // 🌟 新增：根據種族設定背景圖
         const updateRaceBackground = (raceName) => {
             const bgDiv = document.getElementById('raceBackground');
             if (bgDiv && typeof CHAR_BACKGROUNDS !== 'undefined' && CHAR_BACKGROUNDS[raceName]) {
                 const bgUrl = CHAR_BACKGROUNDS[raceName];
-                bgDiv.style.backgroundImage = `url('${bgUrl}')`;
+                // 💡 修改這裡：改用傳統的雙引號與加號字串串接，避免特殊符號解析錯誤
+                bgDiv.style.backgroundImage = "url('" + bgUrl + "')";
             } else {
                 // 如果找不到該種族的背景 (或發生錯誤)，就清空背景
-                if(bgDiv) bgDiv.style.backgroundImage = 'none';
+                if(bgDiv) bgDiv.style.backgroundImage = "none";
             }
         };
         
