@@ -65,7 +65,9 @@
         .spine-player-controls { display: none !important; }
         .costume-btn { transition: all 0.2s ease; }
         .costume-btn:active { transform: scale(0.95); }
-
+        .spine-player {
+            background-color: transparent !important;
+        }
         /* 🌟 使用更精確的父子選取器，確保完全覆蓋 Spine 原生樣式 */
         .spine-player-loading {
             /* 強制將原本的轉圈圈動畫歸零並隱藏 */
@@ -152,7 +154,7 @@
 
         <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 border-b-2 border-amber-200 dark:border-slate-700 pb-6 mb-6">
             <div class="flex flex-col items-center gap-3 flex-shrink-0">
-                <div id="charAvatar" class="w-80 h-[400px] sm:w-80 sm:h-96 rounded-2xl border-4 border-amber-500 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 overflow-hidden shadow-md flex items-center justify-center text-3xl font-bold text-amber-900 dark:text-amber-100 relative cursor-pointer group"></div>
+                <div id="charAvatar" class="animated-bg w-80 h-[400px] sm:w-80 sm:h-96 rounded-2xl border-4 border-amber-500 dark:border-slate-600 overflow-hidden shadow-md flex items-center justify-center text-3xl font-bold text-amber-900 dark:text-amber-100 relative cursor-pointer group"></div>
                 <div id="costumeButtonsContainer" class="flex flex-wrap justify-center gap-2 hidden w-full max-w-[320px]"></div>
             </div>
             
@@ -1205,6 +1207,14 @@
             renderStars(currentTargetName);
             renderExtraInfo(currentTargetName);
 
+            const avatarBox = document.getElementById('charAvatar');
+            if (typeof CHAR_BACKGROUNDS !== 'undefined' && CHAR_BACKGROUNDS[currentCharData.race]) {
+                const bgUrl = CHAR_BACKGROUNDS[currentCharData.race];
+                avatarBox.style.setProperty('--bg-image', `url('${bgUrl}')`);
+            } else {
+                // 如果找不到該種族的背景圖，就把背景清空
+                avatarBox.style.setProperty('--bg-image', `none`);
+            }
             const spineKey = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[currentCharData.name] : currentCharData.name;
 
             if (spineKey) {
