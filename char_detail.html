@@ -65,9 +65,33 @@
         .spine-player-controls { display: none !important; }
         .costume-btn { transition: all 0.2s ease; }
         .costume-btn:active { transform: scale(0.95); }
-        .spine-player-loading, .spine-player-progress, .spine-player-progress-bar {
+        /* 🌟 修改：將 Spine 預設載入圖案換成自訂的金蠟筆 */
+        .spine-player-loading {
+            display: block !important;
+            opacity: 1 !important;
+            /* 換上金蠟筆的圖片 URL */
+            background-image: url('https://i.postimg.cc/qvjNxZzg/golden-crayon.png') !important;
+            background-size: contain !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+            /* 調整蠟筆的顯示大小 */
+            width: 80px !important;
+            height: 80px !important;
+            margin: auto !important;
+            /* 套用自訂的浮動動畫 */
+            animation: crayonFloat 1.5s ease-in-out infinite !important;
+        }
+        
+        /* 繼續隱藏 Spine 預設的載入進度條與文字，保持畫面乾淨 */
+        .spine-player-progress, .spine-player-progress-bar {
             display: none !important;
             opacity: 0 !important;
+        }
+
+        /* 🌟 新增：金蠟筆的懸浮呼吸動畫 */
+        @keyframes crayonFloat {
+            0%, 100% { transform: translateY(0) scale(1); opacity: 1; filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.5)); }
+            50% { transform: translateY(-10px) scale(1.05); opacity: 0.8; filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.9)); }
         }
         /* 背景動態縮放動畫 */
         .animated-bg {
