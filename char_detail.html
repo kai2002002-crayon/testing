@@ -1136,7 +1136,6 @@
             if (!currentCharData) { renderError(`${getI18n('error_char_not_found') || "❌ 找不到角色資料: "}${currentTargetName}`); return; }
 
             const displayName = getI18n(currentCharData.name);
-            const displayName = getI18n(currentCharData.name);
             
             // 🌟 新增：判斷是否為艾爾丁，並在名字後方加上 150% 大小的圖示
             const isEldain = ELDAIN_LIST.includes(currentCharData.name);
