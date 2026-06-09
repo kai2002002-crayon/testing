@@ -531,28 +531,27 @@
                 window.globalSpinePlayer = null;
             }
             
-            avatarBox.innerHTML = ''; 
-
-            if (!avatarBox.style.getPropertyValue('--bg-image') && typeof LOBBY_BACKGROUNDS !== 'undefined' && LOBBY_BACKGROUNDS.length > 0) {
-                const randomBg = LOBBY_BACKGROUNDS[Math.floor(Math.random() * LOBBY_BACKGROUNDS.length)];
-                avatarBox.style.setProperty('--bg-image', `url('${randomBg}')`);
-                avatarBox.classList.add('animated-bg', 'overflow-hidden', 'rounded-2xl', 'shadow-inner');
-            }
+            // 💡 這裡手動插入金蠟筆作為載入中的圖案
+            avatarBox.innerHTML = '<div class="spine-player-loading-custom"></div>';
 
             window.globalSpinePlayer = new spine.SpinePlayer(avatarBox, {
                 skelUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.skel.bytes`,
                 atlasUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.atlas.txt`,
-                
                 animation: "Idle_1",     
-                
                 premultipliedAlpha: true,
                 backgroundColor: "#00000000", 
-                alpha: true,                 
+                alpha: true,
                 showControls: false,
+                showLoading: false, // 🚫 關閉原廠載入圖案
                 viewport: { x: -400, y: 0, width: 800, height: 1000 },
         
                 success: function (player) {
+                    // 載入成功後，把我們自訂的蠟筆刪掉
+                    const loader = avatarBox.querySelector('.spine-player-loading-custom');
+                    if (loader) loader.remove();
+
                     window.myPlayer = player;
+                    // ...
     
                     let activeFaceBone = null; 
                     let initialBoneX = 0;
@@ -1408,15 +1407,6 @@
                 btn.innerHTML = textSubmitBtn;
                 btn.classList.replace('bg-gray-400', 'bg-amber-500');
                 btn.classList.replace('dark:bg-gray-500', 'dark:bg-amber-600');
-            });
-            // 在網頁載入完成時，強制移除轉圈圈的 class 或覆蓋樣式
-            window.addEventListener('load', () => {
-                const loaders = document.querySelectorAll('.spine-player-loading');
-                loaders.forEach(el => {
-                    el.style.backgroundImage = "url('https://i.postimg.cc/qvjNxZzg/golden-crayon.png')";
-                    el.style.border = "none";
-                    el.style.animation = "crayonFloat 1.5s ease-in-out infinite";
-                });
             });
         }
     </script>
