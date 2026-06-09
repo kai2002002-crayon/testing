@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="referrer" content="no-referrer">
+    <meta name="referrer" content="no-referrer-when-downgrade">
     
     <title>嘟嘟臉金蠟筆記事本</title>
     <meta name="description" content="《Trickcal: Chibi Go》各位教主，歡迎來到嘟嘟臉金蠟筆記事本！這裡提供最新的《嘟嘟臉惡作劇》角色圖鑑、金蠟筆分佈與技能資料。亦收錄了坨坨們的珍藏品與情信，馬上來查詢最實用的攻略情報吧！">
@@ -24,6 +24,23 @@
     <link rel="stylesheet" href="https://unpkg.com/@esotericsoftware/spine-player@4.1/dist/spine-player.css">
     <script src="https://unpkg.com/@esotericsoftware/spine-player@4.1/dist/iife/spine-player.js"></script>
     <style>
+        /* 🌟 統一的金蠟筆載入圖案 */
+        .spine-loader-crayon {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 60px; height: 60px;
+            margin: -30px 0 0 -30px;
+            background: url('https://i.postimg.cc/qvjNxZzg/golden-crayon.png') no-repeat center center;
+            background-size: contain;
+            animation: crayonFloat 1.5s ease-in-out infinite;
+            z-index: 999;
+            pointer-events: none;
+        }
+        @keyframes crayonFloat {
+            0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.5)); }
+            50% { transform: translateY(-10px) scale(1.05); filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.9)); }
+        }
+
         #topRunnerContainer canvas {
             width: 100% !important;
             height: 100% !important;
@@ -214,7 +231,6 @@
 </head>
 <body class="p-3 sm:p-6 md:p-8 text-gray-800 dark:text-gray-100">
     
-    <!-- 🌟 跑酷專屬軌道 (原生面朝左，點擊互動版) -->
     <div id="runnerArea" class="fixed top-0 left-0 w-full h-[150px] z-[100] pointer-events-none overflow-hidden">
         <div id="runnerTrack" class="absolute top-0 w-[250px] h-[150px] pointer-events-auto cursor-pointer" style="right: 0px; transform: translateX(0); opacity: 0;">
             <div style="width: 100%; height: 100%; transform: scale(0.75); transform-origin: center;">
@@ -412,14 +428,12 @@
 
             // =======================================================
             // ✨ 關鍵微調 1：出生位置 (右側)
-            // 數字越「負」(例如 -180px)，起點越往畫面右側外隱藏
             // =======================================================
             const startRightOffset = isMobile ? '-140px' : '-110px'; 
             track.style.right = startRightOffset;
 
             // =======================================================
             // ✨ 關鍵微調 2：死亡位置 (左側)
-            // 數字越「小」(例如 30px)，停下來的位置越貼近左邊螢幕邊緣
             // =======================================================
             const endLeftPos = isMobile ? '35px' : '110px'; 
 
@@ -429,13 +443,23 @@
             track.getAnimations().forEach(anim => anim.cancel()); 
             track.style.transform = 'translateX(0)';              
 
-            // 清理上一輪的角色
+            // 清理上一輪的角色 (💡 優化3: 強化 DOM 動態記憶體清理防呆)
             if (currentRunnerPlayer) {
-                try { currentRunnerPlayer.dispose(); } catch(e) {}
-                currentRunnerPlayer = null;
+                try { 
+                    currentRunnerPlayer.dispose(); 
+                } catch(e) {
+                    console.warn("Spine 清理異常:", e);
+                } finally {
+                    currentRunnerPlayer = null;
+                }
             }
             container.innerHTML = ''; 
             track.onclick = null;     
+
+            // 🌟 加入金蠟筆 Loader 代替原廠轉圈圈
+            const loader = document.createElement('div');
+            loader.className = 'spine-loader-crayon';
+            container.appendChild(loader);
 
             // 重新隨機選擇一位角色
             const randomCharData = INITIAL_DATA[Math.floor(Math.random() * INITIAL_DATA.length)];
@@ -454,6 +478,7 @@
                 alpha: true,
                 premultipliedAlpha: false,
                 showControls: false,
+                showLoading: false, // 🚫 關閉原廠圖案
                 
                 // 這裡保持你上一輪設定好的寬廣攝影機視角
                 viewport: { 
@@ -466,6 +491,7 @@
                 },
 
                 success: function (player) {
+                    loader.remove(); // 🌟 載入完成移除金蠟筆
                     console.log(`🏃 跑酷小人進場：${charName}`);
                     
                     try {
@@ -841,16 +867,18 @@
                 if (layerStatBox) layerStatBox.innerHTML = html;
             });
 
+            // 💡 優化5: 將本機存檔的錯誤捕捉從雲端存檔中分離
             try {
                 localStorage.setItem(storageKey, JSON.stringify(savedStates));
-                if (currentUser && db) {
-                    db.collection("player_boards").doc(currentUser.uid).set({
-                        states: savedStates,
-                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    }).catch(e => console.warn("雲端寫入延遲:", e));
-                }
             } catch(e) {
-                console.warn("本機存檔失敗", e);
+                console.warn("本機存檔失敗 (可能是無痕模式或空間不足):", e);
+            }
+
+            if (currentUser && db) {
+                db.collection("player_boards").doc(currentUser.uid).set({
+                    states: savedStates,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }).catch(e => console.warn("雲端寫入延遲:", e));
             }
 
             applyFilterUI();
@@ -1133,7 +1161,6 @@
                     const isOwned = savedStates['owned_' + char.name];
                     const avatarClass = isOwned ? "" : "unowned-avatar";
 
-                    // 在產生 detailBtn 的地方這樣寫：
                     const detailBtn = document.createElement('button');
                     detailBtn.onclick = () => window.open(`char_detail.html?char=${encodeURIComponent(char.name)}`, '_blank');
 
@@ -1156,7 +1183,6 @@
                     const nameCol = document.createElement('div');
                     nameCol.className = "flex flex-row items-center justify-start gap-3 min-w-[210px] w-full md:w-auto border-b md:border-b-0 pb-2 md:pb-0 border-gray-200/50 dark:border-gray-700";
                     
-                    // 🛠️ 修復 3：移除這裡面 img 的 loading="lazy"，避免 Opera 延遲載入破圖
                     nameCol.innerHTML = `
                         <div class="relative shrink-0 w-12 h-12" onclick="toggleOwnership('${char.name}')">
                             <div id="avatar_container_${char.name}" class="char-avatar-container w-12 h-12 rounded-lg border-2 ${borderColorClass} shadow-inner bg-white ${avatarClass}">
@@ -1366,6 +1392,7 @@
         try {
             if (typeof firebase !== 'undefined') {
                 const firebaseConfig = {
+                    /* 💡 資安小提醒：請至 Google Cloud / Firebase 後台，將這組 API Key 設定 HTTP 網域限制，避免他人盜用配額 */
                     apiKey: "AIzaSyDhv8D2pY_0M56UJrDTQw0RGPHA-BkXU8Y",
                     authDomain: "crayon-note.firebaseapp.com",
                     projectId: "crayon-note",
@@ -1374,7 +1401,14 @@
                     appId: "1:210614088940:web:7addbdc7c466eeb05421c9",
                     measurementId: "G-M1EJPE12TE"
                 };
-                firebase.initializeApp(firebaseConfig);
+                
+                // 💡 優化2: 檢查是否已經初始化過，避免重複初始化導致報錯
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                } else {
+                    firebase.app(); // 如果已存在，直接取用
+                }
+
                 db = firebase.firestore();
                 auth = firebase.auth();
 
@@ -1455,6 +1489,12 @@
                 return;
             }
 
+            // 🌟 插入金蠟筆
+            const rimContainer = document.getElementById("rim-live-container");
+            const loader = document.createElement('div');
+            loader.className = 'spine-loader-crayon';
+            rimContainer.appendChild(loader);
+
             new spine.SpinePlayer("rim-live-container", {
                 skelUrl: "Rim.skel.bytes",
                 atlasUrl: "Rim.atlas.txt",
@@ -1464,11 +1504,13 @@
                 premultipliedAlpha: false,
                 skin: "Normal",
                 animation: "Happy_4",        // 初始預設動畫
+                showLoading: false,          // 🚫 關閉原廠圖案
                 viewport: { 
                     transitionTime: 0        // 關閉相機過渡，防止切換動畫時畫面亂跳
                 },
         
                 success: function (player) {
+                    loader.remove(); // 🌟 載入成功後移除金蠟筆
                     console.log("Spine 載入成功，準備輪播動畫！");
                     
                     const animations = ["Happy_4", "Pat_End", "Tickle_Idle_2"];
@@ -1532,8 +1574,8 @@
         function checkCrayonCollision() {
             const chibi = document.getElementById(chibiId);
             
-            // 確保小人存在，且沒有處於隱藏狀態 (opacity > 0 代表小人正在場上跑)
-            const isChibiVisible = chibi && window.getComputedStyle(chibi).opacity > 0;
+            // 💡 優化1：移除耗能的 getComputedStyle，直接讀取 inline style 判斷顯示狀態
+            const isChibiVisible = chibi && chibi.style.opacity === '1';
 
             if (isChibiVisible && activeCrayons.length > 0) {
                 // 取得小人當下在畫面中的精準座標
