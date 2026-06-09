@@ -194,8 +194,8 @@
             z-index: 50;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
             animation: crayonIdle 2s ease-in-out infinite;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease-out;
-            opacity: 0; /* 剛生成時先隱藏，再淡入 */
+            transition: transform 0.6s ease-out, opacity 0.5s ease-out, filter 0.6s ease-out;
+            opacity: 0;
         }
 
         /* 蠟筆被吃掉時的特效（放大、往上飄、變透明、發光） */
@@ -1559,7 +1559,7 @@
                         // 特效播完後徹底移除 DOM 元素
                         setTimeout(() => {
                             crayon.remove();
-                        }, 300);
+                        }, 600);
                     }
                 });
             }
