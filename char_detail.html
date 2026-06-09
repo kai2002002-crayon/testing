@@ -104,7 +104,16 @@
             display: none !important;
             opacity: 0 !important;
         }
-
+        .spine-player-loading-custom {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 80px; height: 80px;
+            margin: -40px 0 0 -40px;
+            background: url('https://i.postimg.cc/qvjNxZzg/golden-crayon.png') no-repeat center center;
+            background-size: contain;
+            animation: crayonFloat 1.5s ease-in-out infinite;
+            z-index: 10;
+        }
         @keyframes crayonFloat {
             0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.5)); }
             50% { transform: translateY(-10px) scale(1.05); filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.9)); }
@@ -552,16 +561,7 @@
 
                     window.myPlayer = player;
                     // ...
-                .spine-player-loading-custom {
-                        position: absolute;
-                        top: 50%; left: 50%;
-                        width: 80px; height: 80px;
-                        margin: -40px 0 0 -40px;
-                        background: url('https://i.postimg.cc/qvjNxZzg/golden-crayon.png') no-repeat center center;
-                        background-size: contain;
-                        animation: crayonFloat 1.5s ease-in-out infinite;
-                        z-index: 10;
-                    }
+
                     let activeFaceBone = null; 
                     let initialBoneX = 0;
                     let initialBoneY = 0;
