@@ -67,21 +67,35 @@
         .costume-btn:active { transform: scale(0.95); }
         /* 🌟 修改：將 Spine 預設載入圖案換成自訂的金蠟筆 */
         .spine-player-loading {
-            display: block !important;
-            opacity: 1 !important;
-            /* 換上金蠟筆的圖片 URL */
-            background-image: url('https://i.postimg.cc/qvjNxZzg/golden-crayon.png') !important;
+            /* ⚠️ 移除了 display 的強制作為，這樣角色讀完後蠟筆才會順利消失 */
+            background: transparent url('https://i.postimg.cc/qvjNxZzg/golden-crayon.png') no-repeat center center !important;
             background-size: contain !important;
-            background-repeat: no-repeat !important;
-            background-position: center !important;
-            /* 調整蠟筆的顯示大小 */
+            
+            /* 調整蠟筆大小為 80x80 */
             width: 80px !important;
             height: 80px !important;
-            margin: auto !important;
-            /* 套用自訂的浮動動畫 */
+            
+            /* 🌟 關鍵修復：重新校正置中對齊 (Spine 預設是 32px，我們改為 80px 所以需要調整 margin) */
+            position: absolute !important;
+            left: 50% !important;
+            top: 50% !important;
+            margin-top: -40px !important;
+            margin-left: -40px !important;
+            
+            /* 🚫 強制消除 Spine 預設的轉圈圈邊框與樣式 */
+            border: none !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            
+            /* 套用自訂的浮動動畫（會覆蓋掉原本的轉圈動畫） */
             animation: crayonFloat 1.5s ease-in-out infinite !important;
         }
-        
+
+        /* 萬一 Spine 把轉圈圈寫在內部元素，這行能強制隱藏它們 */
+        .spine-player-loading * {
+            display: none !important;
+        }
+
         /* 繼續隱藏 Spine 預設的載入進度條與文字，保持畫面乾淨 */
         .spine-player-progress, .spine-player-progress-bar {
             display: none !important;
@@ -90,8 +104,8 @@
 
         /* 🌟 新增：金蠟筆的懸浮呼吸動畫 */
         @keyframes crayonFloat {
-            0%, 100% { transform: translateY(0) scale(1); opacity: 1; filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.5)); }
-            50% { transform: translateY(-10px) scale(1.05); opacity: 0.8; filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.9)); }
+            0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.5)); }
+            50% { transform: translateY(-10px) scale(1.05); filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.9)); }
         }
         /* 背景動態縮放動畫 */
         .animated-bg {
