@@ -1409,6 +1409,15 @@
                 btn.classList.replace('bg-gray-400', 'bg-amber-500');
                 btn.classList.replace('dark:bg-gray-500', 'dark:bg-amber-600');
             });
+            // 在網頁載入完成時，強制移除轉圈圈的 class 或覆蓋樣式
+            window.addEventListener('load', () => {
+                const loaders = document.querySelectorAll('.spine-player-loading');
+                loaders.forEach(el => {
+                    el.style.backgroundImage = "url('https://i.postimg.cc/qvjNxZzg/golden-crayon.png')";
+                    el.style.border = "none";
+                    el.style.animation = "crayonFloat 1.5s ease-in-out infinite";
+                });
+            });
         }
     </script>
     <footer class="mt-12 mb-6 text-center border-t border-gray-200 dark:border-gray-700 pt-6">
