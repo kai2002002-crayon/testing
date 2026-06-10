@@ -1168,7 +1168,7 @@
                 window.skillSpinePlayers = [];
             }
 
-            // 檔名與資料夾名稱統一對應 SPINE_MAP
+            // 檔名統一對應 SPINE_MAP
             const baseFolderKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
 
             // 定義要綁定的小人位置與對應的前綴動作
@@ -1182,24 +1182,26 @@
                 const container = document.getElementById(target.id);
                 if (!container) return;
 
+                console.log(`[SD小人] 準備載入 ${baseFolderKey} 到框框: ${target.id}`);
+
                 const player = new spine.SpinePlayer(container, {
-                    // 🌟 路徑改為 spine_sd_assets，且檔名直接使用 baseFolderKey (因為沒有換裝系統)
                     skelUrl: `./spine_sd_assets/${baseFolderKey}.skel.bytes`,
                     atlasUrl: `./spine_sd_assets/${baseFolderKey}.atlas.txt`,
                     premultipliedAlpha: true,
                     backgroundColor: "#00000000",
                     alpha: true,
-                    showControls: true,
-                    showLoading: false, 
-                    // 保持與主介面相同比例的 viewport，透過外層 CSS 容器來自然縮放
-                    viewport: { x: -400, y: 0, width: 800, height: 1000 },
+                    showControls: false, // 務必關閉控制條，否則會吃掉畫面空間
+                    showLoading: false,
+                    defaultBlendTime: 0.1, // 動作切換時稍微過渡一下
+                    // 🌟 【關鍵修正】把 viewport 拿掉！讓 Spine 播放器自動計算 SD 小人的大小並置中放大
+                    
                     success: function (player) {
+                        console.log(`[SD小人] ✅ 載入成功: ${target.id}`);
                         window.skillSpinePlayers.push(player);
 
-                        // 🌟 確保套用 Normal 或 default 皮膚
+                        // 確保套用 Normal 或 default 皮膚
                         const skins = player.skeleton.data.skins;
                         if (skins && skins.length > 0) {
-                            // 優先找 Normal，其次找 default，如果都沒有就套用第一個找到的
                             const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name === 'default') || skins[0];
                             if (targetSkin) {
                                 player.skeleton.setSkinByName(targetSkin.name);
@@ -1213,38 +1215,33 @@
                         
                         let sequence = allAnims.filter(name => regex.test(name));
                         
-                        // 依據數字進行排序 (例: Attack1_1, Attack2_1, Attack3_1)
+                        // 依據數字進行排序
                         sequence.sort((a, b) => {
                             const numA = parseInt(a.replace(/\D/g, '') || '1');
                             const numB = parseInt(b.replace(/\D/g, '') || '1');
                             return numA - numB;
                         });
 
-                        // 如果完全找不到對應的動作，則退回預設站立姿勢 (防呆)
+                        // 🛡️ 防呆：如果找不到對應的技能動作，隨便找一個來動，至少不會發呆
                         if (sequence.length === 0) {
+                            console.warn(`[SD小人] 找不到 ${target.prefix} 相關動作，改用備用動作`);
                             if (allAnims.includes("Idle_1")) sequence = ["Idle_1"];
+                            else if (allAnims.length > 0) sequence = [allAnims[0]]; 
                         }
 
                         // 播放邏輯
                         if (sequence.length > 0) {
                             let currentIndex = 0;
-                            
-                            // 第一次播放
                             player.animationState.setAnimation(0, sequence[currentIndex], false);
 
-                            // 監聽結束事件，1秒後播放下一個
                             player.animationState.addListener({
                                 complete: function(entry) {
-                                    // 確保只攔截主要 Track，且是我們列表中的動作
                                     if (entry.trackIndex === 0 && entry.animation && sequence.includes(entry.animation.name)) {
-                                        
-                                        // 推進到下一個動作
                                         currentIndex++;
                                         if (currentIndex >= sequence.length) currentIndex = 0;
                                         
-                                        // 延遲1秒再繼續
+                                        // 延遲1秒再繼續下一個動作
                                         setTimeout(() => {
-                                            // 檢查播放器是否已被銷毀 (例如使用者切換了頁面或語言)
                                             if (player.skeleton) {
                                                 player.animationState.setAnimation(0, sequence[currentIndex], false);
                                             }
@@ -1255,8 +1252,9 @@
                         }
                     },
                     error: function(player, reason) {
-                        console.warn(`⚠️ 戰鬥小人載入失敗 (${baseFolderKey}):`, reason);
-                        container.remove(); // 若加載失敗直接移除容器避免佔用空間
+                        // 🌟 如果還是出不來，這裡會把錯誤印在開發者工具裡！
+                        console.error(`[SD小人] ❌ 載入失敗 (${baseFolderKey}):`, reason);
+                        // container.remove(); 暫時不要移除，留著檢查用
                     }
                 });
             });
