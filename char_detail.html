@@ -1237,7 +1237,7 @@
 
                         if (sequence.length > 0) {
                             let currentIndex = 0;
-                            const hasIdle = allAnims.includes("Idle_1");
+                            const hasIdle = allAnims.includes("Idle");
 
                             // 🌟 監聽動作結束
                             player.animationState.addListener({
@@ -1251,7 +1251,7 @@
                                                 player.animationState.setAnimation(0, sequence[currentIndex], false);
                                                 // 播完招式後，馬上預約接回 Idle_1，避免小人卡在最後一幀消失
                                                 if (hasIdle) {
-                                                    player.animationState.addAnimation(0, "Idle_1", true, 0);
+                                                    player.animationState.addAnimation(0, "Idle", true, 0);
                                                 }
                                                 
                                                 currentIndex++;
@@ -1265,7 +1265,7 @@
                             // 🌟 第一次啟動播放
                             player.animationState.setAnimation(0, sequence[currentIndex], false);
                             if (hasIdle) {
-                                player.animationState.addAnimation(0, "Idle_1", true, 0);
+                                player.animationState.addAnimation(0, "Idle", true, 0);
                             }
                             currentIndex++;
                             if (currentIndex >= sequence.length) currentIndex = 0;
