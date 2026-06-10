@@ -1162,7 +1162,6 @@
 
         // 🌟 全新函式：載入技能區塊的小型戰鬥 Spine (SD小人)
         function loadSkillSpines(charName) {
-            // 清理舊的播放器避免 WebGL 崩潰
             if (window.skillSpinePlayers && window.skillSpinePlayers.length > 0) {
                 window.skillSpinePlayers.forEach(p => p.dispose());
                 window.skillSpinePlayers = [];
@@ -1180,50 +1179,62 @@
                 const container = document.getElementById(target.id);
                 if (!container) return;
 
-                // 🌟 強制容器的 z-index 與基礎大小，避免被蓋住或縮成 0
+                // 🌟 同步跑酷的 CSS：強制容器基礎大小與層級
                 container.style.zIndex = "50";
                 container.style.minWidth = "80px";
                 container.style.minHeight = "80px";
+                container.style.position = "relative";
 
-                const player = new spine.SpinePlayer(container, {
+                // 🌟 關鍵差異 1：使用字串 target.id 初始化播放器
+                const player = new spine.SpinePlayer(target.id, {
                     skelUrl: `./spine_sd_assets/${baseFolderKey}.skel.bytes`,
                     atlasUrl: `./spine_sd_assets/${baseFolderKey}.atlas.txt`,
-                    animation: "Idle", // 🌟 預先塞入動作，防止播放器假死
-                    premultipliedAlpha: true,
+                    animation: "Idle", // 🌟 關鍵差異 2：使用你的 Idle
+                    skin: "Normal",    // 🌟 同步跑酷的 Skin
                     backgroundColor: "#00000000",
                     alpha: true,
+                    premultipliedAlpha: false, // 🌟 關鍵差異 3：跑酷小人是 false！
                     showControls: false, 
                     showLoading: false,
-                    defaultBlendTime: 0.1, // 動作切換過渡
-                    // 🌟 採用與主介面完全相同的安全視角
-                    viewport: { x: -400, y: 0, width: 800, height: 1000 },
+                    
+                    // 🌟 關鍵差異 4：完全複製跑酷小人的廣角視角與零邊距設定！
+                    viewport: { 
+                        x: -800,        
+                        y: -250,        
+                        width: 2500,    
+                        height: 1500,   
+                        padLeft: "0%", padRight: "0%", padTop: "0%", padBottom: "0%",
+                        transitionTime: 0 
+                    },
                     
                     success: function (player) {
                         window.skillSpinePlayers.push(player);
 
-                        // 🌟 強制裡面的 Canvas 撐滿技能框
+                        // 🌟 關鍵差異 5：同步 index.html 的 !important 強制撐滿畫布
                         const canvas = container.querySelector('canvas');
                         if (canvas) {
-                            canvas.style.width = '100%';
-                            canvas.style.height = '100%';
-                            canvas.style.objectFit = 'contain';
+                            canvas.style.setProperty('width', '100%', 'important');
+                            canvas.style.setProperty('height', '100%', 'important');
+                            canvas.style.setProperty('display', 'block', 'important');
+                            canvas.style.setProperty('background-color', 'transparent', 'important');
                         }
 
-                        // 套用皮膚
+                        // 確保套用正確皮膚
                         const skins = player.skeleton.data.skins;
                         if (skins && skins.length > 0) {
                             const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name === 'default') || skins[0];
                             if (targetSkin) {
                                 player.skeleton.setSkinByName(targetSkin.name);
-                                player.skeleton.setToSetupPose(); 
+                                player.skeleton.setSlotsToSetupPose(); // 同步跑酷寫法
                             }
                         }
 
-                        // 篩選與排序動作
                         const allAnims = player.skeleton.data.animations.map(a => a.name);
-                        const regex = new RegExp(`^${target.prefix}\\d*_1$`); 
                         
+                        // 放寬搜尋條件，只要開頭符合就好 (例如 Attack1, Attack_1 都抓)
+                        const regex = new RegExp(`^${target.prefix}`); 
                         let sequence = allAnims.filter(name => regex.test(name));
+                        
                         sequence.sort((a, b) => {
                             const numA = parseInt(a.replace(/\D/g, '') || '1');
                             const numB = parseInt(b.replace(/\D/g, '') || '1');
@@ -1239,21 +1250,15 @@
                             let currentIndex = 0;
                             const hasIdle = allAnims.includes("Idle");
 
-                            // 🌟 監聽動作結束
                             player.animationState.addListener({
                                 complete: function(entry) {
-                                    // 確認結束的是我們要的技能動作
                                     if (entry.trackIndex === 0 && entry.animation && sequence.includes(entry.animation.name)) {
-                                        
-                                        // 延遲 1 秒後播放下一個動作
                                         setTimeout(() => {
                                             if (player.skeleton) {
                                                 player.animationState.setAnimation(0, sequence[currentIndex], false);
-                                                // 播完招式後，馬上預約接回 Idle_1，避免小人卡在最後一幀消失
                                                 if (hasIdle) {
                                                     player.animationState.addAnimation(0, "Idle", true, 0);
                                                 }
-                                                
                                                 currentIndex++;
                                                 if (currentIndex >= sequence.length) currentIndex = 0;
                                             }
@@ -1262,7 +1267,6 @@
                                 }
                             });
 
-                            // 🌟 第一次啟動播放
                             player.animationState.setAnimation(0, sequence[currentIndex], false);
                             if (hasIdle) {
                                 player.animationState.addAnimation(0, "Idle", true, 0);
@@ -1270,9 +1274,6 @@
                             currentIndex++;
                             if (currentIndex >= sequence.length) currentIndex = 0;
                         }
-
-                        // 強制引擎開始跳動
-                        player.play();
                     },
                     error: function(player, reason) {
                         console.error(`[SD小人] ❌ 載入失敗 (${baseFolderKey}):`, reason);
