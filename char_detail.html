@@ -1188,7 +1188,7 @@
                 const player = new spine.SpinePlayer(container, {
                     skelUrl: `./spine_sd_assets/${baseFolderKey}.skel.bytes`,
                     atlasUrl: `./spine_sd_assets/${baseFolderKey}.atlas.txt`,
-                    animation: "Idle_1", // 🌟 預先塞入動作，防止播放器假死
+                    animation: "Idle", // 🌟 預先塞入動作，防止播放器假死
                     premultipliedAlpha: true,
                     backgroundColor: "#00000000",
                     alpha: true,
@@ -1231,7 +1231,7 @@
                         });
 
                         if (sequence.length === 0) {
-                            if (allAnims.includes("Idle_1")) sequence = ["Idle"];
+                            if (allAnims.includes("Idle")) sequence = ["Idle"];
                             else if (allAnims.length > 0) sequence = [allAnims[0]]; 
                         }
 
