@@ -1004,6 +1004,9 @@
             }
         }
         
+        // 🌟 建立一個全域陣列，用來儲存技能區塊的 Spine 播放器，方便切換語言時銷毀舊的
+        window.skillSpinePlayers = [];
+
         function renderSkills(charName) {
             const skillsContainer = document.getElementById('skillsContainer');
             
@@ -1025,7 +1028,6 @@
                 if (charSkillData) {
                     const makeStatChips = (statsArray) => {
                         if (!statsArray || statsArray.length === 0) return '';
-                        
                         let processedStats = [];
                         statsArray.forEach(stat => {
                             if (typeof stat === 'string') {
@@ -1034,39 +1036,31 @@
                                 processedStats.push(stat);
                             }
                         });
-                        
                         if (processedStats.length === 0) return '';
-                        return `<div class="flex flex-wrap gap-1.5 mt-2">` + 
+                        return `<div class="flex flex-wrap gap-1.5 mt-2 relative z-10">` + 
                             processedStats.map(stat => `<span class="px-2 py-0.5 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 text-[11px] font-bold rounded-md shadow-sm">${stat}</span>`).join('') + 
                             `</div>`;
                     };
 
                     const renderUnifiedSkill = (skillObj) => {
                         if (!skillObj || skillObj === "無") return "";
-                        
                         if (typeof skillObj === 'string') {
                             let desc = skillObj;
                             let stats = [];
-                            
                             const bracketMatches = skillObj.match(/\[(.*?)\]/g);
                             if (bracketMatches) {
                                 bracketMatches.forEach(match => {
                                     stats.push(match.replace(/[\[\]]/g, '').trim());
                                     desc = desc.replace(match, '').trim();
                                 });
-                            } 
-                            else if (skillObj.includes('|')) {
+                            } else if (skillObj.includes('|')) {
                                 const parts = skillObj.split('|');
                                 desc = parts[0].trim();
                                 stats = parts.length > 1 ? parts[1].split(/[,、，]/).map(s => s.trim()).filter(Boolean) : [];
                             }
-
-                            return `<p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${desc}</p>
-                                    ${makeStatChips(stats)}`;
+                            return `<p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap relative z-10">${desc}</p>${makeStatChips(stats)}`;
                         }
-                        
-                        return `<p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${skillObj.desc || ''}</p>
-                                ${makeStatChips(skillObj.stats)}`;
+                        return `<p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap relative z-10">${skillObj.desc || ''}</p>${makeStatChips(skillObj.stats)}`;
                     };
 
                     const normalAttackIcon = typeof SKILL_ICONS !== 'undefined' ? (charBaseData.attribute === "物理" ? SKILL_ICONS["attack_物理"] : SKILL_ICONS["attack_魔法"]) : "";
@@ -1077,24 +1071,21 @@
                     const enhancedData = charSkillData.normalAttack.enhanced;
                     const hasEnhanced = enhancedData && enhancedData !== "無" && (typeof enhancedData === 'string' ? true : enhancedData.desc !== "無");
                     
-                    let txtNormalAtk = getI18n('skill_normal_attack');
-                    if(txtNormalAtk === 'skill_normal_attack') txtNormalAtk = '普通攻擊';
-                    let txtPassive = getI18n('skill_passive');
-                    if(txtPassive === 'skill_passive') txtPassive = '被動技能';
-                    let txtBasic = getI18n('skill_basic');
-                    if(txtBasic === 'skill_basic') txtBasic = '【基本】';
-                    let txtEnhanced = getI18n('skill_enhanced');
-                    if(txtEnhanced === 'skill_enhanced') txtEnhanced = '【強化】';
+                    let txtNormalAtk = getI18n('skill_normal_attack'); if(txtNormalAtk === 'skill_normal_attack') txtNormalAtk = '普通攻擊';
+                    let txtPassive = getI18n('skill_passive'); if(txtPassive === 'skill_passive') txtPassive = '被動技能';
+                    let txtBasic = getI18n('skill_basic'); if(txtBasic === 'skill_basic') txtBasic = '【基本】';
+                    let txtEnhanced = getI18n('skill_enhanced'); if(txtEnhanced === 'skill_enhanced') txtEnhanced = '【強化】';
 
+                    // 🌟 技能區塊加上 overflow-hidden 避免特效穿模，並且加入小人容器的 HTML
                     let html = `
-                        <div class="bg-slate-50 dark:bg-slate-700/40 border-2 border-slate-300 dark:border-slate-600 rounded-xl p-4 shadow-sm">
-                            <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-600 pb-2 mb-3">
+                        <div class="relative bg-slate-50 dark:bg-slate-700/40 border-2 border-slate-300 dark:border-slate-600 rounded-xl p-4 shadow-sm overflow-hidden">
+                            <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-600 pb-2 mb-3 relative z-10">
                                 <div class="flex items-center gap-2">
                                     ${normalAttackIcon ? `<img src="${normalAttackIcon}" class="w-8 h-8 rounded-lg shadow-sm border border-slate-300 dark:border-slate-600">` : `<span>🎯</span>`}
                                     <span class="font-extrabold text-slate-800 dark:text-slate-200 text-base">${txtNormalAtk}</span>
                                 </div>
                             </div>
-                            <div class="space-y-4">
+                            <div class="space-y-4 pr-16 sm:pr-24 relative z-10">
                                 <div>
                                     <p class="text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">${txtBasic}</p>
                                     ${renderUnifiedSkill(charSkillData.normalAttack.basic)}
@@ -1105,54 +1096,168 @@
                                     ${renderUnifiedSkill(charSkillData.normalAttack.enhanced)}
                                 </div>` : ''}
                             </div>
+                            <div id="spine-attack" class="absolute bottom-2 right-2 w-20 h-20 sm:w-28 sm:h-28 pointer-events-none z-0 opacity-90 drop-shadow-md"></div>
                         </div>
                     `;
 
                     html += `
-                        <div class="bg-emerald-50/80 dark:bg-emerald-900/20 border-2 border-emerald-300 dark:border-emerald-700 rounded-xl p-4 shadow-sm">
-                            <div class="flex justify-between items-center border-b border-emerald-200 dark:border-emerald-800 pb-2 mb-3">
+                        <div class="relative bg-emerald-50/80 dark:bg-emerald-900/20 border-2 border-emerald-300 dark:border-emerald-700 rounded-xl p-4 shadow-sm overflow-hidden">
+                            <div class="flex justify-between items-center border-b border-emerald-200 dark:border-emerald-800 pb-2 mb-3 relative z-10">
                                 <div class="flex items-center gap-2">
                                     ${normalSkillIcon ? `<img src="${normalSkillIcon}" class="w-8 h-8 rounded-lg shadow-sm border border-emerald-300 dark:border-emerald-700">` : `<span>🟢</span>`}
                                     <span class="font-extrabold text-emerald-800 dark:text-emerald-300 text-base">${charSkillData.normalSkill.name}</span>
                                 </div>
                             </div>
-                            <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.normalSkill.desc}</p>
-                            ${makeStatChips(charSkillData.normalSkill.stats)}
+                            <div class="pr-16 sm:pr-24 relative z-10">
+                                <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.normalSkill.desc}</p>
+                                ${makeStatChips(charSkillData.normalSkill.stats)}
+                            </div>
+                            <div id="spine-normal-skill" class="absolute bottom-2 right-2 w-20 h-20 sm:w-28 sm:h-28 pointer-events-none z-0 opacity-90 drop-shadow-md"></div>
                         </div>
                     `;
 
                     html += `
-                        <div class="bg-violet-50/80 dark:bg-violet-900/20 border-2 border-violet-300 dark:border-violet-700 rounded-xl p-4 shadow-sm">
-                            <div class="flex justify-between items-center border-b border-violet-200 dark:border-violet-800 pb-2 mb-3">
+                        <div class="relative bg-violet-50/80 dark:bg-violet-900/20 border-2 border-violet-300 dark:border-violet-700 rounded-xl p-4 shadow-sm overflow-hidden">
+                            <div class="flex justify-between items-center border-b border-violet-200 dark:border-violet-800 pb-2 mb-3 relative z-10">
                                 <div class="flex items-center gap-2">
                                     ${ultSkillIcon ? `<img src="${ultSkillIcon}" class="w-8 h-8 rounded-lg shadow-sm border border-violet-300 dark:border-violet-700">` : `<span>🔥</span>`}
                                     <span class="font-extrabold text-violet-800 dark:text-violet-300 text-base">${charSkillData.ultimateSkill.name}</span>
                                 </div>
                                 <span class="px-2 py-0.5 bg-violet-600 dark:bg-violet-500 text-white font-black text-[10px] rounded-md shadow-sm">CD: ${charSkillData.ultimateSkill.cooldown || "N/A"}</span>
                             </div>
-                            <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.ultimateSkill.desc}</p>
-                            ${makeStatChips(charSkillData.ultimateSkill.stats)}
+                            <div class="pr-16 sm:pr-24 relative z-10">
+                                <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.ultimateSkill.desc}</p>
+                                ${makeStatChips(charSkillData.ultimateSkill.stats)}
+                            </div>
+                            <div id="spine-ultimate-skill" class="absolute bottom-2 right-2 w-20 h-20 sm:w-28 sm:h-28 pointer-events-none z-0 opacity-90 drop-shadow-md"></div>
                         </div>
                     `;
 
+                    // 被動技能不放置 Spine，維持原本設計
                     html += `
-                        <div class="bg-amber-50/70 dark:bg-amber-900/20 border-2 border-amber-300 dark:border-amber-700 rounded-xl p-4 shadow-sm">
-                            <div class="flex justify-between items-center border-b border-amber-200 dark:border-amber-800 pb-2 mb-3">
+                        <div class="relative bg-amber-50/70 dark:bg-amber-900/20 border-2 border-amber-300 dark:border-amber-700 rounded-xl p-4 shadow-sm overflow-hidden">
+                            <div class="flex justify-between items-center border-b border-amber-200 dark:border-amber-800 pb-2 mb-3 relative z-10">
                                 <div class="flex items-center gap-2">
                                     ${passiveSkillIcon ? `<img src="${passiveSkillIcon}" class="w-8 h-8 rounded-lg shadow-sm border border-amber-300 dark:border-amber-700">` : `<span>✨</span>`}
                                     <span class="font-extrabold text-amber-800 dark:text-amber-300 text-base">${txtPassive}</span>
                                 </div>
                             </div>
-                            <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.passiveSkill.desc}</p>
-                            ${makeStatChips(charSkillData.passiveSkill.stats)}
+                            <div class="relative z-10">
+                                <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.passiveSkill.desc}</p>
+                                ${makeStatChips(charSkillData.passiveSkill.stats)}
+                            </div>
                         </div>
                     `;
                     
                     skillsContainer.innerHTML = html;
+
+                    // 🌟 呼叫加載戰鬥小人
+                    setTimeout(() => loadSkillSpines(charName), 100);
+
                 } else {
                     skillsContainer.innerHTML = `<div class="p-4 bg-gray-50 dark:bg-slate-700 text-gray-500 dark:text-gray-400 font-bold border border-gray-200 dark:border-slate-600 rounded-xl text-center">⚠️ ${getI18n('error_char_skill_not_found') || "找不到此角色的技能資料"}</div>`;
                 }
             }
+        }
+
+        // 🌟 全新函式：載入技能區塊的小型 Spine
+        function loadSkillSpines(charName) {
+            // 清理舊的播放器避免 WebGL 崩潰
+            if (window.skillSpinePlayers && window.skillSpinePlayers.length > 0) {
+                window.skillSpinePlayers.forEach(p => p.dispose());
+                window.skillSpinePlayers = [];
+            }
+
+            const baseFolderKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
+            const costumeKey = (typeof COSTUME_MAP !== 'undefined' && COSTUME_MAP[charName] && COSTUME_MAP[charName].length > 0) 
+                                ? COSTUME_MAP[charName][0] : baseFolderKey;
+
+            // 定義要綁定的小人位置與對應的前綴動作
+            const targets = [
+                { id: 'spine-attack', prefix: 'Attack' },
+                { id: 'spine-normal-skill', prefix: 'Skill' },
+                { id: 'spine-ultimate-skill', prefix: 'Ultimate' }
+            ];
+
+            targets.forEach(target => {
+                const container = document.getElementById(target.id);
+                if (!container) return;
+
+                const player = new spine.SpinePlayer(container, {
+                    skelUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.skel.bytes`,
+                    atlasUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.atlas.txt`,
+                    premultipliedAlpha: true,
+                    backgroundColor: "#00000000",
+                    alpha: true,
+                    showControls: false,
+                    showLoading: false, 
+                    // 為了跟主介面的大小比例一致，我們採用完全相同的 viewport 比例，透過 CSS 容器限制來實現「縮小效果」
+                    viewport: { x: -400, y: 0, width: 800, height: 1000 },
+                    success: function (player) {
+                        window.skillSpinePlayers.push(player);
+
+                        // 確保套用正確皮膚
+                        const skins = player.skeleton.data.skins;
+                        if (skins && skins.length > 1) {
+                            const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default');
+                            if (targetSkin) {
+                                player.skeleton.setSkinByName(targetSkin.name);
+                                player.skeleton.setToSetupPose(); 
+                            }
+                        }
+
+                        // 自動搜尋與排序動作名稱
+                        const allAnims = player.skeleton.data.animations.map(a => a.name);
+                        const regex = new RegExp(`^${target.prefix}\\d*_1$`); 
+                        
+                        let sequence = allAnims.filter(name => regex.test(name));
+                        
+                        // 依據數字進行排序 (例: Attack1_1, Attack2_1, Attack3_1)
+                        sequence.sort((a, b) => {
+                            const numA = parseInt(a.replace(/\D/g, '') || '1');
+                            const numB = parseInt(b.replace(/\D/g, '') || '1');
+                            return numA - numB;
+                        });
+
+                        // 如果完全找不到，則退回預設站立姿勢
+                        if (sequence.length === 0) {
+                            if (allAnims.includes("Idle_1")) sequence = ["Idle_1"];
+                        }
+
+                        // 播放邏輯
+                        if (sequence.length > 0) {
+                            let currentIndex = 0;
+                            
+                            // 第一次播放
+                            player.animationState.setAnimation(0, sequence[currentIndex], false);
+
+                            // 監聽結束事件，1秒後播放下一個
+                            player.animationState.addListener({
+                                complete: function(entry) {
+                                    // 確保只攔截主要 Track，且是我們列表中的動作
+                                    if (entry.trackIndex === 0 && entry.animation && sequence.includes(entry.animation.name)) {
+                                        
+                                        // 推進到下一個動作
+                                        currentIndex++;
+                                        if (currentIndex >= sequence.length) currentIndex = 0;
+                                        
+                                        // 延遲1秒再繼續
+                                        setTimeout(() => {
+                                            // 檢查播放器是否已被銷毀 (例如使用者切換了頁面或語言)
+                                            if (player.skeleton) {
+                                                player.animationState.setAnimation(0, sequence[currentIndex], false);
+                                            }
+                                        }, 1000);
+                                    }
+                                }
+                            });
+                        }
+                    },
+                    error: function() {
+                        container.remove(); // 若加載失敗直接移除容器避免佔位
+                    }
+                });
+            });
         }
 
         window.changeLanguage = function(lang) {
