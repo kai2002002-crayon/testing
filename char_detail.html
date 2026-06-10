@@ -162,18 +162,18 @@
                 <div class="mt-6 pt-5 border-t border-dashed border-amber-200 dark:border-slate-600 space-y-4">
                     <p id="charIntro" class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-medium bg-amber-50/50 dark:bg-slate-800/50 p-4 rounded-xl border border-amber-100 dark:border-slate-700 shadow-sm text-left"></p>
                     
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left bg-white/50 dark:bg-slate-800/30 p-4 rounded-xl border border-gray-100 dark:border-slate-700">
-                        <div class="flex items-center gap-2 text-sm sm:col-span-2 border-b border-gray-100 dark:border-slate-700 pb-2">
+                    <div class="flex flex-col gap-4 text-left bg-white/50 dark:bg-slate-800/30 p-4 rounded-xl border border-gray-100 dark:border-slate-700">
+                        <div class="flex items-center gap-2 text-sm border-b border-gray-100 dark:border-slate-700 pb-2">
                             <span class="font-black text-amber-800 dark:text-amber-400 shrink-0" data-i18n="info_cv">🎙️ CV：</span>
                             <span id="charCV" class="text-gray-800 dark:text-gray-200 font-bold text-base"></span>
                         </div>
-                        
-                        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-2">
-                            <span class="font-black text-amber-800 dark:text-amber-400 shrink-0 mt-1" data-i18n="info_food">🍲 喜好料理：</span>
-                            <div id="charFoodIcon" class="flex flex-wrap gap-2 justify-center sm:justify-start"></div>
+    
+                        <div class="flex flex-col gap-2">
+                            <span class="font-black text-amber-800 dark:text-amber-400 shrink-0" data-i18n="info_food">🍲 喜好料理：</span>
+                            <div id="charFoodIcon" class="flex flex-wrap gap-2 justify-start"></div>
                         </div>
-                        
-                        <div class="flex items-center gap-3">
+    
+                        <div class="flex items-center gap-3 pt-2 border-t border-gray-100 dark:border-slate-700">
                             <span class="font-black text-amber-800 dark:text-amber-400 shrink-0" data-i18n="info_job_reward">💰 打工獎勵：</span>
                             <div id="charRewardIcon"></div>
                         </div>
@@ -416,14 +416,14 @@
             document.getElementById('charIntro').innerHTML = introText;
 
             // --- 處理喜好料理 ---
+            // --- 修正後的料理資料讀取 ---
+            const spineKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
+            const foodData = (typeof FOOD_MAP !== 'undefined') ? FOOD_MAP[spineKey] : null;
+
             const foodContainer = document.getElementById('charFoodIcon');
             foodContainer.innerHTML = '';
-            
-            if (typeof FOOD_MAP !== 'undefined' && FOOD_MAP[charName]) {
-                const foodData = FOOD_MAP[charName];
 
-                if (foodData === "無" || foodData === "餐牌" || !foodData) {
-                    // 🌟 若明確標示沒有料理，顯示餐牌
+                if (!foodData || foodData === "無" || foodData === "餐牌") {
                     const placeholderUrl = getSafeFoodIconUrl("餐牌") || "https://i.postimg.cc/qtwD6bsq/Icon-Present.png"; 
                     foodContainer.innerHTML = `
                         <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gray-50 dark:bg-slate-700 rounded-xl border-2 border-gray-300 dark:border-slate-600 shadow-inner flex items-center justify-center overflow-hidden">
