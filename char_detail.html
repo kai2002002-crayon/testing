@@ -1190,13 +1190,19 @@
                     premultipliedAlpha: true,
                     backgroundColor: "#00000000",
                     alpha: true,
-                    showControls: false, // 務必關閉控制條，否則會吃掉畫面空間
+                    showControls: false, 
                     showLoading: false,
-                    defaultBlendTime: 0.1, // 動作切換時稍微過渡一下
-                    // 🌟 【關鍵修正】把 viewport 拿掉！讓 Spine 播放器自動計算 SD 小人的大小並置中放大
+                    defaultBlendTime: 0.1,
+                    // 🌟 【關鍵修正】強制設定 SD 小人的攝影機視角！
+                    // 如果小人太大或太小，可以修改 width 和 height (例如改成 400 或 800)
+                    viewport: { x: -300, y: 0, width: 600, height: 600 },
                     
                     success: function (player) {
                         console.log(`[SD小人] ✅ 載入成功: ${target.id}`);
+                        
+                        // 🌟 【關鍵修正】強制把小人的層級拉到最前面，避免被技能框背景蓋住
+                        container.style.zIndex = "20";
+                        
                         window.skillSpinePlayers.push(player);
 
                         // 確保套用 Normal 或 default 皮膚
@@ -1222,9 +1228,9 @@
                             return numA - numB;
                         });
 
-                        // 🛡️ 防呆：如果找不到對應的技能動作，隨便找一個來動，至少不會發呆
+                        // 🛡️ 防呆：如果找不到對應的技能動作，退回預設動作
                         if (sequence.length === 0) {
-                            console.warn(`[SD小人] 找不到 ${target.prefix} 相關動作，改用備用動作`);
+                            console.warn(`[SD小人] 找不到 ${target.prefix} 相關動作，改用 Idle_1`);
                             if (allAnims.includes("Idle_1")) sequence = ["Idle_1"];
                             else if (allAnims.length > 0) sequence = [allAnims[0]]; 
                         }
@@ -1252,9 +1258,7 @@
                         }
                     },
                     error: function(player, reason) {
-                        // 🌟 如果還是出不來，這裡會把錯誤印在開發者工具裡！
                         console.error(`[SD小人] ❌ 載入失敗 (${baseFolderKey}):`, reason);
-                        // container.remove(); 暫時不要移除，留著檢查用
                     }
                 });
             });
