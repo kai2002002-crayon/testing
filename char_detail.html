@@ -113,7 +113,6 @@
         .animated-bg {
             position: relative;
             z-index: 1; 
-            /* 移除實體背景色交給子元素或原本的背景處理，以防遮擋 */
         }
         .animated-bg::before {
             content: "";
@@ -124,11 +123,11 @@
             background-position: center;
             background-repeat: no-repeat;
             z-index: -1; 
-            animation: slowZoom 12s ease-in-out infinite alternate; /* 放慢一點點更優雅 */
+            animation: slowZoom 12s ease-in-out infinite alternate;
         }
         @keyframes slowZoom {
             0% { transform: scale(1); }
-            100% { transform: scale(1.25); } /* 微微縮小一點放大比例，防邊緣穿幫 */
+            100% { transform: scale(1.25); } 
         }
     </style>
 </head>
@@ -169,9 +168,9 @@
                             <span id="charCV" class="text-gray-800 dark:text-gray-200 font-bold text-base"></span>
                         </div>
                         
-                        <div class="flex items-center gap-3">
-                            <span class="font-black text-amber-800 dark:text-amber-400 shrink-0" data-i18n="info_food">🍲 喜好料理：</span>
-                            <div id="charFoodIcon"></div>
+                        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-2">
+                            <span class="font-black text-amber-800 dark:text-amber-400 shrink-0 mt-1" data-i18n="info_food">🍲 喜好料理：</span>
+                            <div id="charFoodIcon" class="flex flex-wrap gap-2 justify-center sm:justify-start"></div>
                         </div>
                         
                         <div class="flex items-center gap-3">
@@ -345,6 +344,7 @@
 
         function createBigHoverIcon(containerId, imgUrl, tooltipText) {
             const container = document.getElementById(containerId);
+            if (!container) return;
             if (!imgUrl) {
                 container.innerHTML = `<span class="text-xs text-gray-400 font-bold px-2 py-1 bg-gray-100 dark:bg-slate-700 rounded-md">無圖片</span>`;
                 return;
@@ -384,6 +384,14 @@
             }
         }
 
+        // 🌟 新增安全獲取食物圖示的輔助函式，兼容字串與物件格式
+        function getSafeFoodIconUrl(foodKey) {
+            if (typeof FOOD_ICON !== 'undefined' && FOOD_ICON[foodKey]) {
+                return typeof FOOD_ICON[foodKey] === 'object' ? FOOD_ICON[foodKey].url : FOOD_ICON[foodKey];
+            }
+            return "";
+        }
+
         function renderExtraInfo(charName) {
             const cvText = (typeof CV_MAP !== 'undefined' && CV_MAP[charName]) ? CV_MAP[charName] : "???";
             document.getElementById('charCV').innerText = cvText;
@@ -407,25 +415,59 @@
             }
             document.getElementById('charIntro').innerHTML = introText;
 
-            let foodUrl = "";
-            let rewardUrl = "";
-            let foodDisplay = "未知料理";
-            let rewardDisplay = "未知獎勵";
+            // --- 處理喜好料理 ---
+            const foodContainer = document.getElementById('charFoodIcon');
+            foodContainer.innerHTML = '';
             
+            if (typeof FOOD_MAP !== 'undefined' && FOOD_MAP[charName]) {
+                const foodData = FOOD_MAP[charName];
+
+                if (foodData === "無") {
+                    // 🌟 修改：安全讀取 FOOD_ICON 中的 "餐牌"
+                    const placeholderUrl = getSafeFoodIconUrl("餐牌") || "https://i.postimg.cc/qtwD6bsq/Icon-Present.png"; 
+                    foodContainer.innerHTML = `
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gray-50 dark:bg-slate-700 rounded-xl border-2 border-gray-300 dark:border-slate-600 shadow-inner flex items-center justify-center overflow-hidden">
+                            <img src="${placeholderUrl}" alt="無" class="w-3/4 h-3/4 object-contain opacity-50 grayscale">
+                        </div>
+                    `;
+                } else {
+                    let html = "";
+                    // 1. 渲染超級喜好 (螢光粉紅邊框)
+                    if (foodData.super) {
+                        const imgUrl = getSafeFoodIconUrl(foodData.super);
+                        html += `
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white dark:bg-slate-700 rounded-xl border-[3px] border-[#ff00ff] shadow-[0_0_8px_#ff00ff80] flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-110">
+                                ${imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-contain p-1 drop-shadow-sm">` : `<span class="text-[10px] text-gray-400">無圖</span>`}
+                            </div>
+                        `;
+                    }
+                    // 2. 渲染特別喜好 (螢光綠邊框)
+                    if (foodData.special && Array.isArray(foodData.special)) {
+                        foodData.special.forEach(foodName => {
+                            const imgUrl = getSafeFoodIconUrl(foodName);
+                            html += `
+                                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white dark:bg-slate-700 rounded-xl border-[3px] border-[#00ff00] shadow-[0_0_8px_#00ff0080] flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-110">
+                                    ${imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-contain p-1 drop-shadow-sm">` : `<span class="text-[10px] text-gray-400">無圖</span>`}
+                                </div>
+                            `;
+                        });
+                    }
+                    foodContainer.innerHTML = html;
+                }
+            } else {
+                foodContainer.innerHTML = `<span class="text-xs text-gray-400 font-bold px-2 py-1 bg-gray-100 dark:bg-slate-800 rounded-md">無資料</span>`;
+            }
+
+            // --- 處理打工獎勵 ---
+            let rewardUrl = "";
+            let rewardDisplay = "未知獎勵";
             if (typeof REWARD_MAP !== 'undefined' && REWARD_MAP[charName]) {
-                const foodKey = REWARD_MAP[charName].food;     
                 const rewardKey = REWARD_MAP[charName].reward; 
-
-                foodDisplay = getI18n(foodKey) !== foodKey ? getI18n(foodKey) : foodKey;
                 rewardDisplay = getI18n(rewardKey) !== rewardKey ? getI18n(rewardKey) : rewardKey;
-
                 if (typeof ICON_MAP !== 'undefined') {
-                    foodUrl = ICON_MAP[foodKey] || "";
                     rewardUrl = ICON_MAP[rewardKey] || "";
                 }
             }
-
-            createBigHoverIcon('charFoodIcon', foodUrl, foodDisplay);
             createBigHoverIcon('charRewardIcon', rewardUrl, rewardDisplay);
         }
 
