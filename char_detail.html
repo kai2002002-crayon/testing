@@ -417,78 +417,71 @@
 
             // --- 處理喜好料理 ---
             // --- 修正後的料理資料讀取 ---
-            const spineKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
-            const foodData = (typeof FOOD_MAP !== 'undefined') ? FOOD_MAP[spineKey] : null;
-
+           // --- 處理喜好料理 ---
             const foodContainer = document.getElementById('charFoodIcon');
             foodContainer.innerHTML = '';
 
-                if (!foodData || foodData === "無" || foodData === "餐牌") {
-                    const placeholderUrl = getSafeFoodIconUrl("餐牌") || "https://i.postimg.cc/qtwD6bsq/Icon-Present.png"; 
-                    foodContainer.innerHTML = `
-                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gray-50 dark:bg-slate-700 rounded-xl border-2 border-gray-300 dark:border-slate-600 shadow-inner flex items-center justify-center overflow-hidden">
-                            <img src="${placeholderUrl}" alt="餐牌" class="w-3/4 h-3/4 object-contain opacity-50 grayscale">
+            const spineKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
+            const foodData = (typeof FOOD_MAP !== 'undefined') ? FOOD_MAP[spineKey] : null;
+
+            if (foodData && foodData !== "無" && foodData !== "餐牌") {
+                let html = "";
+                let superFoods = [];
+                let specialFoods = [];
+
+                // 自動兼容各種常見的鍵值寫法
+                if (typeof foodData === 'object' && !Array.isArray(foodData)) {
+                    const superKeys = ['super', 'super_like', '超級', '超級喜好'];
+                    const specialKeys = ['special', 'special_like', '特別', '特別喜好'];
+
+                    superKeys.forEach(k => {
+                        if (foodData[k]) superFoods = superFoods.concat(Array.isArray(foodData[k]) ? foodData[k] : [foodData[k]]);
+                    });
+                    specialKeys.forEach(k => {
+                        if (foodData[k]) specialFoods = specialFoods.concat(Array.isArray(foodData[k]) ? foodData[k] : [foodData[k]]);
+                    });
+                }
+
+                // 渲染超級喜好
+                superFoods.forEach(foodName => {
+                    const imgUrl = getSafeFoodIconUrl(foodName);
+                    html += `
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white dark:bg-slate-700 rounded-xl border-[3px] border-[#EC407A] shadow-[0_0_8px_#ff00ff80] flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-110">
+                            ${imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-contain p-1 drop-shadow-sm">` : `<span class="text-[10px] text-gray-400 font-bold">${foodName}</span>`}
                         </div>
                     `;
-                } else {
-                    let html = "";
-                    let superFoods = [];
-                    let specialFoods = [];
+                });
 
-                    // 自動兼容各種常見的鍵值寫法 (防呆設計)
-                    if (typeof foodData === 'object' && !Array.isArray(foodData)) {
-                        const superKeys = ['super', 'super_like', '超級', '超級喜好'];
-                        const specialKeys = ['special', 'special_like', '特別', '特別喜好'];
+                // 渲染特別喜好
+                specialFoods.forEach(foodName => {
+                    const imgUrl = getSafeFoodIconUrl(foodName);
+                    html += `
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white dark:bg-slate-700 rounded-xl border-[3px] border-[#00ff00] shadow-[0_0_8px_#00ff0080] flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-110">
+                            ${imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-contain p-1 drop-shadow-sm">` : `<span class="text-[10px] text-gray-400 font-bold">${foodName}</span>`}
+                        </div>
+                    `;
+                });
 
-                        superKeys.forEach(k => {
-                            if (foodData[k]) superFoods = superFoods.concat(Array.isArray(foodData[k]) ? foodData[k] : [foodData[k]]);
-                        });
-                        specialKeys.forEach(k => {
-                            if (foodData[k]) specialFoods = specialFoods.concat(Array.isArray(foodData[k]) ? foodData[k] : [foodData[k]]);
-                        });
-                    }
-
-                    // 1. 渲染超級喜好 (螢光粉紅邊框)
-                    superFoods.forEach(foodName => {
+                // 若非 object 格式，當作陣列處理
+                if (html === "" && Array.isArray(foodData)) {
+                    foodData.forEach(foodName => {
                         const imgUrl = getSafeFoodIconUrl(foodName);
                         html += `
-                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white dark:bg-slate-700 rounded-xl border-[3px] border-[#EC407A] shadow-[0_0_8px_#ff00ff80] flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-110">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white dark:bg-slate-700 rounded-xl border-[3px] border-amber-400 shadow-sm flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-110">
                                 ${imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-contain p-1 drop-shadow-sm">` : `<span class="text-[10px] text-gray-400 font-bold">${foodName}</span>`}
                             </div>
                         `;
                     });
-
-                    // 2. 渲染特別喜好 (螢光綠邊框)
-                    specialFoods.forEach(foodName => {
-                        const imgUrl = getSafeFoodIconUrl(foodName);
-                        html += `
-                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white dark:bg-slate-700 rounded-xl border-[3px] border-[#00ff00] shadow-[0_0_8px_#00ff0080] flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-110">
-                                ${imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-contain p-1 drop-shadow-sm">` : `<span class="text-[10px] text-gray-400 font-bold">${foodName}</span>`}
-                            </div>
-                        `;
-                    });
-
-                    // 如果上面都沒配對到 (代表格式可能只是單純字串或陣列)，就當作一般顯示
-                    if (html === "") {
-                        let fallbackFoods = Array.isArray(foodData) ? foodData : [foodData];
-                        fallbackFoods.forEach(foodName => {
-                            const imgUrl = getSafeFoodIconUrl(foodName);
-                            html += `
-                                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white dark:bg-slate-700 rounded-xl border-[3px] border-amber-400 shadow-sm flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-110">
-                                    ${imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-contain p-1 drop-shadow-sm">` : `<span class="text-[10px] text-gray-400 font-bold">沒有圖片</span>`}
-                                </div>
-                            `;
-                        });
-                    }
-
-                    foodContainer.innerHTML = html;
                 }
+                
+                foodContainer.innerHTML = html;
+
             } else {
-                // 如果完全找不到這個角色的設定，直接顯示餐牌
+                // 如果找不到資料，顯示餐牌
                 const placeholderUrl = getSafeFoodIconUrl("餐牌") || "https://i.postimg.cc/qtwD6bsq/Icon-Present.png"; 
                 foodContainer.innerHTML = `
                     <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gray-50 dark:bg-slate-700 rounded-xl border-2 border-gray-300 dark:border-slate-600 shadow-inner flex items-center justify-center overflow-hidden">
-                        <img src="${placeholderUrl}" alt="無" class="w-3/4 h-3/4 object-contain opacity-50 grayscale">
+                        <img src="${placeholderUrl}" alt="餐牌" class="w-3/4 h-3/4 object-contain opacity-50 grayscale">
                     </div>
                 `;
             }
