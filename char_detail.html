@@ -1224,6 +1224,9 @@
                             canvas.style.height = '100%';
                             canvas.style.position = 'relative';
                             canvas.style.zIndex = '999'; // 畫布本體也拉到最頂層
+                            // 如果武器揮到腳下，我們把畫布向下平移，並把畫布的高度拉長
+                            canvas.style.transform = "translateY(50px)"; // 向下移 50px
+                            canvas.style.transformOrigin = "center top";
                         }
 
                         // 套用皮膚
