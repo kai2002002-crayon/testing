@@ -1160,7 +1160,7 @@
             }
         }
 
-        // 🌟 最終融合版：以紅框成功版為基礎，加入動作輪播
+        // 🌟 最終完美版：加入最高層級浮空與滑鼠穿透
         function loadSkillSpines(charName) {
             if (window.skillSpinePlayers && window.skillSpinePlayers.length > 0) {
                 window.skillSpinePlayers.forEach(p => p.dispose());
@@ -1179,35 +1179,38 @@
                 const container = document.getElementById(target.id);
                 if (!container) return;
 
-                // 🌟 延續偵錯版的成功經驗：給予明確的基礎大小，撐開 Canvas
-                container.style.minWidth = "90px";
-                container.style.minHeight = "90px";
-                container.style.display = "flex";
-                container.style.justifyContent = "center";
-                container.style.alignItems = "center";
+                // 🌟 【排版魔法】強制將小人區塊拉到最頂層
+                container.style.position = "absolute"; // 讓他脫離原本的排版，直接浮空
+                container.style.zIndex = "999";        // 數字設到超大，保證在所有文字和背景之上
+                container.style.pointerEvents = "none"; // 🌟 滑鼠穿透：讓滑鼠點擊和反白可以穿過小人，不會擋到玩家選取文字！
+                container.style.minWidth = "120px";    // 確保框框夠大
+                container.style.minHeight = "120px";
+                
+                // 依據你的版面，如果他沒有靠在右下角，可以取消下面兩行的註解：
+                // container.style.bottom = "5px"; 
+                // container.style.right = "5px";
 
                 const player = new spine.SpinePlayer(target.id, {
                     skelUrl: `./spine_sd_assets/${baseFolderKey}.skel.bytes`,
                     atlasUrl: `./spine_sd_assets/${baseFolderKey}.atlas.txt`,
-                    
-                    // 🌟 延續偵錯版的成功經驗：以 Idle 起手，讓引擎能正確算出小人的大小
                     animation: "Idle", 
                     skin: "Normal",    
                     backgroundColor: "#00000000",
                     alpha: true,
-                    premultipliedAlpha: false, // 延續偵錯版的成功參數
+                    premultipliedAlpha: false, 
                     showControls: false, 
                     showLoading: false,
-                    // 🚫 絕對不加 viewport，讓它維持自動置中！
                     
                     success: function (player) {
                         window.skillSpinePlayers.push(player);
 
-                        // 強制畫布寬高
+                        // 強制畫布寬高與層級
                         const canvas = container.querySelector('canvas');
                         if (canvas) {
                             canvas.style.width = '100%';
                             canvas.style.height = '100%';
+                            canvas.style.position = 'relative';
+                            canvas.style.zIndex = '999'; // 畫布本體也拉到最頂層
                         }
 
                         // 套用皮膚
@@ -1220,10 +1223,9 @@
                             }
                         }
 
-                        // 取得所有動作
+                        // 取得動作
                         const allAnims = player.skeleton.data.animations.map(a => a.name);
                         
-                        // 找尋對應的招式 (例如 Attack1_1)
                         const regex = new RegExp(`^${target.prefix}`, 'i'); 
                         let sequence = allAnims.filter(name => regex.test(name));
                         sequence.sort((a, b) => {
@@ -1235,12 +1237,10 @@
                         const targetAnim = sequence.length > 0 ? sequence[0] : null;
                         const hasIdle = allAnims.includes("Idle") ? "Idle" : null;
 
-                        // 如果有找到對應的招式，開始執行輪播邏輯
+                        // 輪播邏輯
                         if (targetAnim) {
-                            // 延遲 0.5 秒再放招（讓 Idle 稍微露個臉確定尺寸）
                             setTimeout(() => {
                                 if (player.skeleton) {
-                                    // 播放招式，然後把 Idle 排入等待佇列 (true 代表循環播放)
                                     player.animationState.setAnimation(0, targetAnim, false);
                                     if (hasIdle) {
                                         player.animationState.addAnimation(0, hasIdle, true, 0);
@@ -1248,7 +1248,6 @@
                                 }
                             }, 500);
 
-                            // 監聽招式是否播完，播完後休息 2 秒再打一次
                             player.animationState.addListener({
                                 complete: function(entry) {
                                     if (entry.animation.name === targetAnim) {
@@ -1271,7 +1270,6 @@
                 });
             });
         }
-
         window.changeLanguage = function(lang) {
             window.currentLang = lang;
             document.documentElement.lang = lang === "ja" ? "ja" : "zh-TW";
