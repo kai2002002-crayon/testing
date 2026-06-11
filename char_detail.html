@@ -1160,9 +1160,8 @@
             }
         }
 
-        // 🌟 最終完美版：載入技能區塊的小型戰鬥 Spine (SD小人)
+        // 🌟 最終融合版：以紅框成功版為基礎，加入動作輪播
         function loadSkillSpines(charName) {
-            // 清理舊資源
             if (window.skillSpinePlayers && window.skillSpinePlayers.length > 0) {
                 window.skillSpinePlayers.forEach(p => p.dispose());
                 window.skillSpinePlayers = [];
@@ -1180,34 +1179,38 @@
                 const container = document.getElementById(target.id);
                 if (!container) return;
 
-                // 清除紅框，保留強制大小與相對定位
-                container.style.zIndex = "50";
-                container.style.minWidth = "80px";
-                container.style.minHeight = "80px";
-                container.style.position = "relative";
+                // 🌟 延續偵錯版的成功經驗：給予明確的基礎大小，撐開 Canvas
+                container.style.minWidth = "90px";
+                container.style.minHeight = "90px";
+                container.style.display = "flex";
+                container.style.justifyContent = "center";
+                container.style.alignItems = "center";
 
                 const player = new spine.SpinePlayer(target.id, {
                     skelUrl: `./spine_sd_assets/${baseFolderKey}.skel.bytes`,
                     atlasUrl: `./spine_sd_assets/${baseFolderKey}.atlas.txt`,
+                    
+                    // 🌟 延續偵錯版的成功經驗：以 Idle 起手，讓引擎能正確算出小人的大小
+                    animation: "Idle", 
                     skin: "Normal",    
                     backgroundColor: "#00000000",
                     alpha: true,
-                    premultipliedAlpha: false, // 確保透明度正確
+                    premultipliedAlpha: false, // 延續偵錯版的成功參數
                     showControls: false, 
                     showLoading: false,
-                    // 🌟 關鍵：永遠不要加 viewport，讓 Spine 引擎自動偵測小人大小並完美置中！
+                    // 🚫 絕對不加 viewport，讓它維持自動置中！
                     
                     success: function (player) {
                         window.skillSpinePlayers.push(player);
 
-                        // 強制畫布撐滿容器
+                        // 強制畫布寬高
                         const canvas = container.querySelector('canvas');
                         if (canvas) {
-                            canvas.style.setProperty('width', '100%', 'important');
-                            canvas.style.setProperty('height', '100%', 'important');
+                            canvas.style.width = '100%';
+                            canvas.style.height = '100%';
                         }
 
-                        // 設定皮膚與初始站姿
+                        // 套用皮膚
                         const skins = player.skeleton.data.skins;
                         if (skins && skins.length > 0) {
                             const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name === 'default') || skins[0];
@@ -1217,16 +1220,10 @@
                             }
                         }
 
-                        // 🌟 智慧撈取動作名稱
+                        // 取得所有動作
                         const allAnims = player.skeleton.data.animations.map(a => a.name);
-                        console.log(`[SD小人] ${baseFolderKey} 讀取到的全部動作:`, allAnims);
-
-                        // 1. 找待機 (忽略大小寫)
-                        const hasIdle = allAnims.find(a => a.toLowerCase().includes('idle'));
-                        // 2. 找進場 (忽略大小寫)
-                        const hasSpawn = allAnims.find(a => a.toLowerCase().includes('spawn'));
-
-                        // 3. 找目標技能 (忽略大小寫)
+                        
+                        // 找尋對應的招式 (例如 Attack1_1)
                         const regex = new RegExp(`^${target.prefix}`, 'i'); 
                         let sequence = allAnims.filter(name => regex.test(name));
                         sequence.sort((a, b) => {
@@ -1235,53 +1232,38 @@
                             return numA - numB;
                         });
 
-                        // 萬一沒有對應招式，至少播個待機
-                        if (sequence.length === 0) {
-                            if (hasIdle) sequence = [hasIdle];
-                            else if (allAnims.length > 0) sequence = [allAnims[0]]; 
-                        }
+                        const targetAnim = sequence.length > 0 ? sequence[0] : null;
+                        const hasIdle = allAnims.includes("Idle") ? "Idle" : null;
 
-                        // 🌟 播放邏輯引擎
-                        if (sequence.length > 0) {
-                            let currentIndex = 0;
+                        // 如果有找到對應的招式，開始執行輪播邏輯
+                        if (targetAnim) {
+                            // 延遲 0.5 秒再放招（讓 Idle 稍微露個臉確定尺寸）
+                            setTimeout(() => {
+                                if (player.skeleton) {
+                                    // 播放招式，然後把 Idle 排入等待佇列 (true 代表循環播放)
+                                    player.animationState.setAnimation(0, targetAnim, false);
+                                    if (hasIdle) {
+                                        player.animationState.addAnimation(0, hasIdle, true, 0);
+                                    }
+                                }
+                            }, 500);
 
-                            // 破除隱形起手式
-                            if (hasSpawn) {
-                                player.animationState.setAnimation(0, hasSpawn, false);
-                                player.animationState.addAnimation(0, sequence[currentIndex], false, 0);
-                            } else {
-                                player.animationState.setAnimation(0, sequence[currentIndex], false);
-                            }
-
-                            // 播完招式馬上接待機
-                            if (hasIdle) {
-                                player.animationState.addAnimation(0, hasIdle, true, 0);
-                            }
-                            
-                            currentIndex++;
-                            if (currentIndex >= sequence.length) currentIndex = 0;
-
-                            // 循環施放技能
+                            // 監聽招式是否播完，播完後休息 2 秒再打一次
                             player.animationState.addListener({
                                 complete: function(entry) {
-                                    if (entry.trackIndex === 0 && entry.animation && sequence.includes(entry.animation.name)) {
+                                    if (entry.animation.name === targetAnim) {
                                         setTimeout(() => {
                                             if (player.skeleton) {
-                                                player.animationState.setAnimation(0, sequence[currentIndex], false);
+                                                player.animationState.setAnimation(0, targetAnim, false);
                                                 if (hasIdle) {
                                                     player.animationState.addAnimation(0, hasIdle, true, 0);
                                                 }
-                                                currentIndex++;
-                                                if (currentIndex >= sequence.length) currentIndex = 0;
                                             }
-                                        }, 2000); // 休息 2 秒再打下一招
+                                        }, 2000); 
                                     }
                                 }
                             });
                         }
-                        
-                        // 強制啟動播放器
-                        player.play();
                     },
                     error: function(player, reason) {
                         console.error(`[SD小人] ❌ 載入失敗 (${baseFolderKey}):`, reason);
