@@ -1160,13 +1160,8 @@
             }
         }
 
-        // 🌟 全新函式：載入技能區塊的小型戰鬥 Spine (SD小人)
+        // 🛑 暴力偵錯模式：載入技能區塊的小型戰鬥 Spine
         function loadSkillSpines(charName) {
-            if (window.skillSpinePlayers && window.skillSpinePlayers.length > 0) {
-                window.skillSpinePlayers.forEach(p => p.dispose());
-                window.skillSpinePlayers = [];
-            }
-
             const baseFolderKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
 
             const targets = [
@@ -1177,127 +1172,37 @@
 
             targets.forEach(target => {
                 const container = document.getElementById(target.id);
-                if (!container) return;
+                if (!container) {
+                    console.error(`[偵錯] 找不到 HTML 元素：${target.id}`);
+                    return;
+                }
 
-                // 強制容器層級與大小
-                container.style.zIndex = "50";
-                container.style.minWidth = "80px";
-                container.style.minHeight = "80px";
+                // 🚨 暴力偵錯 CSS：強制加上紅框與黃色半透明背景，確保框框有被撐開！
+                container.style.border = "3px solid red";
+                container.style.backgroundColor = "rgba(255, 255, 0, 0.3)";
+                container.style.minWidth = "150px";
+                container.style.minHeight = "150px";
+                container.style.display = "block";
                 container.style.position = "relative";
 
-                const player = new spine.SpinePlayer(target.id, {
+                new spine.SpinePlayer(target.id, {
                     skelUrl: `./spine_sd_assets/${baseFolderKey}.skel.bytes`,
                     atlasUrl: `./spine_sd_assets/${baseFolderKey}.atlas.txt`,
-                    // 🌟 核心關鍵：預設動畫強制設為 Spawn，讓小人現形！
-                    animation: "Spawn", 
+                    animation: "Idle", // 退回最簡單的 Idle
                     skin: "Normal",    
                     backgroundColor: "#00000000",
                     alpha: true,
                     premultipliedAlpha: false, 
                     showControls: false, 
-                    showLoading: false,
-                    
-                    // 攝影機視角：稍微拉近一點，以免在 80x80 的框框裡太小
-                    viewport: { 
-                        x: -500,        
-                        y: -150,        
-                        width: 1500,    
-                        height: 1500,   
-                        padLeft: "0%", padRight: "0%", padTop: "0%", padBottom: "0%",
-                        transitionTime: 0 
-                    },
+                    showLoading: true, // 🚨 強制顯示原廠 Loading 轉圈圈
+                    // 🚨 暫時完全移除 Viewport，讓 Spine 引擎「自動計算並最大化」小人尺寸
                     
                     success: function (player) {
-                        window.skillSpinePlayers.push(player);
-
-                        const canvas = container.querySelector('canvas');
-                        if (canvas) {
-                            canvas.style.setProperty('width', '100%', 'important');
-                            canvas.style.setProperty('height', '100%', 'important');
-                            canvas.style.setProperty('display', 'block', 'important');
-                            canvas.style.setProperty('background-color', 'transparent', 'important');
-                        }
-
-                        // 套用皮膚與原點
-                        const skins = player.skeleton.data.skins;
-                        if (skins && skins.length > 0) {
-                            const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name === 'default') || skins[0];
-                            if (targetSkin) {
-                                player.skeleton.setSkinByName(targetSkin.name);
-                                player.skeleton.setSlotsToSetupPose(); 
-                            }
-                        }
-
-                        const allAnims = player.skeleton.data.animations.map(a => a.name);
-                        
-                        // 尋找目標技能動作
-                        const regex = new RegExp(`^${target.prefix}`); 
-                        let sequence = allAnims.filter(name => regex.test(name));
-                        sequence.sort((a, b) => {
-                            const numA = parseInt(a.replace(/\D/g, '') || '1');
-                            const numB = parseInt(b.replace(/\D/g, '') || '1');
-                            return numA - numB;
-                        });
-
-                        if (sequence.length === 0) {
-                            if (allAnims.includes("Attack_1")) sequence = ["Attack_1"];
-                            else if (allAnims.length > 0) sequence = [allAnims[0]]; 
-                        }
-
-                        const hasIdle = allAnims.includes("Idle");
-                        const hasSpawn = allAnims.includes("Spawn");
-
-                        if (sequence.length > 0) {
-                            let currentIndex = 0;
-
-                            // 🌟 破除隱形的「連招腳本」🌟
-                            
-                            // 1. 先播放 Spawn 解除隱形 (不循環)
-                            if (hasSpawn) {
-                                player.animationState.setAnimation(0, "Spawn", false);
-                                // 2. Spawn 播完後，馬上接著播放我們要的招式 (Attack/Skill)
-                                player.animationState.addAnimation(0, sequence[currentIndex], false, 0);
-                            } else {
-                                // 如果沒有 Spawn，直接播招式
-                                player.animationState.setAnimation(0, sequence[currentIndex], false);
-                            }
-
-                            // 3. 招式播完後，馬上接回 Idle 發呆，避免消失
-                            if (hasIdle) {
-                                player.animationState.addAnimation(0, "Idle", true, 0);
-                            }
-                            
-                            currentIndex++;
-                            if (currentIndex >= sequence.length) currentIndex = 0;
-
-                            // 🌟 設置輪迴監聽器：每隔幾秒再打一次招式
-                            player.animationState.addListener({
-                                complete: function(entry) {
-                                    // 判斷：如果是招式播完了 (不是 Idle 播完)
-                                    if (entry.trackIndex === 0 && entry.animation && sequence.includes(entry.animation.name)) {
-                                        
-                                        // 延遲 2 秒後，再施放一次招式
-                                        setTimeout(() => {
-                                            if (player.skeleton) {
-                                                // 因為已經現形了，不需要再播 Spawn，直接播招式
-                                                player.animationState.setAnimation(0, sequence[currentIndex], false);
-                                                
-                                                // 播完招式再回到 Idle
-                                                if (hasIdle) {
-                                                    player.animationState.addAnimation(0, "Idle", true, 0);
-                                                }
-                                                
-                                                currentIndex++;
-                                                if (currentIndex >= sequence.length) currentIndex = 0;
-                                            }
-                                        }, 2000); // 2000毫秒 = 休息 2 秒再打
-                                    }
-                                }
-                            });
-                        }
+                        console.log(`[偵錯] ✅ ${target.id} 成功渲染，目前動作：`, player.animationState.tracks[0]?.animation?.name);
+                        player.play();
                     },
                     error: function(player, reason) {
-                        console.error(`[SD小人] ❌ 載入失敗 (${baseFolderKey}):`, reason);
+                        console.error(`[偵錯] ❌ 載入失敗 (${target.id}):`, reason);
                     }
                 });
             });
