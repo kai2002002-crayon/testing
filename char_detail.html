@@ -1182,25 +1182,29 @@
                 // 📱 偵測是否為手機螢幕 (寬度小於等於 768px)
                 const isMobile = window.innerWidth <= 768;
 
-                // 🌟 【排版魔法】強制將小人區塊拉到最頂層
+                // 🌟 【排版魔法】強制拉到最頂層與絕對定位
                 container.style.position = "absolute"; 
                 container.style.zIndex = "999";        
                 container.style.pointerEvents = "none"; 
+                
+                // 🚫 核心修正：徹底取消 translate！不要用硬推的方式排版
+                container.style.transform = "none"; 
 
-                // 🔀 雙平台獨立排版
+                // 🔀 雙平台獨立排版 (完全依賴 bottom 和 right 釘死右下角)
                 if (isMobile) {
                     // 📱 手機版設定
-                    container.style.minWidth = "250px";    // 手機螢幕小，框框稍微縮小一點
-                    container.style.minHeight = "250px";
-                    // 手機版不要推移太多，讓它貼著容器右下角
-                    container.style.transform = "translate(0px, 0px)"; 
-                    container.style.bottom = "-5px";
-                    container.style.right = "-290px"; // 稍微往右靠邊一點
+                    container.style.minWidth = "150px";    
+                    container.style.minHeight = "150px";
+                    // 緊緊吸附右下角，可微調數字 (負數代表超出邊界)
+                    container.style.bottom = "-10px";  
+                    container.style.right = "-5px";   
                 } else {
-                    // 💻 電腦版設定 (維持你原本滿意的數值)
+                    // 💻 電腦版設定
                     container.style.minWidth = "240px";    
                     container.style.minHeight = "240px";
-                    container.style.transform = "translate(375px, 0px)"; 
+                    // 電腦版同樣吸附右下角，不需要再往右推 375px 了！
+                    container.style.bottom = "-20px";  
+                    container.style.right = "10px";    
                 }
                 const desktopViewport = { 
                     x: -500, y: -150, width: 1500, height: 4500, 
