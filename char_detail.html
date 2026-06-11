@@ -1185,6 +1185,11 @@
                 container.style.pointerEvents = "none"; // 🌟 滑鼠穿透：讓滑鼠點擊和反白可以穿過小人，不會擋到玩家選取文字！
                 container.style.minWidth = "500px";    // 確保框框夠大
                 container.style.minHeight = "500px";
+
+                // 保持原有的定位設定
+                container.style.position = "absolute"; 
+                container.style.zIndex = "999";        
+                container.style.pointerEvents = "none";
                 
                 // 依據你的版面，如果他沒有靠在右下角，可以取消下面兩行的註解：
                 // container.style.bottom = "5px"; 
