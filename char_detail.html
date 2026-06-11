@@ -1193,13 +1193,15 @@
 
                 // 🔀 雙平台獨立排版
                 if (isMobile) {
-                    container.style.minWidth = "150px";    
-                    container.style.minHeight = "150px";
+                    // 🌟 核心修正：將 minWidth/minHeight 改為絕對的 width/height
+                    container.style.width = "150px";    
+                    container.style.height = "150px";
                     container.style.bottom = "-10px";  
                     container.style.right = "-5px";   
                 } else {
-                    container.style.minWidth = "240px";    
-                    container.style.minHeight = "240px";
+                    // 🌟 電腦版也同樣鎖死絕對寬高
+                    container.style.width = "240px";    
+                    container.style.height = "240px";
                     container.style.bottom = "-20px";  
                     container.style.right = "10px";    
                 }
