@@ -1178,8 +1178,7 @@
             targets.forEach(target => {
                 const container = document.getElementById(target.id);
                 if (!container) return;
-
-                // 🌟 【排版魔法】強制將小人區塊拉到最頂層
+                container.style.backgroundColor = "red";
                 container.style.position = "absolute"; // 讓他脫離原本的排版，直接浮空
                 container.style.zIndex = "999";        // 數字設到超大，保證在所有文字和背景之上
                 container.style.pointerEvents = "none"; // 🌟 滑鼠穿透：讓滑鼠點擊和反白可以穿過小人，不會擋到玩家選取文字！
