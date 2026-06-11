@@ -1187,8 +1187,8 @@
                 container.style.transform = "translate(350px, 10px)"; //第一個參數是左右，第二個是上下,正數愈大愈右愈下
                 
                 // 依據你的版面，如果他沒有靠在右下角，可以取消下面兩行的註解：
-                // container.style.bottom = "5px"; 
-                // container.style.right = "5px";
+                container.style.bottom = "5px"; 
+                container.style.right = "5px";
 
                 const player = new spine.SpinePlayer(target.id, {
                     skelUrl: `./spine_sd_assets/${baseFolderKey}.skel.bytes`,
