@@ -1096,7 +1096,7 @@
                                     ${renderUnifiedSkill(charSkillData.normalAttack.enhanced)}
                                 </div>` : ''}
                             </div>
-                            <div id="spine-attack" class="absolute bottom-2 right-2 w-20 h-20 sm:w-28 sm:h-28 pointer-events-none z-0 opacity-90 drop-shadow-md"></div>
+                            <div id="spine-attack" class="absolute bottom-2 right-2 pointer-events-none z-0 opacity-90 drop-shadow-md"></div>
                         </div>
                     `;
 
@@ -1112,7 +1112,7 @@
                                 <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.normalSkill.desc}</p>
                                 ${makeStatChips(charSkillData.normalSkill.stats)}
                             </div>
-                            <div id="spine-normal-skill" class="absolute bottom-2 right-2 w-20 h-20 sm:w-28 sm:h-28 pointer-events-none z-0 opacity-90 drop-shadow-md"></div>
+                            <div id="spine-normal-skill" class="absolute bottom-2 right-2 pointer-events-none z-0 opacity-90 drop-shadow-md"></div>
                         </div>
                     `;
 
@@ -1129,7 +1129,7 @@
                                 <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.ultimateSkill.desc}</p>
                                 ${makeStatChips(charSkillData.ultimateSkill.stats)}
                             </div>
-                            <div id="spine-ultimate-skill" class="absolute bottom-2 right-2 w-20 h-20 sm:w-28 sm:h-28 pointer-events-none z-0 opacity-90 drop-shadow-md"></div>
+                            <div id="spine-ultimate-skill" class="absolute bottom-2 right-2 pointer-events-none z-0 opacity-90 drop-shadow-md"></div>
                         </div>
                     `;
 
@@ -1178,7 +1178,6 @@
             targets.forEach(target => {
                 const container = document.getElementById(target.id);
                 if (!container) return;
-                container.style.backgroundColor = "red";
                 container.style.position = "absolute"; // 讓他脫離原本的排版，直接浮空
                 container.style.zIndex = "999";        // 數字設到超大，保證在所有文字和背景之上
                 container.style.pointerEvents = "none"; // 🌟 滑鼠穿透：讓滑鼠點擊和反白可以穿過小人，不會擋到玩家選取文字！
