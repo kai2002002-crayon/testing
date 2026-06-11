@@ -1201,7 +1201,18 @@
                     showControls: false, 
                     showLoading: false,
                     
+                    // 🌟 加上這段！固定攝影機大小，還原真實身高差
+                    viewport: { 
+                        x: -750,        // 鏡頭 X 軸偏移 (通常是 width 的一半負數)
+                        y: -150,        // 鏡頭 Y 軸偏移 (控制小人的腳底要踩在哪裡，數字越負，小人位置越高)
+                        width: 1500,    // 📸 鏡頭寬度：決定小人大小的核心！
+                        height: 1500,   // 📸 鏡頭高度：數字【越大】，小人看起來越【小】
+                        padLeft: "0%", padRight: "0%", padTop: "0%", padBottom: "0%",
+                        transitionTime: 0 
+                    },
+
                     success: function (player) {
+                        // ... 後面的程式碼完全不用動 ...
                         window.skillSpinePlayers.push(player);
 
                         // 強制畫布寬高與層級
