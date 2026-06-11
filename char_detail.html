@@ -1220,6 +1220,8 @@
                         // 強制畫布寬高與層級
                         const canvas = container.querySelector('canvas');
                         if (canvas) {
+                            // 1. 強制讓畫布不要裁切任何東西
+                            canvas.style.overflow = "visible !important";
                             canvas.style.width = '100%';
                             canvas.style.height = '100%';
                             canvas.style.position = 'relative';
