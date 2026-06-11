@@ -1179,30 +1179,30 @@
                 const container = document.getElementById(target.id);
                 if (!container) return;
 
-                // 🌟 同步跑酷的 CSS：強制容器基礎大小與層級
+                // 強制容器層級與大小
                 container.style.zIndex = "50";
                 container.style.minWidth = "80px";
                 container.style.minHeight = "80px";
                 container.style.position = "relative";
 
-                // 🌟 關鍵差異 1：使用字串 target.id 初始化播放器
                 const player = new spine.SpinePlayer(target.id, {
                     skelUrl: `./spine_sd_assets/${baseFolderKey}.skel.bytes`,
                     atlasUrl: `./spine_sd_assets/${baseFolderKey}.atlas.txt`,
-                    animation: "Idle", // 🌟 關鍵差異 2：使用你的 Idle
-                    skin: "Normal",    // 🌟 同步跑酷的 Skin
+                    // 🌟 核心關鍵：預設動畫強制設為 Spawn，讓小人現形！
+                    animation: "Spawn", 
+                    skin: "Normal",    
                     backgroundColor: "#00000000",
                     alpha: true,
-                    premultipliedAlpha: false, // 🌟 關鍵差異 3：跑酷小人是 false！
+                    premultipliedAlpha: false, 
                     showControls: false, 
                     showLoading: false,
                     
-                    // 🌟 關鍵差異 4：完全複製跑酷小人的廣角視角與零邊距設定！
+                    // 攝影機視角：稍微拉近一點，以免在 80x80 的框框裡太小
                     viewport: { 
-                        x: -800,        
-                        y: -250,        
-                        width: 1250,    
-                        height: 750,   
+                        x: -500,        
+                        y: -150,        
+                        width: 1500,    
+                        height: 1500,   
                         padLeft: "0%", padRight: "0%", padTop: "0%", padBottom: "0%",
                         transitionTime: 0 
                     },
@@ -1210,7 +1210,6 @@
                     success: function (player) {
                         window.skillSpinePlayers.push(player);
 
-                        // 🌟 關鍵差異 5：同步 index.html 的 !important 強制撐滿畫布
                         const canvas = container.querySelector('canvas');
                         if (canvas) {
                             canvas.style.setProperty('width', '100%', 'important');
@@ -1219,22 +1218,21 @@
                             canvas.style.setProperty('background-color', 'transparent', 'important');
                         }
 
-                        // 確保套用正確皮膚
+                        // 套用皮膚與原點
                         const skins = player.skeleton.data.skins;
                         if (skins && skins.length > 0) {
                             const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name === 'default') || skins[0];
                             if (targetSkin) {
                                 player.skeleton.setSkinByName(targetSkin.name);
-                                player.skeleton.setSlotsToSetupPose(); // 同步跑酷寫法
+                                player.skeleton.setSlotsToSetupPose(); 
                             }
                         }
 
                         const allAnims = player.skeleton.data.animations.map(a => a.name);
                         
-                        // 放寬搜尋條件，只要開頭符合就好 (例如 Attack1, Attack_1 都抓)
+                        // 尋找目標技能動作
                         const regex = new RegExp(`^${target.prefix}`); 
                         let sequence = allAnims.filter(name => regex.test(name));
-                        
                         sequence.sort((a, b) => {
                             const numA = parseInt(a.replace(/\D/g, '') || '1');
                             const numB = parseInt(b.replace(/\D/g, '') || '1');
@@ -1242,37 +1240,60 @@
                         });
 
                         if (sequence.length === 0) {
-                            if (allAnims.includes("Idle")) sequence = ["Idle"];
+                            if (allAnims.includes("Attack_1")) sequence = ["Attack_1"];
                             else if (allAnims.length > 0) sequence = [allAnims[0]]; 
                         }
 
+                        const hasIdle = allAnims.includes("Idle");
+                        const hasSpawn = allAnims.includes("Spawn");
+
                         if (sequence.length > 0) {
                             let currentIndex = 0;
-                            const hasIdle = allAnims.includes("Idle");
 
-                            player.animationState.addListener({
-                                complete: function(entry) {
-                                    if (entry.trackIndex === 0 && entry.animation && sequence.includes(entry.animation.name)) {
-                                        setTimeout(() => {
-                                            if (player.skeleton) {
-                                                player.animationState.setAnimation(0, sequence[currentIndex], false);
-                                                if (hasIdle) {
-                                                    player.animationState.addAnimation(0, "Idle", true, 0);
-                                                }
-                                                currentIndex++;
-                                                if (currentIndex >= sequence.length) currentIndex = 0;
-                                            }
-                                        }, 1000);
-                                    }
-                                }
-                            });
+                            // 🌟 破除隱形的「連招腳本」🌟
+                            
+                            // 1. 先播放 Spawn 解除隱形 (不循環)
+                            if (hasSpawn) {
+                                player.animationState.setAnimation(0, "Spawn", false);
+                                // 2. Spawn 播完後，馬上接著播放我們要的招式 (Attack/Skill)
+                                player.animationState.addAnimation(0, sequence[currentIndex], false, 0);
+                            } else {
+                                // 如果沒有 Spawn，直接播招式
+                                player.animationState.setAnimation(0, sequence[currentIndex], false);
+                            }
 
-                            player.animationState.setAnimation(0, sequence[currentIndex], false);
+                            // 3. 招式播完後，馬上接回 Idle 發呆，避免消失
                             if (hasIdle) {
                                 player.animationState.addAnimation(0, "Idle", true, 0);
                             }
+                            
                             currentIndex++;
                             if (currentIndex >= sequence.length) currentIndex = 0;
+
+                            // 🌟 設置輪迴監聽器：每隔幾秒再打一次招式
+                            player.animationState.addListener({
+                                complete: function(entry) {
+                                    // 判斷：如果是招式播完了 (不是 Idle 播完)
+                                    if (entry.trackIndex === 0 && entry.animation && sequence.includes(entry.animation.name)) {
+                                        
+                                        // 延遲 2 秒後，再施放一次招式
+                                        setTimeout(() => {
+                                            if (player.skeleton) {
+                                                // 因為已經現形了，不需要再播 Spawn，直接播招式
+                                                player.animationState.setAnimation(0, sequence[currentIndex], false);
+                                                
+                                                // 播完招式再回到 Idle
+                                                if (hasIdle) {
+                                                    player.animationState.addAnimation(0, "Idle", true, 0);
+                                                }
+                                                
+                                                currentIndex++;
+                                                if (currentIndex >= sequence.length) currentIndex = 0;
+                                            }
+                                        }, 2000); // 2000毫秒 = 休息 2 秒再打
+                                    }
+                                }
+                            });
                         }
                     },
                     error: function(player, reason) {
