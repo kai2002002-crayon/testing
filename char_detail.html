@@ -424,7 +424,9 @@
             const spineKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
             const foodData = (typeof FOOD_MAP !== 'undefined') ? FOOD_MAP[spineKey] : null;
 
-            if (foodData && foodData !== "無" && foodData !== "餐牌") {
+            if (!foodData || foodData === "無" || foodData === "餐牌" || (Array.isArray(foodData) && foodData.length === 0)) {
+                foodContainer.innerHTML = `<span class="text-sm text-gray-500 dark:text-gray-400 font-bold py-1">無</span>`
+            } else {
                 let html = "";
                 let superFoods = [];
                 let specialFoods = [];
@@ -476,14 +478,6 @@
                 
                 foodContainer.innerHTML = html;
 
-            } else {
-                // 如果找不到資料，顯示餐牌
-                const placeholderUrl = getSafeFoodIconUrl("餐牌") || "https://i.postimg.cc/qtwD6bsq/Icon-Present.png"; 
-                foodContainer.innerHTML = `
-                    <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gray-50 dark:bg-slate-700 rounded-xl border-2 border-gray-300 dark:border-slate-600 shadow-inner flex items-center justify-center overflow-hidden">
-                        <img src="${placeholderUrl}" alt="餐牌" class="w-3/4 h-3/4 object-contain opacity-90">
-                    </div>
-                `;
             }
 
             // --- 處理打工獎勵 ---
