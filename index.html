@@ -591,7 +591,8 @@
                                             bossTrack.style.transition = 'opacity 0.2s ease-in';
                                             bossTrack.style.opacity = '1';
                                             
-                                            try { bossPlayer.animationState.setAnimation(0, "Move", true); } catch(e){}
+                                            try { bossPlayer.animationState.setAnimation(0, "Spawn", true); } catch(e){}
+                                            bossplayer.animationState.addAnimation(0, "Idle", true, 0);
 
                                             let bossRunAnimation = bossTrack.animate([
                                                 { transform: 'translateX(0)' },
