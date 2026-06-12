@@ -568,20 +568,20 @@
                                 // (如果確定跑道有出來但沒圖案，可以把上面這行註解拿掉來觀察)
 
                                 currentBossPlayer = new spine.SpinePlayer("bossRunnerContainer", {
-                                        skelUrl: `./spine_sd_assets/${bossKey}.skel.bytes`,
-                                        atlasUrl: `./spine_sd_assets/${bossKey}.atlas.txt`,
-                                        backgroundColor: "#00000000", alpha: true, premultipliedAlpha: false, showControls: false, showLoading: false,
-                                        // 🌟 修改這裡：將 Viewport 的 y 座標微調，並加大寬度
-                                        viewport: { 
-                                            x: 0, 
-                                            y: -100, 
-                                            width: 1000, 
-                                            height: 1000, 
-                                            padLeft: "0%", padRight: "0%", padTop: "0%", padBottom: "0%", 
-                                            transitionTime: 0 
-                                        },
-
+                                    skelUrl: `./spine_sd_assets/${bossKey}.skel.bytes`,
+                                    atlasUrl: `./spine_sd_assets/${bossKey}.atlas.txt`,
+                                    backgroundColor: "#00000000", alpha: true, premultipliedAlpha: false, showControls: false, showLoading: false,
+                                    
+                                    // 🌟 暴力修正：把 Viewport 強制鎖在小人區域，且不使用負數偏移
+                                    viewport: { 
+                                        x: 0, y: 0, 
+                                        width: 0, height: 0, // 設為 0 會讓 Player 自動適應內容 (Auto Fit)
+                                        padLeft: "0%", padRight: "0%", padTop: "0%", padBottom: "0%", 
+                                        transitionTime: 0 
+                                    },
+                                    
                                     success: function (bossPlayer) {
+                                        console.log("✅ 💀 BOSS 成功執行 Success 回調");
                                         const canvas = document.querySelector("#bossRunnerContainer canvas");
                                         if (canvas) {
                                             canvas.style.width = "100%";
@@ -592,7 +592,10 @@
                                         try {
                                             const bossSkins = bossPlayer.skeleton.data.skins.map(s => s.name);
                                             console.log("👕 BOSS 可用 Skin：", bossSkins);
-                                            
+                                            try {
+                                            bossPlayer.skeleton.setToSetupPose();
+
+
                                             // 優先順序：default -> Naive (看起來比較像預設) -> 隨機挑一個
                                             let skinToUse = bossSkins.includes('default') ? 'default' : 
                                                             (bossSkins.includes('Skin_Naive') ? 'Skin_Naive' : bossSkins[0]);
