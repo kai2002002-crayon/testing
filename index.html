@@ -48,17 +48,15 @@
             z-index: 100;
         }
 
-        /* 測試用：給 BOSS 容器一個紅框，如果沒框，代表 DIV 根本沒渲染出來 */
         #bossRunnerContainer {
             width: 100% !important;
             height: 100% !important;
             display: block !important;
-            border: 2px dashed red !important; 
-            z-index: 200 !important;
+            z-index: 105 !important;
             pointer-events: none;
         }
 
-        #bossRunnerContainer canvas {
+        #topRunnerContainer canvas, #bossRunnerContainer canvas {
             width: 100% !important;
             height: 100% !important;
             display: block !important;
@@ -451,7 +449,7 @@
 
             const isMobile = window.innerWidth <= 768;
             
-            // 🌟 修正 2：找回丟失的右側定位，讓起點和終點回到正確位置
+            // 🌟 右側定位
             const startRightOffset = isMobile ? '-140px' : '-110px'; 
             track.style.right = startRightOffset; 
             bossTrack.style.right = isMobile ? '-240px' : '-210px'; // BOSS 從更後面的地方追出
@@ -494,6 +492,7 @@
 
             const runDuration = isMobile ? 6000 : 14000; 
 
+            // 1️⃣ 載入前面逃跑的小人
             currentRunnerPlayer = new spine.SpinePlayer("topRunnerContainer", {
                 skelUrl: `./spine_sd_assets/${folderKey}.skel.bytes`,
                 atlasUrl: `./spine_sd_assets/${folderKey}.atlas.txt`,
@@ -504,7 +503,6 @@
                     loader.remove(); 
                     console.log(`🏃 跑酷小人進場：${charName}${isBossEvent ? " (💀 警告：雷內瓦即將出現！)" : ""}`);
                     
-                    // 🌟 修正 1：完美還原備份檔的防呆保護，避免小人沒穿衣服或缺件
                     try {
                         const skins = player.skeleton.data.skins;
                         if (skins && skins.length > 0) {
@@ -555,54 +553,36 @@
                             ], { duration: runDuration, fill: 'forwards' });
 
                             // ==========================================
-                            // 💀 BOSS 追逐戰邏輯分支 (除錯特化版)
+                            // 💀 BOSS 追逐戰邏輯分支
                             // ==========================================
                             if (isBossEvent) {
-                                // 💡 確保這裡的名稱和你 data_core.js 的屬性名稱完全一致
                                 const bossKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP['R41雷內瓦'] ? SPINE_MAP['R41雷內瓦'] : 'R41雷內瓦';
-                                
                                 console.log(`🔍 正在嘗試載入 BOSS 檔案：./spine_sd_assets/${bossKey}.skel.bytes`);
-
-                                // 🔴 除錯用：給 BOSS 跑道加上紅色半透明底色，測試 DOM 有沒有在移動
-                                // bossTrack.style.backgroundColor = "rgba(255, 0, 0, 0.2)"; 
-                                // (如果確定跑道有出來但沒圖案，可以把上面這行註解拿掉來觀察)
 
                                 currentBossPlayer = new spine.SpinePlayer("bossRunnerContainer", {
                                     skelUrl: `./spine_sd_assets/${bossKey}.skel.bytes`,
                                     atlasUrl: `./spine_sd_assets/${bossKey}.atlas.txt`,
                                     backgroundColor: "#00000000", alpha: true, premultipliedAlpha: false, showControls: false, showLoading: false,
                                     
-                                    // 🌟 暴力修正：把 Viewport 強制鎖在小人區域，且不使用負數偏移
+                                    // 🌟 重大修復：讓 BOSS 的視角完全繼承前面小人的視角，避免縮放比例崩壞變成 0
                                     viewport: { 
-                                        x: 0, y: 0, 
-                                        width: 0, height: 0, // 設為 0 會讓 Player 自動適應內容 (Auto Fit)
+                                        x: -800, y: -250, 
+                                        width: 2500, height: 1500, 
                                         padLeft: "0%", padRight: "0%", padTop: "0%", padBottom: "0%", 
                                         transitionTime: 0 
                                     },
                                     
                                     success: function (bossPlayer) {
-                                        console.log("✅ 💀 BOSS 成功執行 Success 回調");
-                                        const canvas = document.querySelector("#bossRunnerContainer canvas");
-                                        if (canvas) {
-                                            canvas.style.width = "100%";
-                                            canvas.style.height = "100%";
-                                        }
                                         console.log("✅ 💀 BOSS Spine 檔案載入成功！");
 
+                                        // 確保 Skin 正常穿上
                                         try {
                                             const bossSkins = bossPlayer.skeleton.data.skins.map(s => s.name);
-                                            console.log("👕 BOSS 可用 Skin：", bossSkins);
-                                            try {
-                                            bossPlayer.skeleton.setToSetupPose();
-
-
-                                            // 優先順序：default -> Naive (看起來比較像預設) -> 隨機挑一個
                                             let skinToUse = bossSkins.includes('default') ? 'default' : 
                                                             (bossSkins.includes('Skin_Naive') ? 'Skin_Naive' : bossSkins[0]);
                                             
                                             bossPlayer.skeleton.setSkinByName(skinToUse);
                                             bossPlayer.skeleton.setSlotsToSetupPose();
-                                            console.log(`🎨 BOSS 成功套用 Skin: ${skinToUse}`);
                                         } catch (e) {
                                             console.warn("BOSS 換裝發生異常，維持預設：", e);
                                         }
@@ -611,8 +591,7 @@
                                             bossTrack.style.transition = 'opacity 0.2s ease-in';
                                             bossTrack.style.opacity = '1';
                                             
-                                            // 播放移動動作 (已從你提供的清單確認為 "Move")
-                                            try { bossPlayer.animationState.setAnimation(0, "Move", true); } catch(e){ console.error("❌ 播放 Move 失敗", e); }
+                                            try { bossPlayer.animationState.setAnimation(0, "Move", true); } catch(e){}
 
                                             let bossRunAnimation = bossTrack.animate([
                                                 { transform: 'translateX(0)' },
@@ -695,12 +674,11 @@
 
                                         }, 1500); 
                                     },
-                                    // 🌟 加入報錯捕獲，如果是 404 找不到檔案這裡會顯示！
                                     error: function (bossPlayer, reason) {
                                         console.error("❌ 💀 BOSS 檔案載入失敗！原因：", reason);
                                     }
                                 });
-                            }
+                            } 
                             // ==========================================
                             // 🕊️ 正常沒事發生的和平邏輯
                             // ==========================================
@@ -728,40 +706,33 @@
                 }
             });
         }
+        
         // 📝 建立一個記憶清單，記住哪些角色已經預載過了
         const preloadedSpines = new Set(); 
 
         function preloadSpineAssets(charName) {
-            // 💡 檢查機制：如果這個角色已經預載過了，就直接跳過，不浪費效能！
             if (preloadedSpines.has(charName)) return;
             
             const spineKey = SPINE_MAP[charName]; 
             if (!spineKey) return;
 
-            // 取得該角色預設服裝的路徑
             const basePath = `./spine_assets/${spineKey}/${spineKey}`;
 
-            // 偷偷在背景抓取檔案，寫入瀏覽器快取 (Cache)
             fetch(`${basePath}.png`, { mode: 'no-cors' }); 
             fetch(`${basePath}.skel.bytes`, { mode: 'no-cors' });
             fetch(`${basePath}.atlas.txt`, { mode: 'no-cors' });
 
-            // 幫這個角色打勾，加進記憶清單中
             preloadedSpines.add(charName);
-            // 您可以按 F12 看看滑鼠滑過時，有沒有成功觸發這行字
-            console.log(`🚀 已在背景悄悄預載了 ${charName} 的動畫檔案！`);
         }
         
         window.currentLang = localStorage.getItem('user_lang') || "zh-TW";
         document.getElementById('langSelect').value = currentLang;
 
-        // 💡 強化版翻譯函數：加入 .trim() 去除多餘空白，並防止字典找不到時出錯
         function t(key) {
             if (!key) return key;
             const lang = window.currentLang || 'zh-TW';
-            const cleanKey = String(key).trim(); // 自動清除字尾多餘的空白
+            const cleanKey = String(key).trim(); 
             
-            // 防呆機制：如果選擇了沒有字典的語言（如 en），預設拿 zh-TW 的翻譯來墊檔
             const safeLang = (typeof LANG_DICT !== 'undefined' && LANG_DICT[lang]) ? lang : 'zh-TW';
             
             if (typeof LANG_DICT !== 'undefined' && LANG_DICT[safeLang] && LANG_DICT[safeLang][cleanKey]) {
@@ -770,13 +741,11 @@
             return cleanKey; 
         }
 
-        // 💡 強化版語言切換：防止讀取 official_x_url 時當機
         function changeLanguage(lang) {
             window.currentLang = lang; 
             localStorage.setItem('user_lang', lang);
             document.documentElement.lang = lang === "ja" ? "ja" : "zh-TW"; 
 
-            // 取得安全字典 (避開 en 導致的 undefined 錯誤)
             const safeLang = (typeof LANG_DICT !== 'undefined' && LANG_DICT[lang]) ? lang : 'zh-TW';
             const dict = typeof LANG_DICT !== 'undefined' ? LANG_DICT[safeLang] : {};
             const statusText = document.getElementById('authStatusText');
@@ -785,7 +754,6 @@
             }
             document.title = t('app_title') || dict.app_title || "嘟嘟臉金蠟筆記事本";
             
-            // 替換靜態標籤
             document.querySelectorAll('[data-lang-key]').forEach(el => {
                 const key = el.getAttribute('data-lang-key');
                 if (dict[key]) {
@@ -796,14 +764,12 @@
             const searchInput = document.getElementById('searchInput');
             if (searchInput) searchInput.placeholder = t('filter_search_placeholder') || dict.filter_search_placeholder || "搜尋坨坨...";
 
-            // 🌟 修改這裡：如果 dict.official_x_url 找不到，會給預設值，不會再報錯當機！
             const xLink = document.getElementById('dynamicXLink');
             if (xLink) {
                 xLink.href = dict.official_x_url || "https://x.com/trickcal_TW";
                 xLink.innerText = dict.x_label || "台港澳服官方X";
             }
 
-            // 重新繪製動態畫面 (現在它絕對能順利執行到了！)
             if (typeof INITIAL_DATA !== 'undefined') {
                 buildFilterPanel();
                 renderMatrix();
@@ -814,9 +780,7 @@
                 updateAuthButtonUI(currentUser);
             }
         }
-        // ==========================================
-        // 深色模式初始化與切換邏輯
-        // ==========================================
+
         let isDarkMode = localStorage.getItem('theme') === 'dark';
         if (isDarkMode) {
             document.documentElement.classList.add('dark');
@@ -841,7 +805,6 @@
         }
         window.addEventListener('load', () => {
             document.getElementById('loader').style.display = 'none';
-            // 🚀 在畫面載入完成時，順便啟動頂部跑酷小人
             initTopRunner();
         });
     </script>
@@ -876,14 +839,12 @@
             savedStates = {}; 
         }
 
-        // 修改後的 activeFilters (所有類別改為陣列)
         let activeFilters = { 
             personality: [], race: [], position: [], job: [], 
             gridLayer: "all", gridType: [], search: "", displayMode: "all" 
         };
         let isFilterOpen = true;
 
-        // 螢幕大於或等於 768px (平板/電腦) 預設為開啟；小於 768px (手機) 預設為關閉
         let isStatsOpen = window.innerWidth >= 768;
 
         let db = null, auth = null, currentUser = null;
@@ -923,7 +884,6 @@
             calculateStats();
         }
 
-        // 修改 OwnershipUI 來對應新的 char-avatar-container
         function updateOwnershipUI(charName) {
             const container = document.getElementById(`avatar_container_${charName}`);
             const fallAvatar = document.getElementById(`fall_av_${charName}`);
@@ -1017,7 +977,6 @@
                 if (layerStatBox) layerStatBox.innerHTML = html;
             });
 
-            // 💡 優化5: 將本機存檔的錯誤捕捉從雲端存檔中分離
             try {
                 localStorage.setItem(storageKey, JSON.stringify(savedStates));
             } catch(e) {
@@ -1149,29 +1108,25 @@
         function selectFilter(category, value) {
             const btnAll = document.getElementById(`btn_filter_${category}_all`);
     
-            // 如果點擊「全部」
             if (value === "") {
                 activeFilters[category] = [];
                 btnAll.className = btnActiveStyle;
-                // 把該類別的其他按鈕設為未選
                 document.querySelectorAll(`[id^='btn_filter_${category}_']`).forEach(btn => {
                     if(btn.id !== btnAll.id) btn.className = btnInactiveStyle;
                 });
             } else {
-                // 多選邏輯
                 btnAll.className = btnInactiveStyle;
                 const index = activeFilters[category].indexOf(value);
                 const btn = document.getElementById(`btn_filter_${category}_${value}`);
         
                 if (index > -1) {
-                    activeFilters[category].splice(index, 1); // 已選則移除
+                    activeFilters[category].splice(index, 1);
                     btn.className = btnInactiveStyle;
                 } else {
-                    activeFilters[category].push(value); // 未選則加入
+                    activeFilters[category].push(value); 
                     btn.className = btnActiveStyle;
                 }
         
-                // 如果全部取消選取，則自動回到「全部」狀態
                 if (activeFilters[category].length === 0) {
                     btnAll.className = btnActiveStyle;
                 }
@@ -1209,13 +1164,11 @@
 
         function applyFilterUI() {
             INITIAL_DATA.forEach(char => {
-                // 陣列長度為 0 表示全選，否則檢查是否包含該特徵
                 const matchP = activeFilters.personality.length === 0 || activeFilters.personality.includes(char.personality);
                 const matchR = activeFilters.race.length === 0 || activeFilters.race.includes(char.race);
                 const matchPos = activeFilters.position.length === 0 || activeFilters.position.includes(char.position);
                 const matchJ = activeFilters.job.length === 0 || activeFilters.job.includes(char.job);
         
-                // gridType 同理也改為陣列檢查 (選多種屬性代表包含其一即可)
                 let matchGrid = true;
                 if (activeFilters.gridType.length > 0) {
                     const layersToSearch = activeFilters.gridLayer === "all" ? [1,2,3] : [parseInt(activeFilters.gridLayer)];
@@ -1314,7 +1267,6 @@
                     const detailBtn = document.createElement('button');
                     detailBtn.onclick = () => window.open(`char_detail.html?char=${encodeURIComponent(char.name)}`, '_blank');
 
-                    // 💡 動態隱藏邏輯：如果是英文版 (en)，則加入 hidden 類別
                     const displayClass = (window.currentLang === 'en') ? 'hidden' : 'flex';
 
                     detailBtn.className = `w-8 sm:w-10 shrink-0 ${displayClass} items-center justify-center bg-amber-500/10 hover:bg-amber-300 dark:bg-gray-700/50 dark:hover:bg-gray-600 border-r border-amber-200/50 dark:border-gray-600 transition-colors cursor-pointer group`;
@@ -1446,9 +1398,6 @@
             applyFilterUI();
         }
 
-        // ==========================================
-        // 📊 Firebase 總次數更新機制
-        // ==========================================
         function updateVisitCount() {
             if (!db) return;
             const countRef = db.collection("metadata").doc("site_stats");
@@ -1471,18 +1420,13 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             try {
-                // 1. 防呆檢查：確認核心資料是否有成功載入
                 if (typeof INITIAL_DATA === 'undefined') {
                     throw new Error("找不到 INITIAL_DATA，請確認 data_core.js 是否載入成功！");
                 }
 
-                // 2. 初始化存檔狀態
                 initStates();
-                
-                // 3. 啟動翻譯 (這行會自動觸發 renderMatrix, buildFilterPanel 等畫面渲染，不用再寫第二次)
                 changeLanguage(currentLang);
                 
-                // 4. 處理統計面板預設的收起/展開狀態
                 if (!isStatsOpen) {
                     const body = document.getElementById("statsPanelBody");
                     const icon = document.getElementById("statsToggleIcon");
@@ -1542,7 +1486,6 @@
         try {
             if (typeof firebase !== 'undefined') {
                 const firebaseConfig = {
-                    /* 💡 資安小提醒：請至 Google Cloud / Firebase 後台，將這組 API Key 設定 HTTP 網域限制，避免他人盜用配額 */
                     apiKey: "AIzaSyDhv8D2pY_0M56UJrDTQw0RGPHA-BkXU8Y",
                     authDomain: "crayon-note.firebaseapp.com",
                     projectId: "crayon-note",
@@ -1552,24 +1495,21 @@
                     measurementId: "G-M1EJPE12TE"
                 };
                 
-                // 💡 優化2: 檢查是否已經初始化過，避免重複初始化導致報錯
                 if (!firebase.apps.length) {
                     firebase.initializeApp(firebaseConfig);
                 } else {
-                    firebase.app(); // 如果已存在，直接取用
+                    firebase.app(); 
                 }
 
                 db = firebase.firestore();
                 auth = firebase.auth();
 
-                // 呼叫更新人次
                 updateVisitCount();
 
                 auth.onAuthStateChanged(user => {
                     updateAuthButtonUI(user); 
                     if (user) {
                         currentUser = user;
-                        // 修改後的 JavaScript 渲染邏輯
                         document.getElementById('userStatus').innerHTML = `
                             <span id="authStatusText" class="block font-bold text-green-700 dark:text-green-500 whitespace-nowrap" data-i18n="auth_online_title">
                                 ${t('auth_online_title')}
@@ -1601,20 +1541,14 @@
             console.error("Firebase 初始化被阻擋:", e);
         }
 
-        // ==========================================
-        // 🌟 自動輪播定時器 (每 3 秒漸變切換)
-        // ==========================================
         setInterval(() => {
             document.body.classList.toggle('swap-avatars');
         }, 3000);
-        // ==========================================
-        // 🌟 跑馬燈智慧判斷 (字數過長才滾動)
-        // ==========================================
+
         function checkMarquee(card, isHover) {
             const box = card.querySelector('.marquee-box');
             const content = card.querySelector('.marquee-content');
             if (box && content) {
-                // 如果是滑鼠移入，且「文字實際寬度 (scrollWidth)」大於「容器寬度 (clientWidth)」，才掛上動畫
                 if (isHover && box.scrollWidth > box.clientWidth) {
                     content.style.animation = 'text-marquee 3.5s linear infinite alternate';
                 } else {
@@ -1639,7 +1573,6 @@
                 return;
             }
 
-            // 🌟 插入金蠟筆
             const rimContainer = document.getElementById("rim-live-container");
             const loader = document.createElement('div');
             loader.className = 'spine-loader-crayon';
@@ -1648,37 +1581,31 @@
             new spine.SpinePlayer("rim-live-container", {
                 skelUrl: "Rim.skel.bytes",
                 atlasUrl: "Rim.atlas.txt",
-                alpha: true,                 // 允許背景透明
+                alpha: true,                 
                 backgroundColor: "#00000000",
-                showControls: false,         // 隱藏下方控制列
+                showControls: false,         
                 premultipliedAlpha: false,
                 skin: "Normal",
-                animation: "Happy_4",        // 初始預設動畫
-                showLoading: false,          // 🚫 關閉原廠圖案
+                animation: "Happy_4",        
+                showLoading: false,          
                 viewport: { 
-                    transitionTime: 0        // 關閉相機過渡，防止切換動畫時畫面亂跳
+                    transitionTime: 0        
                 },
         
                 success: function (player) {
-                    loader.remove(); // 🌟 載入成功後移除金蠟筆
+                    loader.remove(); 
                     console.log("Spine 載入成功，準備輪播動畫！");
                     
                     const animations = ["Happy_4", "Pat_End", "Tickle_Idle_2"];
-                    let currentIndex = 1; // 因為初始化已經播了第一個，從第二個開始輪替
+                    let currentIndex = 1; 
 
                     function playNextAnimation() {
                         const nextAnim = animations[currentIndex % animations.length];
-                        
-                        // 1. 先將骨架強制歸零回到原點，防止帶有「位移」的動畫讓角色默默走出畫面外
                         player.skeleton.setToSetupPose(); 
-                        
-                        // 2. 單純下達切換動畫的指令，剩下的更新與渲染交給 Player 內部引擎自己處理
                         player.animationState.setAnimation(0, nextAnim, true);
-                        
                         currentIndex++;
                     }
             
-                   // 每 5 秒無縫切換一次動畫
                    setInterval(playNextAnimation, 5000);
                 }, 
         
@@ -1689,11 +1616,8 @@
         });
     </script>
     <script>
-        // ==========================================
-        // 🖍️ 金蠟筆收集系統 (跑道互動)
-        // ==========================================
-        const runnerAreaId = 'runnerArea'; // 我們在步驟1加的外層容器
-        const chibiId = 'runnerTrack';     // 你原本會移動的小人容器
+        const runnerAreaId = 'runnerArea'; 
+        const chibiId = 'runnerTrack';     
 
         let activeCrayons = [];
 
@@ -1704,19 +1628,16 @@
             const crayon = document.createElement('div');
             crayon.className = 'track-crayon';
             
-            // 隨機生成在畫面的 X 軸位置 (15% 到 85% 之間，避免太靠邊緣)
             const randomX = Math.floor(Math.random() * 70) + 15;
             crayon.style.left = `${randomX}%`;
             
             area.appendChild(crayon);
             activeCrayons.push(crayon);
 
-            // 稍微延遲後淡入 (產生平滑出現的感覺)
             requestAnimationFrame(() => {
                 crayon.style.opacity = '1';
             });
 
-            // 隨機 5 到 12 秒生成下一支蠟筆
             const nextSpawnTime = Math.random() * 7000 + 5000;
             setTimeout(spawnCrayonOnTrack, nextSpawnTime);
         }
@@ -1724,45 +1645,31 @@
         function checkCrayonCollision() {
             const chibi = document.getElementById(chibiId);
             
-            // 💡 優化1：移除耗能的 getComputedStyle，直接讀取 inline style 判斷顯示狀態
             const isChibiVisible = chibi && chibi.style.opacity === '1';
 
             if (isChibiVisible && activeCrayons.length > 0) {
-                // 取得小人當下在畫面中的精準座標
                 const chibiRect = chibi.getBoundingClientRect();
-                // 抓取小人的中心點 (可以稍微往左偏移一點點，對齊小人的臉)
                 const chibiCenterX = chibiRect.left + (chibiRect.width / 2) - 20;
 
                 activeCrayons.forEach((crayon, index) => {
                     const crayonRect = crayon.getBoundingClientRect();
                     const crayonCenterX = crayonRect.left + (crayonRect.width / 2);
 
-                    // 計算 X 軸距離
                     const distance = Math.abs(chibiCenterX - crayonCenterX);
 
-                    // 碰撞判定：距離小於 45px 視為吃到蠟筆
                     if (distance < 45) {
-                        // 播放吃掉的特效
                         crayon.classList.add('crayon-collected');
-                        
-                        // 從陣列中移除，不再判定碰撞
                         activeCrayons.splice(index, 1);
-
-                        // 特效播完後徹底移除 DOM 元素
                         setTimeout(() => {
                             crayon.remove();
                         }, 600);
                     }
                 });
             }
-
-            // 無限循環持續偵測
             requestAnimationFrame(checkCrayonCollision);
         }
 
-        // 啟動系統
         window.addEventListener('load', () => {
-            // 延遲 4 秒後生成第一支蠟筆，配合小人進場
             setTimeout(spawnCrayonOnTrack, 4000);
             requestAnimationFrame(checkCrayonCollision);
         });
