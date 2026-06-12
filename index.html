@@ -589,22 +589,44 @@
                                 const bossKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP['R41雷內瓦'] ? SPINE_MAP['R41雷內瓦'] : 'R41雷內瓦';
                                 console.log(`🔍 正在嘗試載入 BOSS 檔案：./spine_sd_assets/${bossKey}.skel.bytes`);
 
+                                // 替換原本 currentBossPlayer 的初始化區塊
                                 currentBossPlayer = new spine.SpinePlayer("bossRunnerContainer", {
                                     skelUrl: `./spine_sd_assets/${bossKey}.skel.bytes`,
                                     atlasUrl: `./spine_sd_assets/${bossKey}.atlas.txt`,
-                                    backgroundColor: "#00000000", alpha: true, premultipliedAlpha: true, 
-                                    showControls: false, 
+                                    animation: "Move", // 設置初始動畫
+                                    alpha: true,
+                                    premultipliedAlpha: false, // 絕大多數 .atlas 使用此設定，若顯示黑框請改回 true
+                                    showControls: false,
                                     showLoading: false,
-                                    
-                                    // 重新設定攝影機範圍
                                     viewport: { 
-                                        x: -1100, 
-                                        y: -350,  
-                                        width: 2200, 
-                                        height: 2200, 
-                                        padLeft: "0%", padRight: "0%", padTop: "0%", padBottom: "0%", 
+                                        x: -1100, y: -350, width: 2200, height: 2200, 
                                         transitionTime: 0 
                                     },
+                                    success: function (bossPlayer) {
+                                        console.log("✅ 💀 BOSS 載入成功");
+        
+                                        // 【關鍵優化】確保 Skeleton 物件存在並執行一次骨架更新
+                                        if (bossPlayer.skeleton) {
+                                            bossPlayer.skeleton.setToSetupPose();
+                                            bossPlayer.skeleton.updateWorldTransform();
+                                        }
+
+                                        // 【關鍵優化】強制啟動播放器
+                                        bossPlayer.play();
+        
+                                        // 延遲執行動畫，確保渲染器已經完成初始化
+                                        setTimeout(() => {
+                                            bossTrack.style.opacity = '1';
+            
+                                            // 使用你的確切名稱進行播放
+                                            if (bossPlayer.animationState) {
+                                                bossPlayer.animationState.setAnimation(0, "Move", true);
+                                            }
+            
+                                            bossRunAnimation = bossTrack.animate([
+                                                { transform: 'translateX(0)' },
+                                                { transform: `translateX(calc(-100vw + ${endLeftPos}))` }
+                                            ], { duration: runDuration / 2, fill: 'forwards' });
                                     
                                     success: function (bossPlayer) {
                                         console.log("✅ 💀 BOSS 載入成功，開始追逐！");
