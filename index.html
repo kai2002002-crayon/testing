@@ -539,31 +539,51 @@
                             ], { duration: runDuration, fill: 'forwards' });
 
                             // ==========================================
-                            // 💀 BOSS 追逐戰邏輯分支
+                            // 💀 BOSS 追逐戰邏輯分支 (除錯特化版)
                             // ==========================================
                             if (isBossEvent) {
-                                const bossKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP['R41雷內瓦'] ? SPINE_MAP['R41雷內瓦'] : 'R41';
+                                // 💡 確保這裡的名稱和你 data_core.js 的屬性名稱完全一致
+                                const bossKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP['R41雷內瓦'] ? SPINE_MAP['R41雷內瓦'] : 'R41雷內瓦';
                                 
+                                console.log(`🔍 正在嘗試載入 BOSS 檔案：./spine_sd_assets/${bossKey}.skel.bytes`);
+
+                                // 🔴 除錯用：給 BOSS 跑道加上紅色半透明底色，測試 DOM 有沒有在移動
+                                // bossTrack.style.backgroundColor = "rgba(255, 0, 0, 0.2)"; 
+                                // (如果確定跑道有出來但沒圖案，可以把上面這行註解拿掉來觀察)
+
                                 currentBossPlayer = new spine.SpinePlayer("bossRunnerContainer", {
                                     skelUrl: `./spine_sd_assets/${bossKey}.skel.bytes`,
                                     atlasUrl: `./spine_sd_assets/${bossKey}.atlas.txt`,
                                     backgroundColor: "#00000000", alpha: true, premultipliedAlpha: false, showControls: false, showLoading: false,
-                                    // 加入相同的 pad 確保比例一致
+                                    // 調整 Viewport，預防 BOSS 體型較大跑到畫面外
                                     viewport: { x: -800, y: -250, width: 2500, height: 1500, padLeft: "0%", padRight: "0%", padTop: "0%", padBottom: "0%", transitionTime: 0 },
+                                    
                                     success: function (bossPlayer) {
+                                        console.log("✅ 💀 BOSS Spine 檔案載入成功！");
+
+                                        // 💡 防呆優化：很多 BOSS 沒有 "Normal" 造型，如果找不到就乾脆不要強制換 Skin，避免變形或隱形
                                         try {
-                                            const bossSkins = bossPlayer.skeleton.data.skins;
-                                            if (bossSkins && bossSkins.length > 0) {
-                                                const bSkin = bossSkins.find(s => s.name === 'Normal') || bossSkins[0];
-                                                if (bSkin) { bossPlayer.skeleton.setSkinByName(bSkin.name); bossPlayer.skeleton.setSlotsToSetupPose(); }
+                                            const bossSkins = bossPlayer.skeleton.data.skins.map(s => s.name);
+                                            console.log("👕 BOSS 可用 Skin：", bossSkins);
+                                            
+                                            if (bossSkins.includes('Normal')) {
+                                                bossPlayer.skeleton.setSkinByName('Normal');
+                                                bossPlayer.skeleton.setSlotsToSetupPose();
+                                            } else if (bossSkins.includes('default')) {
+                                                bossPlayer.skeleton.setSkinByName('default');
+                                                bossPlayer.skeleton.setSlotsToSetupPose();
                                             }
-                                        } catch (e) {}
+                                            // 如果都沒有，就讓 Spine 引擎使用她預設的樣子
+                                        } catch (e) {
+                                            console.warn("BOSS 換裝發生異常，維持預設：", e);
+                                        }
 
                                         setTimeout(() => {
                                             bossTrack.style.transition = 'opacity 0.2s ease-in';
                                             bossTrack.style.opacity = '1';
-                                            // 套用你剛剛備份提供的正確名稱
-                                            try { bossPlayer.animationState.setAnimation(0, "Move", true); } catch(e){}
+                                            
+                                            // 播放移動動作 (已從你提供的清單確認為 "Move")
+                                            try { bossPlayer.animationState.setAnimation(0, "Move", true); } catch(e){ console.error("❌ 播放 Move 失敗", e); }
 
                                             let bossRunAnimation = bossTrack.animate([
                                                 { transform: 'translateX(0)' },
@@ -645,9 +665,13 @@
                                             chaseLoopId = requestAnimationFrame(checkCollision);
 
                                         }, 1500); 
+                                    },
+                                    // 🌟 加入報錯捕獲，如果是 404 找不到檔案這裡會顯示！
+                                    error: function (bossPlayer, reason) {
+                                        console.error("❌ 💀 BOSS 檔案載入失敗！原因：", reason);
                                     }
                                 });
-                            } 
+                            }
                             // ==========================================
                             // 🕊️ 正常沒事發生的和平邏輯
                             // ==========================================
