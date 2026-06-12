@@ -561,19 +561,17 @@
                                     success: function (bossPlayer) {
                                         console.log("✅ 💀 BOSS Spine 檔案載入成功！");
 
-                                        // 💡 防呆優化：很多 BOSS 沒有 "Normal" 造型，如果找不到就乾脆不要強制換 Skin，避免變形或隱形
                                         try {
                                             const bossSkins = bossPlayer.skeleton.data.skins.map(s => s.name);
                                             console.log("👕 BOSS 可用 Skin：", bossSkins);
                                             
-                                            if (bossSkins.includes('Normal')) {
-                                                bossPlayer.skeleton.setSkinByName('Normal');
-                                                bossPlayer.skeleton.setSlotsToSetupPose();
-                                            } else if (bossSkins.includes('default')) {
-                                                bossPlayer.skeleton.setSkinByName('default');
-                                                bossPlayer.skeleton.setSlotsToSetupPose();
-                                            }
-                                            // 如果都沒有，就讓 Spine 引擎使用她預設的樣子
+                                            // 優先順序：default -> Naive (看起來比較像預設) -> 隨機挑一個
+                                            let skinToUse = bossSkins.includes('default') ? 'default' : 
+                                                            (bossSkins.includes('Skin_Naive') ? 'Skin_Naive' : bossSkins[0]);
+                                            
+                                            bossPlayer.skeleton.setSkinByName(skinToUse);
+                                            bossPlayer.skeleton.setSlotsToSetupPose();
+                                            console.log(`🎨 BOSS 成功套用 Skin: ${skinToUse}`);
                                         } catch (e) {
                                             console.warn("BOSS 換裝發生異常，維持預設：", e);
                                         }
