@@ -685,54 +685,77 @@ currentBossPlayer = new spine.SpinePlayer("bossRunnerContainer", {
                             }
                         });
 
-                        // 💥 碰撞處理函數
-                        function handleCollision(bossPlayer, bossRunAnimation) {
-                            charRunAnimation.pause();
-                            bossRunAnimation.pause();
+                        // 💥 碰撞處理函數 (更新版)
+function handleCollision(bossPlayer, bossRunAnimation) {
+    isCaught = true; // 鎖定狀態
+    charRunAnimation.pause();
+    bossRunAnimation.pause();
 
-                            const counterAttack = Math.random() < 0.25;
+    const counterAttack = Math.random() < 0.25;
 
-                            if (counterAttack) {
-                                // 25% 小人反擊
-                                safePlaySpine(player, "Attack1_1", false);
-                                safePlaySpine(bossPlayer, "Groggy", true);
+    if (counterAttack) {
+        // 1️⃣ 25% 小人反擊成功
+        console.log("⚔️ 小人反擊成功！");
+        safePlaySpine(player, "Attack1_1", false);
+        safePlaySpine(bossPlayer, "Groggy", true); // Boss 暈眩
 
-                                setTimeout(() => {
-                                    safePlaySpine(player, "Move", true);
-                                    player.timeScale = 2.5;
-                                    charRunAnimation.playbackRate = 2.5;
-                                    charRunAnimation.play();
+        setTimeout(() => {
+            // 反擊後小人加速逃跑
+            try { player.animationState.setAnimation(0, "Move", true); } catch(e){}
+            player.timeScale = 2.0; // 加速
+            charRunAnimation.playbackRate = 2.0;
+            charRunAnimation.play();
 
-                                    setTimeout(() => {
-                                        safePlaySpine(bossPlayer, "Idle", true);
-                                        setTimeout(() => {
-                                            bossTrack.style.transition = 'opacity 0.6s ease-out';
-                                            bossTrack.style.opacity = '0';
-                                        }, 3000);
-                                    }, 2000);
-                                }, 1000); 
-                            } else {
-                                // 75% 被抓住了
-                                safePlaySpine(player, "Groggy", true);
-                                
-                                let attackTrack = safePlaySpine(bossPlayer, "Attack3_1", false);
-                                let attackDuration = (attackTrack && attackTrack.animation ? attackTrack.animation.duration : 2.0) * 1000;
+            // Boss 暈眩 2 秒後恢復並開始發呆
+            setTimeout(() => {
+                safePlaySpine(bossPlayer, "Idle", true);
+                setTimeout(() => {
+                    bossTrack.style.transition = 'opacity 0.6s ease-out';
+                    bossTrack.style.opacity = '0';
+                }, 3000); // 暈眩結束後，Boss 發呆 3 秒消失
+            }, 2000);
 
-                                setTimeout(() => {
-                                    safePlaySpine(player, "Die", false);
-                                    safePlaySpine(bossPlayer, "Idle", true);
-                                    
-                                    setTimeout(() => {
-                                        track.style.transition = 'opacity 0.6s ease-out';
-                                        track.style.opacity = '0';
-                                        setTimeout(() => {
-                                            bossTrack.style.transition = 'opacity 0.6s ease-out';
-                                            bossTrack.style.opacity = '0';
-                                            setTimeout(initTopRunner, 600);
-                                        }, 3000);
-                                    }, 3000);
-                                }, attackDuration);
-                            }
+            // 💡 監測逃跑成功
+            charRunAnimation.onfinish = () => {
+                isEscaped = true;
+                player.timeScale = 1.0;
+                
+                // 逃脫成功，播放 Victory
+                safePlaySpine(player, "Victory", false);
+                
+                // 3秒後消失
+                setTimeout(() => {
+                    track.style.transition = 'opacity 0.6s ease-out';
+                    track.style.opacity = '0';
+                    setTimeout(initTopRunner, 600);
+                }, 3000);
+            };
+
+        }, 1000); 
+    } else {
+        // 2️⃣ 75% 被抓住了 (原有邏輯)
+        console.log("💀 小人被抓住了...");
+        safePlaySpine(player, "Groggy", true);
+        
+        let attackTrack = safePlaySpine(bossPlayer, "Attack3_1", false);
+        let attackDuration = (attackTrack && attackTrack.animation ? attackTrack.animation.duration : 2.0) * 1000;
+
+        setTimeout(() => {
+            safePlaySpine(player, "Die", false);
+            safePlaySpine(bossPlayer, "Idle", true);
+            
+            // Die 播完後，小人消失，Boss 在 3 秒後消失
+            setTimeout(() => {
+                track.style.transition = 'opacity 0.6s ease-out';
+                track.style.opacity = '0';
+                setTimeout(() => {
+                    bossTrack.style.transition = 'opacity 0.6s ease-out';
+                    bossTrack.style.opacity = '0';
+                    setTimeout(initTopRunner, 600);
+                }, 3000);
+            }, 3000);
+        }, attackDuration);
+    }
                         }
                     }
                 }, spawnDuration);
