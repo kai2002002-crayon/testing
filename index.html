@@ -524,12 +524,12 @@
 
                     if (!isBossEvent) {
                         track.onclick = () => {
-                            if (currentPhase === "move") {
+                            if (currentPhase === "Move") {
                                 currentPhase = "groggy"; 
                                 if (charRunAnimation) charRunAnimation.pause();
                                 try { player.animationState.setAnimation(0, "Groggy", true); } catch(e){}
                                 setTimeout(() => {
-                                    currentPhase = "move"; 
+                                    currentPhase = "Move"; 
                                     try { player.animationState.setAnimation(0, "Move", true); } catch(e){}
                                     if (charRunAnimation) charRunAnimation.play(); 
                                 }, 5000);
@@ -546,7 +546,7 @@
                         let spawnDuration = (spawnTrack && spawnTrack.animation ? spawnTrack.animation.duration : 1.5) * 1000;
 
                         setTimeout(() => {
-                            currentPhase = "move";
+                            currentPhase = "Move";
                             player.timeScale = 1.0; 
                             try { player.animationState.setAnimation(0, "Move", true); } catch(e){}
                             
