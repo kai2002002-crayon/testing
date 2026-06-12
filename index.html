@@ -552,12 +552,19 @@
                                 // (如果確定跑道有出來但沒圖案，可以把上面這行註解拿掉來觀察)
 
                                 currentBossPlayer = new spine.SpinePlayer("bossRunnerContainer", {
-                                    skelUrl: `./spine_sd_assets/${bossKey}.skel.bytes`,
-                                    atlasUrl: `./spine_sd_assets/${bossKey}.atlas.txt`,
-                                    backgroundColor: "#00000000", alpha: true, premultipliedAlpha: false, showControls: false, showLoading: false,
-                                    // 調整 Viewport，預防 BOSS 體型較大跑到畫面外
-                                    viewport: { x: -800, y: -250, width: 2500, height: 1500, padLeft: "0%", padRight: "0%", padTop: "0%", padBottom: "0%", transitionTime: 0 },
-                                    
+                                        skelUrl: `./spine_sd_assets/${bossKey}.skel.bytes`,
+                                        atlasUrl: `./spine_sd_assets/${bossKey}.atlas.txt`,
+                                        backgroundColor: "#00000000", alpha: true, premultipliedAlpha: false, showControls: false, showLoading: false,
+                                        // 🌟 修改這裡：將 Viewport 的 y 座標微調，並加大寬度
+                                        viewport: { 
+                                            x: 0, 
+                                            y: -100, 
+                                            width: 1000, 
+                                            height: 1000, 
+                                            padLeft: "0%", padRight: "0%", padTop: "0%", padBottom: "0%", 
+                                            transitionTime: 0 
+                                        },
+
                                     success: function (bossPlayer) {
                                         console.log("✅ 💀 BOSS Spine 檔案載入成功！");
 
