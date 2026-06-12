@@ -562,7 +562,7 @@
                                 currentBossPlayer = new spine.SpinePlayer("bossRunnerContainer", {
                                     skelUrl: `./spine_sd_assets/${bossKey}.skel.bytes`,
                                     atlasUrl: `./spine_sd_assets/${bossKey}.atlas.txt`,
-                                    backgroundColor: "#00000000", alpha: true, premultipliedAlpha: false, showControls: false, showLoading: false,
+                                    backgroundColor: "#00000000", alpha: true, premultipliedAlpha: true, showControls: true, showLoading: false,
                                     
                                     // 🌟 重大修復：讓 BOSS 的視角完全繼承前面小人的視角，避免縮放比例崩壞變成 0
                                     viewport: { 
