@@ -1313,16 +1313,26 @@
 
         // 🌟 【核心修正】加入全域監聽器：當螢幕尺寸改變或旋轉時，自動重繪 Spine
         let resizeTimeout;
+        // 紀錄目前的螢幕寬度
+        let lastWindowWidth = window.innerWidth;
+
         window.addEventListener('resize', () => {
+            // 🚫 防誤觸機制：如果螢幕「寬度」沒變，代表只是手機滑動導致網址列縮放，直接忽略！
+            if (window.innerWidth === lastWindowWidth) {
+                return; 
+            }
+
+            // 更新最新的螢幕寬度
+            lastWindowWidth = window.innerWidth;
+
             // 使用 debounce 避免短時間內重複觸發，優化手機效能
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(() => {
                 if (window.currentActiveCharName) {
-                    // 當偵測到旋轉，直接用當前角色重新呼叫 loadSkillSpines
-                    // 這會自動套用新的手機版直/橫樣式，並讓小人完美歸位
+                    // 只有在真正旋轉螢幕（寬度改變）時，才重新載入小人
                     loadSkillSpines(window.currentActiveCharName);
                 }
-            }, 300); // 旋轉後延遲 0.3 秒執行，等瀏覽器版面穩定
+            }, 300); 
         });
         window.changeLanguage = function(lang) {
             window.currentLang = lang;
