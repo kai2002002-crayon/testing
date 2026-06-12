@@ -491,8 +491,14 @@
             rewardContainer.className = 'flex flex-wrap gap-2 justify-start'; // 確保橫向彈性排列
             rewardContainer.innerHTML = '';
 
-            if (typeof REWARD_MAP !== 'undefined' && REWARD_MAP[charName]) {
-                let rewards = REWARD_MAP[charName];
+            // 🔥 透過 SPINE_MAP 將 charName 轉換為對應的 SPINE 名稱
+            const spineName = (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName]) 
+                ? SPINE_MAP[charName] 
+                : charName;
+
+            // 使用轉換後的 spineName 來查找 REWARD_MAP
+            if (typeof REWARD_MAP !== 'undefined' && REWARD_MAP[spineName]) {
+                let rewards = REWARD_MAP[spineName];
                 
                 // 處理無獎勵的角色
                 if (rewards.length === 0 || rewards === "無") {
@@ -508,7 +514,7 @@
                             rewardUrl = ICON_MAP[rewardKey] || "";
                         }
 
-                        // 🔥 核心邏輯：第一個使用螢光綠外框，其餘使用普通灰外框
+                        // 第一個使用螢光綠外框，其餘使用普通灰外框
                         let borderClass = idx === 0 
                             ? "border-[3px] border-[#39ff14] shadow-[0_0_8px_rgba(57,255,20,0.6)]" // 螢光綠色 + 些微發光
                             : "border-2 border-gray-300 dark:border-slate-600 shadow-sm"; // 普通灰色
