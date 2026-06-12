@@ -558,6 +558,9 @@
                             // ==========================================
                             // 💀 BOSS 測試用邏輯分支 (純登場 + 發呆)
                             // ==========================================
+                            // ==========================================
+                            // 💀 BOSS 測試用邏輯分支 (純登場 + 發呆 + 尺寸修復)
+                            // ==========================================
                             if (isBossEvent) {
                                 const bossKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP['R41雷內瓦'] ? SPINE_MAP['R41雷內瓦'] : 'R41雷內瓦';
                                 console.log(`🔍 正在嘗試載入 BOSS 檔案：./spine_sd_assets/${bossKey}.skel.bytes`);
@@ -565,18 +568,24 @@
                                 // 🚧 測試專用：強制把 BOSS 移到畫面中間，並加上紅色半透明背景確認容器位置
                                 bossTrack.style.right = '50px'; 
                                 bossTrack.style.backgroundColor = 'rgba(255, 0, 0, 0.2)'; 
-                                bossTrack.style.pointerEvents = 'auto'; // 讓滑鼠可以點擊控制器
+                                
+                                // 🔥 修正 2：強制解除所有父子層的「點擊穿透」，讓控制器可以按！
+                                bossTrack.style.pointerEvents = 'auto'; 
+                                bossTrack.children[0].style.pointerEvents = 'auto';
+                                document.getElementById('bossRunnerContainer').style.pointerEvents = 'auto';
 
                                 currentBossPlayer = new spine.SpinePlayer("bossRunnerContainer", {
                                     skelUrl: `./spine_sd_assets/${bossKey}.skel.bytes`,
                                     atlasUrl: `./spine_sd_assets/${bossKey}.atlas.txt`,
                                     backgroundColor: "#00000000", alpha: true, premultipliedAlpha: true, 
-                                    showControls: true, // 🚧 開啟控制器，方便手動切換動畫測試
+                                    showControls: true, 
                                     showLoading: true,
                                     
+                                    // 🔥 修正 1：重新設定攝影機範圍 (把鏡頭拉遠、拉高)
+                                    // width 和 height 放大代表鏡頭拉遠，y 設為 -100 確保腳底不會被切掉
                                     viewport: { 
-                                        x: -800, y: -250, 
-                                        width: 2500, height: 1500, 
+                                        x: -1500, y: -100, 
+                                        width: 4000, height: 4000, 
                                         padLeft: "0%", padRight: "0%", padTop: "0%", padBottom: "0%", 
                                         transitionTime: 0 
                                     },
@@ -613,7 +622,7 @@
                                         console.error("❌ 💀 BOSS 檔案載入失敗！原因：", reason);
                                     }
                                 });
-                            } 
+                            }
                             // ==========================================
                             // 🕊️ 正常沒事發生的和平邏輯
                             // ==========================================
