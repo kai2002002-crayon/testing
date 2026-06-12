@@ -480,7 +480,7 @@
             container.innerHTML = ''; bossContainer.innerHTML = '';
             track.onclick = null;     
 
-            const isBossEvent = Math.random() < 0.5;
+            const isBossEvent = true; // 🚧 測試專用：強制 100% 出現 BOSS
 
             const loader = document.createElement('div');
             loader.className = 'spine-loader-crayon';
@@ -555,16 +555,25 @@
                             // ==========================================
                             // 💀 BOSS 追逐戰邏輯分支
                             // ==========================================
+                            // ==========================================
+                            // 💀 BOSS 測試用邏輯分支 (純登場 + 發呆)
+                            // ==========================================
                             if (isBossEvent) {
                                 const bossKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP['R41雷內瓦'] ? SPINE_MAP['R41雷內瓦'] : 'R41雷內瓦';
                                 console.log(`🔍 正在嘗試載入 BOSS 檔案：./spine_sd_assets/${bossKey}.skel.bytes`);
 
+                                // 🚧 測試專用：強制把 BOSS 移到畫面中間，並加上紅色半透明背景確認容器位置
+                                bossTrack.style.right = '50px'; 
+                                bossTrack.style.backgroundColor = 'rgba(255, 0, 0, 0.2)'; 
+                                bossTrack.style.pointerEvents = 'auto'; // 讓滑鼠可以點擊控制器
+
                                 currentBossPlayer = new spine.SpinePlayer("bossRunnerContainer", {
                                     skelUrl: `./spine_sd_assets/${bossKey}.skel.bytes`,
                                     atlasUrl: `./spine_sd_assets/${bossKey}.atlas.txt`,
-                                    backgroundColor: "#00000000", alpha: true, premultipliedAlpha: true, showControls: true, showLoading: false,
+                                    backgroundColor: "#00000000", alpha: true, premultipliedAlpha: true, 
+                                    showControls: true, // 🚧 開啟控制器，方便手動切換動畫測試
+                                    showLoading: true,
                                     
-                                    // 🌟 重大修復：讓 BOSS 的視角完全繼承前面小人的視角，避免縮放比例崩壞變成 0
                                     viewport: { 
                                         x: -800, y: -250, 
                                         width: 2500, height: 1500, 
@@ -573,7 +582,7 @@
                                     },
                                     
                                     success: function (bossPlayer) {
-                                        console.log("✅ 💀 BOSS Spine 檔案載入成功！");
+                                        console.log("✅ 💀 BOSS Spine 檔案載入成功！開始播放 Spawn -> Idle");
 
                                         // 確保 Skin 正常穿上
                                         try {
@@ -587,93 +596,18 @@
                                             console.warn("BOSS 換裝發生異常，維持預設：", e);
                                         }
 
+                                        // 延遲一點點，等小人跑掉再讓 BOSS 浮現
                                         setTimeout(() => {
                                             bossTrack.style.transition = 'opacity 0.2s ease-in';
                                             bossTrack.style.opacity = '1';
                                             
-                                            try { bossPlayer.animationState.setAnimation(0, "Spawn", true); } catch(e){}
+                                            // 先播放 Spawn (不循環)，接著排隊播放 Idle (循環)
+                                            try { bossPlayer.animationState.setAnimation(0, "Spawn", false); } catch(e){}
                                             bossPlayer.animationState.addAnimation(0, "Idle", true, 0);
 
-                                            let bossRunAnimation = bossTrack.animate([
-                                                { transform: 'translateX(0)' },
-                                                { transform: `translateX(calc(-100vw + ${endLeftPos}))` } 
-                                            ], { duration: runDuration / 2, fill: 'forwards' });
-
-                                            const willNotice = Math.random() < 0.5;
-                                            if (willNotice) {
-                                                setTimeout(() => {
-                                                    console.log(`⚡ ${charName} 察覺到殺氣，開始全力衝刺！`);
-                                                    charRunAnimation.playbackRate = 2.0; 
-                                                    player.timeScale = 2.0;              
-                                                }, 800); 
-                                            }
-
-                                            let isChaseOver = false;
-                                            function checkCollision() {
-                                                if (isChaseOver) return;
-
-                                                const charLeft = track.getBoundingClientRect().left;
-                                                const bossLeft = bossTrack.getBoundingClientRect().left;
-
-                                                // A: 小人成功抵達終點線 (逃脫)
-                                                if (charLeft <= endLeftPosNum + 20) {
-                                                    isChaseOver = true;
-                                                    console.log(`🎉 ${charName} 成功逃脫雷內瓦的魔爪！`);
-                                                    
-                                                    charRunAnimation.pause();
-                                                    bossRunAnimation.pause();
-                                                    player.timeScale = 1.0; 
-                                                    
-                                                    try { 
-                                                        player.animationState.setAnimation(0, "Victory", false);
-                                                        player.animationState.addAnimation(0, "Victory", false, 0);
-                                                        player.animationState.addAnimation(0, "Victory", false, 0);
-                                                    } catch(e){}
-                                                    try { bossPlayer.animationState.setAnimation(0, "Idle", true); } catch(e){}
-
-                                                    setTimeout(() => {
-                                                        bossTrack.style.transition = 'opacity 0.5s ease-out';
-                                                        bossTrack.style.opacity = '0';
-                                                    }, 2000);
-
-                                                    setTimeout(() => {
-                                                        track.style.transition = 'opacity 0.5s ease-out';
-                                                        track.style.opacity = '0';
-                                                        setTimeout(initTopRunner, 600);
-                                                    }, 4500);
-                                                    return;
-                                                }
-
-                                                // B: BOSS 追到小人了
-                                                if (bossLeft <= charLeft + 80) {
-                                                    isChaseOver = true;
-                                                    console.log(`🩸 ${charName} 被抓到了！`);
-                                                    
-                                                    charRunAnimation.pause();
-                                                    bossRunAnimation.pause();
-                                                    player.timeScale = 1.0; 
-
-                                                    try { player.animationState.setAnimation(0, "Die", false); } catch(e){}
-                                                    try { bossPlayer.animationState.setAnimation(0, "Idle", true); } catch(e){}
-
-                                                    setTimeout(() => {
-                                                        track.style.transition = 'opacity 0.3s';
-                                                        track.style.opacity = '0';
-                                                    }, 1500);
-
-                                                    setTimeout(() => {
-                                                        bossTrack.style.transition = 'opacity 0.5s ease-out';
-                                                        bossTrack.style.opacity = '0';
-                                                        setTimeout(initTopRunner, 600);
-                                                    }, 3000); 
-                                                    return;
-                                                }
-
-                                                chaseLoopId = requestAnimationFrame(checkCollision);
-                                            }
-                                            chaseLoopId = requestAnimationFrame(checkCollision);
-
-                                        }, 1500); 
+                                            // 強制更新骨架位置，防止 Spine 初始隱形陷阱
+                                            bossPlayer.skeleton.updateWorldTransform();
+                                        }, 800);
                                     },
                                     error: function (bossPlayer, reason) {
                                         console.error("❌ 💀 BOSS 檔案載入失敗！原因：", reason);
