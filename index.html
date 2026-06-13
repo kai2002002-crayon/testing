@@ -45,14 +45,14 @@
             width: 100% !important;
             height: 100% !important;
             position: relative;
-            z-index: 110; !important; /* 🔥 把小人容器的圖層拉到最高 */
+            z-index: 110; !important; /* 🔥 把坨坨容器的圖層拉到最高 */
         }
 
         #bossRunnerContainer {
             width: 100% !important;
             height: 100% !important;
             display: block !important;
-            z-index: 105 !important; /* 保持 105，乖乖待在小人後面 */
+            z-index: 105 !important; /* 保持 105，乖乖待在坨坨後面 */
             pointer-events: none;
         }
 
@@ -433,7 +433,7 @@
     </div>
 
     <script>
-        // 🌟 初始化頂部跑酷小人 (雙平台獨立微調版 + 💀 雷內瓦追逐戰彩蛋)
+        // 🌟 初始化頂部跑酷坨坨 (雙平台獨立微調版 + 💀 雷內瓦追逐戰彩蛋)
 let currentRunnerPlayer = null; 
 let currentBossPlayer = null;
 let chaseLoopId = null;
@@ -526,7 +526,7 @@ function initTopRunner() {
     const charName = randomCharData.name;
     const folderKey = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[charName] : charName;
 
-    // 1️⃣ 載入前面逃跑的小人
+    // 1️⃣ 載入前面逃跑的坨坨
     currentRunnerPlayer = new spine.SpinePlayer("topRunnerContainer", {
         skelUrl: `./spine_sd_assets/${folderKey}.skel.bytes`,
         atlasUrl: `./spine_sd_assets/${folderKey}.atlas.txt`,
@@ -535,7 +535,7 @@ function initTopRunner() {
         viewport: { x: -800, y: 100, width: 2500, height: 1500, padLeft: "0%", padRight: "0%", padTop: "0%", padBottom: "0%", transitionTime: 0 },
         success: function (player) {
             loader.remove(); 
-            console.log(`🏃 跑酷小人進場：${charName}${isBossEvent ? " (💀 警告：雷內瓦即將出現！)" : ""}`);
+            console.log(`🏃 跑酷坨坨進場：${charName}${isBossEvent ? " (💀 警告：雷內瓦即將出現！)" : ""}`);
             player.play(); // 確保開始播放
             
             try {
@@ -714,13 +714,13 @@ currentBossPlayer = new spine.SpinePlayer("bossRunnerContainer", {
                                 const counterAttack = Math.random() < 0.25;
 
                                 if (counterAttack) {
-                                    console.log("⚔️ 第一階段：小人反擊成功！");
+                                    console.log("⚔️ 第一階段：坨坨反擊成功！");
                                     track.style.transform = 'scaleX(-1)'; 
                                     safePlaySpine(player, "Attack1_1", false);
                                     safePlaySpine(bossPlayer, "Groggy", true);
 
                                     setTimeout(() => {
-                                        // 1. 小人轉回左邊，加速逃跑
+                                        // 1. 坨坨轉回左邊，加速逃跑
                                         track.style.transform = 'scaleX(1)';
                                         try { player.animationState.setAnimation(0, "Move", true); } catch(e){}
                                         player.timeScale = 2.0;
@@ -765,8 +765,8 @@ currentBossPlayer = new spine.SpinePlayer("bossRunnerContainer", {
                                 const secondCounterAttack = Math.random() < 0.60; 
 
                                 if (secondCounterAttack) {
-                                    console.log("🌟 第二階段：小人絕地大反攻，使出連續技擊敗 BOSS！");
-                                    track.style.transform = 'scaleX(-1)'; 
+                                    console.log("🌟 第二階段：坨坨絕地大反攻，使出連續技擊敗 BOSS！");
+                                    track.style.transform = 'scaleX(1)'; 
                                     safePlaySpine(bossPlayer, "Groggy", true); 
 
                                     // 🔍 自動抓取並排序所有 Skill1 相關的動作
@@ -809,9 +809,9 @@ currentBossPlayer = new spine.SpinePlayer("bossRunnerContainer", {
                             }
                         }
 
-                        // 🔪 獨立出來的 Boss 處決動畫邏輯 (保留你微調過的 2300 毫秒)
+                        // 🔪 獨立出來的 Boss 處決動畫邏輯 (保留你微調過的 2400 毫秒)
                         function bossExecuteKill(bossPlayer) {
-                            console.log("💀 小人被抓住了...");
+                            console.log("💀 坨坨被抓住了...");
                             safePlaySpine(player, "Groggy", true);
                             
                             let attackTrack = safePlaySpine(bossPlayer, "Attack3_1", false);
