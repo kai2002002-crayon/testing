@@ -618,12 +618,71 @@ function initTopRunner() {
                                         bossPlayer.timeScale = 1.0; 
                                         safePlaySpine(bossPlayer, "Move", true);
                                         
-                                        // 開始 CSS 位移 (維持你的速度設定)
-                                        bossRunAnimation = bossTrack.animate([
-                                            { transform: 'translateX(0)' },
-                                            { transform: `translateX(calc(-100vw + ${endLeftPos}))` }
-                                        ], { duration: runDuration * 0.9, fill: 'forwards' });
+                                        // 🏃‍♂️ 開始 CSS 位移 (原本就有的程式碼)
+                                            bossRunAnimation = bossTrack.animate([
+                                                { transform: 'translateX(0)' },
+                                                { transform: `translateX(calc(-100vw + ${endLeftPos}))` }
+                                            ], { duration: runDuration * 0.65, fill: 'forwards' });
 
+                                            // ==========================================
+                                            // 🛡️ 新增：玩家點擊 BOSS 擊退功能
+                                            // ==========================================
+                                            let isBossKnockedBack = false;
+                                            
+                                            // 讓原本無法點擊的 bossTrack 變成可以點擊的目標
+                                            bossTrack.style.pointerEvents = 'auto'; 
+                                            bossTrack.style.cursor = 'pointer'; // 滑鼠放上去會變手指
+
+                                            bossTrack.onclick = () => {
+                                                // 防呆：如果已經抓到小人、小人已經逃脫、或正在擊退中，就不反應
+                                                if (isCaught || isEscaped || isBossKnockedBack) return;
+                                                isBossKnockedBack = true;
+
+                                                console.log("👆 玩家神助攻！BOSS 被擊退！");
+                                                
+                                                // 1. BOSS 播放暈眩挨打動作，並暫停往前跑的動畫
+                                                safePlaySpine(bossPlayer, "Groggy", true);
+                                                bossRunAnimation.pause(); 
+
+                                                // 2. 計算退後 300px (BOSS畫布 600px 的一半) 所對應的動畫時間
+                                                const knockbackPx = 300; 
+                                                const screenWidth = window.innerWidth || 1000;
+                                                const totalDuration = bossRunAnimation.effect.getTiming().duration;
+                                                // 計算 300px 佔總距離的比例，換算成要倒退的時間
+                                                const knockbackTime = (knockbackPx / screenWidth) * totalDuration;
+
+                                                // 3. 計算目標時間 (時間往回倒轉)
+                                                const startT = bossRunAnimation.currentTime;
+                                                const targetT = Math.max(0, startT - knockbackTime); // 最多退回起點
+
+                                                // 4. 利用 requestAnimationFrame 平滑地倒轉動畫 (製造滑退感)
+                                                const kDuration = 150; // 擊退滑動時間 150 毫秒 (非常迅速)
+                                                const kStartTime = performance.now();
+
+                                                function tweenKnockback(now) {
+                                                    let p = (now - kStartTime) / kDuration;
+                                                    if (p < 1) {
+                                                        // 平滑倒轉 currentTime
+                                                        bossRunAnimation.currentTime = startT - (startT - targetT) * p;
+                                                        requestAnimationFrame(tweenKnockback);
+                                                    } else {
+                                                        // 滑退到底後，確保時間精準
+                                                        bossRunAnimation.currentTime = targetT;
+                                                        
+                                                        // 5. 擊退到位後，讓 BOSS 原地暈 0.4 秒，再繼續追
+                                                        setTimeout(() => {
+                                                            if (isCaught || isEscaped) return; // 避免期間發生意外
+                                                            safePlaySpine(bossPlayer, "Move", true);
+                                                            bossRunAnimation.play();
+                                                            
+                                                            // ⏳ 擊退冷卻時間 (0.6秒)
+                                                            // 避免玩家當成「打地鼠」瘋狂連點，讓 BOSS 永遠過不來 😂
+                                                            setTimeout(() => { isBossKnockedBack = false; }, 600); 
+                                                        }, 400); 
+                                                    }
+                                                }
+                                                requestAnimationFrame(tweenKnockback);
+                                            };
                                         // 正式啟動追逐雷達
                                         let chasePhase = 1; 
 
