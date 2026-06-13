@@ -742,7 +742,7 @@ function handleCollision(bossPlayer, bossRunAnimation) {
                                 let attackDuration = (attackTrack && attackTrack.animation ? attackTrack.animation.duration : 3.0) * 1000;
 
                                 // ⏳ 算出「動作結束前 1 秒」的時間點 (確保時間不為負數)
-                                let dieTriggerTime = Math.max(0, attackDuration - 2000);
+                                let dieTriggerTime = Math.max(0, attackDuration - 2300);
 
                                 // 💥 1. 在 Attack 結束前 1 秒，小人受到致命一擊倒下！
                                 setTimeout(() => {
