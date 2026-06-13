@@ -45,7 +45,7 @@
             width: 100% !important;
             height: 100% !important;
             position: relative;
-            z-index: 110 !important;
+            z-index: 120 !important;
             transition: transform 0.2s ease; /* 翻轉與位移用 */
         }
 
@@ -95,7 +95,7 @@
 
         /* 🖍️ 爆裂小蠟筆特效 */
         .burst-crayon {
-            position: absolute; width: 12px; height: 12px;
+            position: absolute; width: 16px; height: 16px;
             background: url('https://i.postimg.cc/qvjNxZzg/golden-crayon.png') no-repeat center center; 
             background-size: contain; z-index: 200; pointer-events: none;
         }
@@ -832,8 +832,33 @@
                         }, Math.max(0, atkDur - 500));
 
                         setTimeout(() => {
-                            // 攻擊結束，坨坨轉回來
-                            container.style.transform = 'translateX(0px) scaleX(1)'; 
+                            // 攻擊結束，坨坨轉回來 (無縫銜接位移系統)
+                            if (isRanged) {
+                                // 1. 先平滑轉身，但保持 -240px 的視覺位移
+                                container.style.transform = 'translateX(-240px) scaleX(1)';
+                                
+                                // 2. 給予 200ms 讓 CSS 轉身動畫播完，然後進行「物理與視覺座標交換」
+                                setTimeout(() => {
+                                    if (chasePhase === 0 || hasReachedEnd) return; // 如果已經抵達終點勝利，就讓他在原地慶祝，不交換座標
+                                    
+                                    const screenWidth = window.innerWidth || 1000;
+                                    const skipTime = (240 / screenWidth) * runDuration;
+                                    
+                                    // 讓軌道的實體進度瞬間往前推進 240px 的時間量
+                                    if (charRunAnimation && charRunAnimation.playState !== 'finished') {
+                                        charRunAnimation.currentTime = (charRunAnimation.currentTime || 0) + skipTime;
+                                    }
+                                    
+                                    // 瞬間消除 container 偏移，讓軌道的實體座標無縫接手
+                                    container.style.transition = 'none';
+                                    container.style.transform = 'translateX(0px) scaleX(1)';
+                                    void container.offsetWidth; // 觸發重繪
+                                    container.style.transition = 'transform 0.2s ease';
+                                }, 200);
+                            } else {
+                                // 近戰沒有位移，直接轉向
+                                container.style.transform = 'translateX(0px) scaleX(1)'; 
+                            }
                             
                             // 🚩 檢查：如果剛剛打架時不小心走到終點了，直接獲勝！
                             if (hasReachedEnd) {
@@ -929,7 +954,28 @@
                         setTimeout(() => {
                             console.log("💀 BOSS 倒地身亡！");
                             safePlaySpine(bossPlayer, "Die", false);
-                            container.style.transform = 'translateX(0px) scaleX(1)'; 
+                            
+                            // 攻擊結束，坨坨轉回來 (無縫銜接位移系統)
+                            if (isRanged) {
+                                container.style.transform = 'translateX(-240px) scaleX(1)';
+                                setTimeout(() => {
+                                    if (hasReachedEnd) return; 
+                                    
+                                    const screenWidth = window.innerWidth || 1000;
+                                    const skipTime = (240 / screenWidth) * runDuration;
+                                    
+                                    if (charRunAnimation && charRunAnimation.playState !== 'finished') {
+                                        charRunAnimation.currentTime = (charRunAnimation.currentTime || 0) + skipTime;
+                                    }
+                                    
+                                    container.style.transition = 'none';
+                                    container.style.transform = 'translateX(0px) scaleX(1)';
+                                    void container.offsetWidth;
+                                    container.style.transition = 'transform 0.2s ease';
+                                }, 200);
+                            } else {
+                                container.style.transform = 'translateX(0px) scaleX(1)'; 
+                            }
                             
                             // 🚩 檢查：如果在處決 Boss 的期間走到終點了，直接觸發勝利動畫
                             if (hasReachedEnd) {
