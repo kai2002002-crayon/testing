@@ -662,12 +662,17 @@
                 function checkChase() {
                     if (isEscaped || chasePhase === 0) return;
 
+                    // 💡 察覺機制：小人有 25% 機率察覺並獲得隨機速度加成
                     if (!hasNoticed && !isCaught) {
                         hasNoticed = true; 
-                        if (Math.random() < 0.25) {
-                            console.log("⚡ 小人察覺到 BOSS，加速逃脫！");
-                            runnerPlayer.timeScale = 1.8; 
-                            charRunAnimation.playbackRate = 1.8; 
+                        if (Math.random() < 0.3) {
+                            // 產生 0.8 到 2.2 之間的隨機加速倍率
+                            // 0.8: 比 Boss 慢, 1.0: 等速, >1.0: 比 Boss 快
+                            const randomSpeed = (Math.random() * 1.4 + 0.8).toFixed(2);
+                            console.log(`⚡ 小人察覺到 BOSS！隨機加速倍率：${randomSpeed}x`);
+                            
+                            runnerPlayer.timeScale = parseFloat(randomSpeed); 
+                            charRunAnimation.playbackRate = parseFloat(randomSpeed); 
                         }
                     }
 
@@ -693,7 +698,7 @@
                 bossTrack.style.pointerEvents = 'none'; 
 
                 if (chasePhase === 1) {
-                    if (Math.random() < 0.25) {
+                    if (Math.random() < 0.4) {
                         console.log("⚔️ 一階：小人轉向右方反擊！");
                         container.style.transform = 'scaleX(-1)'; // 讓小人轉身
                         safePlaySpine(runnerPlayer, "Attack1_1", false);
@@ -731,7 +736,7 @@
                     }
                 } 
                 else if (chasePhase === 2) {
-                    if (Math.random() < 0.60) {
+                    if (Math.random() < 0.70) {
                         console.log("🌟 二階：絕地大反攻，連續技擊殺 BOSS！");
                         chasePhase = 0; 
                         container.style.transform = 'scaleX(-1)'; 
