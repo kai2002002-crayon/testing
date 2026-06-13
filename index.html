@@ -732,112 +732,8 @@ function initTopRunner() {
                     // 💀 BOSS 追逐戰邏輯分支
                     // ==========================================
                     if (isBossEvent) {
+                        let chasePhase = 1;
                         const bossKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP['R41雷內瓦'] ? SPINE_MAP['R41雷內瓦'] : 'R41雷內瓦';
-                        
-                        currentBossPlayer = new spine.SpinePlayer("bossRunnerContainer", {
-                            skelUrl: `./spine_sd_assets/${bossKey}.skel.bytes`,
-                            atlasUrl: `./spine_sd_assets/${bossKey}.atlas.txt`,
-                            animation: "Move", 
-                            backgroundColor: "#00000000", alpha: true, 
-                            premultipliedAlpha: false,
-                            showControls: false, showLoading: false,
-                            viewport: { 
-                                x: -1500, y: -500, width: 3000, height: 3000, // 💡 確保武器不會被切到的加大視角
-                                padLeft: "0%", padRight: "0%", padTop: "0%", padBottom: "0%", transitionTime: 0 
-                            },
-                            success: function (bossPlayer) {
-                                console.log("✅ 💀 BOSS 載入成功，準備登場！");
-
-                                if (bossPlayer.skeleton) {
-                                    bossPlayer.skeleton.setToSetupPose();
-                                    bossPlayer.skeleton.updateWorldTransform();
-                                }
-                                bossPlayer.play(); 
-
-                                try {
-                                    const bossSkins = bossPlayer.skeleton.data.skins.map(s => s.name);
-                                    let skinToUse = bossSkins.includes('default') ? 'default' : 
-                                                    (bossSkins.includes('Skin_Naive') ? 'Skin_Naive' : bossSkins[0]);
-                                    bossPlayer.skeleton.setSkinByName(skinToUse);
-                                    bossPlayer.skeleton.setSlotsToSetupPose();
-                                } catch (e) { }
-
-                                // ==========================================
-                                // 🌟 動態偵測：等待小人跑到 15% 時再登場
-                                // ==========================================
-                                function waitRunner15Percent() {
-                                    if (isCaught || isEscaped) return; 
-
-                                    // 計算小人目前跑的進度 (毫秒)
-                                    let currentTime = charRunAnimation ? (charRunAnimation.currentTime || 0) : 0;
-                                    
-                                    // 判斷是否已經超過總跑程時間的 15%
-                                    if (currentTime >= runDuration * 0.15) {
-                                        bossTrack.style.transition = 'opacity 0.2s ease-in';
-                                        bossTrack.style.opacity = '1';
-                                        
-                                        // ⚡ 1. 將播放速度拉高到 3 倍，快速播放 Spawn 登場動作
-                                        bossPlayer.timeScale = 3.0; 
-                                        let bossSpawnTrack = safePlaySpine(bossPlayer, "Spawn", false);
-                                        
-                                        // 取得 Spawn 動作的原始長度 (毫秒)
-                                        let bossSpawnDuration = (bossSpawnTrack && bossSpawnTrack.animation ? bossSpawnTrack.animation.duration : 1.5) * 1000;
-                                        
-                                        // ⏳ 計算實際需要的等待時間 (因為 3 倍速，所以時間縮短為 1/3)
-                                        let actualWaitTime = bossSpawnDuration / 3;
-
-                                        // ⚡ 2. 等待 Spawn 光速播完後，恢復正常並開始移動追逐
-                                        setTimeout(() => {
-                                            // ⚠️ 記得把 Boss 的動作速度恢復成正常的 1.0！
-                                            bossPlayer.timeScale = 1.0; 
-                                            safePlaySpine(bossPlayer, "Move", true);
-                                            
-                                            // 🏃‍♂️ 開始 CSS 位移 (因為晚出發，所以縮短時間到 0.65，讓 Boss 跑得比小人快)
-                                            bossRunAnimation = bossTrack.animate([
-                                                { transform: 'translateX(0)' },
-                                                { transform: `translateX(calc(-100vw + ${endLeftPos}))` }
-                                            ], { duration: runDuration * 0.55, fill: 'forwards' });
-
-                                            // 正式啟動追逐雷達
-                                            let chasePhase = 1; 
-
-                                            function checkChase() {
-                                                if (isCaught || isEscaped) return;
-
-                                                const rRect = track.getBoundingClientRect();
-                                                const bRect = bossTrack.getBoundingClientRect();
-
-                                                if (!hasNoticed && charRunAnimation.currentTime > noticeTriggerTime) {
-                                                    hasNoticed = true;
-                                                    player.timeScale = 2.0; 
-                                                    charRunAnimation.playbackRate = 2.0; 
-                                                    bossPlayer.timeScale = 1.5; 
-                                                    bossRunAnimation.playbackRate = 1.5; 
-                                                }
-
-                                                let rCenter = rRect.left + (rRect.width / 2);
-                                                let bCenter = bRect.left + (bRect.width / 2);
-
-                                                if (bCenter <= rCenter + 60) {
-                                                    isCaught = true;
-                                                    handleCollision(bossPlayer, bossRunAnimation);
-                                                    return;
-                                                }
-                                                chaseLoopId = requestAnimationFrame(checkChase);
-                                            }
-                                            chaseLoopId = requestAnimationFrame(checkChase);
-
-                                        }, actualWaitTime); // ⏳ 使用縮短後的時間
-
-                                    } else {
-                                        // 如果小人還沒跑到 15%，下一幀繼續檢查
-                                        requestAnimationFrame(waitRunner15Percent);
-                                    }
-                                }
-                                // 🚀 立即啟動 15% 進度偵測迴圈
-                                requestAnimationFrame(waitRunner15Percent);
-                            } // ⬅️ success 區塊在這裡結束
-                        });
 
                         // 💥 碰撞處理函數 (暴怒二階段 & 連續技更新版)
                         function handleCollision(bossPlayer, bossRunAnimation) {
@@ -945,6 +841,112 @@ function initTopRunner() {
                                 }
                             }
                         }
+                        
+                        currentBossPlayer = new spine.SpinePlayer("bossRunnerContainer", {
+                            skelUrl: `./spine_sd_assets/${bossKey}.skel.bytes`,
+                            atlasUrl: `./spine_sd_assets/${bossKey}.atlas.txt`,
+                            animation: "Move", 
+                            backgroundColor: "#00000000", alpha: true, 
+                            premultipliedAlpha: false,
+                            showControls: false, showLoading: false,
+                            viewport: { 
+                                x: -1500, y: -500, width: 3000, height: 3000, // 💡 確保武器不會被切到的加大視角
+                                padLeft: "0%", padRight: "0%", padTop: "0%", padBottom: "0%", transitionTime: 0 
+                            },
+                            success: function (bossPlayer) {
+                                console.log("✅ 💀 BOSS 載入成功，準備登場！");
+
+                                if (bossPlayer.skeleton) {
+                                    bossPlayer.skeleton.setToSetupPose();
+                                    bossPlayer.skeleton.updateWorldTransform();
+                                }
+                                bossPlayer.play(); 
+
+                                try {
+                                    const bossSkins = bossPlayer.skeleton.data.skins.map(s => s.name);
+                                    let skinToUse = bossSkins.includes('default') ? 'default' : 
+                                                    (bossSkins.includes('Skin_Naive') ? 'Skin_Naive' : bossSkins[0]);
+                                    bossPlayer.skeleton.setSkinByName(skinToUse);
+                                    bossPlayer.skeleton.setSlotsToSetupPose();
+                                } catch (e) { }
+
+                                // ==========================================
+                                // 🌟 動態偵測：等待小人跑到 15% 時再登場
+                                // ==========================================
+                                function waitRunner15Percent() {
+                                    if (isCaught || isEscaped) return; 
+
+                                    // 計算小人目前跑的進度 (毫秒)
+                                    let currentTime = charRunAnimation ? (charRunAnimation.currentTime || 0) : 0;
+                                    
+                                    // 判斷是否已經超過總跑程時間的 15%
+                                    if (currentTime >= runDuration * 0.15) {
+                                        bossTrack.style.transition = 'opacity 0.2s ease-in';
+                                        bossTrack.style.opacity = '1';
+                                        
+                                        // ⚡ 1. 將播放速度拉高到 3 倍，快速播放 Spawn 登場動作
+                                        bossPlayer.timeScale = 3.0; 
+                                        let bossSpawnTrack = safePlaySpine(bossPlayer, "Spawn", false);
+                                        
+                                        // 取得 Spawn 動作的原始長度 (毫秒)
+                                        let bossSpawnDuration = (bossSpawnTrack && bossSpawnTrack.animation ? bossSpawnTrack.animation.duration : 1.5) * 1000;
+                                        
+                                        // ⏳ 計算實際需要的等待時間 (因為 3 倍速，所以時間縮短為 1/3)
+                                        let actualWaitTime = bossSpawnDuration / 3;
+
+                                        // ⚡ 2. 等待 Spawn 光速播完後，恢復正常並開始移動追逐
+                                        setTimeout(() => {
+                                            // ⚠️ 記得把 Boss 的動作速度恢復成正常的 1.0！
+                                            bossPlayer.timeScale = 1.0; 
+                                            safePlaySpine(bossPlayer, "Move", true);
+                                            
+                                            // 🏃‍♂️ 開始 CSS 位移 (因為晚出發，所以縮短時間到 0.65，讓 Boss 跑得比小人快)
+                                            bossRunAnimation = bossTrack.animate([
+                                                { transform: 'translateX(0)' },
+                                                { transform: `translateX(calc(-100vw + ${endLeftPos}))` }
+                                            ], { duration: runDuration * 0.55, fill: 'forwards' });
+
+                                            // 正式啟動追逐雷達
+
+                                            function checkChase() {
+                                                if (isCaught || isEscaped) return;
+
+                                                const rRect = track.getBoundingClientRect();
+                                                const bRect = bossTrack.getBoundingClientRect();
+
+                                                if (!hasNoticed && charRunAnimation.currentTime > noticeTriggerTime) {
+                                                    hasNoticed = true;
+                                                    player.timeScale = 2.0; 
+                                                    charRunAnimation.playbackRate = 2.0; 
+                                                    bossPlayer.timeScale = 1.5; 
+                                                    bossRunAnimation.playbackRate = 1.5; 
+                                                }
+
+                                                let rCenter = rRect.left + (rRect.width / 2);
+                                                let bCenter = bRect.left + (bRect.width / 2);
+
+                                                if (bCenter <= rCenter + 60) {
+                                                    isCaught = true;
+                                                    handleCollision(bossPlayer, bossRunAnimation);
+                                                    return;
+                                                }
+                                                chaseLoopId = requestAnimationFrame(checkChase);
+                                            }
+                                            chaseLoopId = requestAnimationFrame(checkChase);
+
+                                        }, actualWaitTime); // ⏳ 使用縮短後的時間
+
+                                    } else {
+                                        // 如果小人還沒跑到 15%，下一幀繼續檢查
+                                        requestAnimationFrame(waitRunner15Percent);
+                                    }
+                                }
+                                // 🚀 立即啟動 15% 進度偵測迴圈
+                                requestAnimationFrame(waitRunner15Percent);
+                            } // ⬅️ success 區塊在這裡結束
+                        });
+
+                        
 
                         // 🔪 獨立出來的 Boss 處決動畫邏輯 (保留你微調過的 2400 毫秒)
                         function bossExecuteKill(bossPlayer) {
