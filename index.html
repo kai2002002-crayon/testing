@@ -654,7 +654,7 @@ currentBossPlayer = new spine.SpinePlayer("bossRunnerContainer", {
             bossRunAnimation = bossTrack.animate([
                 { transform: 'translateX(0)' },
                 { transform: `translateX(calc(-100vw + ${endLeftPos}))` }
-            ], { duration: runDuration *0.9, fill: 'forwards' });
+            ], { duration: runDuration *0.7, fill: 'forwards' });
 
                                     function checkChase() {
                                         if (isCaught || isEscaped) return;
