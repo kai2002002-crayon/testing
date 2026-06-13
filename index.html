@@ -783,7 +783,7 @@
                 // 判斷是否為遠程職業 (射手、法師、治療)
                 const isRanged = ["中排", "後排"].some(j => randomCharData.job && randomCharData.job.includes(j));
                 // 遠程向左後退 120px 拉開距離 (數值可依喜好調整，越小退越遠，例如 -150px)
-                const attackOffset = isRanged ? "translateX(-120px)" : "translateX(0px)";
+                const attackOffset = isRanged ? "translateX(120px)" : "translateX(0px)";
 
                 if (chasePhase === 1) {
                     if (Math.random() < 0.4) {
