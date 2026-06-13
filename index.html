@@ -496,47 +496,52 @@
         }
 
         // 🎇 處理攻擊的金蠟筆特效 (彈道與打擊)
-        function triggerCrayonAttack(isRanged, attackDurationMs, bossContainer, runnerContainer) {
-            const area = document.getElementById('runnerArea');
-            const rRect = runnerContainer.getBoundingClientRect();
-            const bRect = bossContainer.getBoundingClientRect();
+function triggerCrayonAttack(isRanged, attackDurationMs, bossContainer, runnerContainer, isCombo = false) {
+    const area = document.getElementById('runnerArea');
+    const rRect = runnerContainer.getBoundingClientRect();
+    const bRect = bossContainer.getBoundingClientRect();
+    
+    const startX = rRect.left + rRect.width * 0.5;
+    const startY = rRect.top + rRect.height * 0.5;
+    const endX = bRect.left + bRect.width * 0.5 - 30;
+    const endY = bRect.top + bRect.height * 0.5;
+
+    // 規定：動作開始 0.5 秒後射出
+    const launchDelay = 500; 
+    // 規定：動作結束前 0.5 秒爆裂 (確保不會超過總長度)
+    const burstTime = Math.max(launchDelay + 100, attackDurationMs - 500);
+
+    if (isRanged) {
+        // 等待 0.5 秒後射出
+        setTimeout(() => {
+            const proj = document.createElement('div');
+            proj.className = 'projectile-crayon';
+            proj.style.left = `${startX}px`;
+            proj.style.top = `${startY}px`;
+            area.appendChild(proj);
             
-            const startX = rRect.left + rRect.width * 0.5;
-            const startY = rRect.top + rRect.height * 0.5;
-            const endX = bRect.left + bRect.width * 0.5 - 30; // 稍微偏向 Boss 中心
-            const endY = bRect.top + bRect.height * 0.5;
+            // 飛行時間 = 從射出到爆裂的時間差
+            const flightTime = burstTime - launchDelay;
+            
+            setTimeout(() => {
+                proj.style.transition = `all ${flightTime}ms cubic-bezier(0.25, 0.1, 0.25, 1)`;
+                proj.style.left = `${endX}px`;
+                proj.style.top = `${endY}px`;
+                proj.style.transform = `rotate(720deg)`;
+            }, 50);
 
-            // 定義爆裂時間點 (動作結束前 0.5 秒)
-            const burstTime = Math.max(0, attackDurationMs - 500);
-
-            if (isRanged) {
-                // 產生飛行的金蠟筆
-                const proj = document.createElement('div');
-                proj.className = 'projectile-crayon';
-                proj.style.left = `${startX}px`;
-                proj.style.top = `${startY}px`;
-                area.appendChild(proj);
-                
-                // 動畫飛行 (配合提早爆裂的時間縮短飛行時間)
-                setTimeout(() => {
-                    proj.style.transition = `all ${Math.max(100, burstTime - 50)}ms cubic-bezier(0.25, 0.1, 0.25, 1)`;
-                    proj.style.left = `${endX}px`;
-                    proj.style.top = `${endY}px`;
-                    proj.style.transform = `rotate(720deg)`;
-                }, 50);
-
-                // 擊中時爆裂
-                setTimeout(() => {
-                    if(proj && proj.parentNode) proj.remove();
-                    createCrayonBurst(endX, endY, area);
-                }, burstTime);
-            } else {
-                // 近戰直接在結算時爆裂
-                setTimeout(() => {
-                    createCrayonBurst(endX, endY, area);
-                }, burstTime);
-            }
-        }
+            setTimeout(() => {
+                if(proj && proj.parentNode) proj.remove();
+                createCrayonBurst(endX, endY, area);
+            }, flightTime);
+        }, launchDelay);
+    } else {
+        // 近戰則在結算點爆裂
+        setTimeout(() => {
+            createCrayonBurst(endX, endY, area);
+        }, burstTime);
+    }
+}
 
         function initTopRunner() {
             if (typeof INITIAL_DATA === 'undefined' || INITIAL_DATA.length === 0) return;
