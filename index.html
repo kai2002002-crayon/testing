@@ -454,8 +454,13 @@
         let currentRunnerPlayer = null; 
         let currentBossPlayer = null;
         let chaseLoopId = null;
+        
+        // 🚩 感嘆號專用變數（統一在此處宣告）
+        let noticeIconEl = null;
+        let noticeIconTimeout = null;
 
         function safePlaySpine(playerObj, animName, loop) {
+            // ... (函式內容不變)
             if (!playerObj || !playerObj.animationState) return null;
             try {
                 const anims = playerObj.skeleton.data.animations.map(a => a.name);
