@@ -662,14 +662,14 @@
                 function checkChase() {
                     if (isEscaped || chasePhase === 0) return;
 
-                    // 💡 察覺機制：小人有 25% 機率察覺並獲得隨機速度加成
+                    // 💡 察覺機制：坨坨有 25% 機率察覺並獲得隨機速度加成
                     if (!hasNoticed && !isCaught) {
                         hasNoticed = true; 
                         if (Math.random() < 0.3) {
                             // 產生 0.8 到 2.2 之間的隨機加速倍率
                             // 0.8: 比 Boss 慢, 1.0: 等速, >1.0: 比 Boss 快
                             const randomSpeed = (Math.random() * 1.4 + 0.8).toFixed(2);
-                            console.log(`⚡ 小人察覺到 BOSS！隨機加速倍率：${randomSpeed}x`);
+                            console.log(`⚡ 坨坨察覺到 BOSS！隨機加速倍率：${randomSpeed}x`);
                             
                             runnerPlayer.timeScale = parseFloat(randomSpeed); 
                             charRunAnimation.playbackRate = parseFloat(randomSpeed); 
@@ -699,8 +699,8 @@
 
                 if (chasePhase === 1) {
                     if (Math.random() < 0.4) {
-                        console.log("⚔️ 一階：小人轉向右方反擊！");
-                        container.style.transform = 'scaleX(-1)'; // 讓小人轉身
+                        console.log("⚔️ 一階：坨坨轉向右方反擊！");
+                        container.style.transform = 'scaleX(-1)'; // 讓坨坨轉身
                         safePlaySpine(runnerPlayer, "Attack1_1", false);
                         safePlaySpine(bossPlayer, "Groggy", true);
                         
@@ -709,12 +709,12 @@
                         setTimeout(() => bossContainer.classList.remove('shake-anim'), 400);
 
                         setTimeout(() => {
-                            // 攻擊結束，小人轉回來繼續逃跑
+                            // 攻擊結束，坨坨轉回來繼續逃跑
                             container.style.transform = 'scaleX(1)'; 
                             safePlaySpine(runnerPlayer, "Move", true);
                             charRunAnimation.play();
 
-                            // 讓小人先跑 1.5 秒後，Boss 才恢復 Move (解決連擊判定重疊的 Bug)
+                            // 讓坨坨先跑 1.5 秒後，Boss 才恢復 Move (解決連擊判定重疊的 Bug)
                             setTimeout(() => {
                                 if (chasePhase === 0) return; // 避免已經結束的狀況
                                 console.log("💢 一階：BOSS 從暈眩恢復，暴怒超高速追趕！");
@@ -764,7 +764,7 @@
                         setTimeout(() => {
                             console.log("💀 BOSS 倒地身亡！");
                             safePlaySpine(bossPlayer, "Die", false);
-                            container.style.transform = 'scaleX(1)'; // 小人轉回左邊
+                            container.style.transform = 'scaleX(1)'; // 坨坨轉回左邊
                             safePlaySpine(runnerPlayer, "Move", true);
                             
                             // 💡 關鍵修復：這裡重置 isCaught，讓抵達終點時能播 Victory
@@ -797,7 +797,7 @@
                 // 觸發死亡與震動特效
                 setTimeout(() => { 
                     safePlaySpine(runnerPlayer, "Die", false); 
-                    // 觸發小人容器震動
+                    // 觸發坨坨容器震動
                     container.classList.add('shake-anim');
                     setTimeout(() => container.classList.remove('shake-anim'), 400);
                 }, dieTriggerTime);
