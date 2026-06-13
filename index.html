@@ -785,7 +785,7 @@
 
                 // 依據小人站位判斷：中排、後排為遠距離，前排為近距離
                 const isRanged = ["中排", "後排"].includes(randomCharData.position);
-                const attackOffset = isRanged ? "translateX(120px)" : "translateX(0px)"; // 遠程向左後退拉開距離
+                const attackOffset = isRanged ? "translateX(-240px)" : "translateX(0px)"; // 遠程向左後退拉開距離
 
                 if (chasePhase === 1) {
                     if (Math.random() < 0.4) {
