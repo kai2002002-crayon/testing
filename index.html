@@ -733,29 +733,37 @@ function handleCollision(bossPlayer, bossRunAnimation) {
 
         }, 1000); 
     } else {
-        // 2️⃣ 75% 被抓住了 (原有邏輯)
-        console.log("💀 小人被抓住了...");
-        safePlaySpine(player, "Groggy", true);
-        
-        let attackTrack = safePlaySpine(bossPlayer, "Attack3_1", false);
-        let attackDuration = (attackTrack && attackTrack.animation ? attackTrack.animation.duration : 2.0) * 1000;
+                                // 75% 被抓住了
+                                console.log("💀 小人被抓住了...");
+                                safePlaySpine(player, "Groggy", true);
+                                
+                                let attackTrack = safePlaySpine(bossPlayer, "Attack3_1", false);
+                                // 取得 Attack3_1 總毫秒數，如果抓不到則預設為 3000 毫秒
+                                let attackDuration = (attackTrack && attackTrack.animation ? attackTrack.animation.duration : 3.0) * 1000;
 
-        setTimeout(() => {
-            safePlaySpine(player, "Die", false);
-            safePlaySpine(bossPlayer, "Idle", true);
-            
-            // Die 播完後，小人消失，Boss 在 3 秒後消失
-            setTimeout(() => {
-                track.style.transition = 'opacity 0.6s ease-out';
-                track.style.opacity = '0';
-                setTimeout(() => {
-                    bossTrack.style.transition = 'opacity 0.6s ease-out';
-                    bossTrack.style.opacity = '0';
-                    setTimeout(initTopRunner, 600);
-                }, 3000);
-            }, 3000);
-        }, attackDuration);
-    }
+                                // ⏳ 算出「動作結束前 1 秒」的時間點 (確保時間不為負數)
+                                let dieTriggerTime = Math.max(0, attackDuration - 1000);
+
+                                // 💥 1. 在 Attack 結束前 1 秒，小人受到致命一擊倒下！
+                                setTimeout(() => {
+                                    safePlaySpine(player, "Die", false);
+                                }, dieTriggerTime);
+
+                                // 💨 2. Attack3_1 完全結束時，Boss 與小人慢慢淡出消失
+                                setTimeout(() => {
+                                    // Boss 轉為 Idle 姿勢準備淡出
+                                    safePlaySpine(bossPlayer, "Idle", true); 
+                                    
+                                    // 啟動淡出效果
+                                    track.style.transition = 'opacity 0.6s ease-out';
+                                    track.style.opacity = '0';
+                                    bossTrack.style.transition = 'opacity 0.6s ease-out';
+                                    bossTrack.style.opacity = '0';
+                                    
+                                    // 等待淡出 (600毫秒) 後，重新載入下一位小人
+                                    setTimeout(initTopRunner, 600);
+                                }, attackDuration);
+                            }
                         }
                     }
                 }, spawnDuration);
