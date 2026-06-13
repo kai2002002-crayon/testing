@@ -656,6 +656,8 @@ currentBossPlayer = new spine.SpinePlayer("bossRunnerContainer", {
                 { transform: `translateX(calc(-100vw + ${endLeftPos}))` }
             ], { duration: runDuration *0.7, fill: 'forwards' });
 
+                                    let chasePhase = 1; // 紀錄追逐階段
+
                                     function checkChase() {
                                         if (isCaught || isEscaped) return;
 
@@ -685,91 +687,136 @@ currentBossPlayer = new spine.SpinePlayer("bossRunnerContainer", {
                             }
                         });
 
-                        // 💥 碰撞處理函數 (更新版)
-function handleCollision(bossPlayer, bossRunAnimation) {
-    isCaught = true; // 鎖定狀態
-    charRunAnimation.pause();
-    bossRunAnimation.pause();
+                        // 💥 碰撞處理函數 (暴怒二階段 & 連續技更新版)
+                        function handleCollision(bossPlayer, bossRunAnimation) {
+                            charRunAnimation.pause();
+                            bossRunAnimation.pause();
 
-    const counterAttack = Math.random() < 0.25;
+                            if (chasePhase === 1) {
+                                // ==========================================
+                                // 🏁 第一階段追逐
+                                // ==========================================
+                                const counterAttack = Math.random() < 0.25;
 
-    if (counterAttack) {
-    console.log("⚔️ 小人反擊成功！");
+                                if (counterAttack) {
+                                    console.log("⚔️ 第一階段：小人反擊成功！");
+                                    track.style.transform = 'scaleX(-1)'; 
+                                    safePlaySpine(player, "Attack1_1", false);
+                                    safePlaySpine(bossPlayer, "Groggy", true);
 
-    // 1. 攻擊時轉向右邊 (預設是面向左逃跑，轉向右即 scaleX(-1))
-    // 假設原本面向左，將容器水平翻轉
-    track.style.transform = 'scaleX(-1)'; 
-    
-    safePlaySpine(player, "Attack1_1", false);
-    safePlaySpine(bossPlayer, "Groggy", true);
+                                    setTimeout(() => {
+                                        // 1. 小人轉回左邊，加速逃跑
+                                        track.style.transform = 'scaleX(1)';
+                                        try { player.animationState.setAnimation(0, "Move", true); } catch(e){}
+                                        player.timeScale = 2.0;
+                                        charRunAnimation.playbackRate = 2.0;
+                                        charRunAnimation.play();
 
-    setTimeout(() => {
-        // 2. 攻擊結束，轉回左邊繼續逃跑 (scaleX(1))
-        track.style.transform = 'scaleX(1)';
-        
-        try { player.animationState.setAnimation(0, "Move", true); } catch(e){}
-        player.timeScale = 2.0;
-        charRunAnimation.playbackRate = 2.0;
-        charRunAnimation.play();
+                                        // 2. Boss 暈眩結束，暴怒恢復並以「超高速」二次追趕！
+                                        setTimeout(() => {
+                                            console.log("💢 BOSS 暴怒恢復，超高速追趕！");
+                                            safePlaySpine(bossPlayer, "Move", true);
+                                            bossPlayer.timeScale = 2.5; 
+                                            bossRunAnimation.playbackRate = 3.8; 
+                                            bossRunAnimation.play();
+                                            
+                                            // 重啟追蹤雷達，進入二階段
+                                            chasePhase = 2;
+                                            isCaught = false; 
+                                            chaseLoopId = requestAnimationFrame(checkChase);
+                                        }, 1200); 
 
-            // Boss 暈眩 2 秒後恢復並開始發呆
-            setTimeout(() => {
-                safePlaySpine(bossPlayer, "Idle", true);
-                setTimeout(() => {
-                    bossTrack.style.transition = 'opacity 0.6s ease-out';
-                    bossTrack.style.opacity = '0';
-                }, 3000); // 暈眩結束後，Boss 發呆 3 秒消失
-            }, 2000);
+                                        // 💡 監測逃跑成功 (第一階段就反擊成功的話，後續跑到終點會觸發 Victory)
+                                        charRunAnimation.onfinish = () => {
+                                            isEscaped = true;
+                                            player.timeScale = 1.0;
+                                            safePlaySpine(player, "Victory", false);
+                                            setTimeout(() => {
+                                                track.style.transition = 'opacity 0.6s ease-out';
+                                                track.style.opacity = '0';
+                                                setTimeout(initTopRunner, 600);
+                                            }, 3000);
+                                        };
+                                    }, 1000); 
+                                } else {
+                                    // 75% 失敗
+                                    bossExecuteKill(bossPlayer);
+                                }
 
-            // 💡 監測逃跑成功
-            charRunAnimation.onfinish = () => {
-                isEscaped = true;
-                player.timeScale = 1.0;
-                
-                // 逃脫成功，播放 Victory
-                safePlaySpine(player, "Victory", false);
-                
-                // 3秒後消失
-                setTimeout(() => {
-                    track.style.transition = 'opacity 0.6s ease-out';
-                    track.style.opacity = '0';
-                    setTimeout(initTopRunner, 600);
-                }, 3000);
-            };
+                            } else if (chasePhase === 2) {
+                                // ==========================================
+                                // 🏁 第二階段追逐 (生死一瞬)
+                                // ==========================================
+                                const secondCounterAttack = Math.random() < 0.60; 
 
-        }, 1000); 
-    } else {
-                                // 75% 被抓住了
-                                console.log("💀 小人被抓住了...");
-                                safePlaySpine(player, "Groggy", true);
-                                
-                                let attackTrack = safePlaySpine(bossPlayer, "Attack3_1", false);
-                                // 取得 Attack3_1 總毫秒數，如果抓不到則預設為 3000 毫秒
-                                let attackDuration = (attackTrack && attackTrack.animation ? attackTrack.animation.duration : 3.0) * 1000;
+                                if (secondCounterAttack) {
+                                    console.log("🌟 第二階段：小人絕地大反攻，使出連續技擊敗 BOSS！");
+                                    track.style.transform = 'scaleX(-1)'; 
+                                    safePlaySpine(bossPlayer, "Groggy", true); 
 
-                                // ⏳ 算出「動作結束前 1 秒」的時間點 (確保時間不為負數)
-                                let dieTriggerTime = Math.max(0, attackDuration - 2300);
-
-                                // 💥 1. 在 Attack 結束前 1 秒，小人受到致命一擊倒下！
-                                setTimeout(() => {
-                                    safePlaySpine(player, "Die", false);
-                                }, dieTriggerTime);
-
-                                // 💨 2. Attack3_1 完全結束時，Boss 與小人慢慢淡出消失
-                                setTimeout(() => {
-                                    // Boss 轉為 Idle 姿勢準備淡出
-                                    safePlaySpine(bossPlayer, "Idle", true); 
+                                    // 🔍 自動抓取並排序所有 Skill1 相關的動作
+                                    const anims = player.skeleton.data.animations.map(a => a.name);
+                                    const skillAnims = anims.filter(a => a.startsWith("Skill1_")).sort();
                                     
-                                    // 啟動淡出效果
-                                    track.style.transition = 'opacity 0.6s ease-out';
-                                    track.style.opacity = '0';
-                                    bossTrack.style.transition = 'opacity 0.6s ease-out';
-                                    bossTrack.style.opacity = '0';
-                                    
-                                    // 等待淡出 (600毫秒) 後，重新載入下一位小人
-                                    setTimeout(initTopRunner, 600);
-                                }, attackDuration);
+                                    let totalSkillDuration = 0;
+
+                                    if (skillAnims.length > 0) {
+                                        let firstTrack = safePlaySpine(player, skillAnims[0], false);
+                                        totalSkillDuration += (firstTrack && firstTrack.animation ? firstTrack.animation.duration : 1.0);
+                                        for (let i = 1; i < skillAnims.length; i++) {
+                                            let nextTrack = player.animationState.addAnimation(0, skillAnims[i], false, 0);
+                                            totalSkillDuration += (nextTrack && nextTrack.animation ? nextTrack.animation.duration : 1.0);
+                                        }
+                                    } else {
+                                        let fallbackTrack = safePlaySpine(player, "Attack1_1", false);
+                                        totalSkillDuration += (fallbackTrack && fallbackTrack.animation ? fallbackTrack.animation.duration : 1.0);
+                                    }
+
+                                    // 等待整套連續技打完
+                                    setTimeout(() => {
+                                        track.style.transform = 'scaleX(1)'; 
+                                        safePlaySpine(player, "Move", true);
+                                        charRunAnimation.play(); 
+
+                                        console.log("💀 BOSS 倒地身亡！");
+                                        safePlaySpine(bossPlayer, "Die", false);
+                                        
+                                        setTimeout(() => {
+                                            bossTrack.style.transition = 'opacity 0.6s ease-out';
+                                            bossTrack.style.opacity = '0';
+                                        }, 2000); 
+                                    }, totalSkillDuration * 1000);
+
+                                } else {
+                                    console.log("💀 第二階段：極限逃生失敗...");
+                                    bossExecuteKill(bossPlayer);
+                                }
                             }
+                        }
+
+                        // 🔪 獨立出來的 Boss 處決動畫邏輯 (保留你微調過的 2300 毫秒)
+                        function bossExecuteKill(bossPlayer) {
+                            console.log("💀 小人被抓住了...");
+                            safePlaySpine(player, "Groggy", true);
+                            
+                            let attackTrack = safePlaySpine(bossPlayer, "Attack3_1", false);
+                            let attackDuration = (attackTrack && attackTrack.animation ? attackTrack.animation.duration : 3.0) * 1000;
+                            
+                            let dieTriggerTime = Math.max(0, attackDuration - 2400); // 💡 保留你設定的 2400
+
+                            setTimeout(() => {
+                                safePlaySpine(player, "Die", false);
+                            }, dieTriggerTime);
+
+                            setTimeout(() => {
+                                safePlaySpine(bossPlayer, "Idle", true); 
+                                track.style.transition = 'opacity 0.6s ease-out';
+                                track.style.opacity = '0';
+                                bossTrack.style.transition = 'opacity 0.6s ease-out';
+                                bossTrack.style.opacity = '0';
+                                setTimeout(initTopRunner, 600);
+                            }, attackDuration);
+                        }
                         }
                     }
                 }, spawnDuration);
