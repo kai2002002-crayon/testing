@@ -782,12 +782,13 @@
 
                 // 判斷是否為遠程職業 (射手、法師、治療)
                 const isRanged = ["中排", "後排"].some(j => randomCharData.job && randomCharData.job.includes(j));
-                const attackOffset = isRanged ? "translateX(60px)" : "translateX(0px)"; // 遠程向後退拉開距離
+                // 遠程向左後退 120px 拉開距離 (數值可依喜好調整，越小退越遠，例如 -150px)
+                const attackOffset = isRanged ? "translateX(-120px)" : "translateX(0px)";
 
                 if (chasePhase === 1) {
                     if (Math.random() < 0.4) {
                         console.log("⚔️ 一階：坨坨轉向右方反擊！");
-                        container.style.transform = `scaleX(-1) ${attackOffset}`; 
+                        container.style.transform = `${attackOffset} scaleX(-1)`; 
                         
                         let attackTrack = safePlaySpine(runnerPlayer, "Attack1_1", false);
                         let atkDur = (attackTrack && attackTrack.animation ? attackTrack.animation.duration : 1.0) * 1000;
@@ -838,7 +839,7 @@
                     if (Math.random() < 0.70) {
                         console.log("🌟 二階：絕地大反攻，連續技擊殺 BOSS！");
                         chasePhase = 0; 
-                        container.style.transform = `scaleX(-1) ${attackOffset}`; 
+                        container.style.transform = `${attackOffset} scaleX(-1)`;
                         safePlaySpine(bossPlayer, "Groggy", true); 
 
                         // 1. 動作起始：普通震動
