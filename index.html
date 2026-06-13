@@ -580,6 +580,7 @@
             if (currentBossPlayer) { try { currentBossPlayer.dispose(); } catch(e){} currentBossPlayer = null; }
             container.innerHTML = ''; bossContainer.innerHTML = '';
             track.onclick = null; bossTrack.onclick = null;
+            clearTimeout(noticeIconTimeout); // 🚩 新增這行，重置選單時清空計時
 
             const isBossEvent = Math.random() < 0.7; 
             
@@ -589,6 +590,8 @@
             let chasePhase = 1; 
             let isBossKnockedBack = false;
             let hasReachedEnd = false; // 🚩 新增標記：是否已經抵達終點
+            let noticeIconEl = null;      // 💡 新增：紀錄感嘆號元素
+            let noticeIconTimeout = null; // 💡 新增：紀錄感嘆號計時器
 
             const runDuration = isMobile ? 6000 : 14000; 
             let charRunAnimation = null;
@@ -771,17 +774,46 @@
                     if (isEscaped || chasePhase === 0) return;
 
                     // 💡 察覺機制：坨坨有 30% 機率察覺並獲得隨機速度加成
-                    if (!hasNoticed && !isCaught) {
-                        hasNoticed = true; 
-                        if (Math.random() < 0.3) {
-                            // 產生 0.8 到 2.2 之間的隨機加速倍率
-                            const randomSpeed = (Math.random() * 1.4 + 0.8).toFixed(2);
-                            console.log(`⚡ 坨坨察覺到 BOSS！隨機加速倍率：${randomSpeed}x`);
-                            
-                            runnerPlayer.timeScale = parseFloat(randomSpeed); 
-                            charRunAnimation.playbackRate = parseFloat(randomSpeed); 
+                    // 💡 察覺機制：坨坨察覺並獲得隨機速度加成
+                if (!hasNoticed && !isCaught) {
+                    hasNoticed = true; 
+                    
+                    // 🌟 產生驚嚇感嘆號 icon
+                    if (noticeIconEl) { noticeIconEl.remove(); clearTimeout(noticeIconTimeout); }
+                    noticeIconEl = document.createElement('img');
+                    noticeIconEl.src = 'https://i.postimg.cc/ft7Yt8RD/Chaos-Arena-Matching-Icon-02.png';
+                    // w-[25px] h-[25px] 完美契合金蠟筆大小
+                    noticeIconEl.className = 'absolute w-[25px] h-[25px] object-contain pointer-events-none transition-all duration-200';
+                    noticeIconEl.style.top = '-35px'; // 顯示在小人頭頂正上方
+                    noticeIconEl.style.left = '50%';
+                    noticeIconEl.style.transform = 'translateX(-50%) scale(0)';
+                    noticeIconEl.style.zIndex = '150';
+                    noticeIconEl.style.filter = 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))';
+                    container.appendChild(noticeIconEl);
+                    
+                    // 彈出動畫效果
+                    requestAnimationFrame(() => { 
+                        if(noticeIconEl) noticeIconEl.style.transform = 'translateX(-50%) scale(1.2)'; 
+                    });
+                    
+                    // 2 秒後自動縮小消失
+                    noticeIconTimeout = setTimeout(() => {
+                        if (noticeIconEl) {
+                            noticeIconEl.style.transform = 'translateX(-50%) scale(0)';
+                            noticeIconEl.style.opacity = '0';
+                            setTimeout(() => { if (noticeIconEl) { noticeIconEl.remove(); noticeIconEl = null; } }, 200);
                         }
+                    }, 2000);
+
+                    if (Math.random() < 0.3) {
+                        // 產生 0.8 到 2.2 之間的隨機加速倍率
+                        const randomSpeed = (Math.random() * 1.4 + 0.8).toFixed(2);
+                        console.log(`⚡ 坨坨察覺到 BOSS！隨機加速倍率：${randomSpeed}x`);
+                        
+                        runnerPlayer.timeScale = parseFloat(randomSpeed); 
+                        charRunAnimation.playbackRate = parseFloat(randomSpeed); 
                     }
+                }
 
                     const rRect = track.getBoundingClientRect();
                     const bRect = bossTrack.getBoundingClientRect();
@@ -800,6 +832,13 @@
 
             // ⚔️ 碰撞劇本處理
             function handleCollision(runnerPlayer, bossPlayer) {
+                // 🚩 補上：如果這 2 秒內和 BOSS 發生碰撞，感嘆號提早消失
+                if (noticeIconEl) {
+                    noticeIconEl.remove();
+                    noticeIconEl = null;
+                    clearTimeout(noticeIconTimeout);
+                }
+
                 charRunAnimation.pause();
                 bossRunAnimation.pause();
                 bossTrack.style.pointerEvents = 'none'; 
@@ -860,32 +899,61 @@
                                 container.style.transform = 'translateX(0px) scaleX(1)'; 
                             }
                             
+                            setTimeout(() => {
                             // 🚩 檢查：如果剛剛打架時不小心走到終點了，直接獲勝！
                             if (hasReachedEnd) {
-                                isCaught = false;
-                                chasePhase = 0;
-                                triggerVictory();
-                                return; // 終止後續的追逐
+                                isCaught = false; chasePhase = 0; triggerVictory(); return;
                             }
 
-                            safePlaySpine(runnerPlayer, "Move", true);
-                            charRunAnimation.play();
+                            // 將起跑與 Boss 追趕的邏輯包裝起來，確保在「轉身與座標交換」完成後才執行
+                            const resumeRunning = () => {
+                                safePlaySpine(runnerPlayer, "Move", true);
+                                charRunAnimation.play();
 
-                            // 讓坨坨先跑 1.5 秒後，Boss 才恢復 Move
-                            setTimeout(() => {
-                                if (chasePhase === 0) return; // 避免已經結束的狀況
-                                console.log("💢 一階：BOSS 從暈眩恢復，暴怒超高速追趕！");
-                                safePlaySpine(bossPlayer, "Move", true);
-                                bossPlayer.timeScale = 1.5; 
-                                bossRunAnimation.playbackRate = 2.0; 
-                                bossRunAnimation.play();
-                                bossTrack.style.pointerEvents = 'auto'; 
+                                setTimeout(() => {
+                                    if (chasePhase === 0) return; 
+                                    console.log("💢 一階：BOSS 從暈眩恢復，暴怒超高速追趕！");
+                                    safePlaySpine(bossPlayer, "Move", true);
+                                    bossPlayer.timeScale = 1.5; 
+                                    bossRunAnimation.playbackRate = 2.0; 
+                                    bossRunAnimation.play();
+                                    bossTrack.style.pointerEvents = 'auto'; 
+                                    
+                                    isCaught = false; 
+                                    chasePhase = 2; 
+                                    chaseLoopId = requestAnimationFrame(() => startChaseRadar(runnerPlayer, bossPlayer));
+                                }, 1500); 
+                            };
+
+                            if (isRanged) {
+                                // 1. 留在原地 (-240px)，只做翻轉轉向 (scaleX)
+                                container.style.transform = 'translateX(-240px) scaleX(1)';
                                 
-                                isCaught = false; // 恢復判定
-                                chasePhase = 2; // 進入二階
-                                chaseLoopId = requestAnimationFrame(() => startChaseRadar(runnerPlayer, bossPlayer));
-                            }, 1500); 
-
+                                // 2. 等待 200ms 翻轉動畫結束
+                                setTimeout(() => {
+                                    if (chasePhase === 0 || hasReachedEnd) return; 
+                                    
+                                    const screenWidth = window.innerWidth || 1000;
+                                    const skipTime = (240 / screenWidth) * runDuration;
+                                    
+                                    // 軌道時間往前推
+                                    if (charRunAnimation && charRunAnimation.playState !== 'finished') {
+                                        charRunAnimation.currentTime = (charRunAnimation.currentTime || 0) + skipTime;
+                                    }
+                                    
+                                    // 小人視覺歸零 (瞬間完成，取消 transition 防止閃爍)
+                                    container.style.transition = 'none';
+                                    container.style.transform = 'translateX(0px) scaleX(1)';
+                                    void container.offsetWidth; // 強制重繪
+                                    container.style.transition = 'transform 0.2s ease';
+                                    
+                                    // 3. 完美交換座標後，才開始奔跑！
+                                    resumeRunning();
+                                }, 200);
+                            } else {
+                                container.style.transform = 'translateX(0px) scaleX(1)'; 
+                                resumeRunning();
+                            }
                         }, atkDur); 
                     } else {
                         console.log("💀 一階：反擊失敗，被處決");
@@ -955,7 +1023,21 @@
                             console.log("💀 BOSS 倒地身亡！");
                             safePlaySpine(bossPlayer, "Die", false);
                             
-                            // 攻擊結束，坨坨轉回來 (無縫銜接位移系統)
+                            if (hasReachedEnd) {
+                                isCaught = false; triggerVictory(); return;
+                            }
+
+                            const resumeRunning = () => {
+                                safePlaySpine(runnerPlayer, "Move", true);
+                                isCaught = false; 
+                                charRunAnimation.play(); 
+
+                                setTimeout(() => {
+                                    bossTrack.style.transition = 'opacity 0.6s ease-out';
+                                    bossTrack.style.opacity = '0';
+                                }, 3000); 
+                            };
+
                             if (isRanged) {
                                 container.style.transform = 'translateX(-240px) scaleX(1)';
                                 setTimeout(() => {
@@ -972,26 +1054,13 @@
                                     container.style.transform = 'translateX(0px) scaleX(1)';
                                     void container.offsetWidth;
                                     container.style.transition = 'transform 0.2s ease';
+                                    
+                                    resumeRunning();
                                 }, 200);
                             } else {
                                 container.style.transform = 'translateX(0px) scaleX(1)'; 
+                                resumeRunning();
                             }
-                            
-                            // 🚩 檢查：如果在處決 Boss 的期間走到終點了，直接觸發勝利動畫
-                            if (hasReachedEnd) {
-                                isCaught = false;
-                                triggerVictory();
-                                return; // 終止後續邏輯
-                            }
-
-                            safePlaySpine(runnerPlayer, "Move", true);
-                            isCaught = false; 
-                            charRunAnimation.play(); 
-
-                            setTimeout(() => {
-                                bossTrack.style.transition = 'opacity 0.6s ease-out';
-                                bossTrack.style.opacity = '0';
-                            }, 3000); 
                         }, totalSkillDurationMs);
                     } else {
                         console.log("💀 二階：極限逃生失敗，被處決");
