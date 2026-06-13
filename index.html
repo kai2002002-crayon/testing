@@ -832,7 +832,7 @@
 
             // ⚔️ 碰撞劇本處理
             function handleCollision(runnerPlayer, bossPlayer) {
-                // 🚩 補上：如果這 2 秒內和 BOSS 發生碰撞，感嘆號提早消失
+                // 🚩 如果這 2 秒內和 BOSS 發生碰撞，感嘆號提早消失
                 if (noticeIconEl) {
                     noticeIconEl.remove();
                     noticeIconEl = null;
@@ -861,7 +861,7 @@
                         bossContainer.classList.add('shake-anim');
                         setTimeout(() => bossContainer.classList.remove('shake-anim'), 400);
 
-                        // 將原有的呼叫改為：
+                        // 2. 觸發專屬金蠟筆特效
                         triggerCrayonAttack(isRanged, atkDur, bossContainer, container, isRanged ? -240 : 0);
 
                         // 3. 動作結束前 0.5 秒：更強烈的震動爆破
@@ -871,41 +871,12 @@
                         }, Math.max(0, atkDur - 500));
 
                         setTimeout(() => {
-                            // 攻擊結束，坨坨轉回來 (無縫銜接位移系統)
-                            if (isRanged) {
-                                // 1. 先平滑轉身，但保持 -240px 的視覺位移
-                                container.style.transform = 'translateX(-240px) scaleX(1)';
-                                
-                                // 2. 給予 200ms 讓 CSS 轉身動畫播完，然後進行「物理與視覺座標交換」
-                                setTimeout(() => {
-                                    if (chasePhase === 0 || hasReachedEnd) return; // 如果已經抵達終點勝利，就讓他在原地慶祝，不交換座標
-                                    
-                                    const screenWidth = window.innerWidth || 1000;
-                                    const skipTime = (240 / screenWidth) * runDuration;
-                                    
-                                    // 讓軌道的實體進度瞬間往前推進 240px 的時間量
-                                    if (charRunAnimation && charRunAnimation.playState !== 'finished') {
-                                        charRunAnimation.currentTime = (charRunAnimation.currentTime || 0) + skipTime;
-                                    }
-                                    
-                                    // 瞬間消除 container 偏移，讓軌道的實體座標無縫接手
-                                    container.style.transition = 'none';
-                                    container.style.transform = 'translateX(0px) scaleX(1)';
-                                    void container.offsetWidth; // 觸發重繪
-                                    container.style.transition = 'transform 0.2s ease';
-                                }, 200);
-                            } else {
-                                // 近戰沒有位移，直接轉向
-                                container.style.transform = 'translateX(0px) scaleX(1)'; 
-                            }
-                            
-                            setTimeout(() => {
                             // 🚩 檢查：如果剛剛打架時不小心走到終點了，直接獲勝！
                             if (hasReachedEnd) {
                                 isCaught = false; chasePhase = 0; triggerVictory(); return;
                             }
 
-                            // 將起跑與 Boss 追趕的邏輯包裝起來，確保在「轉身與座標交換」完成後才執行
+                            // 將起跑與 Boss 追趕的邏輯包裝起來
                             const resumeRunning = () => {
                                 safePlaySpine(runnerPlayer, "Move", true);
                                 charRunAnimation.play();
@@ -926,28 +897,24 @@
                             };
 
                             if (isRanged) {
-                                // 1. 留在原地 (-240px)，只做翻轉轉向 (scaleX)
+                                // 留在原地，只做翻轉轉向
                                 container.style.transform = 'translateX(-240px) scaleX(1)';
                                 
-                                // 2. 等待 200ms 翻轉動畫結束
                                 setTimeout(() => {
                                     if (chasePhase === 0 || hasReachedEnd) return; 
                                     
                                     const screenWidth = window.innerWidth || 1000;
                                     const skipTime = (240 / screenWidth) * runDuration;
                                     
-                                    // 軌道時間往前推
                                     if (charRunAnimation && charRunAnimation.playState !== 'finished') {
                                         charRunAnimation.currentTime = (charRunAnimation.currentTime || 0) + skipTime;
                                     }
                                     
-                                    // 小人視覺歸零 (瞬間完成，取消 transition 防止閃爍)
                                     container.style.transition = 'none';
                                     container.style.transform = 'translateX(0px) scaleX(1)';
-                                    void container.offsetWidth; // 強制重繪
+                                    void container.offsetWidth; 
                                     container.style.transition = 'transform 0.2s ease';
                                     
-                                    // 3. 完美交換座標後，才開始奔跑！
                                     resumeRunning();
                                 }, 200);
                             } else {
@@ -972,7 +939,6 @@
                         let totalSkillDurationMs = 0;
 
                         if (skillAnims.length > 0) {
-                            // 針對每一個分段動作安排特效
                             skillAnims.forEach((animName, index) => {
                                 let track;
                                 if (index === 0) {
@@ -983,33 +949,27 @@
                                 
                                 let currentAnimDurMs = (track && track.animation ? track.animation.duration : 1.0) * 1000;
 
-                                // 在當前子動作「起手時」觸發：輕微震動與子彈發射
                                 setTimeout(() => {
                                     bossContainer.classList.add('shake-anim');
                                     setTimeout(() => bossContainer.classList.remove('shake-anim'), 400);
                                     
-                                    // 在迴圈內呼叫的部分改為：
                                     triggerCrayonAttack(isRanged, currentAnimDurMs, bossContainer, container, isRanged ? -240 : 0);
                                 }, totalSkillDurationMs);
 
-                                // 在當前子動作「結束前 0.5 秒」觸發：強烈震動
                                 setTimeout(() => {
                                     bossContainer.classList.add('shake-strong-anim');
                                     setTimeout(() => bossContainer.classList.remove('shake-strong-anim'), 500);
                                 }, totalSkillDurationMs + Math.max(0, currentAnimDurMs - 500));
 
-                                // 累加總時間供下一個動作使用
                                 totalSkillDurationMs += currentAnimDurMs;
                             });
                         } else {
-                            // 若無連續技，執行單一動作邏輯
                             let fallbackTrack = safePlaySpine(runnerPlayer, "Attack1_1", false);
                             totalSkillDurationMs = (fallbackTrack && fallbackTrack.animation ? fallbackTrack.animation.duration : 1.0) * 1000;
                             
                             bossContainer.classList.add('shake-anim');
                             setTimeout(() => bossContainer.classList.remove('shake-anim'), 400);
                             
-                            // 在 fallback (無連續技時) 的部分改為：
                             triggerCrayonAttack(isRanged, totalSkillDurationMs, bossContainer, container, isRanged ? -240 : 0);
 
                             setTimeout(() => {
@@ -1062,6 +1022,7 @@
                                 resumeRunning();
                             }
                         }, totalSkillDurationMs);
+
                     } else {
                         console.log("💀 二階：極限逃生失敗，被處決");
                         bossExecuteKill(runnerPlayer, bossPlayer);
