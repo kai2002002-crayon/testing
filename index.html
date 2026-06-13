@@ -779,31 +779,29 @@
                     hasNoticed = true; 
                     
                     // 🌟 產生驚嚇感嘆號 icon
-                    if (noticeIconEl) { noticeIconEl.remove(); clearTimeout(noticeIconTimeout); }
-                    noticeIconEl = document.createElement('img');
-                    noticeIconEl.src = 'https://i.postimg.cc/ft7Yt8RD/Chaos-Arena-Matching-Icon-02.png';
-                    // w-[25px] h-[25px] 完美契合金蠟筆大小
-                    noticeIconEl.className = 'absolute w-[25px] h-[25px] object-contain pointer-events-none transition-all duration-200';
-                    noticeIconEl.style.top = '-35px'; // 顯示在小人頭頂正上方
-                    noticeIconEl.style.left = '50%';
-                    noticeIconEl.style.transform = 'translateX(-50%) scale(0)';
-                    noticeIconEl.style.zIndex = '150';
-                    noticeIconEl.style.filter = 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))';
-                    container.appendChild(noticeIconEl);
+                    if (window.noticeIconEl) { window.noticeIconEl.remove(); clearTimeout(window.noticeIconTimeout); }
+                    window.noticeIconEl = document.createElement('img');
+                    window.noticeIconEl.src = 'https://i.postimg.cc/ft7Yt8RD/Chaos-Arena-Matching-Icon-02.png';
+                    window.noticeIconEl.className = 'absolute w-[25px] h-[25px] object-contain pointer-events-none transition-all duration-200';
+                    window.noticeIconEl.style.top = '-35px';
+                    window.noticeIconEl.style.left = '50%';
+                    window.noticeIconEl.style.transform = 'translateX(-50%) scale(0)';
+                    window.noticeIconEl.style.zIndex = '150';
+                    container.appendChild(window.noticeIconEl);
                     
-                    // 彈出動畫效果
                     requestAnimationFrame(() => { 
-                        if(noticeIconEl) noticeIconEl.style.transform = 'translateX(-50%) scale(1.2)'; 
+                        if(window.noticeIconEl) window.noticeIconEl.style.transform = 'translateX(-50%) scale(1.2)'; 
                     });
                     
-                    // 2 秒後自動縮小消失
-                    noticeIconTimeout = setTimeout(() => {
-                        if (noticeIconEl) {
-                            noticeIconEl.style.transform = 'translateX(-50%) scale(0)';
-                            noticeIconEl.style.opacity = '0';
-                            setTimeout(() => { if (noticeIconEl) { noticeIconEl.remove(); noticeIconEl = null; } }, 200);
+                    window.noticeIconTimeout = setTimeout(() => {
+                        if (window.noticeIconEl) {
+                            window.noticeIconEl.style.transform = 'translateX(-50%) scale(0)';
+                            window.noticeIconEl.style.opacity = '0';
+                            setTimeout(() => { if (window.noticeIconEl) { window.noticeIconEl.remove(); window.noticeIconEl = null; } }, 200);
                         }
                     }, 2000);
+
+                    // ... 後續加速邏輯 ...
 
                     if (Math.random() < 0.3) {
                         // 產生 0.8 到 2.2 之間的隨機加速倍率
@@ -832,11 +830,11 @@
 
             // ⚔️ 碰撞劇本處理
             function handleCollision(runnerPlayer, bossPlayer) {
-                // 🚩 如果這 2 秒內和 BOSS 發生碰撞，感嘆號提早消失
-                if (noticeIconEl) {
-                    noticeIconEl.remove();
-                    noticeIconEl = null;
-                    clearTimeout(noticeIconTimeout);
+                // 🚩 修改這裡：使用 window.noticeIconEl
+                if (window.noticeIconEl) {
+                    window.noticeIconEl.remove();
+                    window.noticeIconEl = null;
+                    clearTimeout(window.noticeIconTimeout);
                 }
 
                 charRunAnimation.pause();
