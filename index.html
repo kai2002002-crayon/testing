@@ -669,25 +669,26 @@ function initTopRunner() {
                     // ==========================================
                     // 💀 BOSS 追逐戰邏輯分支
                     // ==========================================
+                    // ==========================================
+                    // 💀 BOSS 追逐戰邏輯分支
+                    // ==========================================
                     if (isBossEvent) {
                         const bossKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP['R41雷內瓦'] ? SPINE_MAP['R41雷內瓦'] : 'R41雷內瓦';
                         
-                        // 替換原本 currentBossPlayer 的初始化區塊
-currentBossPlayer = new spine.SpinePlayer("bossRunnerContainer", {
-    skelUrl: `./spine_sd_assets/${bossKey}.skel.bytes`,
-    atlasUrl: `./spine_sd_assets/${bossKey}.atlas.txt`,
-    animation: "Move", // 設置初始動畫
-    alpha: true,
-    premultipliedAlpha: false, // 絕大多數 .atlas 使用此設定，若顯示黑框請改回 true
-    showControls: false,
-    showLoading: false,
-    viewport: { 
-        x: -1100, y: -350, width: 2200, height: 2500, 
-        transitionTime: 0 
-    },
-    success: function (bossPlayer) {
+                        currentBossPlayer = new spine.SpinePlayer("bossRunnerContainer", {
+                            skelUrl: `./spine_sd_assets/${bossKey}.skel.bytes`,
+                            atlasUrl: `./spine_sd_assets/${bossKey}.atlas.txt`,
+                            animation: "Move", 
+                            backgroundColor: "#00000000", alpha: true, 
+                            premultipliedAlpha: false,
+                            showControls: false, showLoading: false,
+                            viewport: { 
+                                x: -1500, y: -500, width: 3000, height: 3000, // 💡 確保武器不會被切到的加大視角
+                                padLeft: "0%", padRight: "0%", padTop: "0%", padBottom: "0%", transitionTime: 0 
+                            },
+                            success: function (bossPlayer) {
                                 console.log("✅ 💀 BOSS 載入成功，準備登場！");
-                                
+
                                 if (bossPlayer.skeleton) {
                                     bossPlayer.skeleton.setToSetupPose();
                                     bossPlayer.skeleton.updateWorldTransform();
@@ -703,10 +704,10 @@ currentBossPlayer = new spine.SpinePlayer("bossRunnerContainer", {
                                 } catch (e) { }
 
                                 // ==========================================
-                                // 🌟 動態偵測：等待小人跑到 15% 時再登場 (完全取代原本的 setTimeout 500)
+                                // 🌟 動態偵測：等待小人跑到 15% 時再登場
                                 // ==========================================
                                 function waitRunner15Percent() {
-                                    if (isCaught || isEscaped) return; // 避免意外錯誤
+                                    if (isCaught || isEscaped) return; 
 
                                     // 計算小人目前跑的進度 (毫秒)
                                     let currentTime = charRunAnimation ? (charRunAnimation.currentTime || 0) : 0;
@@ -776,7 +777,7 @@ currentBossPlayer = new spine.SpinePlayer("bossRunnerContainer", {
                                 }
                                 // 🚀 立即啟動 15% 進度偵測迴圈
                                 requestAnimationFrame(waitRunner15Percent);
-                            }
+                            } // ⬅️ success 區塊在這裡結束
                         });
 
                         // 💥 碰撞處理函數 (暴怒二階段 & 連續技更新版)
