@@ -694,17 +694,23 @@ function handleCollision(bossPlayer, bossRunAnimation) {
     const counterAttack = Math.random() < 0.25;
 
     if (counterAttack) {
-        // 1️⃣ 25% 小人反擊成功
-        console.log("⚔️ 小人反擊成功！");
-        safePlaySpine(player, "Attack1_1", false);
-        safePlaySpine(bossPlayer, "Groggy", true); // Boss 暈眩
+    console.log("⚔️ 小人反擊成功！");
 
-        setTimeout(() => {
-            // 反擊後小人加速逃跑
-            try { player.animationState.setAnimation(0, "Move", true); } catch(e){}
-            player.timeScale = 2.0; // 加速
-            charRunAnimation.playbackRate = 2.0;
-            charRunAnimation.play();
+    // 1. 攻擊時轉向右邊 (預設是面向左逃跑，轉向右即 scaleX(-1))
+    // 假設原本面向左，將容器水平翻轉
+    track.style.transform = 'scaleX(-1)'; 
+    
+    safePlaySpine(player, "Attack1_1", false);
+    safePlaySpine(bossPlayer, "Groggy", true);
+
+    setTimeout(() => {
+        // 2. 攻擊結束，轉回左邊繼續逃跑 (scaleX(1))
+        track.style.transform = 'scaleX(1)';
+        
+        try { player.animationState.setAnimation(0, "Move", true); } catch(e){}
+        player.timeScale = 2.0;
+        charRunAnimation.playbackRate = 2.0;
+        charRunAnimation.play();
 
             // Boss 暈眩 2 秒後恢復並開始發呆
             setTimeout(() => {
