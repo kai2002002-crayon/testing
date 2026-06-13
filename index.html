@@ -660,7 +660,7 @@
                                     atlasUrl: `./spine_sd_assets/${bossKey}.atlas.txt`,
                                     animation: "Idle", backgroundColor: "#00000000", alpha: true, 
                                     premultipliedAlpha: false, showControls: false, showLoading: false,
-                                    viewport: { x: -2500, y: -500, width: 5000, height: 3000, transitionTime: 0 },
+                                    viewport: { x: -1500, y: -500, width: 3000, height: 3000, transitionTime: 0 },
                                     success: function (bossPlayer) {
                                         try {
                                             const bossSkins = bossPlayer.skeleton.data.skins.map(s => s.name);
@@ -903,6 +903,10 @@
                         // 整段連續技播完後的結算
                         setTimeout(() => {
                             console.log("💀 BOSS 倒地身亡！");
+
+                            // 在播放 Die 之前，給 Boss 一點位移空間，防止翅膀切邊
+                            bossTrack.style.transition = 'transform 0.3s ease-out';
+                            bossTrack.style.transform = 'translateX(-50px)'; // 👈 往後挪 50px，給翅膀空間
                             safePlaySpine(bossPlayer, "Die", false);
                             container.style.transform = 'translateX(0px) scaleX(1)'; // 坨坨轉回左邊
                             safePlaySpine(runnerPlayer, "Move", true);
