@@ -787,7 +787,7 @@
                 let attackTrack = safePlaySpine(bossPlayer, "Attack3_1", false);
                 let attackDuration = (attackTrack && attackTrack.animation ? attackTrack.animation.duration : 3.0) * 1000;
                 
-                let dieTriggerTime = Math.max(0, attackDuration - 2200); 
+                let dieTriggerTime = Math.max(0, attackDuration - 2300); 
 
                 setTimeout(() => { safePlaySpine(runnerPlayer, "Die", false); }, dieTriggerTime);
 
