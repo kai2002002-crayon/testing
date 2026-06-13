@@ -660,29 +660,12 @@
                                 { transform: `translateX(calc(-100vw + ${endLeftPos})) scaleX(1)` } 
                             ], { duration: runDuration, fill: 'forwards' });
 
-                            charRunAnimation.onfinish = () => {
+                           charRunAnimation.onfinish = () => {
                                 hasReachedEnd = true; // 標記已到達終點
                                 if (!isCaught) {
                                     triggerVictory(); // 沒被抓到，順利通關！
                                 } 
                                 // 如果 isCaught 是 true，代表正在戰鬥中，交給戰鬥結束後的邏輯接手處理
-                            };
-                                    // 如果成功逃到終點，Boss也跟著停下來發呆
-                                    if (bossRunAnimation && bossRunAnimation.playState !== 'finished' && chasePhase !== 0 && currentBossPlayer) {
-                                        bossRunAnimation.pause();
-                                        safePlaySpine(currentBossPlayer, "Idle", true);
-                                    }
-
-                                    setTimeout(() => {
-                                        track.style.transition = 'opacity 0.6s ease-out';
-                                        track.style.opacity = '0';
-                                        if (bossTrack) {
-                                            bossTrack.style.transition = 'opacity 0.6s ease-out';
-                                            bossTrack.style.opacity = '0';
-                                        }
-                                        setTimeout(initTopRunner, 600);
-                                    }, 3000); 
-                                }
                             };
 
                             if (isBossEvent) {
@@ -849,8 +832,17 @@
                         }, Math.max(0, atkDur - 500));
 
                         setTimeout(() => {
-                            // 攻擊結束，坨坨轉回來繼續逃跑
+                            // 攻擊結束，坨坨轉回來
                             container.style.transform = 'translateX(0px) scaleX(1)'; 
+                            
+                            // 🚩 檢查：如果剛剛打架時不小心走到終點了，直接獲勝！
+                            if (hasReachedEnd) {
+                                isCaught = false;
+                                chasePhase = 0;
+                                triggerVictory();
+                                return; // 終止後續的追逐
+                            }
+
                             safePlaySpine(runnerPlayer, "Move", true);
                             charRunAnimation.play();
 
