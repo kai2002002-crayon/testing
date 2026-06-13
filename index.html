@@ -507,12 +507,12 @@ function triggerCrayonAttack(isRanged, attackDurationMs, bossContainer, runnerCo
     const endY = bRect.top + bRect.height * 0.5;
 
     // 規定：動作開始 0.5 秒後射出
-    const launchDelay = 500; 
+    const launchDelay = 1000; 
     // 規定：動作結束前 0.5 秒爆裂 (確保不會超過總長度)
     const burstTime = Math.max(launchDelay + 100, attackDurationMs - 500);
 
     if (isRanged) {
-        // 等待 0.5 秒後射出
+        // 等待 1 秒後射出
         setTimeout(() => {
             const proj = document.createElement('div');
             proj.className = 'projectile-crayon';
