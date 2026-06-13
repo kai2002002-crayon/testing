@@ -484,7 +484,7 @@
             container.innerHTML = ''; bossContainer.innerHTML = '';
             track.onclick = null; bossTrack.onclick = null;
 
-            const isBossEvent = Math.random() < 0.5; 
+            const isBossEvent = Math.random() < 0.7; 
             
             let isCaught = false;
             let isEscaped = false;
@@ -512,7 +512,7 @@
                 viewport: { x: -800, y: 100, width: 2500, height: 1500, transitionTime: 0 },
                 success: function (player) {
                     loader.remove(); 
-                    console.log(`🏃 小人進場：${charName}${isBossEvent ? " (💀 雷內瓦潛伏中...)" : ""}`);
+                    console.log(`🏃 坨坨進場：${charName}${isBossEvent ? " (💀 雷內瓦潛伏中...)" : ""}`);
                     
                     try {
                         const skins = player.skeleton.data.skins;
@@ -582,7 +582,7 @@
                                             let currentTime = charRunAnimation ? (charRunAnimation.currentTime || 0) : 0;
                                             
                                             if (currentTime >= runDuration * 0.15) {
-                                                console.log("💀 BOSS 15% 登場！");
+                                                console.log("💀 BOSS 70% 登場！");
                                                 bossTrack.style.transition = 'opacity 0.2s ease-in';
                                                 bossTrack.style.opacity = '1';
                                                 
@@ -599,7 +599,7 @@
                                                     bossRunAnimation = bossTrack.animate([
                                                         { transform: 'translateX(0)' },
                                                         { transform: `translateX(calc(-100vw + ${endLeftPos}))` }
-                                                    ], { duration: runDuration * 0.55, fill: 'forwards' });
+                                                    ], { duration: runDuration * 0.5, fill: 'forwards' });
 
                                                     setupPlayerKnockback(bossPlayer); 
                                                     startChaseRadar(player, bossPlayer); 
@@ -789,7 +789,13 @@
                 
                 let dieTriggerTime = Math.max(0, attackDuration - 2300); 
 
-                setTimeout(() => { safePlaySpine(runnerPlayer, "Die", false); }, dieTriggerTime);
+                // 觸發死亡與震動特效
+                setTimeout(() => { 
+                    safePlaySpine(runnerPlayer, "Die", false); 
+                    // 觸發小人容器震動
+                    container.classList.add('shake-anim');
+                    setTimeout(() => container.classList.remove('shake-anim'), 400);
+                }, dieTriggerTime);
 
                 setTimeout(() => {
                     safePlaySpine(bossPlayer, "Idle", true); 
