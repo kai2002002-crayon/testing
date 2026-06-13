@@ -631,59 +631,74 @@ currentBossPlayer = new spine.SpinePlayer("bossRunnerContainer", {
         transitionTime: 0 
     },
     success: function (bossPlayer) {
-        console.log("✅ 💀 BOSS 載入成功");
-        
-        // 【關鍵優化】確保 Skeleton 物件存在並執行一次骨架更新
-        if (bossPlayer.skeleton) {
-            bossPlayer.skeleton.setToSetupPose();
-            bossPlayer.skeleton.updateWorldTransform();
-        }
+                                console.log("✅ 💀 BOSS 載入成功，準備登場！");
+                                
+                                if (bossPlayer.skeleton) {
+                                    bossPlayer.skeleton.setToSetupPose();
+                                    bossPlayer.skeleton.updateWorldTransform();
+                                }
+                                bossPlayer.play(); 
 
-        // 【關鍵優化】強制啟動播放器
-        bossPlayer.play();
-        
-        // 延遲執行動畫，確保渲染器已經完成初始化
-        setTimeout(() => {
-            bossTrack.style.opacity = '1';
-            
-            // 使用你的確切名稱進行播放
-            if (bossPlayer.animationState) {
-                bossPlayer.animationState.setAnimation(0, "Move", true);
-            }
-            
-            bossRunAnimation = bossTrack.animate([
-                { transform: 'translateX(0)' },
-                { transform: `translateX(calc(-100vw + ${endLeftPos}))` }
-            ], { duration: runDuration *0.7, fill: 'forwards' });
+                                try {
+                                    const bossSkins = bossPlayer.skeleton.data.skins.map(s => s.name);
+                                    let skinToUse = bossSkins.includes('default') ? 'default' : 
+                                                    (bossSkins.includes('Skin_Naive') ? 'Skin_Naive' : bossSkins[0]);
+                                    bossPlayer.skeleton.setSkinByName(skinToUse);
+                                    bossPlayer.skeleton.setSlotsToSetupPose();
+                                } catch (e) { }
 
-                                    let chasePhase = 1; // 紀錄追逐階段
+                                // 延遲讓 Boss 出現並播放登場動畫
+                                setTimeout(() => {
+                                    bossTrack.style.transition = 'opacity 0.2s ease-in';
+                                    bossTrack.style.opacity = '1';
+                                    
+                                    // 🌟 1. 播放 Spawn 登場動作 (不循環)
+                                    let bossSpawnTrack = safePlaySpine(bossPlayer, "Spawn", false);
+                                    // 取得 Spawn 動作的長度，如果抓不到就預設 1.5 秒
+                                    let bossSpawnDuration = (bossSpawnTrack && bossSpawnTrack.animation ? bossSpawnTrack.animation.duration : 1.5) * 1000;
 
-                                    function checkChase() {
-                                        if (isCaught || isEscaped) return;
+                                    // 🌟 2. 等待 Spawn 播完後，才轉成 Move 並開始移動追逐
+                                    setTimeout(() => {
+                                        safePlaySpine(bossPlayer, "Move", true);
+                                        
+                                        // 開始 CSS 位移 (記得這裡可以調整你想設定的速度，例如 runDuration * 0.9)
+                                        bossRunAnimation = bossTrack.animate([
+                                            { transform: 'translateX(0)' },
+                                            { transform: `translateX(calc(-100vw + ${endLeftPos}))` }
+                                        ], { duration: runDuration * 0.9, fill: 'forwards' });
 
-                                        const rRect = track.getBoundingClientRect();
-                                        const bRect = bossTrack.getBoundingClientRect();
+                                        // 正式啟動追逐雷達
+                                        let chasePhase = 1; 
 
-                                        if (!hasNoticed && charRunAnimation.currentTime > noticeTriggerTime) {
-                                            hasNoticed = true;
-                                            player.timeScale = 2.0; 
-                                            charRunAnimation.playbackRate = 2.0; 
-                                            bossPlayer.timeScale = 1.5; 
-                                            bossRunAnimation.playbackRate = 1.5; 
-                                        }
+                                        function checkChase() {
+                                            if (isCaught || isEscaped) return;
 
-                                        let rCenter = rRect.left + (rRect.width / 2);
-                                        let bCenter = bRect.left + (bRect.width / 2);
+                                            const rRect = track.getBoundingClientRect();
+                                            const bRect = bossTrack.getBoundingClientRect();
 
-                                        if (bCenter <= rCenter + 60) {
-                                            isCaught = true;
-                                            handleCollision(bossPlayer, bossRunAnimation);
-                                            return;
+                                            if (!hasNoticed && charRunAnimation.currentTime > noticeTriggerTime) {
+                                                hasNoticed = true;
+                                                player.timeScale = 2.0; 
+                                                charRunAnimation.playbackRate = 2.0; 
+                                                bossPlayer.timeScale = 1.5; 
+                                                bossRunAnimation.playbackRate = 1.5; 
+                                            }
+
+                                            let rCenter = rRect.left + (rRect.width / 2);
+                                            let bCenter = bRect.left + (bRect.width / 2);
+
+                                            if (bCenter <= rCenter + 60) {
+                                                isCaught = true;
+                                                handleCollision(bossPlayer, bossRunAnimation);
+                                                return;
+                                            }
+                                            chaseLoopId = requestAnimationFrame(checkChase);
                                         }
                                         chaseLoopId = requestAnimationFrame(checkChase);
-                                    }
-                                    chaseLoopId = requestAnimationFrame(checkChase);
-                                }, 800);
+
+                                    }, bossSpawnDuration); // ⏳ 等待登場動作的時間
+
+                                }, 500);
                             }
                         });
 
