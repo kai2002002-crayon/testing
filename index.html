@@ -506,10 +506,10 @@
             const area = document.getElementById('runnerArea');
             const rRect = runnerContainer.getBoundingClientRect();
             const bRect = bossContainer.getBoundingClientRect();
-            
-            // 修正射出點：原本的中心 + 當前的位移修正 (offsetPx)
-            // 因為我們是往左位移，所以 startX 要減去該位移量
-            const startX = (rRect.left + rRect.width * 0.5) + offsetPx;
+
+            // 🌟 修正射出點：改為小人當前位置的「右邊緣」 (角色已轉向右方)
+            // ⚠️ getBoundingClientRect() 已包含位移，所以絕對不能再加 offsetPx
+            const startX = rRect.right - 20; 
             const startY = rRect.top + rRect.height * 0.5;
             
             // Boss 的命中點 (保持不變)
