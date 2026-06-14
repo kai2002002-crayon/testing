@@ -459,17 +459,16 @@
         let noticeIconEl = null;
         let noticeIconTimeout = null;
         
-        // 🌟 讀取動畫中 "launch" 事件的時間點 (回傳毫秒)
         // 🌟 讀取動畫事件時間，並在 Console 印出所有可用事件！
+        // 🌟 讀取動畫事件時間 (專屬 Trickcal 官方標籤版)
         function getLaunchTime(player, animName, defaultMs = 500) {
             if (!player || !player.skeleton.data) return defaultMs;
             const anim = player.skeleton.data.animations.find(a => a.name === animName);
             if (!anim) return defaultMs;
 
             let targetTimeMs = null;
-            let foundEvents = []; // 用來收集找到的事件清單
+            let foundEvents = []; 
 
-            // 遍歷時間軸，尋找所有事件
             for (let i = 0; i < anim.timelines.length; i++) {
                 const timeline = anim.timelines[i];
                 if (timeline.events) { 
@@ -478,27 +477,27 @@
                         const eventName = evt.data.name;
                         const eventTimeMs = evt.time * 1000;
                         
-                        // 收集起來準備印在 Console
-                        foundEvents.push(`[${eventName}: ${eventTimeMs}ms]`);
+                        // 捨去小數點，讓印出來的資訊更乾淨好讀
+                        foundEvents.push(`[${eventName}: ${Math.round(eventTimeMs)}ms]`);
 
-                        // 💡 這裡您可以把業界常用的名稱都寫上去當作備案
-                        // 如果官方用的是 fire, shoot, attack 等名稱，我們也能自動抓到！
-                        if (eventName === "launch" || eventName === "fire" || eventName === "shoot" || eventName === "attack") {
-                            // 記錄找到的第一個符合條件的時間
-                            if (targetTimeMs === null) targetTimeMs = eventTimeMs;
+                        // 💡 官方使用的是 "Event"，我們同時保留其他常用標籤以防萬一
+                        if (eventName === "Event" || eventName === "launch" || eventName === "fire") {
+                            // 🌟 關鍵邏輯：排除 0ms 的初始化事件，抓取第一個「真正有延遲」的動作點！
+                            if (targetTimeMs === null && eventTimeMs > 0) {
+                                targetTimeMs = eventTimeMs;
+                            }
                         }
                     }
                 }
             }
 
-            // 🖨️ 將該動畫的事件清單印出來，方便教主除錯與觀察官方命名習慣
             if (foundEvents.length > 0) {
-                console.log(`🔍 動畫 [${animName}] 內含事件:`, foundEvents.join(", "));
-            } else {
-                console.log(`🔍 動畫 [${animName}] 裡面空空如也，沒有任何事件。`);
+                console.log(`🔍 動畫 [${animName}] 解析完畢 ->`, foundEvents.join(", "));
+                if (targetTimeMs !== null) {
+                    console.log(`🎯 成功鎖定發射時間：${Math.round(targetTimeMs)}ms`);
+                }
             }
 
-            // 如果有找到目標時間就回傳，沒有就退回預設值
             return targetTimeMs !== null ? targetTimeMs : defaultMs;
         }
         function safePlaySpine(playerObj, animName, loop) {
