@@ -780,18 +780,39 @@
                 function checkChase() {
                     if (isEscaped || chasePhase === 0) return;
 
-                    // 💡 察覺機制：坨坨有 30% 機率察覺並獲得隨機速度加成
-                    // 💡 察覺機制：坨坨察覺並獲得隨機速度加成
+                // 💡 察覺機制：坨坨有 30% 機率察覺並獲得隨機速度加成
                 // 💡 察覺機制：坨坨察覺並獲得隨機速度加成
                 if (!hasNoticed && !isCaught) {
                     hasNoticed = true; 
                     
+                    // 🌟 動態計算頭部高度 (Spine 骨骼掃描魔法)
+                    let iconTopPx = 50; // 預設高度 (防呆備用)
+                    try {
+                        // 在小人的骨架中尋找名稱包含 'head' 或 'face' 的頭部骨骼
+                        const headBone = runnerPlayer.skeleton.bones.find(b => {
+                            const n = b.data.name.toLowerCase();
+                            return n.includes('head') || n.includes('face') || n.includes('hair_top');
+                        });
+                        
+                        if (headBone) {
+                            // headBone.worldY 代表該骨架距離地面的真實 Spine 單位高度
+                            // 我們的畫布縮放比例大約是 0.15，因此用真實高度換算 CSS 的 top
+                            // Spine Y 軸是向上的，所以 worldY 越大（個子越高），算出來的 top 就越小（越靠近畫布頂部）
+                            iconTopPx = 130 - (headBone.worldY * 0.15);
+                            
+                            // 加上安全範圍限制，防止數值過於極端（最高允許 -20px，最低 120px）
+                            iconTopPx = Math.max(-20, Math.min(iconTopPx, 120));
+                        }
+                    } catch (e) {
+                        console.warn("找不到頭部骨骼，使用預設高度");
+                    }
+
                     // 🌟 產生驚嚇感嘆號 icon
                     if (noticeIconEl) { noticeIconEl.remove(); clearTimeout(noticeIconTimeout); }
                     noticeIconEl = document.createElement('img');
                     noticeIconEl.src = 'https://i.postimg.cc/ft7Yt8RD/Chaos-Arena-Matching-Icon-02.png';
                     noticeIconEl.className = 'absolute w-[25px] h-[25px] object-contain pointer-events-none transition-all duration-200';
-                    noticeIconEl.style.top = '100px';
+                    noticeIconEl.style.top = `${iconTopPx}px`; // 💡 替換為剛剛算出來的動態高度！
                     noticeIconEl.style.left = '50%';
                     noticeIconEl.style.transform = 'translateX(-50%) scale(0)';
                     noticeIconEl.style.zIndex = '150';
@@ -808,6 +829,8 @@
                             setTimeout(() => { if (noticeIconEl) { noticeIconEl.remove(); noticeIconEl = null; } }, 200);
                         }
                     }, 2000);
+
+                    // ... 後續加速邏輯保持不變 ...
 
                     // ... 後續加速邏輯維持不變 ...
 
