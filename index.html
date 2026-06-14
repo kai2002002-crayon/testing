@@ -893,11 +893,11 @@
                         // 2. 觸發專屬金蠟筆特效
                         triggerCrayonAttack(isRanged, atkDur, bossContainer, container, isRanged ? rangedOffsetPx : 0);
 
-                        // 3. 動作結束前 0.5 秒：更強烈的震動爆破
+                        // 3. 動作結束前 1 秒：更強烈的震動爆破
                         setTimeout(() => {
                             bossContainer.classList.add('shake-strong-anim');
                             setTimeout(() => bossContainer.classList.remove('shake-strong-anim'), 500);
-                        }, Math.max(0, atkDur - 500));
+                        }, Math.max(0, atkDur - 1000));
 
                         setTimeout(() => {
                             // 🚩 檢查：如果剛剛打架時不小心走到終點了，直接獲勝！
