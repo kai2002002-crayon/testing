@@ -507,9 +507,9 @@
             const rRect = runnerContainer.getBoundingClientRect();
             const bRect = bossContainer.getBoundingClientRect();
 
-            // 🌟 修正射出點：改為小人當前位置的「右邊緣」 (角色已轉向右方)
-            // ⚠️ getBoundingClientRect() 已包含位移，所以絕對不能再加 offsetPx
-            const startX = rRect.right - 20; 
+            // 🌟 修正射出點：以小人容器的「中心點」為基準，向右微調 40px (當作手臂長度)
+            // 這樣就不會因為透明容器太寬而跑到 BOSS 身上了
+            const startX = rRect.left + (rRect.width * 0.5) + 40; 
             const startY = rRect.top + rRect.height * 0.5;
             
             // Boss 的命中點 (保持不變)
