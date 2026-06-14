@@ -999,10 +999,15 @@
                                     triggerCrayonAttack(isRanged, currentAnimDurMs, bossContainer, container, isRanged ? rangedOffsetPx : 0);
                                 }, totalSkillDurationMs);
 
+                                // 🌟 核心修改：判斷是否為最後一段技能
+                                const isLastSkill = (index === skillAnims.length - 1);
+                                // 最後一段提早 1000ms (1秒)，其他維持 500ms (0.5秒)
+                                const shakeStrongOffset = isLastSkill ? 1000 : 500; 
+
                                 setTimeout(() => {
                                     bossContainer.classList.add('shake-strong-anim');
                                     setTimeout(() => bossContainer.classList.remove('shake-strong-anim'), 500);
-                                }, totalSkillDurationMs + Math.max(0, currentAnimDurMs - 500));
+                                }, totalSkillDurationMs + Math.max(0, currentAnimDurMs - shakeStrongOffset));
 
                                 totalSkillDurationMs += currentAnimDurMs;
                             });
@@ -1015,10 +1020,11 @@
                             
                             triggerCrayonAttack(isRanged, totalSkillDurationMs, bossContainer, container, isRanged ? rangedOffsetPx : 0);
 
+                            // 🌟 Fallback (沒有多段技能時) 也一併改成提早 1000ms (1秒)
                             setTimeout(() => {
                                 bossContainer.classList.add('shake-strong-anim');
                                 setTimeout(() => bossContainer.classList.remove('shake-strong-anim'), 500);
-                            }, Math.max(0, totalSkillDurationMs - 500));
+                            }, Math.max(0, totalSkillDurationMs - 1000));
                         }
 
                         // 整段連續技播完後的結算
