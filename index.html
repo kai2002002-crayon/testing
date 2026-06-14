@@ -507,10 +507,10 @@
             const rRect = runnerContainer.getBoundingClientRect();
             const bRect = bossContainer.getBoundingClientRect();
 
-            // 🌟 修正射出點：以小人容器的「中心點」為基準，向右微調 40px (當作手臂長度)
-            // 這樣就不會因為透明容器太寬而跑到 BOSS 身上了
-            const startX = rRect.left + (rRect.width * 0.5) + 40; 
-            const startY = rRect.top + rRect.height * 0.5;
+            // 🌟 修正射出點：從容器最左邊緣 (rRect.left)，向右推算小人實際站在畫布裡的距離
+            // 例如推 150px (教主可以根據視覺慢慢調整這個數字，太大就減小，太小就加大)
+            const startX = rRect.left + 150; 
+            const startY = rRect.top + (rRect.height * 0.5) + 1; // Y軸通常在中間，可以微調
             
             // Boss 的命中點 (保持不變)
             const endX = bRect.left + bRect.width * 0.5 - 30;
