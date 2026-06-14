@@ -460,14 +460,14 @@
         let noticeIconTimeout = null;
         
         // 🌟 讀取動畫事件時間，並在 Console 印出所有可用事件！
-        // 🌟 讀取動畫事件時間 (專屬 Trickcal 官方標籤版)
+        // 🌟 讀取動畫事件時間 (智慧過濾起手假動作版)
         function getLaunchTime(player, animName, defaultMs = 500) {
             if (!player || !player.skeleton.data) return defaultMs;
             const anim = player.skeleton.data.animations.find(a => a.name === animName);
             if (!anim) return defaultMs;
 
-            let targetTimeMs = null;
             let foundEvents = []; 
+            let validEventTimes = []; // 專門用來收集大於 0 的 Event 時間
 
             for (let i = 0; i < anim.timelines.length; i++) {
                 const timeline = anim.timelines[i];
@@ -477,24 +477,37 @@
                         const eventName = evt.data.name;
                         const eventTimeMs = evt.time * 1000;
                         
-                        // 捨去小數點，讓印出來的資訊更乾淨好讀
                         foundEvents.push(`[${eventName}: ${Math.round(eventTimeMs)}ms]`);
 
-                        // 💡 官方使用的是 "Event"，我們同時保留其他常用標籤以防萬一
+                        // 收集所有潛在的發射標籤
                         if (eventName === "Event" || eventName === "launch" || eventName === "fire") {
-                            // 🌟 關鍵邏輯：排除 0ms 的初始化事件，抓取第一個「真正有延遲」的動作點！
-                            if (targetTimeMs === null && eventTimeMs > 0) {
-                                targetTimeMs = eventTimeMs;
+                            if (eventTimeMs > 0) {
+                                validEventTimes.push(eventTimeMs);
                             }
                         }
                     }
                 }
             }
 
+            // 確保時間從小到大排序 (Spine預設通常有排，但保險起見自己排一次)
+            validEventTimes.sort((a, b) => a - b);
+
+            let targetTimeMs = null;
+            
+            if (validEventTimes.length > 0) {
+                // 💡 核心智慧邏輯：尋找第一個「大於 200ms」的事件
+                // 這樣可以完美跳過 100ms 的「舉手/發光」前置動作
+                const realHit = validEventTimes.find(t => t > 200);
+                
+                // 如果有找到 > 200ms 的，就用它；
+                // 如果動作真的超快（所有事件都在 200ms 內），只好退而求其次用最後一個事件
+                targetTimeMs = realHit !== undefined ? realHit : validEventTimes[validEventTimes.length - 1];
+            }
+
             if (foundEvents.length > 0) {
-                console.log(`🔍 動畫 [${animName}] 解析完畢 ->`, foundEvents.join(", "));
+                console.log(`🔍 動畫 [${animName}] 解析 ->`, foundEvents.join(", "));
                 if (targetTimeMs !== null) {
-                    console.log(`🎯 成功鎖定發射時間：${Math.round(targetTimeMs)}ms`);
+                    console.log(`🎯 智慧過濾後，鎖定真實發射時間：${Math.round(targetTimeMs)}ms`);
                 }
             }
 
