@@ -585,7 +585,10 @@
             if (currentBossPlayer) { try { currentBossPlayer.dispose(); } catch(e){} currentBossPlayer = null; }
             container.innerHTML = ''; bossContainer.innerHTML = '';
             track.onclick = null; bossTrack.onclick = null;
-            clearTimeout(noticeIconTimeout); // 🚩 新增這行，重置選單時清空計時
+            
+            // 🚩 確保每次重新開始時，感嘆號都被徹底清理乾淨
+            if (noticeIconEl) { noticeIconEl.remove(); noticeIconEl = null; }
+            clearTimeout(noticeIconTimeout); 
 
             const isBossEvent = Math.random() < 0.7; 
             
@@ -594,9 +597,8 @@
             let hasNoticed = false;
             let chasePhase = 1; 
             let isBossKnockedBack = false;
-            let hasReachedEnd = false; // 🚩 新增標記：是否已經抵達終點
-            let noticeIconEl = null;      // 💡 新增：紀錄感嘆號元素
-            let noticeIconTimeout = null; // 💡 新增：紀錄感嘆號計時器
+            let hasReachedEnd = false; 
+            // ❌ 這裡原本的 let noticeIconEl 與 noticeIconTimeout 已徹底刪除！
 
             const runDuration = isMobile ? 6000 : 14000; 
             let charRunAnimation = null;
@@ -780,33 +782,34 @@
 
                     // 💡 察覺機制：坨坨有 30% 機率察覺並獲得隨機速度加成
                     // 💡 察覺機制：坨坨察覺並獲得隨機速度加成
+                // 💡 察覺機制：坨坨察覺並獲得隨機速度加成
                 if (!hasNoticed && !isCaught) {
                     hasNoticed = true; 
                     
                     // 🌟 產生驚嚇感嘆號 icon
-                    if (window.noticeIconEl) { window.noticeIconEl.remove(); clearTimeout(window.noticeIconTimeout); }
-                    window.noticeIconEl = document.createElement('img');
-                    window.noticeIconEl.src = 'https://i.postimg.cc/ft7Yt8RD/Chaos-Arena-Matching-Icon-02.png';
-                    window.noticeIconEl.className = 'absolute w-[25px] h-[25px] object-contain pointer-events-none transition-all duration-200';
-                    window.noticeIconEl.style.top = '-35px';
-                    window.noticeIconEl.style.left = '50%';
-                    window.noticeIconEl.style.transform = 'translateX(-50%) scale(0)';
-                    window.noticeIconEl.style.zIndex = '150';
-                    container.appendChild(window.noticeIconEl);
+                    if (noticeIconEl) { noticeIconEl.remove(); clearTimeout(noticeIconTimeout); }
+                    noticeIconEl = document.createElement('img');
+                    noticeIconEl.src = 'https://i.postimg.cc/ft7Yt8RD/Chaos-Arena-Matching-Icon-02.png';
+                    noticeIconEl.className = 'absolute w-[25px] h-[25px] object-contain pointer-events-none transition-all duration-200';
+                    noticeIconEl.style.top = '-35px';
+                    noticeIconEl.style.left = '50%';
+                    noticeIconEl.style.transform = 'translateX(-50%) scale(0)';
+                    noticeIconEl.style.zIndex = '150';
+                    container.appendChild(noticeIconEl);
                     
                     requestAnimationFrame(() => { 
-                        if(window.noticeIconEl) window.noticeIconEl.style.transform = 'translateX(-50%) scale(1.2)'; 
+                        if(noticeIconEl) noticeIconEl.style.transform = 'translateX(-50%) scale(1.2)'; 
                     });
                     
-                    window.noticeIconTimeout = setTimeout(() => {
-                        if (window.noticeIconEl) {
-                            window.noticeIconEl.style.transform = 'translateX(-50%) scale(0)';
-                            window.noticeIconEl.style.opacity = '0';
-                            setTimeout(() => { if (window.noticeIconEl) { window.noticeIconEl.remove(); window.noticeIconEl = null; } }, 200);
+                    noticeIconTimeout = setTimeout(() => {
+                        if (noticeIconEl) {
+                            noticeIconEl.style.transform = 'translateX(-50%) scale(0)';
+                            noticeIconEl.style.opacity = '0';
+                            setTimeout(() => { if (noticeIconEl) { noticeIconEl.remove(); noticeIconEl = null; } }, 200);
                         }
                     }, 2000);
 
-                    // ... 後續加速邏輯 ...
+                    // ... 後續加速邏輯維持不變 ...
 
                     if (Math.random() < 0.3) {
                         // 產生 0.8 到 2.2 之間的隨機加速倍率
@@ -835,11 +838,11 @@
 
             // ⚔️ 碰撞劇本處理
             function handleCollision(runnerPlayer, bossPlayer) {
-                // 🚩 修改這裡：使用 window.noticeIconEl
-                if (window.noticeIconEl) {
-                    window.noticeIconEl.remove();
-                    window.noticeIconEl = null;
-                    clearTimeout(window.noticeIconTimeout);
+                // 🚩 直接使用外層變數即可
+                if (noticeIconEl) {
+                    noticeIconEl.remove();
+                    noticeIconEl = null;
+                    clearTimeout(noticeIconTimeout);
                 }
 
                 charRunAnimation.pause();
