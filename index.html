@@ -780,85 +780,81 @@
                 function checkChase() {
                     if (isEscaped || chasePhase === 0) return;
 
-                // 💡 察覺機制：坨坨有 30% 機率察覺並獲得隨機速度加成
-                // 💡 察覺機制：坨坨察覺並獲得隨機速度加成
-                if (!hasNoticed && !isCaught) {
-                    hasNoticed = true; 
-                    
-                    // 🌟 動態計算頭部高度 (Spine 骨骼掃描魔法)
-                    let iconTopPx = 50; // 預設高度 (防呆備用)
-                    try {
-                        // 在小人的骨架中尋找名稱包含 'head' 或 'face' 的頭部骨骼
-                        const headBone = runnerPlayer.skeleton.bones.find(b => {
-                            const n = b.data.name.toLowerCase();
-                            return n.includes('head') || n.includes('face') || n.includes('hair_top');
-                        });
-                        
-                        if (headBone) {
-                            // headBone.worldY 代表該骨架距離地面的真實 Spine 單位高度
-                            // 我們的畫布縮放比例大約是 0.15，因此用真實高度換算 CSS 的 top
-                            // Spine Y 軸是向上的，所以 worldY 越大（個子越高），算出來的 top 就越小（越靠近畫布頂部）
-                            iconTopPx = 130 - (headBone.worldY * 0.15);
-                            
-                            // 加上安全範圍限制，防止數值過於極端（最高允許 -20px，最低 120px）
-                            iconTopPx = Math.max(-20, Math.min(iconTopPx, 120));
-                        }
-                    } catch (e) {
-                        console.warn("找不到頭部骨骼，使用預設高度");
-                    }
-
-                    // 🌟 產生驚嚇感嘆號 icon
-                    if (noticeIconEl) { noticeIconEl.remove(); clearTimeout(noticeIconTimeout); }
-                    noticeIconEl = document.createElement('img');
-                    noticeIconEl.src = 'https://i.postimg.cc/ft7Yt8RD/Chaos-Arena-Matching-Icon-02.png';
-                    noticeIconEl.className = 'absolute w-[25px] h-[25px] object-contain pointer-events-none transition-all duration-200';
-                    noticeIconEl.style.top = `${iconTopPx}px`; // 💡 替換為剛剛算出來的動態高度！
-                    noticeIconEl.style.left = '50%';
-                    noticeIconEl.style.transform = 'translateX(-50%) scale(0)';
-                    noticeIconEl.style.zIndex = '150';
-                    container.appendChild(noticeIconEl);
-                    
-                    requestAnimationFrame(() => { 
-                        if(noticeIconEl) noticeIconEl.style.transform = 'translateX(-50%) scale(1.2)'; 
-                    });
-                    
-                    noticeIconTimeout = setTimeout(() => {
-                        if (noticeIconEl) {
-                            noticeIconEl.style.transform = 'translateX(-50%) scale(0)';
-                            noticeIconEl.style.opacity = '0';
-                            setTimeout(() => { if (noticeIconEl) { noticeIconEl.remove(); noticeIconEl = null; } }, 200);
-                        }
-                    }, 2000);
-
-                    // ... 後續加速邏輯保持不變 ...
-
-                    // ... 後續加速邏輯維持不變 ...
-
-                    if (Math.random() < 0.3) {
-                        // 產生 0.8 到 2.2 之間的隨機加速倍率
-                        const randomSpeed = (Math.random() * 1.4 + 0.8).toFixed(2);
-                        console.log(`⚡ 坨坨察覺到 BOSS！隨機加速倍率：${randomSpeed}x`);
-                        
-                        runnerPlayer.timeScale = parseFloat(randomSpeed); 
-                        charRunAnimation.playbackRate = parseFloat(randomSpeed); 
-                    }
-                }
-
+                    // 🚩 1. 先計算雙方的真實距離
                     const rRect = track.getBoundingClientRect();
                     const bRect = bossTrack.getBoundingClientRect();
                     let rCenter = rRect.left + (rRect.width / 2);
                     let bCenter = bRect.left + (bRect.width / 2);
+                    let distance = bCenter - rCenter; // 因為 Boss 在右邊追，所以用 bCenter 減 rCenter
 
-                    if (bCenter <= rCenter + 60 && !isCaught) {
+                    // 💡 2. 察覺機制：當 BOSS 靠近到 450px (快追上) 時，才觸發驚嚇！
+                    // 💡 2. 察覺機制：當 BOSS 靠近到 450px 時判定
+                    if (distance <= 450 && !hasNoticed && !isCaught) {
+                        hasNoticed = true; // 確保這個判定只會執行一次
+                        
+                        // 只有 30% 機率真正「察覺並加速逃跑」
+                        if (Math.random() < 0.3) {
+                            
+                            // 🌟 動態計算高度與左右偏移 (只有觸發逃跑時才計算並顯示)
+                            let iconTopPx = 50; 
+                            let iconOffsetX = -15; // ⬅️ X軸微調：負數往左移，正數往右移
+                            
+                            try {
+                                const headBone = runnerPlayer.skeleton.bones.find(b => {
+                                    const n = b.data.name.toLowerCase();
+                                    return n.includes('head') || n.includes('face') || n.includes('hair_top');
+                                });
+                                
+                                if (headBone) {
+                                    iconTopPx = 150 - (headBone.worldY * 0.15); // ⬇️ 150越大越往下掉
+                                    iconTopPx = Math.max(0, Math.min(iconTopPx, 150));
+                                }
+                            } catch (e) { }
+
+                            // 🌟 產生驚嚇感嘆號 icon
+                            if (noticeIconEl) { noticeIconEl.remove(); clearTimeout(noticeIconTimeout); }
+                            noticeIconEl = document.createElement('img');
+                            noticeIconEl.src = 'https://i.postimg.cc/ft7Yt8RD/Chaos-Arena-Matching-Icon-02.png';
+                            noticeIconEl.className = 'absolute w-[25px] h-[25px] object-contain pointer-events-none transition-all duration-200';
+                            noticeIconEl.style.top = `${iconTopPx}px`; 
+                            noticeIconEl.style.left = '50%';
+                            noticeIconEl.style.transform = `translateX(calc(-50% + ${iconOffsetX}px)) scale(0)`;
+                            noticeIconEl.style.zIndex = '150';
+                            container.appendChild(noticeIconEl);
+                            
+                            requestAnimationFrame(() => { 
+                                if(noticeIconEl) noticeIconEl.style.transform = `translateX(calc(-50% + ${iconOffsetX}px)) scale(1.2)`; 
+                            });
+                            
+                            noticeIconTimeout = setTimeout(() => {
+                                if (noticeIconEl) {
+                                    noticeIconEl.style.transform = `translateX(calc(-50% + ${iconOffsetX}px)) scale(0)`;
+                                    noticeIconEl.style.opacity = '0';
+                                    setTimeout(() => { if (noticeIconEl) { noticeIconEl.remove(); noticeIconEl = null; } }, 200);
+                                }
+                            }, 2000);
+
+                            // 🏃‍♂️ 執行加速
+                            const randomSpeed = (Math.random() * 1.4 + 0.8).toFixed(2);
+                            console.log(`⚡ 坨坨在距離 ${Math.round(distance)}px 時察覺到 BOSS！加速倍率：${randomSpeed}x`);
+                            runnerPlayer.timeScale = parseFloat(randomSpeed); 
+                            charRunAnimation.playbackRate = parseFloat(randomSpeed); 
+                        } else {
+                            console.log("🙈 坨坨沒察覺到背後的危機，繼續用原速奔跑...");
+                        }
+                    }
+
+                    // ⚔️ 3. 碰撞機制：距離小於等於 60 時觸發戰鬥
+                    if (distance <= 60 && !isCaught) {
                         isCaught = true;
                         handleCollision(runnerPlayer, bossPlayer);
                         return;
                     }
+                    
                     chaseLoopId = requestAnimationFrame(checkChase);
                 }
                 chaseLoopId = requestAnimationFrame(checkChase);
             }
-
             // ⚔️ 碰撞劇本處理
             function handleCollision(runnerPlayer, bossPlayer) {
                 // 🚩 直接使用外層變數即可
