@@ -527,10 +527,12 @@
                     proj.style.top = `${startY}px`;
                     area.appendChild(proj);
                     
-                    const flightTime = burstTime - launchDelay;
+                    // 🌟 修正：給定固定的慢速飛行時間 (數值越大飛越慢，800 = 1.5秒)
+                    const flightTime = 1500; 
                     
                     setTimeout(() => {
-                        proj.style.transition = `all ${flightTime}ms cubic-bezier(0.25, 0.1, 0.25, 1)`;
+                        // 💡 順便將曲線改為 linear (等速直飛)，飛行視覺會更平滑自然
+                        proj.style.transition = `all ${flightTime}ms linear`;
                         proj.style.left = `${endX}px`;
                         proj.style.top = `${endY}px`;
                         proj.style.transform = `rotate(720deg)`;
