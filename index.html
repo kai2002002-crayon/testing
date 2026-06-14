@@ -460,15 +460,17 @@
         let noticeIconTimeout = null;
         
         // 🌟 讀取動畫事件時間，並在 Console 印出所有可用事件！
-        // 🌟 讀取動畫事件時間 (智慧過濾起手假動作版)
-        function getLaunchTime(player, animName, defaultMs = 500) {
-            if (!player || !player.skeleton.data) return defaultMs;
+        // 🌟 讀取動畫事件時間 (終極防呆多段連擊版)
+        function getLaunchTimes(player, animName, defaultMs = 500) {
+            if (!player || !player.skeleton.data) return [defaultMs];
             const anim = player.skeleton.data.animations.find(a => a.name === animName);
-            if (!anim) return defaultMs;
+            if (!anim) return [defaultMs];
 
-            let foundEvents = []; 
-            let validEventTimes = []; // 專門用來收集大於 0 的 Event 時間
+            const totalDurMs = anim.duration * 1000; // 取得動畫總長度
+            let validEventTimes = [];
+            let foundEvents = [];
 
+            // 遍歷收集所有事件
             for (let i = 0; i < anim.timelines.length; i++) {
                 const timeline = anim.timelines[i];
                 if (timeline.events) { 
@@ -479,39 +481,51 @@
                         
                         foundEvents.push(`[${eventName}: ${Math.round(eventTimeMs)}ms]`);
 
-                        // 收集所有潛在的發射標籤
-                        if (eventName === "Event" || eventName === "launch" || eventName === "fire") {
-                            if (eventTimeMs > 0) {
-                                validEventTimes.push(eventTimeMs);
-                            }
+                        // 收集目標標籤
+                        if (eventName === "Event" || eventName === "launch" || eventName === "fire" || eventName === "attack") {
+                            if (eventTimeMs > 0) validEventTimes.push(eventTimeMs);
                         }
                     }
                 }
             }
 
-            // 確保時間從小到大排序 (Spine預設通常有排，但保險起見自己排一次)
             validEventTimes.sort((a, b) => a - b);
 
-            let targetTimeMs = null;
-            
-            if (validEventTimes.length > 0) {
-                // 💡 核心智慧邏輯：尋找第一個「大於 200ms」的事件
-                // 這樣可以完美跳過 100ms 的「舉手/發光」前置動作
-                const realHit = validEventTimes.find(t => t > 200);
-                
-                // 如果有找到 > 200ms 的，就用它；
-                // 如果動作真的超快（所有事件都在 200ms 內），只好退而求其次用最後一個事件
-                targetTimeMs = realHit !== undefined ? realHit : validEventTimes[validEventTimes.length - 1];
-            }
+            // 💡 終極過濾機制：
+            // 1. > 200ms (排除起手發光特效)
+            // 2. < totalDurMs - 50 (排除放在最後一格的收手/狀態重置事件)
+            let realHits = validEventTimes.filter(t => t > 200 && t < totalDurMs - 50);
 
-            if (foundEvents.length > 0) {
-                console.log(`🔍 動畫 [${animName}] 解析 ->`, foundEvents.join(", "));
-                if (targetTimeMs !== null) {
-                    console.log(`🎯 智慧過濾後，鎖定真實發射時間：${Math.round(targetTimeMs)}ms`);
+            // 3. 攻擊冷卻合併 (如果兩個 Event 靠得太近，例如小於 150ms，當作同一次攻擊)
+            let finalHits = [];
+            realHits.forEach(t => {
+                if (finalHits.length === 0) {
+                    finalHits.push(t);
+                } else {
+                    let lastHit = finalHits[finalHits.length - 1];
+                    if (t - lastHit > 150) { // 必須間隔大於 150ms 才算新的一擊
+                        finalHits.push(t);
+                    }
                 }
+            });
+
+            // 印出分析結果供教主參考
+            if (foundEvents.length > 0) {
+                console.log(`🔍 動畫 [${animName}] (總長 ${Math.round(totalDurMs)}ms) 解析 ->`, foundEvents.join(", "));
             }
 
-            return targetTimeMs !== null ? targetTimeMs : defaultMs;
+            // 決定最終回傳的時間陣列
+            if (finalHits.length > 0) {
+                console.log(`🎯 終極過濾後，鎖定發射時間：`, finalHits.map(t => Math.round(t) + "ms"));
+                return finalHits; 
+            } else if (validEventTimes.length > 0) {
+                // 如果條件太嚴苛導致全被濾光，只好拿最後一個不是 0 的事件當作備案
+                let fallback = [validEventTimes[validEventTimes.length - 1]];
+                console.log(`🎯 退而求其次鎖定時間：`, fallback.map(t => Math.round(t) + "ms"));
+                return fallback;
+            }
+
+            return [defaultMs];
         }
         function safePlaySpine(playerObj, animName, loop) {
             // ... (函式內容不變)
