@@ -872,7 +872,8 @@
                 const isRanged = ["中排", "後排"].includes(randomCharData.position);
                 // 📱 動態調整後退距離：手機版退 120px，電腦版退 240px
                 const rangedOffsetPx = (window.innerWidth <= 768) ? -120 : -240; 
-                const attackOffset = isRanged ? `translateX(${rangedOffsetPx}px)` : "translateX(0px)";
+                const attackOffset = isRanged ? `translateX(${rangedOffsetPx}px)` : "translateX(0px)"; 
+
                 if (chasePhase === 1) {
                     if (Math.random() < 0.4) {
                         console.log("⚔️ 一階：坨坨轉向右方反擊！");
@@ -887,7 +888,7 @@
                         bossContainer.classList.add('shake-anim');
                         setTimeout(() => bossContainer.classList.remove('shake-anim'), 400);
 
-                       / 2. 觸發專屬金蠟筆特效 (替換最後一個參數為 rangedOffsetPx)
+                        // 2. 觸發專屬金蠟筆特效
                         triggerCrayonAttack(isRanged, atkDur, bossContainer, container, isRanged ? rangedOffsetPx : 0);
 
                         // 3. 動作結束前 0.5 秒：更強烈的震動爆破
@@ -922,16 +923,6 @@
                                 }, 1500); 
                             };
 
-                            // 2. 觸發專屬金蠟筆特效 (替換最後一個參數為 rangedOffsetPx)
-                        triggerCrayonAttack(isRanged, atkDur, bossContainer, container, isRanged ? rangedOffsetPx : 0);
-
-                        // 3. 動作結束前 0.5 秒：更強烈的震動爆破
-                        // ... 中間維持原本程式碼 ...
-
-                            const resumeRunning = () => {
-                                // ... 維持原本程式碼 ...
-                            };
-
                             if (isRanged) {
                                 // 留在原地，只做翻轉轉向
                                 container.style.transform = `translateX(${rangedOffsetPx}px) scaleX(1)`;
@@ -946,7 +937,7 @@
                                         charRunAnimation.currentTime = (charRunAnimation.currentTime || 0) + skipTime;
                                     }
                                     
-                                    // 🏁 核心修復：如果位移時間補償後已經達到或超過終點，直接觸發勝利，不強行起跑
+                                    // 🏁 核心修復：如果位移時間補償後已經達到或超過終點，直接觸發勝利
                                     if (charRunAnimation && charRunAnimation.currentTime >= runDuration) {
                                         isCaught = false;
                                         chasePhase = 0;
