@@ -1353,7 +1353,13 @@
         function changeLanguage(lang) {
             window.currentLang = lang; 
             localStorage.setItem('user_lang', lang);
+            
+            // 🌟 1. 同步 HTML 標籤
             document.documentElement.lang = lang === "ja" ? "ja" : "zh-TW"; 
+
+            // 🌟 2. 【關鍵】同步隱藏的 Select 選項值，確保下次點開時它是正確選中的
+            const selectEl = document.getElementById('langSelect');
+            if (selectEl) selectEl.value = lang;
 
             const safeLang = (typeof LANG_DICT !== 'undefined' && LANG_DICT[lang]) ? lang : 'zh-TW';
             const dict = typeof LANG_DICT !== 'undefined' ? LANG_DICT[safeLang] : {};
