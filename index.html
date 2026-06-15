@@ -259,6 +259,30 @@
             0%, 100% { transform: translateY(0) rotate(-5deg); }
             50% { transform: translateY(-10px) rotate(5deg); filter: drop-shadow(0 8px 6px rgba(0,0,0,0.2)); }
         }
+        /* 🌟 Pickup 閃閃發光特效 */
+        @keyframes pickupGlow {
+            0%, 100% { filter: drop-shadow(0 0 3px currentColor); transform: scale(1); }
+            50% { filter: drop-shadow(0 0 8px currentColor); transform: scale(1.05); }
+        }
+        .pickup-sparkle {
+            animation: pickupGlow 2s infinite ease-in-out;
+            position: relative;
+        }
+        /* 小星星裝飾 */
+        .pickup-sparkle::after {
+            content: "✨";
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            font-size: 12px;
+            animation: starTwinkle 1.5s infinite alternate;
+            filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.8));
+            pointer-events: none;
+        }
+        @keyframes starTwinkle {
+            0% { opacity: 0.2; transform: scale(0.8) rotate(0deg); }
+            100% { opacity: 1; transform: scale(1.3) rotate(20deg); }
+        }
     </style>
 </head>
 <body class="p-3 sm:p-6 md:p-8 text-gray-800 dark:text-gray-100">
@@ -282,9 +306,16 @@
     
     <div class="max-w-7xl mx-auto">
         <header class="bg-gradient-to-r from-amber-100/90 via-yellow-100/90 to-orange-100/90 dark:from-gray-800/90 dark:via-gray-700/90 dark:to-gray-800/90 rounded-2xl p-4 sm:p-6 shadow-md mb-6 border-4 border-amber-400 dark:border-gray-600 flex flex-col transition-colors backdrop-blur-sm relative z-10">
-            <div class="w-full flex justify-start mb-3">
-                <div class="flex items-center gap-1.5 text-[10px] sm:text-xs font-bold text-amber-900/70 dark:text-gray-300 bg-white/60 dark:bg-gray-800/60 px-2.5 py-1 rounded-md backdrop-blur-sm border border-amber-200/80 dark:border-gray-600/80 shadow-sm">
+            <div class="w-full flex flex-row justify-between items-start mb-3 gap-2">
+                <div class="flex items-center gap-1.5 text-[10px] sm:text-xs font-bold text-amber-900/70 dark:text-gray-300 bg-white/60 dark:bg-gray-800/60 px-2.5 py-1 rounded-md backdrop-blur-sm border border-amber-200/80 dark:border-gray-600/80 shadow-sm shrink-0">
                     👥 <span data-lang-key="visit_count_prefix">累計利用回數</span>: <span id="top_visit_counter" class="text-amber-700 dark:text-amber-400 tracking-wider">讀取中...</span>
+                </div>
+                
+                <div class="flex items-center gap-1 sm:gap-2 bg-gradient-to-r from-amber-50 to-white dark:from-gray-700 dark:to-gray-800 p-1 sm:p-1.5 rounded-full border-2 border-amber-300 shadow-md backdrop-blur-sm shrink-0">
+                    <span id="pickupTitleText" class="text-[10px] sm:text-xs font-bold text-amber-700 dark:text-amber-300 px-1.5 whitespace-nowrap">🎯 特選使者招募</span>
+                    
+                    <div id="pickupIconsContainer" class="flex flex-row-reverse items-center gap-1.5 sm:gap-2 pr-1">
+                        </div>
                 </div>
             </div>
 
@@ -641,7 +672,66 @@
                 }, burstTime);
             }
         }
+        // ==========================================
+        // 🎯 這裡更改當期 Pickup 角色名稱 (支援多個)
+        // ==========================================
+        const CURRENT_PICKUP_CHARS = ["莉絲蒂", "海莉", "盧波"]; 
 
+        function renderPickupBanner() {
+            const container = document.getElementById('pickupIconsContainer');
+            if (!container || !CURRENT_PICKUP_CHARS.length) return;
+            
+            container.innerHTML = '';
+
+            // 🌟 內建 Pickup 專用中、日、英翻譯字典
+            const localRecruitTexts = { 
+                "zh-TW": "🎯 特選使者招募", 
+                "ja": "🎯 ピックアップ使徒ガチャ", 
+                "en": "🎯 Pick Up Apostles" 
+            };
+            const localTooltipTexts = { 
+                "zh-TW": "特選招募中：", 
+                "ja": "ピックアップ中：", 
+                "en": "Pickup Rate Up: " 
+            };
+
+            // 🌟 1. 自動切換主標題語系 (如果找不到就預設繁中)
+            const titleEl = document.getElementById('pickupTitleText');
+            if (titleEl) {
+                titleEl.innerText = localRecruitTexts[window.currentLang] || localRecruitTexts["zh-TW"];
+            }
+
+            const personalityColors = {
+                "天真": "border-green-400 text-green-400",
+                "冷靜": "border-blue-400 text-blue-400",
+                "狂亂": "border-red-400 text-red-400",
+                "活潑": "border-yellow-400 text-yellow-400",
+                "憂鬱": "border-purple-400 text-purple-400"
+            };
+
+            CURRENT_PICKUP_CHARS.forEach(charName => {
+                const charData = INITIAL_DATA.find(c => c.name === charName);
+                if (!charData) return;
+
+                const iconUrl = IMAGE_MAP['skill_passive_' + charName];
+                const pColorClass = personalityColors[charData.personality] || "border-gray-400 text-gray-400";
+
+                const iconWrapper = document.createElement('div');
+                iconWrapper.className = `w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 ${pColorClass} bg-white dark:bg-gray-800 flex items-center justify-center relative pickup-sparkle shrink-0 overflow-hidden cursor-help`;
+                
+                // 🌟 2. 懸浮提示文字與角色名稱全面套用翻譯 (使用內建的 t() 函式)
+                const prefix = localTooltipTexts[window.currentLang] || localTooltipTexts["zh-TW"];
+                iconWrapper.title = `${prefix}${t(charName)}`;
+
+                if (iconUrl) {
+                    iconWrapper.innerHTML = `<img src="${iconUrl}" class="w-[120%] h-[120%] max-w-none object-cover" alt="${t(charName)}">`;
+                } else {
+                    iconWrapper.innerHTML = `<span class="text-[10px] font-bold text-gray-800 dark:text-gray-200">${t(charName).charAt(0)}</span>`;
+                }
+
+                container.appendChild(iconWrapper);
+            });
+        }
         function initTopRunner() {
             if (typeof INITIAL_DATA === 'undefined' || INITIAL_DATA.length === 0) return;
 
@@ -1283,7 +1373,15 @@
             if (typeof updateAuthButtonUI === 'function' && typeof currentUser !== 'undefined') {
                 updateAuthButtonUI(currentUser);
             }
-        }
+        if (typeof updateAuthButtonUI === 'function' && typeof currentUser !== 'undefined') {
+                updateAuthButtonUI(currentUser);
+            }
+
+            // 🌟 加上這段：確保切換語言時，Pickup 區塊也會立刻更新文字與語系
+            if (typeof renderPickupBanner === 'function') {
+                renderPickupBanner();
+            }
+        } // 這是 changeLanguage 的結束大括號
 
         let isDarkMode = localStorage.getItem('theme') === 'dark';
         if (isDarkMode) { document.documentElement.classList.add('dark'); } 
@@ -1636,6 +1734,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             try {
                 if (typeof INITIAL_DATA === 'undefined') throw new Error("找不到 INITIAL_DATA，請確認 data_core.js 是否載入成功！");
+                // 🌟 加在這裡！
+                renderPickupBanner(); 
                 initStates(); changeLanguage(currentLang);
                 if (!isStatsOpen) { const body = document.getElementById("statsPanelBody"); const icon = document.getElementById("statsToggleIcon"); if(body) { body.classList.add("hidden"); body.classList.remove("grid"); icon.innerText = "▶"; } }
             } catch (e) { const errBanner = document.getElementById('errorBanner'); if(errBanner) { errBanner.innerHTML = `⚠️ 畫面繪製失敗: ${e.message}`; errBanner.classList.remove('hidden'); } }
