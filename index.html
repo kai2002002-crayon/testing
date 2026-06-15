@@ -311,10 +311,9 @@
                     👥 <span data-lang-key="visit_count_prefix">累計利用回數</span>: <span id="top_visit_counter" class="text-amber-700 dark:text-amber-400 tracking-wider">讀取中...</span>
                 </div>
                 
-                <div class="flex items-center gap-1 sm:gap-2 bg-gradient-to-r from-amber-50 to-white dark:from-gray-700 dark:to-gray-800 p-1 sm:p-1.5 rounded-full border-2 border-amber-300 shadow-md backdrop-blur-sm shrink-0">
-                    <span id="pickupTitleText" class="text-[10px] sm:text-xs font-bold text-amber-700 dark:text-amber-300 px-1.5 whitespace-nowrap">🎯 特選使者招募</span>
-                    
-                    <div id="pickupIconsContainer" class="flex flex-row-reverse items-center gap-1.5 sm:gap-2 pr-1">
+                <div class="flex items-center gap-1 sm:gap-2 bg-gradient-to-r from-amber-50 to-white dark:from-gray-700 dark:to-gray-800 px-2.5 h-8 sm:h-9 rounded-xl border border-amber-300 dark:border-gray-600 shadow-sm backdrop-blur-sm shrink-0 transition-colors">
+                    <span id="pickupTitleText" class="text-[10px] sm:text-[11px] font-bold text-amber-700 dark:text-amber-300 pr-1 whitespace-nowrap">🎯 特選使者招募</span>
+                    <div id="pickupIconsContainer" class="flex flex-row-reverse items-center gap-1.5">
                         </div>
                 </div>
             </div>
@@ -330,38 +329,37 @@
                     </div>
                 </div>
                 
-                <div class="flex flex-row items-center gap-2 sm:gap-3 w-full lg:w-auto">
-                    <select id="langSelect" onchange="changeLanguage(this.value)" class="p-2 bg-white/80 dark:bg-gray-800/80 border border-amber-300 dark:border-gray-600 rounded-xl shadow-sm transition hover:bg-gray-50 dark:hover:bg-gray-700 shrink-0 backdrop-blur-sm text-xs font-bold outline-none cursor-pointer text-amber-900 dark:text-amber-400">
+                <div class="flex flex-row items-center gap-2 w-full lg:w-auto">
+                    <select id="langSelect" onchange="changeLanguage(this.value)" class="h-8 sm:h-9 px-2 bg-white/80 dark:bg-gray-800/80 border border-amber-300 dark:border-gray-600 rounded-xl shadow-sm transition hover:bg-gray-50 dark:hover:bg-gray-700 shrink-0 backdrop-blur-sm text-[11px] sm:text-xs font-bold outline-none cursor-pointer text-amber-900 dark:text-amber-400">
                         <option value="zh-TW">繁中</option>
                         <option value="ja">日本語</option>
                         <option value="en">English</option>
                     </select>
 
-                    <button onclick="toggleDarkMode()" class="p-2 bg-white/80 dark:bg-gray-800/80 border border-amber-300 dark:border-gray-600 rounded-xl shadow-sm transition hover:bg-gray-50 dark:hover:bg-gray-700 shrink-0 backdrop-blur-sm">
+                    <button onclick="toggleDarkMode()" class="h-8 w-8 sm:h-9 sm:w-9 flex items-center justify-center bg-white/80 dark:bg-gray-800/80 border border-amber-300 dark:border-gray-600 rounded-xl shadow-sm transition hover:bg-gray-50 dark:hover:bg-gray-700 shrink-0 backdrop-blur-sm text-xs sm:text-sm">
                         <span id="themeIconLight" class="block dark:hidden">🌙</span>
                         <span id="themeIconDark" class="hidden dark:block">☀️</span>
                     </button>
 
-                    <div id="authPanel" class="w-full bg-white/90 dark:bg-gray-800/90 p-3 rounded-xl border border-amber-300 dark:border-gray-600 shadow-sm flex flex-row items-center justify-between sm:justify-start gap-4 backdrop-blur-sm">
-                        <div id="userStatus" class="text-left text-[11px] sm:text-xs text-gray-600 dark:text-gray-300">
-                            <span class="block font-bold text-amber-800 dark:text-amber-500" data-lang-key="auth_offline_title">當前狀態：單機模式</span>
-                            <span data-lang-key="auth_offline_desc">紀錄保存在此裝置</span>
+                    <div id="authPanel" class="w-full bg-white/90 dark:bg-gray-800/90 px-2.5 h-8 sm:h-9 rounded-xl border border-amber-300 dark:border-gray-600 shadow-sm flex flex-row items-center justify-between sm:justify-start gap-2 sm:gap-3 backdrop-blur-sm">
+                        <div id="userStatus" class="flex flex-row items-center gap-1.5 text-left text-[10px] sm:text-[11px] text-gray-600 dark:text-gray-300 truncate">
+                            <span class="font-bold text-amber-800 dark:text-amber-500 whitespace-nowrap" data-lang-key="auth_offline_title">當前狀態：單機模式</span>
+                            <span class="hidden sm:inline whitespace-nowrap opacity-70" data-lang-key="auth_offline_desc">紀錄保存在此裝置</span>
                         </div>
                         
-                        <div id="authBtnContainer" class="shrink-0">
-                            <button id="authBtn" onclick="handleAuth()" class="google-login-btn bg-white dark:bg-gray-700 rounded-lg p-2 flex items-center justify-center transition border border-gray-200 dark:border-gray-600 shrink-0">
-                                <svg id="googleLogoSvg" class="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <div id="authBtnContainer" class="shrink-0 flex items-center">
+                            <button id="authBtn" onclick="handleAuth()" class="google-login-btn bg-white dark:bg-gray-700 rounded-lg h-6 sm:h-7 px-1.5 sm:px-2 flex items-center justify-center transition border border-gray-200 dark:border-gray-600 shrink-0">
+                                <svg id="googleLogoSvg" class="w-4 h-4 sm:w-4 sm:h-4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                                     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
                                     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
                                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
                                 </svg>
-                                <span id="logoutText" class="hidden text-white font-bold text-xs px-2 py-0.5" data-lang-key="auth_logout">登出</span>
+                                <span id="logoutText" class="hidden text-white font-bold text-[10px] sm:text-xs px-1" data-lang-key="auth_logout">登出</span>
                             </button>
                         </div>
                     </div>
                 </div>
-            </div>
         </header>
 
         <div id="errorBanner" class="hidden bg-red-100 border-2 border-red-500 text-red-800 px-4 py-3 rounded-xl mb-6 text-sm font-bold shadow-sm flex flex-col gap-1"></div>
@@ -717,8 +715,8 @@
                 const pColorClass = personalityColors[charData.personality] || "border-gray-400 text-gray-400";
 
                 const iconWrapper = document.createElement('div');
-                // 🌟 將原來的 cursor-help 改成 cursor-pointer，讓滑鼠移過去會變成點擊的手指圖案
-                iconWrapper.className = `w-7 h-7 sm:w-8 sm:h-8 rounded-lg border-2 ${pColorClass} bg-white dark:bg-gray-800 flex items-center justify-center relative pickup-sparkle shrink-0 overflow-hidden cursor-pointer hover:scale-110 transition-transform`;
+                // 🌟 尺寸縮小為 w-6 h-6 (手機) 與 w-7 h-7 (電腦)，以完美塞入 h-8/h-9 的容器中
+                iconWrapper.className = `w-6 h-6 sm:w-7 sm:h-7 rounded-lg border-2 ${pColorClass} bg-white dark:bg-gray-800 flex items-center justify-center relative pickup-sparkle shrink-0 overflow-hidden cursor-pointer hover:scale-110 transition-transform`;
                 
                 const prefix = localTooltipTexts[window.currentLang] || localTooltipTexts["zh-TW"];
                 iconWrapper.title = `${prefix}${t(charName)}`;
@@ -1767,10 +1765,11 @@
                     updateAuthButtonUI(user); 
                     if (user) {
                         currentUser = user;
-                        document.getElementById('userStatus').innerHTML = `<span id="authStatusText" class="block font-bold text-green-700 dark:text-green-500 whitespace-nowrap" data-i18n="auth_online_title">${t('auth_online_title')}</span><span class="text-[10px] sm:text-[11px] text-gray-500 dark:text-gray-400 truncate max-w-[120px]">${user.displayName || '教主'}</span>`;
+                        document.getElementById('userStatus').innerHTML = `<span id="authStatusText" class="font-bold text-green-700 dark:text-green-500 whitespace-nowrap" data-i18n="auth_online_title">${t('auth_online_title')}</span><span class="text-[10px] sm:text-[11px] text-gray-500 dark:text-gray-400 truncate max-w-[80px] sm:max-w-[120px] ml-1">${user.displayName || '教主'}</span>`;
                         db.collection("player_boards").doc(user.uid).get().then(doc => { if (doc.exists && doc.data().states) { savedStates = doc.data().states; initStates(); renderMatrix(); calculateStats(); } }).catch(err => {});
                     } else {
-                        currentUser = null; document.getElementById('userStatus').innerHTML = `<span class="block font-bold text-amber-800 dark:text-amber-500 whitespace-nowrap" data-lang-key="auth_offline_title">${t('auth_offline_title')}</span><span class="whitespace-nowrap" data-lang-key="auth_offline_desc">${t('auth_offline_desc')}</span>`;
+                        currentUser = null; 
+                        document.getElementById('userStatus').innerHTML = `<span class="font-bold text-amber-800 dark:text-amber-500 whitespace-nowrap" data-lang-key="auth_offline_title">${t('auth_offline_title')}</span><span class="hidden sm:inline opacity-70 whitespace-nowrap ml-1" data-lang-key="auth_offline_desc">${t('auth_offline_desc')}</span>`;
                     }
                 });
             }
