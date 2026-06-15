@@ -713,7 +713,7 @@
                 const charData = INITIAL_DATA.find(c => c.name === charName);
                 if (!charData) return;
 
-                const iconUrl = IMAGE_MAP['skill_passive_' + charName];
+                const iconUrl = SKILL_ICONS['skill_passive_' + charName];
                 const pColorClass = personalityColors[charData.personality] || "border-gray-400 text-gray-400";
 
                 const iconWrapper = document.createElement('div');
