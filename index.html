@@ -725,7 +725,7 @@
 
                 const iconWrapper = document.createElement('div');
                 // 🌟 尺寸改回最佳比例 w-7 h-7 (手機) 與 w-8 h-8 (電腦)
-                iconWrapper.className = `w-7 h-7 sm:w-8 sm:h-8 rounded-lg border-2 ${pColorClass} bg-white dark:bg-gray-800 flex items-center justify-center relative pickup-sparkle shrink-0 overflow-hidden cursor-pointer hover:scale-110 transition-transform`;
+                iconWrapper.className = `w-7 h-7 sm:w-8 sm:h-8 rounded-lg border-2 ${pColorClass} bg-white dark:bg-gray-800 flex items-center justify-center relative pickup-sparkle shrink-0 overflow-hidden cursor-pointer hover:scale-150 transition-transform`;
                 
                 const prefix = localTooltipTexts[window.currentLang] || localTooltipTexts["zh-TW"];
                 iconWrapper.title = `${prefix}${t(charName)}`;
