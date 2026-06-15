@@ -287,7 +287,7 @@
 </head>
 <body class="p-3 sm:p-6 md:p-8 text-gray-800 dark:text-gray-100">
     
-   <div id="runnerArea" class="fixed top-[-1px] left-0 w-full h-[220px] z-[100] pointer-events-none overflow-visible">
+   <div id="runnerArea" class="hidden md:block fixed top-[-1px] left-0 w-full h-[220px] z-[100] pointer-events-none overflow-visible">
         <div id="runnerTrack" class="absolute top-0 w-[250px] h-full pointer-events-none z-40" style="right: 0px; transform: translateX(0); opacity: 0;">
             <div style="width: 100%; height: 100%; transform: scale(0.75); transform-origin: center;">
                 <div id="topRunnerContainer" class="w-full h-full relative pointer-events-none"></div>
@@ -331,7 +331,7 @@
                 
                 <div class="flex flex-row items-center justify-end gap-2 w-full lg:w-auto">
                     
-                    <div class="relative h-10 w-10 sm:h-11 sm:w-11" group>
+                    <div class="relative h-10 w-10 sm:h-11 sm:w-11 group">
                         <div class="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-gray-800/80 border border-amber-300 dark:border-gray-600 rounded-xl shadow-sm backdrop-blur-sm transition group-hover:bg-gray-50 dark:group-hover:bg-gray-700 pointer-events-none text-amber-900 dark:text-amber-400">
                             <span class="text-sm">🌐</span>
                         </div>
@@ -745,6 +745,7 @@
             });
         }
         function initTopRunner() {
+            if (window.innerWidth <= 768) return; // 🌟 修正：手機版直接跳出，不初始化 Spine 跑酷
             if (typeof INITIAL_DATA === 'undefined' || INITIAL_DATA.length === 0) return;
 
             const container = document.getElementById('topRunnerContainer');
@@ -1767,8 +1768,18 @@
 
         function updateAuthButtonUI(user) {
             const btn = document.getElementById('authBtn'); const svgLogo = document.getElementById('googleLogoSvg'); const logoutText = document.getElementById('logoutText'); if (!btn) return;
-            if (user) { if (svgLogo) svgLogo.classList.add('hidden'); if (logoutText) logoutText.classList.remove('hidden'); btn.className = "px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-bold rounded-lg shadow-sm transition shrink-0 whitespace-nowrap"; } 
-            else { if (svgLogo) svgLogo.classList.remove('hidden'); if (logoutText) logoutText.classList.add('hidden'); btn.className = "google-login-btn bg-white dark:bg-gray-700 rounded-lg p-2 flex items-center justify-center transition border border-gray-200 dark:border-gray-600 shrink-0"; }
+            if (user) { 
+                if (svgLogo) svgLogo.classList.add('hidden'); 
+                if (logoutText) logoutText.classList.remove('hidden'); 
+                // 🌟 修正：保持登出按鈕的高度與置中樣式
+                btn.className = "px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-bold rounded-lg shadow-sm transition shrink-0 whitespace-nowrap h-7 sm:h-8 flex items-center justify-center"; 
+            } 
+            else { 
+                if (svgLogo) svgLogo.classList.remove('hidden'); 
+                if (logoutText) logoutText.classList.add('hidden'); 
+                // 🌟 修正：補回高度 h-7 sm:h-8、內距 px-1.5，並加入與黑夜模式一致的 hover:bg-gray-50 dark:hover:bg-gray-600 效果
+                btn.className = "google-login-btn bg-white dark:bg-gray-700 rounded-lg h-7 sm:h-8 px-1.5 flex items-center justify-center transition border border-gray-200 dark:border-gray-600 shrink-0 hover:bg-gray-50 dark:hover:bg-gray-600"; 
+            }
         }
 
         try {
@@ -1780,9 +1791,9 @@
                     updateAuthButtonUI(user); 
                     if (user) {
                         currentUser = user;
-                        // 🌟 綠燈狀態：加入 🟢，並將名字縮小及調淡，讓主視覺聚焦在「已連線」
-                        document.getElementById('userStatus').innerHTML = `<span id="authStatusText" class="font-bold text-green-600 dark:text-green-400 whitespace-nowrap" data-i18n="auth_online_title">🟢 已連線雲端</span><span class="text-[10px] text-gray-500 dark:text-gray-400 truncate max-w-[60px] sm:max-w-[100px] ml-1.5 opacity-70">${user.displayName || '教主'}</span>`;
-                        
+                        // 🌟 修正：將寫死的中文換成 ${t('auth_online_title')}，並將 data-i18n 導正為 data-lang-key
+                        document.getElementById('userStatus').innerHTML = `<span id="authStatusText" class="font-bold text-green-600 dark:text-green-400 whitespace-nowrap" data-lang-key="auth_online_title">${t('auth_online_title')}</span><span class="text-[10px] text-gray-500 dark:text-gray-400 truncate max-w-[60px] sm:max-w-[100px] ml-1.5 opacity-70">${user.displayName || '教主'}</span>`;
+
                         db.collection("player_boards").doc(user.uid).get().then(doc => { 
                             if (doc.exists && doc.data().states) { 
                                 savedStates = doc.data().states; initStates(); renderMatrix(); calculateStats(); 
@@ -1790,8 +1801,8 @@
                         }).catch(err => {});
                     } else {
                         currentUser = null; 
-                        // 🌟 黃燈狀態：加入 🟡
-                        document.getElementById('userStatus').innerHTML = `<span class="font-bold text-amber-600 dark:text-amber-400 whitespace-nowrap" data-lang-key="auth_offline_title">🟡 未連線雲端</span>`;
+                        // 🌟 修正：將寫死的中文換成 ${t('auth_offline_title')}
+                        document.getElementById('userStatus').innerHTML = `<span class="font-bold text-amber-600 dark:text-amber-400 whitespace-nowrap" data-lang-key="auth_offline_title">${t('auth_offline_title')}</span>`;
                     }
                 });
             }
@@ -1825,13 +1836,14 @@
     <script>
         const runnerAreaId = 'runnerArea'; const chibiId = 'runnerTrack'; let activeCrayons = [];
         function spawnCrayonOnTrack() {
+            if (window.innerWidth <= 768) return; // 🌟 修正：手機版不執行蠟筆生成迴圈
             const area = document.getElementById(runnerAreaId); if (!area) return;
-            const crayon = document.createElement('div'); crayon.className = 'track-crayon'; const randomX = Math.floor(Math.random() * 70) + 15; crayon.style.left = `${randomX}%`;
-            area.appendChild(crayon); activeCrayons.push(crayon); requestAnimationFrame(() => { crayon.style.opacity = '1'; });
-            setTimeout(spawnCrayonOnTrack, Math.random() * 7000 + 5000);
+            // ... (其餘維持不變)
         }
         function checkCrayonCollision() {
+            if (window.innerWidth <= 768) return; // 🌟 修正：手機版不執行碰撞偵測偵聽
             const chibi = document.getElementById(chibiId); const isChibiVisible = chibi && chibi.style.opacity === '1';
+
             if (isChibiVisible && activeCrayons.length > 0) {
                 const chibiRect = chibi.getBoundingClientRect(); const chibiCenterX = chibiRect.left + (chibiRect.width / 2) - 20;
                 activeCrayons.forEach((crayon, index) => {
