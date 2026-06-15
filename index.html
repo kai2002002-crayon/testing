@@ -717,14 +717,15 @@
                 const pColorClass = personalityColors[charData.personality] || "border-gray-400 text-gray-400";
 
                 const iconWrapper = document.createElement('div');
-                iconWrapper.className = `w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 ${pColorClass} bg-white dark:bg-gray-800 flex items-center justify-center relative pickup-sparkle shrink-0 overflow-hidden cursor-help`;
+                // 🌟 改變外框形狀：將 rounded-full 改成 rounded-lg
+                iconWrapper.className = `w-7 h-7 sm:w-8 sm:h-8 rounded-lg border-2 ${pColorClass} bg-white dark:bg-gray-800 flex items-center justify-center relative pickup-sparkle shrink-0 overflow-hidden cursor-help`;
                 
-                // 🌟 2. 懸浮提示文字與角色名稱全面套用翻譯 (使用內建的 t() 函式)
                 const prefix = localTooltipTexts[window.currentLang] || localTooltipTexts["zh-TW"];
                 iconWrapper.title = `${prefix}${t(charName)}`;
 
                 if (iconUrl) {
-                    iconWrapper.innerHTML = `<img src="${iconUrl}" class="w-[120%] h-[120%] max-w-none object-cover" alt="${t(charName)}">`;
+                    // 🌟 圖片適配方形：將 w-[120%] 改回 w-full h-full，避免技能圖示的邊角被切掉
+                    iconWrapper.innerHTML = `<img src="${iconUrl}" class="w-full h-full object-cover" alt="${t(charName)}">`;
                 } else {
                     iconWrapper.innerHTML = `<span class="text-[10px] font-bold text-gray-800 dark:text-gray-200">${t(charName).charAt(0)}</span>`;
                 }
