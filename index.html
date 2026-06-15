@@ -717,14 +717,18 @@
                 const pColorClass = personalityColors[charData.personality] || "border-gray-400 text-gray-400";
 
                 const iconWrapper = document.createElement('div');
-                // 🌟 改變外框形狀：將 rounded-full 改成 rounded-lg
-                iconWrapper.className = `w-7 h-7 sm:w-8 sm:h-8 rounded-lg border-2 ${pColorClass} bg-white dark:bg-gray-800 flex items-center justify-center relative pickup-sparkle shrink-0 overflow-hidden cursor-help`;
+                // 🌟 將原來的 cursor-help 改成 cursor-pointer，讓滑鼠移過去會變成點擊的手指圖案
+                iconWrapper.className = `w-7 h-7 sm:w-8 sm:h-8 rounded-lg border-2 ${pColorClass} bg-white dark:bg-gray-800 flex items-center justify-center relative pickup-sparkle shrink-0 overflow-hidden cursor-pointer hover:scale-110 transition-transform`;
                 
                 const prefix = localTooltipTexts[window.currentLang] || localTooltipTexts["zh-TW"];
                 iconWrapper.title = `${prefix}${t(charName)}`;
 
+                // 🌟 加入點擊事件：開啟新分頁前往該角色的詳細資料頁面
+                iconWrapper.onclick = () => {
+                    window.open(`char_detail.html?char=${encodeURIComponent(charName)}`, '_blank');
+                };
+
                 if (iconUrl) {
-                    // 🌟 圖片適配方形：將 w-[120%] 改回 w-full h-full，避免技能圖示的邊角被切掉
                     iconWrapper.innerHTML = `<img src="${iconUrl}" class="w-full h-full object-cover" alt="${t(charName)}">`;
                 } else {
                     iconWrapper.innerHTML = `<span class="text-[10px] font-bold text-gray-800 dark:text-gray-200">${t(charName).charAt(0)}</span>`;
