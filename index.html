@@ -208,6 +208,41 @@
             100% { opacity: 1; transform: translateY(0); } 
         }
         .animate-banner-fade { animation: fadeInBanner 0.4s ease-out forwards; }
+
+        /* 🌈 彩虹動態邊框與發光效果 */
+        .rainbow-banner-frame {
+            position: relative;
+            border-radius: 6px; /* 與原本圖片的 rounded 一致 */
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            /* 核心：發光效果 */
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+            transition: all 0.3s ease;
+        }
+
+        /* 建立彩虹漸層的邊框 */
+        .rainbow-banner-frame::before {
+            content: '';
+            position: absolute;
+            top: -2px; bottom: -2px; left: -2px; right: -2px;
+            z-index: -1;
+            border-radius: 8px;
+            background: linear-gradient(45deg, #ff0000, #ff7300, #ffeb00, #47e247, #00bbff, #0055ff, #8800ff, #ff0000);
+            background-size: 400%;
+            animation: rainbowMove 5s linear infinite;
+        }
+
+        /* 彩虹流動動畫 */
+        @keyframes rainbowMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 400% 0; }
+        }
+
+        /* 滑鼠懸停時加強亮度 */
+        .rainbow-banner-frame:hover {
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body class="p-3 sm:p-6 md:p-8 text-gray-800 dark:text-gray-100">
@@ -598,12 +633,13 @@
 
             activeEvents.forEach(evt => {
                 const imgEl = document.createElement('img');
-                
-                // 🌟 修改：在路徑前面加上 event/ 資料夾
-                imgEl.src = `event/${evt.eventId}_${langSuffix}.png`; 
-                
+                imgEl.src = `event/${evt.eventId}_${langSuffix}.png`;
                 imgEl.alt = evt.eventId;
-                imgEl.className = "h-7 sm:h-8 w-auto object-contain rounded border border-gray-200 dark:border-gray-600 shadow-sm hover:scale-105 transition-transform";
+                
+                // 🌟 修改：換上我們的彩虹邊框 class
+                imgEl.className = "rainbow-banner-frame h-7 sm:h-8 w-auto object-contain cursor-pointer transition-transform";
+                
+                imgEl.onclick = () => window.open(`event_detail.html?event=${evt.eventId}`, '_blank');
                 container.appendChild(imgEl);
             });
         }
