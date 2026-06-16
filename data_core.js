@@ -677,12 +677,12 @@ const EVENT_SCHEDULE = [
     {
         start: "2026-06-04T18:00:00+09:00",
         end: "2026-06-18T10:59:59+09:00",
-        eventId: "Theme15"  // 會對應尋找 Theme015_ZH.png, Theme015_JA.png 等
+        eventId: "Theme015"  // 會對應尋找 Theme015_ZH.png, Theme015_JA.png 等
     },
     {
         start: "2026-06-18T18:00:00+09:000",
         end: "2026-07-02T10:59:59+09:00",
-        eventId: "Theme17" 
+        eventId: "Theme0017" 
     }
 ];
 
