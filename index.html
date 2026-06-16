@@ -209,31 +209,35 @@
         }
         .animate-banner-fade { animation: fadeInBanner 0.4s ease-out forwards; }
 
-        /* 🌈 強力彩虹動態邊框 */
-.rainbow-banner-frame {
+       /* 🌈 外層：彩虹流動邊框容器 */
+.rainbow-wrapper {
     position: relative;
-    /* 設定邊框厚度 */
-    border: 3px solid;
-    /* 使用 border-image 產生彩虹 */
-    border-image: linear-gradient(45deg, #ff0000, #ff7300, #ffeb00, #47e247, #00bbff, #0055ff, #8800ff, #ff0000) 1;
-    border-radius: 8px; /* 這裡如果不生效，可以用下方動畫修正 */
+    padding: 3px; /* 這裡控制邊框的厚度 */
+    border-radius: 12px; /* 這裡控制圓角大小 */
+    background: linear-gradient(45deg, #ff0000, #ff7300, #ffeb00, #47e247, #00bbff, #0055ff, #8800ff, #ff0000);
+    background-size: 400%;
     animation: rainbowMove 5s linear infinite;
-    
-    /* 發光特效 */
-    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
-    transition: all 0.3s ease;
+    display: inline-block;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+    transition: transform 0.3s ease;
+}
+
+/* 內層：處理圖片的圓角，並遮住背景色 */
+.rainbow-content {
+    display: block;
+    border-radius: 9px; /* 內圓角要比外圓角稍微小一點點，視覺才協調 */
+    overflow: hidden;
 }
 
 /* 讓彩虹流動 */
 @keyframes rainbowMove {
-    0% { border-image-source: linear-gradient(45deg, #ff0000, #ff7300, #ffeb00, #47e247, #00bbff, #0055ff, #8800ff, #ff0000); }
-    50% { border-image-source: linear-gradient(225deg, #ff0000, #ff7300, #ffeb00, #47e247, #00bbff, #0055ff, #8800ff, #ff0000); }
-    100% { border-image-source: linear-gradient(405deg, #ff0000, #ff7300, #ffeb00, #47e247, #00bbff, #0055ff, #8800ff, #ff0000); }
+    0% { background-position: 0 0; }
+    100% { background-position: 400% 0; }
 }
 
-.rainbow-banner-frame:hover {
-    filter: drop-shadow(0 0 12px rgba(255, 255, 255, 1));
-    transform: scale(1.08);
+.rainbow-wrapper:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
 }
     </style>
 </head>
@@ -624,15 +628,20 @@
             const langSuffix = { "zh-TW": "ZH", "ja": "JA", "en": "EN" }[window.currentLang] || "ZH";
 
             activeEvents.forEach(evt => {
+                // 1. 建立外框
+                const wrapper = document.createElement('div');
+                wrapper.className = "rainbow-wrapper h-7 sm:h-8 w-auto cursor-pointer";
+                wrapper.onclick = () => window.open(`event_detail.html?event=${evt.eventId}`, '_blank');
+                
+                // 2. 建立圖片內容
                 const imgEl = document.createElement('img');
                 imgEl.src = `event/${evt.eventId}_${langSuffix}.png`;
                 imgEl.alt = evt.eventId;
+                imgEl.className = "rainbow-content h-full w-full object-cover";
                 
-                // 🌟 修改：換上我們的彩虹邊框 class
-                imgEl.className = "rainbow-banner-frame h-7 sm:h-8 w-auto object-contain cursor-pointer transition-transform";
-                
-                imgEl.onclick = () => window.open(`event_detail.html?event=${evt.eventId}`, '_blank');
-                container.appendChild(imgEl);
+                // 組合起來
+                wrapper.appendChild(imgEl);
+                container.appendChild(wrapper);
             });
         }
 
