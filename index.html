@@ -239,14 +239,16 @@
                 
                 <div id="bannerDisplayArea" class="grid items-center bg-gradient-to-r from-amber-50 to-white dark:from-gray-800 dark:to-gray-700 px-2.5 h-10 sm:h-11 rounded-xl border border-amber-300 dark:border-gray-600 shadow-sm backdrop-blur-sm shrink-0 overflow-hidden">
                     
-                    <div id="pickupPanel" class="col-start-1 row-start-1 flex items-center gap-1 sm:gap-2 transition-opacity duration-500 opacity-100 z-10">
-                        <span id="pickupTitleText" class="text-[10px] sm:text-[11px] font-bold text-amber-700 dark:text-amber-300 pr-1 whitespace-nowrap">🎯 特選使者招募</span>
-                        <div id="pickupIconsContainer" class="flex flex-row items-center gap-1.5"></div>
+                    <!-- 面板 A：特選招募 -->
+                    <div id="pickupPanel" class="col-start-1 row-start-1 flex items-center justify-between w-full gap-3 transition-opacity duration-500 opacity-100 z-10">
+                        <span id="pickupTitleText" class="text-[10px] sm:text-[11px] font-bold text-amber-700 dark:text-amber-300 whitespace-nowrap shrink-0">🎯 特選使者招募</span>
+                        <div id="pickupIconsContainer" class="flex flex-row items-center justify-end gap-1.5"></div>
                     </div>
 
-                    <div id="eventPanel" class="col-start-1 row-start-1 flex items-center gap-1 sm:gap-2 transition-opacity duration-500 opacity-0 pointer-events-none z-0">
-                        <span id="eventTitleText" class="text-[10px] sm:text-[11px] font-bold text-sky-700 dark:text-sky-400 pr-1 whitespace-nowrap">🎪 今期活動</span>
-                        <div id="eventBannersContainer" class="flex flex-row items-center gap-1.5 h-full"></div>
+                    <!-- 面板 B：今期活動 -->
+                    <div id="eventPanel" class="col-start-1 row-start-1 flex items-center justify-between w-full gap-3 transition-opacity duration-500 opacity-0 pointer-events-none z-0">
+                        <span id="eventTitleText" class="text-[10px] sm:text-[11px] font-bold text-sky-700 dark:text-sky-400 whitespace-nowrap shrink-0">🎪 今期活動</span>
+                        <div id="eventBannersContainer" class="flex flex-row items-center justify-end gap-1.5 h-full"></div>
                     </div>
                 </div>
             </div>
