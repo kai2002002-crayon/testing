@@ -490,7 +490,17 @@
         const btnActiveStyle = "whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-bold transition bg-amber-500 text-white border-amber-600 shadow-sm";
         const btnInactiveStyle = "whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-medium transition bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600";
         const btnDispActiveStyle = "whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-bold transition bg-blue-500 text-white border-blue-600 shadow-sm";
-
+        // 🌟 新增：種族背景色對應表
+        const RACE_BG_MAP = {
+            "妖精": "bg-emerald-400 dark:bg-emerald-700/60",
+            "獸人": "bg-orange-400 dark:bg-orange-700/60",
+            "魔女": "bg-purple-400 dark:bg-purple-700/60",
+            "精靈": "bg-sky-400 dark:bg-sky-700/60",
+            "幽靈": "bg-pink-400 dark:bg-pink-700/60",
+            "龍族": "bg-slate-400 dark:bg-slate-700/60",
+            "魔靈": "bg-emerald-400 dark:bg-emerald-700/60",
+            "???": "
+        };
         // ------------------------------------------------------------
         // 基本工具函式 (翻譯、主題、資料預載)
         // ------------------------------------------------------------
@@ -1006,45 +1016,49 @@
                     const jobPath = typeof IMAGE_MAP !== 'undefined' ? (IMAGE_MAP[`job_${char.job}`] || "") : "";
                     const borderColorClass = personalityBorderColors[char.personality] || "border-gray-300"; 
                     const isOwned = savedStates['owned_' + char.name]; 
-                    
-                    // 根據狀態設定頭像與名稱
-                    const avatarClass = isOwned && !isUnreleased ? "" : "unowned-avatar";
-                    const displayName = isUnreleased ? "???" : t(char.name);
-                    const hoverImgHtml = isUnreleased ? "" : `<img src="${hoverPath}" class="avatar-alt" alt="${displayName}" onerror="this.style.display='none';" loading="lazy">`;
-                    
-                    const detailBtn = document.createElement('button'); 
-                    detailBtn.onclick = () => window.open(`char_detail.html?char=${encodeURIComponent(char.name)}`, '_blank');
-                    const displayClass = (window.currentLang === 'en' || isUnreleased) ? 'hidden' : 'flex';
-                    detailBtn.className = `w-8 sm:w-10 shrink-0 ${displayClass} items-center justify-center bg-amber-500/10 hover:bg-amber-300 dark:bg-gray-700/50 dark:hover:bg-gray-600 border-r border-amber-200/50 dark:border-gray-600 transition-colors cursor-pointer group`;
-                    detailBtn.title = (window.currentLang === 'ja') ? `${t(char.name)}の詳細データを見る` : `查看 ${t(char.name)} 的詳細資料`;
-                    detailBtn.innerHTML = `<img src="https://i.postimg.cc/T1Y9CC22/Album-Icon-Info.png" alt="Info" class="w-5 h-5 sm:w-6 sm:h-6 opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all duration-200">`;
-                    charCard.appendChild(detailBtn);
 
-                    const cardInner = document.createElement('div'); cardInner.className = "flex-1 p-3 sm:p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-4 w-full overflow-hidden";
-                    const nameCol = document.createElement('div'); nameCol.className = "flex flex-row items-center justify-start gap-3 min-w-[210px] w-full md:w-auto border-b md:border-b-0 pb-2 md:pb-0 border-gray-200/50 dark:border-gray-700";
+// 🌟 新增：取得該角色的種族專屬背景色 (若無對應則給預設值)
+const raceBgClass = RACE_BG_MAP[char.race] || "bg-amber-50 dark:bg-slate-800/60";
                     
-                    const traitsHtml = isUnreleased ? 
-                        `<div class="flex items-center gap-1.5 pt-1 border-t border-dashed border-gray-100 dark:border-gray-700 text-gray-400 dark:text-gray-500 text-[10px] font-bold tracking-widest">DATA CLASSIFIED</div>` :
-                        `<div class="flex items-center gap-1.5 pt-1 border-t border-dashed border-gray-100 dark:border-gray-700">
-                            <div class="flex items-center hover-scale cursor-help"><img src="${pPath}" alt="${t(char.personality)}" title="${t('stats_personality')} ${t(char.personality)}" onerror="this.style.display='none'; document.getElementById('fall_p_${char.name}').classList.remove('hidden');" class="w-4 h-4 object-contain" loading="lazy"><span id="fall_p_${char.name}" class="hidden text-[9px] px-1 rounded bg-amber-50 dark:bg-gray-700 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-gray-600 whitespace-nowrap">${t(char.personality)}</span></div>
-                            <div class="flex items-center hover-scale cursor-help"><img src="${racePath}" alt="${t(char.race)}" title="${t('stats_race')} ${t(char.race)}" onerror="this.style.display='none'; document.getElementById('fall_r_${char.name}').classList.remove('hidden');" class="w-4 h-4 object-contain" loading="lazy"><span id="fall_r_${char.name}" class="hidden bg-gray-100 dark:bg-gray-700 px-1 rounded text-[9px] text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap">${t(char.race)}</span></div>
-                            <div class="flex items-center hover-scale cursor-help"><img src="${posPath}" alt="${t(char.position)}" title="${t('stats_position')} ${t(char.position)}" onerror="this.style.display='none'; document.getElementById('fall_pos_${char.name}').classList.remove('hidden');" class="w-4 h-4 object-contain opacity-85" loading="lazy"><span id="fall_pos_${char.name}" class="hidden bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-1 rounded text-[9px] font-medium whitespace-nowrap">${t(char.position)}</span></div>
-                            <div class="flex items-center hover-scale cursor-help"><img src="${jobPath}" alt="${t(char.job)}" title="${t('stats_job')} ${t(char.job)}" onerror="this.style.display='none'; document.getElementById('fall_j_${char.name}').classList.remove('hidden');" class="w-4 h-4 object-contain opacity-85" loading="lazy"><span id="fall_j_${char.name}" class="hidden bg-purple-50 dark:bg-purple-900 text-purple-700 dark:text-purple-300 px-1 rounded text-[9px] font-medium whitespace-nowrap">${t(char.job)}</span></div>
-                        </div>`;
+// 根據狀態設定頭像與名稱
+const avatarClass = isOwned && !isUnreleased ? "" : "unowned-avatar";
+const displayName = isUnreleased ? "???" : t(char.name);
+const hoverImgHtml = isUnreleased ? "" : `<img src="${hoverPath}" class="avatar-alt" alt="${displayName}" onerror="this.style.display='none';" loading="lazy">`;
+                    
+const detailBtn = document.createElement('button'); 
+detailBtn.onclick = () => window.open(`char_detail.html?char=${encodeURIComponent(char.name)}`, '_blank');
+const displayClass = (window.currentLang === 'en' || isUnreleased) ? 'hidden' : 'flex';
+detailBtn.className = `w-8 sm:w-10 shrink-0 ${displayClass} items-center justify-center bg-amber-500/10 hover:bg-amber-300 dark:bg-gray-700/50 dark:hover:bg-gray-600 border-r border-amber-200/50 dark:border-gray-600 transition-colors cursor-pointer group`;
+detailBtn.title = (window.currentLang === 'ja') ? `${t(char.name)}の詳細データを見る` : `查看 ${t(char.name)} 的詳細資料`;
+detailBtn.innerHTML = `<img src="https://i.postimg.cc/T1Y9CC22/Album-Icon-Info.png" alt="Info" class="w-5 h-5 sm:w-6 sm:h-6 opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all duration-200">`;
+charCard.appendChild(detailBtn);
 
-                    nameCol.innerHTML = `
-                        <div class="relative shrink-0 w-12 h-12" ${isUnreleased ? '' : `onclick="toggleOwnership('${char.name}')"`}>
-                            <div id="avatar_container_${char.name}" class="char-avatar-container w-12 h-12 rounded-lg border-2 ${borderColorClass} shadow-inner bg-white ${avatarClass} ${isUnreleased ? 'pointer-events-none' : ''}">
-                                <img src="${avatarPath}" alt="${displayName}" class="${isUnreleased ? 'silhouette-mode' : ''}" onerror="this.style.display='none'; document.getElementById('fall_av_${char.name}').classList.remove('hidden');" loading="lazy">
-                                ${hoverImgHtml}
-                            </div>
-                            <div id="fall_av_${char.name}" class="hidden char-avatar-container w-12 h-12 rounded-lg border-2 ${borderColorClass} shadow-sm flex items-center justify-center font-bold text-amber-900 bg-gradient-to-br from-amber-100 to-yellow-200 text-lg ${avatarClass} ${isUnreleased ? 'silhouette-mode' : ''}">${isUnreleased ? '?' : t(char.name).charAt(0)}</div>
-                        </div>
-                        <div class="flex flex-col gap-0.5 w-full overflow-hidden">
-                            <div class="marquee-box text-sm sm:text-base font-bold text-gray-900 dark:text-gray-100" title="${displayName}"><span class="marquee-content">${displayName}</span></div>
-                            ${traitsHtml}
-                        </div>
-                    `;
+const cardInner = document.createElement('div'); cardInner.className = "flex-1 p-3 sm:p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-4 w-full overflow-hidden";
+const nameCol = document.createElement('div'); nameCol.className = "flex flex-row items-center justify-start gap-3 min-w-[210px] w-full md:w-auto border-b md:border-b-0 pb-2 md:pb-0 border-gray-200/50 dark:border-gray-700";
+                    
+const traitsHtml = isUnreleased ? 
+    `<div class="flex items-center gap-1.5 pt-1 border-t border-dashed border-gray-100 dark:border-gray-700 text-gray-400 dark:text-gray-500 text-[10px] font-bold tracking-widest">DATA CLASSIFIED</div>` :
+    `<div class="flex items-center gap-1.5 pt-1 border-t border-dashed border-gray-100 dark:border-gray-700">
+        <div class="flex items-center hover-scale cursor-help"><img src="${pPath}" alt="${t(char.personality)}" title="${t('stats_personality')} ${t(char.personality)}" onerror="this.style.display='none'; document.getElementById('fall_p_${char.name}').classList.remove('hidden');" class="w-4 h-4 object-contain" loading="lazy"><span id="fall_p_${char.name}" class="hidden text-[9px] px-1 rounded bg-amber-50 dark:bg-gray-700 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-gray-600 whitespace-nowrap">${t(char.personality)}</span></div>
+        <div class="flex items-center hover-scale cursor-help"><img src="${racePath}" alt="${t(char.race)}" title="${t('stats_race')} ${t(char.race)}" onerror="this.style.display='none'; document.getElementById('fall_r_${char.name}').classList.remove('hidden');" class="w-4 h-4 object-contain" loading="lazy"><span id="fall_r_${char.name}" class="hidden bg-gray-100 dark:bg-gray-700 px-1 rounded text-[9px] text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap">${t(char.race)}</span></div>
+        <div class="flex items-center hover-scale cursor-help"><img src="${posPath}" alt="${t(char.position)}" title="${t('stats_position')} ${t(char.position)}" onerror="this.style.display='none'; document.getElementById('fall_pos_${char.name}').classList.remove('hidden');" class="w-4 h-4 object-contain opacity-85" loading="lazy"><span id="fall_pos_${char.name}" class="hidden bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-1 rounded text-[9px] font-medium whitespace-nowrap">${t(char.position)}</span></div>
+        <div class="flex items-center hover-scale cursor-help"><img src="${jobPath}" alt="${t(char.job)}" title="${t('stats_job')} ${t(char.job)}" onerror="this.style.display='none'; document.getElementById('fall_j_${char.name}').classList.remove('hidden');" class="w-4 h-4 object-contain opacity-85" loading="lazy"><span id="fall_j_${char.name}" class="hidden bg-purple-50 dark:bg-purple-900 text-purple-700 dark:text-purple-300 px-1 rounded text-[9px] font-medium whitespace-nowrap">${t(char.job)}</span></div>
+    </div>`;
+
+// 🌟 修改：將下方 avatar_container 的 bg-white 替換成了 ${raceBgClass}
+nameCol.innerHTML = `
+    <div class="relative shrink-0 w-12 h-12" ${isUnreleased ? '' : `onclick="toggleOwnership('${char.name}')"`}>
+        <div id="avatar_container_${char.name}" class="char-avatar-container w-12 h-12 rounded-lg border-2 ${borderColorClass} shadow-inner ${raceBgClass} ${avatarClass} ${isUnreleased ? 'pointer-events-none' : ''}">
+            <img src="${avatarPath}" alt="${displayName}" class="${isUnreleased ? 'silhouette-mode' : ''}" onerror="this.style.display='none'; document.getElementById('fall_av_${char.name}').classList.remove('hidden');" loading="lazy">
+            ${hoverImgHtml}
+        </div>
+        <div id="fall_av_${char.name}" class="hidden char-avatar-container w-12 h-12 rounded-lg border-2 ${borderColorClass} shadow-sm flex items-center justify-center font-bold text-amber-900 ${raceBgClass} text-lg ${avatarClass} ${isUnreleased ? 'silhouette-mode' : ''}">${isUnreleased ? '?' : t(char.name).charAt(0)}</div>
+    </div>
+    <div class="flex flex-col gap-0.5 w-full overflow-hidden">
+        <div class="marquee-box text-sm sm:text-base font-bold text-gray-900 dark:text-gray-100" title="${displayName}"><span class="marquee-content">${displayName}</span></div>
+        ${traitsHtml}
+    </div>
+`;
                     cardInner.appendChild(nameCol);
 
                     const layersContainer = document.createElement('div'); layersContainer.className = "flex flex-col sm:flex-row gap-3 w-full md:flex-1 relative";
