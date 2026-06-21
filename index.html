@@ -229,8 +229,8 @@
         /* 🌈 外層：彩虹流動邊框容器 */
         .rainbow-wrapper {
             position: relative;
-            padding: 2px; /* 這裡控制邊框的厚度 */
-            border-radius: 9px; /* 這裡控制圓角大小 */
+            padding: 2px;
+            border-radius: 9px;
             background: linear-gradient(45deg, #ff0000, #ff7300, #ffeb00, #47e247, #00bbff, #0055ff, #8800ff, #ff0000);
             background-size: 400%;
             animation: rainbowMove 5s linear infinite;
@@ -239,18 +239,16 @@
             transition: transform 0.3s ease;
         }
 
-        /* 內層：處理圖片的圓角，並遮住背景色 */
         .rainbow-content {
             display: block;
-            height: 100%;       /* 強制高度填滿外框 */
-            width: auto;        /* 寬度隨高度自動縮放 */
-            aspect-ratio: auto; /* 保持圖片原始比例 */
-            object-fit: contain; /* 確保圖片內容完整顯示，不會被裁切 */
-            border-radius: 7px; /* 內圓角要比外圓角稍微小一點點，視覺才協調 */
+            height: 100%;
+            width: auto;
+            aspect-ratio: auto;
+            object-fit: contain;
+            border-radius: 7px;
             overflow: hidden;
         }
 
-        /* 讓彩虹流動 */
         @keyframes rainbowMove {
             0% { background-position: 0 0; }
             100% { background-position: 400% 0; }
@@ -262,21 +260,24 @@
         }
 
         /* ------------------------------------------------------------
-        /* 🌟 Banner 滑鼠移入自動展開特製 CSS 邏輯
+        /* 🌟 Banner 滑鼠移入自動展開特製 CSS 邏輯 (縱向展開版)
         /* ------------------------------------------------------------ */
         #bannerDisplayArea {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            max-width: 320px; /* 基礎輪播模式下限制寬度 */
+            /* 平常維持正常的寬高，不會強制縮放或變形 */
         }
         
-        /* 當觸發展開狀態時的樣式改變 */
+        /* 當觸發展開狀態時的樣式改變 (改為垂直往下堆疊) */
         #bannerDisplayArea.banner-expanded {
-            max-width: 1200px !important;
             height: auto !important;
             min-height: 44px;
+            flex-direction: column !important; /* 核心：垂直排列 */
+            align-items: stretch !important;   /* 寬度撐滿容器 */
+            justify-content: flex-start;
             overflow: visible !important;
-            padding-top: 6px;
-            padding-bottom: 6px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            gap: 12px; /* 上下項目間距 */
             background: rgba(255, 255, 255, 0.95);
             border-color: #fbbf24;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
@@ -286,24 +287,27 @@
             border-color: #4b5563;
         }
 
-        /* 展開狀態下內部所有面板的排列組合 */
+        /* 展開狀態下內部所有面板的排列組合 (橫向滿版、上下間隔) */
         #bannerDisplayArea.banner-expanded > .banner-panel-item {
             position: relative !important;
             opacity: 1 !important;
             pointer-events: auto !important;
             transform: none !important;
             z-index: 20 !important;
-            border-right: 2px dashed rgba(217, 119, 6, 0.2);
-            padding-right: 12px;
+            width: 100%; /* 確保寬度吃滿外框 */
+            border-bottom: 2px dashed rgba(217, 119, 6, 0.2); /* 右虛線改為下虛線 */
+            padding-bottom: 12px;
+            border-right: none !important; /* 清除原有右虛線 */
+            padding-right: 0 !important;
         }
         .dark #bannerDisplayArea.banner-expanded > .banner-panel-item {
-            border-right: 2px dashed rgba(156, 163, 175, 0.2);
+            border-bottom: 2px dashed rgba(156, 163, 175, 0.2);
         }
 
-        /* 最後一個面板不需要右側虛線 */
+        /* 最後一個面板不需要底下的虛線 */
         #bannerDisplayArea.banner-expanded > .banner-panel-item:last-child {
-            border-right: none !important;
-            padding-right: 0px;
+            border-bottom: none !important;
+            padding-bottom: 0px;
         }
 
         /* 隱藏沒有實質內容的空白面板 */
