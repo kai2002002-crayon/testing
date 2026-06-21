@@ -4,7 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="no-referrer-when-downgrade">
-    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2Z87YT118P"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-2Z87YT118P');
+    </script>
     <title>嘟嘟臉金蠟筆記事本</title>
     <meta name="description" content="《Trickcal: Chibi Go》嘟嘟臉金蠟筆記事本！提供最新的《嘟嘟臉惡作劇》(Trickcal Revive / トリカル) 角色圖鑑、金蠟筆與技能資料。The best Trickcal Revive Crayon Planner & Character Database. トリカル 最強キャラ・クレヨン攻略データベース。">
     <link rel="icon" href="https://i.postimg.cc/mkfSTq5k/Favicon.png" type="image/png">
@@ -261,6 +268,56 @@
             transform: scale(1.30);
             filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
         }
+
+        /* ------------------------------------------------------------
+        /* 🌟 Banner 滑鼠移入自動展開特製 CSS 邏輯
+        /* ------------------------------------------------------------ */
+        #bannerDisplayArea {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            max-width: 320px; /* 基礎輪播模式下限制寬度 */
+        }
+        
+        /* 當觸發展開狀態時的樣式改變 */
+        #bannerDisplayArea.banner-expanded {
+            max-width: 1200px !important;
+            height: auto !important;
+            min-height: 44px;
+            overflow: visible !important;
+            padding-top: 6px;
+            padding-bottom: 6px;
+            background: rgba(255, 255, 255, 0.95);
+            border-color: #fbbf24;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+        .dark #bannerDisplayArea.banner-expanded {
+            background: rgba(31, 41, 55, 0.95);
+            border-color: #4b5563;
+        }
+
+        /* 展開狀態下內部所有面板的排列組合 */
+        #bannerDisplayArea.banner-expanded > .banner-panel-item {
+            position: relative !important;
+            opacity: 1 !important;
+            pointer-events: auto !important;
+            transform: none !important;
+            z-index: 20 !important;
+            border-right: 2px dashed rgba(217, 119, 6, 0.2);
+            padding-right: 12px;
+        }
+        .dark #bannerDisplayArea.banner-expanded > .banner-panel-item {
+            border-right: 2px dashed rgba(156, 163, 175, 0.2);
+        }
+
+        /* 最後一個面板不需要右側虛線 */
+        #bannerDisplayArea.banner-expanded > .banner-panel-item:last-child {
+            border-right: none !important;
+            padding-right: 0px;
+        }
+
+        /* 隱藏沒有實質內容的空白面板 */
+        #bannerDisplayArea.banner-expanded > .banner-panel-item.panel-empty-hide {
+            display: none !important;
+        }
     </style>
 </head>
 <body class="p-3 sm:p-6 md:p-8 text-gray-800 dark:text-gray-100">
@@ -285,33 +342,33 @@
     
     <div class="max-w-7xl mx-auto">
         <header class="bg-gradient-to-r from-amber-100/90 via-yellow-100/90 to-orange-100/90 dark:from-gray-800/90 dark:via-gray-700/90 dark:to-gray-800/90 rounded-2xl p-4 sm:p-6 shadow-md mb-6 border-4 border-amber-400 dark:border-gray-600 flex flex-col transition-colors backdrop-blur-sm relative z-10">
-            <div class="w-full flex flex-row justify-between items-start mb-3 gap-2">
+            <div class="w-full flex flex-col md:flex-row justify-between items-start mb-3 gap-3">
                 <div class="flex items-center gap-1.5 text-[10px] sm:text-xs font-bold text-amber-900/70 dark:text-gray-300 bg-white/60 dark:bg-gray-800/60 px-2.5 py-1 rounded-md backdrop-blur-sm border border-amber-200/80 dark:border-gray-600/80 shadow-sm shrink-0">
                     👥 <span data-lang-key="visit_count_prefix">累計利用回數</span>: <span id="top_visit_counter" class="text-amber-700 dark:text-amber-400 tracking-wider">讀取中...</span>
                 </div>
                 
-                <div id="bannerDisplayArea" class="grid items-center bg-gradient-to-r from-amber-50 to-white dark:from-gray-800 dark:to-gray-700 px-2.5 h-10 sm:h-11 rounded-xl border border-amber-300 dark:border-gray-600 shadow-sm backdrop-blur-sm shrink-0 overflow-hidden">
+                <div id="bannerDisplayArea" 
+                     onmouseenter="handleBannerHover(true)" 
+                     onmouseleave="handleBannerHover(false)"
+                     class="flex flex-wrap md:flex-nowrap items-center bg-gradient-to-r from-amber-50 to-white dark:from-gray-800 dark:to-gray-700 px-2.5 h-10 sm:h-11 rounded-xl border border-amber-300 dark:border-gray-600 shadow-sm backdrop-blur-sm shrink-0 overflow-hidden w-full md:w-auto gap-x-4 gap-y-2">
                     
-                    <div id="pickupPanel" class="col-start-1 row-start-1 flex items-center justify-between w-full gap-3 transition-opacity duration-500 opacity-100 z-10">
+                    <div id="pickupPanel" class="banner-panel-item flex items-center justify-between gap-2.5 transition-all duration-300 opacity-100 z-10 shrink-0">
                         <span id="pickupTitleText" class="text-[10px] sm:text-[11px] font-bold text-amber-700 dark:text-amber-300 whitespace-nowrap shrink-0">🎯 特選使者招募</span>
                         <div id="pickupIconsContainer" class="flex flex-row items-center justify-end gap-1.5"></div>
                     </div>
 
-                    <div id="eventPanel" class="col-start-1 row-start-1 flex items-center justify-between w-full gap-3 transition-opacity duration-500 opacity-0 pointer-events-none z-0">
+                    <div id="eventPanel" class="banner-panel-item flex items-center justify-between gap-2.5 transition-all duration-300 opacity-0 pointer-events-none z-0 shrink-0">
                         <span id="eventTitleText" class="text-[10px] sm:text-[11px] font-bold text-sky-700 dark:text-sky-400 whitespace-nowrap shrink-0">🎪 今期活動</span>
                         <div id="eventBannersContainer" class="flex flex-row items-center justify-end gap-1.5 h-full"></div>
                     </div>
-                    <!-- 面板 C：特選卡片 -->
-                    <div id="cardPanel" class="col-start-1 row-start-1 flex items-center justify-between w-full gap-3 transition-opacity duration-500 opacity-0 pointer-events-none z-0">
+
+                    <div id="cardPanel" class="banner-panel-item flex items-center justify-between gap-2.5 transition-all duration-300 opacity-0 pointer-events-none z-0 shrink-0">
                         <span id="cardTitleText" class="text-[10px] sm:text-[11px] font-bold text-indigo-700 dark:text-indigo-300 whitespace-nowrap shrink-0">🃏 特選卡片抽取</span>
                         <div id="cardIconsContainer" class="flex flex-row items-center justify-end gap-1.5"></div>
                     </div>
                 </div>
             </div>
-            <button onclick="window.open('gacha.html', '_blank')" 
-                    class="h-10 sm:h-11 px-4 flex items-center justify-end bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md border-2 border-pink-300 transition-all hover:scale-105 shrink-0 self-start">
-                招募模擬器
-            </button>
+
             <div class="flex flex-col lg:flex-row justify-between items-center gap-4 w-full">
                 <div class="flex flex-row items-center justify-center lg:justify-start gap-3 text-center lg:text-left">
                     <div class="flex flex-col items-center lg:items-start">
@@ -509,21 +566,12 @@
             preloadedSpines.add(charName);
         }
         
-        // 🌟 國際化智慧語系偵測
         function detectDefaultLanguage() {
-            // 1. 如果玩家之前已經手動切換過語言，永遠以玩家的選擇為最優先
             const savedLang = localStorage.getItem('user_lang');
             if (savedLang) return savedLang;
-
-            // 2. 如果是第一次來，讀取他們瀏覽器的系統語言
             const browserLang = (navigator.language || navigator.userLanguage).toLowerCase();
-
-            // 3. 判斷邏輯：
-            // 若為日文系統 -> 日文
             if (browserLang.includes('ja')) return 'ja';
-            // 若為中文系統 (zh-TW, zh-HK, zh-MO, zh-CN 等) -> 繁體中文
             if (browserLang.includes('zh')) return 'zh-TW';
-            // 其餘外國語系 (歐美、韓文、東南亞等) -> 預設顯示英文，避免他們看不懂中文介面
             return 'en';
         }
 
@@ -595,21 +643,24 @@
         function getActivePickupChars() {
             if (typeof PICKUP_SCHEDULE === 'undefined') return [];
             const now = new Date();
-            // 找出符合現在時間的所有檔期
             const active = PICKUP_SCHEDULE.find(s => {
                 const startDate = new Date(s.start);
                 const endDate = new Date(s.end);
                 return now.getTime() >= startDate.getTime() && now.getTime() <= endDate.getTime();
             });
-
-            return active ? active.chars : []; // 若沒排程則回傳空陣列
+            return active ? active.chars : [];
         }
 
         function renderPickupBanner() {
             const container = document.getElementById('pickupIconsContainer');
-            const activeChars = getActivePickupChars(); // 自動獲取當前角色
+            const activeChars = getActivePickupChars();
+            const panel = document.getElementById('pickupPanel');
     
-            if (!container || activeChars.length === 0) return;
+            if (!container || activeChars.length === 0) {
+                if (panel) panel.classList.add('panel-empty-hide');
+                return;
+            }
+            if (panel) panel.classList.remove('panel-empty-hide');
     
             container.innerHTML = '';
             const localRecruitTexts = { "zh-TW": "🎯 特選使者招募", "ja": "🎯 ピックアップ使徒ガチャ", "en": "🎯 Pick Up Apostles" };
@@ -632,6 +683,7 @@
                 container.appendChild(iconWrapper);
             });
         }
+
         // ------------------------------------------------------------
         // 🌟 今期活動與 Banner 輪播邏輯
         // ------------------------------------------------------------
@@ -645,36 +697,35 @@
             });
         }
 
-        // 全域變數追蹤目前是第幾個活動
         let currentEventIndex = 0;
 
         function updateEventBanner() {
             const container = document.getElementById('eventBannersContainer');
             const activeEvents = getActiveEvents();
-            if (!container) return;
-            
-            // 初始化或更新標題
-            const titleEl = document.getElementById('eventTitleText');
-            if (titleEl) titleEl.innerText = t("event_title") || "🎪 今期活動";
+            const panel = document.getElementById('eventPanel');
 
-            // 如果沒有活動，清空容器並返回
+            if (!container) return;
             if (activeEvents.length === 0) {
+                if (panel) panel.classList.add('panel-empty-hide');
                 container.innerHTML = '';
                 return;
             }
+            if (panel) panel.classList.remove('panel-empty-hide');
+            
+            const titleEl = document.getElementById('eventTitleText');
+            if (titleEl) titleEl.innerText = t("event_title") || "🎪 今期活動";
 
-            // 確保索引在範圍內 (防止活動數量減少時溢出)
             if (currentEventIndex >= activeEvents.length) currentEventIndex = 0;
 
             const evt = activeEvents[currentEventIndex];
             const langSuffix = { "zh-TW": "ZH", "ja": "JA", "en": "EN" }[window.currentLang] || "ZH";
     
-            // 只清空並只渲染一張
             container.innerHTML = '';
     
             const wrapper = document.createElement('div');
             wrapper.className = "rainbow-wrapper h-7 sm:h-8 w-auto cursor-pointer shrink-0";
-            wrapper.onclick = () => window.open(`event_detail.html?event=${evt.eventId}`, '_blank');
+            wrapper.onclick = null;
+            wrapper.style.cursor = "default";
     
             const imgEl = document.createElement('img');
             imgEl.src = `event/${evt.eventId}_${langSuffix}.png`;
@@ -701,7 +752,14 @@
         function renderCardBanner() {
             const container = document.getElementById('cardIconsContainer');
             const activeCards = getActiveCards();
-            if (!container || activeCards.length === 0) return;
+            const panel = document.getElementById('cardPanel');
+
+            if (!container) return;
+            if (activeCards.length === 0) {
+                if (panel) panel.classList.add('panel-empty-hide');
+                return;
+            }
+            if (panel) panel.classList.remove('panel-empty-hide');
 
             container.innerHTML = '';
             const localTexts = { "zh-TW": "🃏 特選卡片抽取", "ja": "🃏 ピックガチャ", "en": "🃏 Pick Up Card" };
@@ -711,7 +769,6 @@
             activeCards.forEach(card => {
                 const borderClass = card.type === "Artifact" ? "card-artifact" : "card-rune";
                 const iconWrapper = document.createElement('div');
-                // 帶入 pickup-sparkle 共用星星特效，並套用專屬螢光色
                 iconWrapper.className = `w-7 h-7 sm:w-8 sm:h-8 rounded-lg border-2 bg-white dark:bg-gray-800 flex items-center justify-center relative pickup-sparkle shrink-0 transition-transform ${borderClass}`;
                 
                 const iconUrl = `event/${card.id}.png`;
@@ -721,27 +778,27 @@
         }
 
         // ------------------------------------------------------------
-        // 🌟 核心輪播邏輯 (特選 > 活動 > 卡片 > 活動)
+        // 🌟 核心輪播與滑鼠懸停展開控制中心
         // ------------------------------------------------------------
         let bannerRotationTimer = null;
         let rotationSequence = [];
         let currentSequenceIndex = 0;
+        let isBannerHovered = false; // 追蹤滑鼠是否放在上面
 
         function startBannerRotation() {
             if (bannerRotationTimer) clearInterval(bannerRotationTimer);
     
             const hasPickup = getActivePickupChars().length > 0;
             const hasEvent = getActiveEvents().length > 0;
-            const hasCard = getActiveCards().length > 0; // 偵測卡片
+            const hasCard = getActiveCards().length > 0;
     
             const displayArea = document.getElementById('bannerDisplayArea');
             const pickupPanel = document.getElementById('pickupPanel');
             const eventPanel = document.getElementById('eventPanel');
-            const cardPanel = document.getElementById('cardPanel'); // 卡片面板
+            const cardPanel = document.getElementById('cardPanel');
 
             if (!displayArea || !pickupPanel || !eventPanel || !cardPanel) return;
 
-            // 如果三者都沒東西，顯示維護中
             if (!hasPickup && !hasEvent && !hasCard) {
                 displayArea.style.display = 'grid';
                 const maintenanceMsg = t('maintenance_msg') !== 'maintenance_msg' ? t('maintenance_msg') : '🔧 維護更新中...';
@@ -756,30 +813,31 @@
                 cardPanel.classList.remove('hidden');
             }
 
-            // 建立您的「夾心」輪播序列
             rotationSequence = [];
-            if (hasPickup && hasEvent && hasCard) {
-                rotationSequence = ['pickup', 'event', 'card', 'event'];
-            } else if (hasPickup && hasEvent && !hasCard) {
-                rotationSequence = ['pickup', 'event'];
-            } else if (hasPickup && !hasEvent && hasCard) {
-                rotationSequence = ['pickup', 'card'];
-            } else if (!hasPickup && hasEvent && hasCard) {
-                rotationSequence = ['event', 'card'];
-            } else if (hasPickup) { rotationSequence = ['pickup']; } 
-              else if (hasEvent)  { rotationSequence = ['event']; } 
-              else if (hasCard)   { rotationSequence = ['card']; }
+            if (hasPickup && hasEvent && hasCard) { rotationSequence = ['pickup', 'event', 'card', 'event']; } 
+            else if (hasPickup && hasEvent && !hasCard) { rotationSequence = ['pickup', 'event']; } 
+            else if (hasPickup && !hasEvent && hasCard) { rotationSequence = ['pickup', 'card']; } 
+            else if (!hasPickup && hasEvent && hasCard) { rotationSequence = ['event', 'card']; } 
+            else if (hasPickup) { rotationSequence = ['pickup']; } 
+            else if (hasEvent)  { rotationSequence = ['event']; } 
+            else if (hasCard)   { rotationSequence = ['card']; }
+
+            // 如果正處於展開狀態，不要破壞現有的平鋪 UI
+            if (isBannerHovered) return;
 
             const panels = { 'pickup': pickupPanel, 'event': eventPanel, 'card': cardPanel };
 
             const showPanel = (panelId) => {
                 panels[panelId].classList.remove('opacity-0', 'pointer-events-none', 'z-0');
                 panels[panelId].classList.add('opacity-100', 'pointer-events-auto', 'z-10');
+                panels[panelId].style.position = 'relative'; // 輪播激活時保持正常定位
             };
             const hideAllPanels = () => {
-                Object.values(panels).forEach(panel => {
+                Object.keys(panels).forEach(key => {
+                    const panel = panels[key];
                     panel.classList.remove('opacity-100', 'pointer-events-auto', 'z-10');
                     panel.classList.add('opacity-0', 'pointer-events-none', 'z-0');
+                    panel.style.position = 'absolute'; // 隱藏時改為絕對定位，避免撐開容器
                 });
             };
 
@@ -788,17 +846,17 @@
             hideAllPanels();
             showPanel(rotationSequence[0]);
 
-            // 若只有單一項目不需輪播
             if (rotationSequence.length <= 1) return;
 
             bannerRotationTimer = setInterval(() => {
+                if (isBannerHovered) return; // 安全鎖：滑鼠懸停時強制不執行輪播切換
+                
                 hideAllPanels();
                 currentSequenceIndex = (currentSequenceIndex + 1) % rotationSequence.length;
                 const nextPanelId = rotationSequence[currentSequenceIndex];
                 
                 showPanel(nextPanelId);
 
-                // 當切換到「活動」時，推動內部活動圖片的索引
                 if (nextPanelId === 'event') {
                     const activeEvents = getActiveEvents();
                     if (activeEvents.length > 0) {
@@ -807,6 +865,35 @@
                     }
                 }
             }, 5000);
+        }
+
+        // 🌟 新增：處理滑鼠移入/移出展開事件的核心函式
+        function handleBannerHover(isHover) {
+            isBannerHovered = isHover;
+            const displayArea = document.getElementById('bannerDisplayArea');
+            
+            // 安全防呆：如果本來就沒有任何資料，直接返回不作用
+            if (getActivePickupChars().length === 0 && getActiveEvents().length === 0 && getActiveCards().length === 0) return;
+
+            if (isHover) {
+                // 1. 暫停定時輪播
+                if (bannerRotationTimer) clearInterval(bannerRotationTimer);
+                
+                // 2. 注入展開樣式 CSS class
+                displayArea.classList.add('banner-expanded');
+                
+                // 3. 確保所有有資料的面板在展開模式下全部正常排版展示
+                const activeEvents = getActiveEvents();
+                if (activeEvents.length > 0) {
+                    updateEventBanner(); // 自動同步並重繪當下活動圖片
+                }
+            } else {
+                // 1. 移除展開樣式 CSS class
+                displayArea.classList.remove('banner-expanded');
+                
+                // 2. 重新啟動輪播機制，回到原本的正常定時循環
+                startBannerRotation();
+            }
         }
         
         function initStates() {
@@ -845,7 +932,6 @@
             const nowTime = Date.now();
 
             INITIAL_DATA.forEach(char => {
-                // 🌟 統計過濾：不計算未發布的角色
                 if (char.releaseDate && new Date(char.releaseDate).getTime() > nowTime) return;
 
                 validCharCount++;
@@ -861,7 +947,6 @@
                 });
             });
 
-            // 更新實際可用的角色數量
             document.getElementById('total_char_count').innerText = validCharCount;
             document.getElementById('owned_char_count').innerText = ownedCount;
             document.getElementById('total_used_crayon').innerText = globalUsedCrayons;
@@ -932,12 +1017,14 @@
         }
 
         function selectGridLayerFilter(layerValue) {
-            activeFilters.gridLayer = layerValue; const buttons = document.getElementById("filter_gridLayer").getElementsByTagName("button");
+            const buttons = document.getElementById("filter_gridLayer").getElementsByTagName("button");
+            activeFilters.gridLayer = layerValue;
             for (let btn of buttons) { if (btn.id.endsWith(`_${layerValue}`)) btn.className = btnActiveStyle; else btn.className = btnInactiveStyle; } applyFilterUI();
         }
 
         function selectGridTypeFilter(typeValue) {
-            activeFilters.gridType = typeValue; const buttons = document.getElementById("filter_gridType").getElementsByTagName("button");
+            const buttons = document.getElementById("filter_gridType").getElementsByTagName("button");
+            activeFilters.gridType = typeValue;
             for (let btn of buttons) { if ((typeValue === "" && btn.id.endsWith("_all")) || (typeValue !== "" && btn.id.endsWith(`_${typeValue}`))) btn.className = btnActiveStyle; else btn.className = btnInactiveStyle; } applyFilterUI();
         }
 
@@ -990,7 +1077,6 @@
                 const charListContainer = document.createElement('div'); charListContainer.className = "space-y-4";
 
                 pChars.forEach(char => {
-                    // 🌟 判定角色是否尚未公開
                     const isUnreleased = char.releaseDate && new Date(char.releaseDate).getTime() > nowTime;
                     
                     const charCard = document.createElement('div'); charCard.id = `char_card_${char.name}`; charCard.className = "char-card-wrapper bg-white/50 dark:bg-gray-750/50 rounded-xl border border-gray-200/60 dark:border-gray-600 flex flex-row items-stretch transition-all duration-200 overflow-hidden";
@@ -1010,12 +1096,9 @@
                     const borderColorClass = personalityBorderColors[char.personality] || "border-gray-300"; 
                     const isOwned = savedStates['owned_' + char.name]; 
 
-                    // 🌟 新增：讀取 data_skills.js 中的 CHAR_BACKGROUNDS，並轉為行內樣式 (Inline Style)
                     const bgUrl = (typeof CHAR_BACKGROUNDS !== 'undefined' && CHAR_BACKGROUNDS[char.race]) ? CHAR_BACKGROUNDS[char.race] : "";
-                    // 使用 background-size: cover 讓花紋自適應縮放填滿整個頭像框
                     const bgInlineStyle = bgUrl ? `background-image: url('${bgUrl}'); background-size: cover; background-position: center;` : "background-color: #fef3c7;";
                     
-                    // 根據狀態設定頭像與名稱
                     const avatarClass = isOwned && !isUnreleased ? "" : "unowned-avatar";
                     const displayName = isUnreleased ? "???" : t(char.name);
                     const hoverImgHtml = isUnreleased ? "" : `<img src="${hoverPath}" class="avatar-alt" alt="${displayName}" onerror="this.style.display='none';" loading="lazy">`;
@@ -1040,7 +1123,6 @@
                             <div class="flex items-center hover-scale cursor-help"><img src="${jobPath}" alt="${t(char.job)}" title="${t('stats_job')} ${t(char.job)}" onerror="this.style.display='none'; document.getElementById('fall_j_${char.name}').classList.remove('hidden');" class="w-4 h-4 object-contain opacity-85" loading="lazy"><span id="fall_j_${char.name}" class="hidden bg-purple-50 dark:bg-purple-900 text-purple-700 dark:text-purple-300 px-1 rounded text-[9px] font-medium whitespace-nowrap">${t(char.job)}</span></div>
                         </div>`;
 
-                    // 🌟 修改：為容器加入 style="${bgInlineStyle}"，同時把先前的背景色 class 拿掉
                     nameCol.innerHTML = `
                         <div class="relative shrink-0 w-12 h-12" ${isUnreleased ? '' : `onclick="toggleOwnership('${char.name}')"`}>
                             <div id="avatar_container_${char.name}" class="char-avatar-container w-12 h-12 rounded-lg border-2 ${borderColorClass} shadow-inner ${avatarClass} ${isUnreleased ? 'pointer-events-none' : ''}" style="${bgInlineStyle}">
@@ -1058,15 +1140,11 @@
 
                     const layersContainer = document.createElement('div'); layersContainer.className = "flex flex-col sm:flex-row gap-3 w-full md:flex-1 relative";
                     
-                    // 🌟 如果未公開，直接蓋上鎖定畫面
                     if (isUnreleased) {
                         const releaseDateObj = new Date(char.releaseDate);
-                        
-                        // 根據語系調整時間格式
                         const localeFormat = window.currentLang === 'en' ? 'en-US' : (window.currentLang === 'ja' ? 'ja-JP' : 'zh-TW');
                         const dateStr = releaseDateObj.toLocaleString(localeFormat, { month: 'numeric', day: 'numeric', hour: '2-digit', minute:'2-digit' });
                         
-                        // 多國語系翻譯字典
                         const localComingSoon = { "zh-TW": "即將登場", "ja": "近日登場", "en": "Coming Soon" }[window.currentLang] || "即將登場";
                         const localUnlock = { "zh-TW": "解禁", "ja": "解禁", "en": "Unlocks" }[window.currentLang] || "解禁";
                         
@@ -1159,7 +1237,6 @@
             } catch(e) { console.warn(`⚠️ 讀取 ${charName} 的技能文本失敗，將使用預設判斷。`); }
 
             if (!isMultiHitDesc && finalHits.length > 1) {
-                console.log(`📖 文本判定：${charName} 的 [${animName}] 無「總」字，強制轉為單發判定。`);
                 finalHits = [finalHits[0]]; 
             }
 
@@ -1189,7 +1266,7 @@
                 area.appendChild(burst);
                 const angle = (Math.PI * 2 / 8) * i; const distance = 80 + Math.random() * 40;
                 const tx = Math.cos(angle) * distance; const ty = Math.sin(angle) * distance;
-                burst.animate([ { transform: 'translate(-50%, -50%) scale(1) rotate(0deg)', opacity: 1 }, { transform: `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(0) rotate(${360 + Math.random()*360}deg)`, opacity: 0 } ], { duration: 600 + Math.random()*300, easing: 'ease-out', fill: 'forwards' }).onfinish = () => burst.remove();
+                burst.animate([ { transform: 'translate(-50%, -50%) scale(1) rotate(0deg)', opacity: 1 }, { transform: `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(0) rotate(${360 + Math.random()*360}deg)', opacity: 0 } ], { duration: 600 + Math.random()*300, easing: 'ease-out', fill: 'forwards' }).onfinish = () => burst.remove();
             }
         }
 
@@ -1217,7 +1294,6 @@
 
             const container = document.getElementById('topRunnerContainer'); const track = document.getElementById('runnerTrack');
             const bossContainer = document.getElementById('bossRunnerContainer'); const bossTrack = document.getElementById('bossTrack');
-            const isMobile = false; // 已被阻擋，這裡必定是 false
             
             const trackRightOffset = '-110px'; const bossRightOffset = '-410px'; 
             track.style.right = trackRightOffset; bossTrack.style.right = bossRightOffset; 
@@ -1271,7 +1347,7 @@
                             if (isBossEvent) {
                                 const bossKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP['R41雷內瓦'] ? SPINE_MAP['R41雷內瓦'] : 'R41雷內瓦';
                                 currentBossPlayer = new spine.SpinePlayer("bossRunnerContainer", {
-                                    skelUrl: `./spine_sd_assets/${bossKey}.skel.bytes`, atlasUrl: `./spine_sd_assets/${bossKey}.atlas.txt`,
+                                    skelUrl: `./spine_sd_assets/${bossKey}.skel.bytes`, atlasUrl: `./spine_sd_assets/${folderKey}.atlas.txt`,
                                     animation: "Idle", backgroundColor: "#00000000", alpha: true, premultipliedAlpha: false, showControls: false, showLoading: false,
                                     viewport: { x: -1500, y: -450, width: 3000, height: 3000, transitionTime: 0 },
                                     success: function (bossPlayer) {
@@ -1501,7 +1577,6 @@
             }); 
         }
 
-        // 🌟 合併所有 Load 事件，交錯延遲載入 (Staggered Loading) 大幅提升體感速度
         window.addEventListener('load', () => {
             document.getElementById('loader').style.display = 'none';
 
@@ -1511,7 +1586,6 @@
                 if (!isStatsOpen) { const body = document.getElementById("statsPanelBody"); const icon = document.getElementById("statsToggleIcon"); if(body) { body.classList.add("hidden"); body.classList.remove("grid"); icon.innerText = "▶"; } }
             } catch (e) { const errBanner = document.getElementById('errorBanner'); if(errBanner) { errBanner.innerHTML = `⚠️ 畫面繪製失敗: ${e.message}`; errBanner.classList.remove('hidden'); } }
 
-            // 啟動 Firebase
             try {
                 if (typeof firebase !== 'undefined') {
                     const firebaseConfig = { apiKey: "AIzaSyDhv8D2pY_0M56UJrDTQw0RGPHA-BkXU8Y", authDomain: "crayon-note.firebaseapp.com", projectId: "crayon-note", storageBucket: "crayon-note.firebasestorage.app", messagingSenderId: "210614088940", appId: "1:210614088940:web:7addbdc7c466eeb05421c9", measurementId: "G-M1EJPE12TE" };
@@ -1532,7 +1606,6 @@
                 }
             } catch (e) { }
 
-            // 錯開重度渲染，讓主畫面先出現，不會白畫面卡死
             setTimeout(() => {
                 initTopRunner();
                 setTimeout(() => {
