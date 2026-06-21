@@ -1341,6 +1341,8 @@
     container.style.height = '300px'; // ❗ 強制給高度
     container.style.width = '300px';  // ❗ 強制給寬度
     container.style.border = '2px solid red';
+    container.style.position = "relative";
+    container.style.zIndex = "99999"; // 讓它在最上層
     if (!container) return;
 
     if (topMiniSpinePlayer) {
@@ -1392,16 +1394,17 @@
             }
 
             const canvas = container.querySelector('canvas');
-        if (canvas) {
-            canvas.style.display = 'block !important';
-            canvas.style.width = '300px !important'; // 強制寬
-            canvas.style.height = '300px !important'; // 強制高
-            canvas.style.opacity = '1 !important';
-            canvas.style.zIndex = '9999 !important';
-            canvas.style.pointerEvents = 'auto';
-            console.log("🎨 Canvas CSS 已被強制重設");
-        }
-            
+    if (canvas) {
+        canvas.style.display = 'block';
+        canvas.style.position = 'absolute';
+        canvas.style.zIndex = '99999';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.opacity = '1';
+        canvas.style.visibility = 'visible';
+    }
+            console.log("Canvas 寬度偵測:", canvas ? canvas.offsetWidth : "找不到 Canvas");
+}
             // 🌟 【確認骨架是否真的有內容】
         if (player.skeleton) {
             console.log("骨架寬度:", player.skeleton.data.width);
