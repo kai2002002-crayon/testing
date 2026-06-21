@@ -1374,7 +1374,8 @@
         // 如果小人的座標在 (1000, 1000)，你原本的 viewport (-100, -10) 會完全拍不到它。
         // 註解掉後，Spine 播放器會自動計算小人的大小並置中。
         // viewport: { x: -100, y: -10, width: 200, height: 200 },
-        
+        // 改用下面這行，讓 Spine 自動抓取骨架範圍
+        viewport: { debug: true },
         success: (player) => {
             console.log("✅ Spine 載入成功！開始檢查內部資料...");
             
