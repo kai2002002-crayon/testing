@@ -1353,7 +1353,7 @@
                 container.style.display = 'none'; // 如果該角色沒有迷你小人，就隱藏容器
                 return;
             }
-
+            container.style.display = 'block';
             topMiniSpinePlayer = new spine.SpinePlayer("topMiniSpineWrapper", {
                 skelUrl: "Minimi.skel.bytes",   // 確保檔案在同一層目錄
                 atlasUrl: "Minimi.atlas.txt",
