@@ -1368,7 +1368,7 @@
         
         backgroundColor: "#00000000",
         alpha: true,
-        premultipliedAlpha: true,
+        premultipliedAlpha: false,
         
         // 🌟 修正點 3：先將寫死的 viewport 註解掉！
         // 如果小人的座標在 (1000, 1000)，你原本的 viewport (-100, -10) 會完全拍不到它。
@@ -1377,45 +1377,40 @@
         // 改用下面這行，讓 Spine 自動抓取骨架範圍
         viewport: { debug: true },
         success: (player) => {
-            console.log("✅ Spine 載入成功！開始檢查內部資料...");
+            console.log("✅ Spine 載入成功！正在進行視覺強制校正...");
             
-            const availableSkins = player.skeleton.data.skins.map(s => s.name);
-            console.log("📜 檔案內所有的 Skin:", availableSkins);
-            console.log("🎯 程式要套用的 Skin:", skinName);
-
-            // 🌟 修正點 4：檢查 Skin 名稱是否完全吻合 (包含大小寫)
-            if (availableSkins.includes(skinName)) {
-                player.skeleton.setSkinByName(skinName);
-                player.skeleton.setSlotsToSetupPose();
-                console.log("👗 Skin 套用成功！");
-            } else {
-                console.warn("⚠️ 警告：找不到對應的 Skin，小人可能會變透明！請檢查 MINI_SPINE 裡面的名字是否拼錯。");
-            }
-
+            // 1. 套用 Skin
+            player.skeleton.setSkinByName(skinName);
+            player.skeleton.setSlotsToSetupPose();
+            
+            // 2. 確保動畫啟動
             const anims = player.skeleton.data.animations.map(a => a.name);
-            console.log("🏃 檔案內所有的動作:", anims);
-
             let targetAnim = anims.includes("Idle") ? "Idle" : (anims.includes("idle") ? "idle" : anims[0]);
             if (targetAnim) {
                 player.animationState.setAnimation(0, targetAnim, true);
-                console.log("▶️ 正在播放動作:", targetAnim);
             }
 
+            // 3. 強制畫布顯示與撐開
             const canvas = container.querySelector('canvas');
             if (canvas) {
+                canvas.style.display = 'block';
                 canvas.style.width = '100%';
                 canvas.style.height = '100%';
                 canvas.style.position = 'absolute';
-                canvas.style.bottom = '0';
-                canvas.style.left = '0';
+                canvas.style.zIndex = '999';
+                // 檢查是否有透明度被錯誤設置
+                canvas.style.opacity = '1';
+                canvas.style.visibility = 'visible';
             }
+            
+            console.log("🚀 強制渲染校正完成");
         },
         error: (player, reason) => {
             console.error("❌ 頂部迷你小人載入失敗:", reason);
             container.style.display = 'none';
         }
-    });
-}
+    }); // 這是 SpinePlayer 的結尾
+} // 這是 loadTopMiniSpine 函式的結尾
         // 🌟 【核心修正】加入全域監聽器：當螢幕尺寸改變或旋轉時，自動重繪 Spine
         let resizeTimeout;
         // 紀錄目前的螢幕寬度
