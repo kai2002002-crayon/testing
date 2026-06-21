@@ -1375,12 +1375,8 @@
         alpha: true,
         premultipliedAlpha: false,
         
-        // 🌟 修正點 3：先將寫死的 viewport 註解掉！
-        // 如果小人的座標在 (1000, 1000)，你原本的 viewport (-100, -10) 會完全拍不到它。
-        // 註解掉後，Spine 播放器會自動計算小人的大小並置中。
-        // viewport: { x: -100, y: -10, width: 200, height: 200 },
-        // 改用下面這行，讓 Spine 自動抓取骨架範圍
-        viewport: { debug: true },
+        // 🌟 【暴力強制鏡頭】不使用預設 viewport，改用 bounds 讓他自動找圖
+        bounds: { x: 0, y: 0, width: 500, height: 500 },
         success: (player) => {
             console.log("✅ Spine 載入成功！正在進行視覺強制校正...");
             
@@ -1395,27 +1391,24 @@
                 player.animationState.setAnimation(0, targetAnim, true);
             }
 
-            // 3. 強制畫布顯示與撐開
             const canvas = container.querySelector('canvas');
-            if (canvas) {
-                canvas.style.display = 'block';
-                canvas.style.width = '100%';
-                canvas.style.height = '100%';
-                canvas.style.position = 'absolute';
-                canvas.style.zIndex = '999';
-                // 檢查是否有透明度被錯誤設置
-                canvas.style.opacity = '1';
-                canvas.style.visibility = 'visible';
-            }
-            
-            console.log("🚀 強制渲染校正完成");
-        },
-        error: (player, reason) => {
-            console.error("❌ 頂部迷你小人載入失敗:", reason);
-            container.style.display = 'none';
+        if (canvas) {
+            canvas.style.display = 'block !important';
+            canvas.style.width = '300px !important'; // 強制寬
+            canvas.style.height = '300px !important'; // 強制高
+            canvas.style.opacity = '1 !important';
+            canvas.style.zIndex = '9999 !important';
+            canvas.style.pointerEvents = 'auto';
+            console.log("🎨 Canvas CSS 已被強制重設");
         }
-    }); // 這是 SpinePlayer 的結尾
-} // 這是 loadTopMiniSpine 函式的結尾
+            
+            // 🌟 【確認骨架是否真的有內容】
+        if (player.skeleton) {
+            console.log("骨架寬度:", player.skeleton.data.width);
+            console.log("骨架高度:", player.skeleton.data.height);
+        }
+    }
+});
         // 🌟 【核心修正】加入全域監聽器：當螢幕尺寸改變或旋轉時，自動重繪 Spine
         let resizeTimeout;
         // 紀錄目前的螢幕寬度
