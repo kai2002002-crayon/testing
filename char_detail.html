@@ -137,9 +137,12 @@
 
     <div id="mainContainer" class="max-w-4xl mx-auto bg-white/90 dark:bg-slate-800/95 backdrop-blur-md p-6 rounded-2xl shadow-md border-4 border-amber-400 dark:border-slate-600 transition-colors">
         
-        <button onclick="window.close()" data-i18n="btn_close_page" class="mb-4 px-4 py-2 bg-amber-500 text-white text-xs font-bold rounded-xl shadow hover:bg-amber-600 dark:bg-slate-700 dark:hover:bg-slate-600 transition">
-            ⬅️ 關閉此頁
-        </button>
+        <div class="flex items-end gap-2 mb-4">
+            <button onclick="window.close()" data-i18n="btn_close_page" class="px-4 py-2 bg-amber-500 text-white text-xs font-bold rounded-xl shadow hover:bg-amber-600 dark:bg-slate-700 dark:hover:bg-slate-600 transition shrink-0 z-10 relative">
+                ⬅️ 關閉此頁
+            </button>
+            <div id="topMiniSpineContainer" class="relative w-16 h-16 sm:w-20 sm:h-20 pointer-events-none -mb-2 z-0"></div>
+        </div>
 
         <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 border-b-2 border-amber-200 dark:border-slate-700 pb-6 mb-6">
             <div class="flex flex-col items-center gap-3 flex-shrink-0">
@@ -1329,7 +1332,70 @@
                 });
             });
         }
+        let topMiniSpinePlayer = null;
 
+        function loadTopMiniSpine(charName) {
+            const container = document.getElementById('topMiniSpineContainer');
+            if (!container) return;
+
+            // 清理舊的播放器避免記憶體洩漏
+            if (topMiniSpinePlayer) {
+                topMiniSpinePlayer.dispose();
+                topMiniSpinePlayer = null;
+            }
+
+            container.innerHTML = '<div id="topMiniSpineWrapper" class="w-full h-full"></div>';
+
+            // 透過新的 MINI_SPINE 字典取得 Skin 名稱
+            const skinName = typeof MINI_SPINE !== 'undefined' && MINI_SPINE[charName] ? MINI_SPINE[charName] : null;
+    
+            if (!skinName) {
+                container.style.display = 'none'; // 如果該角色沒有迷你小人，就隱藏容器
+                return;
+            }
+
+            topMiniSpinePlayer = new spine.SpinePlayer("topMiniSpineWrapper", {
+                skelUrl: "Minimi.skel.bytes",   // 確保檔案在同一層目錄
+                atlasUrl: "Minimi.atlas.txt",
+                showControls: false,
+                showLoading: false,
+                backgroundColor: "#00000000",
+                alpha: true,
+                premultipliedAlpha: true,
+                // 設定視角大小讓小人能完整顯示且高度剛好
+                viewport: { x: -100, y: -10, width: 200, height: 200 },
+                success: (player) => {
+                    const availableSkins = player.skeleton.data.skins.map(s => s.name);
+            
+                    // 手動套用 Skin
+                    if (availableSkins.includes(skinName)) {
+                        player.skeleton.setSkinByName(skinName);
+                        player.skeleton.setSlotsToSetupPose();
+                    }
+
+                    // 強制播放 Idle 動作
+                    const anims = player.skeleton.data.animations.map(a => a.name);
+                    let targetAnim = anims.includes("Idle") ? "Idle" : (anims.includes("idle") ? "idle" : anims[0]);
+                    if (targetAnim) {
+                        player.animationState.setAnimation(0, targetAnim, true);
+                    }
+
+                    // 強制設定 Canvas 大小貼合容器
+                    const canvas = container.querySelector('canvas');
+                    if (canvas) {
+                        canvas.style.width = '100%';
+                        canvas.style.height = '100%';
+                        canvas.style.position = 'absolute';
+                        canvas.style.bottom = '0';
+                        canvas.style.left = '0';
+                    }
+                },
+                error: (player, reason) => {
+                    console.error("頂部迷你小人載入失敗:", reason);
+                    container.style.display = 'none';
+                }
+            });
+        }
         // 🌟 【核心修正】加入全域監聽器：當螢幕尺寸改變或旋轉時，自動重繪 Spine
         let resizeTimeout;
         // 紀錄目前的螢幕寬度
@@ -1572,8 +1638,9 @@
 
             loadComments(currentTargetName);
             switchPresentTab('thought'); 
-            
-        };
+            // 👇 在這裡補上這行，觸發小人載入！
+                loadTopMiniSpine(currentTargetName);
+         };
 
         function getAnonymousId() {
             let anonId = localStorage.getItem('trickcal_anon_id');
