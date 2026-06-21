@@ -315,6 +315,20 @@
         #bannerDisplayArea.banner-expanded > .banner-panel-item.panel-empty-hide {
             display: none !important;
         }
+        /* 🌟 強制活動 Banner 在展開時縱向排列，且鎖定寬高不影響總寬度 */
+        #bannerDisplayArea.banner-expanded #eventBannersContainer {
+            flex-direction: column !important;
+            align-items: flex-end !important;
+            height: auto !important;
+            width: max-content !important;
+            margin-left: auto;
+        }
+
+        #bannerDisplayArea.banner-expanded #eventBannersContainer .rainbow-wrapper {
+            display: flex !important; 
+            height: 32px !important; /* 鎖定與單行時相同的高度，避免撐爆 */
+            width: auto !important;
+        }
     </style>
 </head>
 <body class="p-3 sm:p-6 md:p-8 text-gray-800 dark:text-gray-100">
@@ -357,9 +371,9 @@
                             <div id="pickupIconsContainer" class="flex flex-row items-center justify-end gap-1.5"></div>
                         </div>
 
-                        <div id="eventPanel" class="banner-panel-item col-start-1 row-start-1 flex items-center justify-between w-full gap-3 transition-opacity duration-500 opacity-0 pointer-events-none z-0">
-                            <span id="eventTitleText" class="text-[10px] sm:text-[11px] font-bold text-sky-700 dark:text-sky-400 whitespace-nowrap shrink-0">🎪 今期活動</span>
-                            <div id="eventBannersContainer" class="flex flex-row flex-wrap items-center justify-end gap-1.5 h-full"></div>
+                        <div id="eventPanel" class="banner-panel-item col-start-1 row-start-1 flex items-start justify-between w-full gap-3 transition-opacity duration-500 opacity-0 pointer-events-none z-0">
+                            <span id="eventTitleText" class="text-[10px] sm:text-[11px] font-bold text-sky-700 dark:text-sky-400 whitespace-nowrap shrink-0 pt-1">🎪 今期活動</span>
+                            <div id="eventBannersContainer" class="flex flex-row flex-wrap items-end justify-end gap-1.5"></div>
                         </div>
                         
                         <div id="cardPanel" class="banner-panel-item col-start-1 row-start-1 flex items-center justify-between w-full gap-3 transition-opacity duration-500 opacity-0 pointer-events-none z-0">
