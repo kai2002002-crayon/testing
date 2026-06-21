@@ -1335,7 +1335,12 @@
         let topMiniSpinePlayer = null;
 
         function loadTopMiniSpine(charName) {
+   // 在設定 container 的地方，強制加上一個固定高度
     const container = document.getElementById('topMiniSpineContainer');
+    container.style.display = 'block';
+    container.style.height = '300px'; // ❗ 強制給高度
+    container.style.width = '300px';  // ❗ 強制給寬度
+    container.style.border = '2px solid red';
     if (!container) return;
 
     if (topMiniSpinePlayer) {
