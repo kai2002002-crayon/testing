@@ -1335,67 +1335,86 @@
         let topMiniSpinePlayer = null;
 
         function loadTopMiniSpine(charName) {
-            const container = document.getElementById('topMiniSpineContainer');
-            if (!container) return;
+    const container = document.getElementById('topMiniSpineContainer');
+    if (!container) return;
 
-            // 清理舊的播放器避免記憶體洩漏
-            if (topMiniSpinePlayer) {
-                topMiniSpinePlayer.dispose();
-                topMiniSpinePlayer = null;
-            }
+    if (topMiniSpinePlayer) {
+        topMiniSpinePlayer.dispose();
+        topMiniSpinePlayer = null;
+    }
 
-            container.innerHTML = '<div id="topMiniSpineWrapper" class="w-full h-full"></div>';
+    container.innerHTML = '<div id="topMiniSpineWrapper" class="w-full h-full"></div>';
 
-            // 透過新的 MINI_SPINE 字典取得 Skin 名稱
-            const skinName = typeof MINI_SPINE !== 'undefined' && MINI_SPINE[charName] ? MINI_SPINE[charName] : null;
+    const skinName = typeof MINI_SPINE !== 'undefined' && MINI_SPINE[charName] ? MINI_SPINE[charName] : null;
+
+    if (!skinName) {
+        container.style.display = 'none'; 
+        return;
+    }
+
+    // 🌟 修正點 1：確保容器有被顯示出來 (如果你之前沒補上的話)
+    container.style.display = 'block';
     
-            if (!skinName) {
-                container.style.display = 'none'; // 如果該角色沒有迷你小人，就隱藏容器
-                return;
-            }
-            container.style.display = 'block';
-            topMiniSpinePlayer = new spine.SpinePlayer("topMiniSpineWrapper", {
-                skelUrl: "Minimi.skel.bytes",   // 確保檔案在同一層目錄
-                atlasUrl: "Minimi.atlas.txt",
-                showControls: false,
-                showLoading: false,
-                backgroundColor: "#00000000",
-                alpha: true,
-                premultipliedAlpha: true,
-                // 設定視角大小讓小人能完整顯示且高度剛好
-                viewport: { x: -100, y: -10, width: 200, height: 200 },
-                success: (player) => {
-                    const availableSkins = player.skeleton.data.skins.map(s => s.name);
+    // 🌟 偵錯用：給容器加上紅框，確認它在畫面上真的有佔據空間，沒有被擠成 0x0
+    container.style.border = '2px solid red';
+
+    topMiniSpinePlayer = new spine.SpinePlayer("topMiniSpineWrapper", {
+        skelUrl: "Minimi.skel.bytes",
+        atlasUrl: "Minimi.atlas.txt",
+        
+        // 🌟 修正點 2：暫時打開控制列與載入畫面，確認 Spine 播放器真的有啟動
+        showControls: true,
+        showLoading: true,
+        
+        backgroundColor: "#00000000",
+        alpha: true,
+        premultipliedAlpha: true,
+        
+        // 🌟 修正點 3：先將寫死的 viewport 註解掉！
+        // 如果小人的座標在 (1000, 1000)，你原本的 viewport (-100, -10) 會完全拍不到它。
+        // 註解掉後，Spine 播放器會自動計算小人的大小並置中。
+        // viewport: { x: -100, y: -10, width: 200, height: 200 },
+        
+        success: (player) => {
+            console.log("✅ Spine 載入成功！開始檢查內部資料...");
             
-                    // 手動套用 Skin
-                    if (availableSkins.includes(skinName)) {
-                        player.skeleton.setSkinByName(skinName);
-                        player.skeleton.setSlotsToSetupPose();
-                    }
+            const availableSkins = player.skeleton.data.skins.map(s => s.name);
+            console.log("📜 檔案內所有的 Skin:", availableSkins);
+            console.log("🎯 程式要套用的 Skin:", skinName);
 
-                    // 強制播放 Idle 動作
-                    const anims = player.skeleton.data.animations.map(a => a.name);
-                    let targetAnim = anims.includes("Idle") ? "Idle" : (anims.includes("idle") ? "idle" : anims[0]);
-                    if (targetAnim) {
-                        player.animationState.setAnimation(0, targetAnim, true);
-                    }
+            // 🌟 修正點 4：檢查 Skin 名稱是否完全吻合 (包含大小寫)
+            if (availableSkins.includes(skinName)) {
+                player.skeleton.setSkinByName(skinName);
+                player.skeleton.setSlotsToSetupPose();
+                console.log("👗 Skin 套用成功！");
+            } else {
+                console.warn("⚠️ 警告：找不到對應的 Skin，小人可能會變透明！請檢查 MINI_SPINE 裡面的名字是否拼錯。");
+            }
 
-                    // 強制設定 Canvas 大小貼合容器
-                    const canvas = container.querySelector('canvas');
-                    if (canvas) {
-                        canvas.style.width = '100%';
-                        canvas.style.height = '100%';
-                        canvas.style.position = 'absolute';
-                        canvas.style.bottom = '0';
-                        canvas.style.left = '0';
-                    }
-                },
-                error: (player, reason) => {
-                    console.error("頂部迷你小人載入失敗:", reason);
-                    container.style.display = 'none';
-                }
-            });
+            const anims = player.skeleton.data.animations.map(a => a.name);
+            console.log("🏃 檔案內所有的動作:", anims);
+
+            let targetAnim = anims.includes("Idle") ? "Idle" : (anims.includes("idle") ? "idle" : anims[0]);
+            if (targetAnim) {
+                player.animationState.setAnimation(0, targetAnim, true);
+                console.log("▶️ 正在播放動作:", targetAnim);
+            }
+
+            const canvas = container.querySelector('canvas');
+            if (canvas) {
+                canvas.style.width = '100%';
+                canvas.style.height = '100%';
+                canvas.style.position = 'absolute';
+                canvas.style.bottom = '0';
+                canvas.style.left = '0';
+            }
+        },
+        error: (player, reason) => {
+            console.error("❌ 頂部迷你小人載入失敗:", reason);
+            container.style.display = 'none';
         }
+    });
+}
         // 🌟 【核心修正】加入全域監聽器：當螢幕尺寸改變或旋轉時，自動重繪 Spine
         let resizeTimeout;
         // 紀錄目前的螢幕寬度
