@@ -1227,7 +1227,8 @@
 
             let html = `
                 <div class="mb-4 text-center sm:text-left">
-                    <span class="inline-block px-4 py-1.5 bg-gradient-to-r from-fuchsia-100 to-purple-100 dark:from-fuchsia-900/50 dark:to-purple-900/50 text-fuchsia-900 dark:text-fuchsia-200 text-sm font-black rounded-lg border border-fuchsia-300 dark:border-fuchsia-700 shadow-sm drop-shadow-sm tracking-wide">
+                    <span class="inline-flex items-center justify-center gap-2 px-4 py-1.5 bg-gradient-to-r from-fuchsia-100 to-purple-100 dark:from-fuchsia-900/50 dark:to-purple-900/50 text-fuchsia-900 dark:text-fuchsia-200 text-sm font-black rounded-lg border border-fuchsia-300 dark:border-fuchsia-700 shadow-sm drop-shadow-sm tracking-wide">
+                        ${data.asideIcon ? `<img src="${data.asideIcon}" class="w-6 h-6 object-contain drop-shadow-sm" alt="Aside Icon">` : ''}
                         ${data.totalName}
                     </span>
                 </div>
