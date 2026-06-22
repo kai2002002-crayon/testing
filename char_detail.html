@@ -1337,73 +1337,79 @@
         let topMiniSpinePlayer = null;
 
         function loadTopMiniSpine(charName) {
-    const container = document.getElementById('topMiniSpineContainer');
-    if (!container) return;
+            const container = document.getElementById('topMiniSpineContainer');
+            if (!container) return;
 
-    // 既然不顯示控制器了，我們把它改回 pointer-events-none (穿透)
-    // 這樣才不會不小心擋到旁邊的「⬅️ 關閉此頁」按鈕
-    container.style.pointerEvents = "none";
-    
-    container.style.display = 'block';
-    // 🌟 調整為 120px，這通常是頂部裝飾小人最適合的尺寸
-    container.style.height = '120px'; 
-    container.style.width = '120px';  
-    // container.style.border = '2px solid red'; // 若位置正確，可以把這行註解掉或刪除
-    container.style.position = "relative";
-    container.style.zIndex = "99999"; 
+            // 設定容器樣式 (穿透且固定尺寸)
+            container.style.pointerEvents = "none";
+            container.style.display = 'block';
+            container.style.height = '120px'; 
+            container.style.width = '120px';  
+            container.style.position = "relative";
+            container.style.zIndex = "99999"; 
 
-    if (topMiniSpinePlayer) {
-        topMiniSpinePlayer.dispose();
-        topMiniSpinePlayer = null;
-    }
-
-    // 將內部 Wrapper 設定好，讓 Spine 自動填滿這個空間
-    container.innerHTML = '<div id="topMiniSpineWrapper" style="width: 100%; height: 100%;"></div>';
-
-    const skinName = typeof MINI_SPINE !== 'undefined' && MINI_SPINE[charName] ? MINI_SPINE[charName] : null;
-
-    if (!skinName) {
-        container.style.display = 'none'; 
-        return;
-    }
-
-    topMiniSpinePlayer = new spine.SpinePlayer("topMiniSpineWrapper", {
-        skelUrl: "./Minimi.skel.bytes", 
-        atlasUrl: "./Minimi.atlas.txt",
-        
-        showControls: false, 
-        showLoading: false, 
-        backgroundColor: "#00000000",
-        alpha: true,
-        premultipliedAlpha: false,
-        
-        // 🌟 恢復鏡頭設定：給他一個安全的顯示範圍，避免他縮成 0x0 大小
-        viewport: { x: -250, y: 0, width: 500, height: 500 },
-        
-        success: (player) => {
-            console.log("✅ 超迷你 Spine 載入成功！強制播放啟動...");
-            
-            // 🌟 1. 換裝並強制歸位
-            player.skeleton.setSkinByName(skinName);
-            player.skeleton.setToSetupPose();
-            
-            // 🌟 2. 強制計算第一幀的骨架座標（防止初始透明）
-            player.skeleton.updateWorldTransform();
-            
-            const anims = player.skeleton.data.animations.map(a => a.name);
-            let targetAnim = anims.includes("Idle") ? "Idle" : (anims.includes("idle") ? "idle" : anims[0]);
-            
-            if (targetAnim) {
-                player.animationState.setAnimation(0, targetAnim, true);
+            if (topMiniSpinePlayer) {
+                topMiniSpinePlayer.dispose();
+                topMiniSpinePlayer = null;
             }
 
-            // 🌟 3. 下達強制播放指令（取代原本滑鼠點擊控制器的動作）
-            player.play();
-        },
-        error: (player, reason) => {
-            console.error("❌ 超迷你 Spine 載入失敗，原因：", reason);
-        }
-    });
+            container.innerHTML = '<div id="topMiniSpineWrapper" style="width: 100%; height: 100%;"></div>';
+
+            const skinName = typeof MINI_SPINE !== 'undefined' && MINI_SPINE[charName] ? MINI_SPINE[charName] : null;
+
+            if (!skinName) {
+                container.style.display = 'none'; 
+                return;
+            }
+
+            topMiniSpinePlayer = new spine.SpinePlayer("topMiniSpineWrapper", {
+                skelUrl: "./Minimi.skel.bytes", 
+                atlasUrl: "./Minimi.atlas.txt",
+                
+                // 🌟 破案關鍵 1：像技能小人一樣，直接在初始設定就綁定 Skin
+                // 這樣 Spine 算第一幀大小時才不會抓到 0x0 的空骨架
+                skin: skinName, 
+                
+                // 🌟 破案關鍵 2：直接在初始設定告訴它要播什麼動畫
+                animation: "Idle",
+
+                showControls: false, 
+                showLoading: false, 
+                backgroundColor: "#00000000",
+                alpha: true,
+                premultipliedAlpha: false,
+                
+                // 🌟 破案關鍵 3：給予安全的鏡頭範圍
+                viewport: { x: -250, y: 0, width: 500, height: 500 },
+
+                success: (player) => {
+                    console.log("✅ 超迷你 Spine 載入成功！");
+                    
+                    // 🌟 破案關鍵 4：完美複製你寫技能小人的 Canvas 強制展延寫法
+                    const canvas = container.querySelector('canvas');
+                    if (canvas) {
+                        canvas.style.width = '100%';
+                        canvas.style.height = '100%';
+                        canvas.style.position = 'relative';
+                        canvas.style.zIndex = '99999';
+                    }
+
+                    // 防呆機制：萬一這個角色的待機動作不叫大寫的 Idle，我們在這邊修正
+                    const anims = player.skeleton.data.animations.map(a => a.name);
+                    if (!anims.includes("Idle")) {
+                        let targetAnim = anims.includes("idle") ? "idle" : anims[0];
+                        if (targetAnim) {
+                            player.animationState.setAnimation(0, targetAnim, true);
+                        }
+                    }
+
+                    // 取代點擊控制器的動作，強迫開跑
+                    player.play();
+                },
+                error: (player, reason) => {
+                    console.error("❌ 超迷你 Spine 載入失敗，原因：", reason);
+                }
+            });
         }
         // 🌟 【核心修正】加入全域監聽器：當螢幕尺寸改變或旋轉時，自動重繪 Spine
         let resizeTimeout;
