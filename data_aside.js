@@ -37,7 +37,7 @@ const ASIDE_DATA = {
         2: { icon: "https://i.postimg.cc/yDH0xtVG/Aside-Skill-Hilde-2.png", name: "[2星名稱]", desc: "[2星描述]", effects: ["效果1"] },
         3: { icon: "https://i.postimg.cc/5XV8yTxZ/Aside-Skill-Hilde-3.png", name: "[3星名稱]", desc: "[3星描述]", effects: ["效果1"], globalEffects: ["能力加成1"] }
     }},
-    "Hyarot": { asideIcon: "https://i.postimg.cc/pp3yL6HW/Aside-Icon-Kyarot.png", totalName: "[請填入願像總名稱]", stars: {
+    "Kyarot": { asideIcon: "https://i.postimg.cc/pp3yL6HW/Aside-Icon-Kyarot.png", totalName: "[請填入願像總名稱]", stars: {
         1: { icon: "https://i.postimg.cc/Xrb9qmj0/Aside-Skill-Kyarot-1.png", name: "[1星名稱]", desc: "[1星描述]", effects: ["效果1"] },
         2: { icon: "https://i.postimg.cc/LJpj5w9p/Aside-Skill-Kyarot-2.png", name: "[2星名稱]", desc: "[2星描述]", effects: ["效果1"] },
         3: { icon: "https://i.postimg.cc/nXJqrgFx/Aside-Skill-Kyarot-3.png", name: "[3星名稱]", desc: "[3星描述]", effects: ["效果1"], globalEffects: ["能力加成1"] }
