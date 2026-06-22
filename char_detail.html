@@ -1197,19 +1197,21 @@
             const data = ASIDE_DATA[spineKey] || ASIDE_DATA[charName];
 
             // 🌟 1. 取得當前語言 (請確認你的系統是用哪個變數儲存語言，這裡以 currentLang 為例)
-            // 如果你的全域變數是別的名稱 (例如 CURRENT_LANGUAGE)，請把它換成你的變數！
-            const lang = typeof currentLang !== 'undefined' ? currentLang : 'zh';
+            // 🌟 1. 取得當前語言 (對應你的 window.currentLang)
+            let lang = window.currentLang || 'zh-TW';
+            // 如果你的資料庫是寫 'zh'，但系統抓到的是 'zh-TW'，我們在這裡做個轉換對應
+            if (lang === 'zh-TW') lang = 'zh'; 
 
             // 🌟 2. 建立安全讀取多語系資料的輔助函數
             const getLocText = (obj) => {
                 if (!obj) return '';
-                if (typeof obj === 'string') return obj; // 兼容舊版純文字格式
-                return obj[lang] || obj['zh'] || '';     // 找不到對應語言就退回中文
+                if (typeof obj === 'string') return obj; 
+                return obj[lang] || obj['zh'] || '';     
             };
             const getLocArray = (arrObj) => {
                 if (!arrObj) return [];
-                if (Array.isArray(arrObj)) return arrObj; // 兼容舊版純陣列格式
-                return arrObj[lang] || arrObj['zh'] || []; // 找不到對應語言就退回中文
+                if (Array.isArray(arrObj)) return arrObj; 
+                return arrObj[lang] || arrObj['zh'] || []; 
             };
 
             const isUpcoming = ['Rim', 'xXionx'].includes(charName) || ['Rim', 'xXionx'].includes(spineKey);
