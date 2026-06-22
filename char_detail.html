@@ -1340,13 +1340,15 @@
     const container = document.getElementById('topMiniSpineContainer');
     if (!container) return;
 
-    // ❗ 核心修正 1：強制解除 HTML 上的 pointer-events-none，否則按鈕點不到
-    container.style.pointerEvents = "auto";
+    // 既然不顯示控制器了，我們把它改回 pointer-events-none (穿透)
+    // 這樣才不會不小心擋到旁邊的「⬅️ 關閉此頁」按鈕
+    container.style.pointerEvents = "none";
     
     container.style.display = 'block';
-    container.style.height = '300px'; 
-    container.style.width = '300px';  
-    container.style.border = '2px solid red'; // 測試用紅框，確認位置後可刪除
+    // 🌟 調整為 120px，這通常是頂部裝飾小人最適合的尺寸
+    container.style.height = '120px'; 
+    container.style.width = '120px';  
+    // container.style.border = '2px solid red'; // 若位置正確，可以把這行註解掉或刪除
     container.style.position = "relative";
     container.style.zIndex = "99999"; 
 
@@ -1355,7 +1357,8 @@
         topMiniSpinePlayer = null;
     }
 
-    container.innerHTML = '<div id="topMiniSpineWrapper" class="w-full h-full relative"></div>';
+    // 將內部 Wrapper 設定好，讓 Spine 自動填滿這個空間
+    container.innerHTML = '<div id="topMiniSpineWrapper" style="width: 100%; height: 100%;"></div>';
 
     const skinName = typeof MINI_SPINE !== 'undefined' && MINI_SPINE[charName] ? MINI_SPINE[charName] : null;
 
@@ -1368,40 +1371,30 @@
         skelUrl: "./Minimi.skel.bytes", 
         atlasUrl: "./Minimi.atlas.txt",
         
-        // 🌟 修正點 1：測試完畢，把醜醜的控制列跟載入圖關掉，這能解除部分點擊限制
         showControls: false, 
         showLoading: false, 
-        
         backgroundColor: "#00000000",
         alpha: true,
         premultipliedAlpha: false,
-        viewport: { x: -250, y: 0, width: 500, height: 500 },
         
+        // 🌟 終極解法：【不要寫 viewport 參數】
+        // 只要不寫，Spine 就會「自動計算」這隻小人的骨架大小，並且完美置中塞進 120x120 的框框裡！
+
         success: (player) => {
-            console.log("✅ 超迷你 Spine 載入成功！自動播放啟動中...");
+            console.log("✅ 超迷你 Spine 載入成功！自動對齊置中...");
             
-            // 🌟 修正點 2：套用皮膚後，強制更新世界座標，讓第一幀立刻顯現！
+            // 換皮膚並歸位
             player.skeleton.setSkinByName(skinName);
-            player.skeleton.setToSetupPose(); // 讓骨架歸位
-            player.skeleton.updateWorldTransform(); // 強制算出第一幀的畫面
+            player.skeleton.setToSetupPose();
             
+            // 找出待機動畫並播放
             const anims = player.skeleton.data.animations.map(a => a.name);
             let targetAnim = anims.includes("Idle") ? "Idle" : (anims.includes("idle") ? "idle" : anims[0]);
             if (targetAnim) {
                 player.animationState.setAnimation(0, targetAnim, true);
             }
 
-            // 🌟 修正點 3：用程式強制點擊「播放」，跳過等待狀態
-            player.play();
-
-            const canvas = container.querySelector('canvas');
-            if (canvas) {
-                canvas.style.display = 'block';
-                canvas.style.position = 'relative';
-                canvas.style.zIndex = '1';
-                canvas.style.width = '100%';
-                canvas.style.height = '100%';
-            }
+            // ⚠️ 已經刪除剛剛在這裡強制修改 canvas style 的程式碼，交給 Spine 原生處理，保證不消失
         },
         error: (player, reason) => {
             console.error("❌ 超迷你 Spine 載入失敗，原因：", reason);
