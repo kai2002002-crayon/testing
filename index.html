@@ -392,9 +392,8 @@
                 <div class="flex flex-row items-center justify-end gap-2 w-full lg:w-auto">
                     
                     <!-- 🌟 動畫開關按鈕 -->
-                    <button onclick="toggleAnimation()" class="h-10 w-10 sm:h-11 sm:w-11 flex items-center justify-center bg-white/80 dark:bg-gray-800/80 border border-amber-300 dark:border-gray-600 rounded-xl shadow-sm transition hover:bg-gray-50 dark:hover:bg-gray-700 shrink-0 backdrop-blur-sm text-xs sm:text-sm" title="開關跑酷動畫">
-                        <span id="animIconOn" class="">🏃</span>
-                        <span id="animIconOff" class="hidden grayscale opacity-60">🛑</span>
+                    <button onclick="toggleAnimation()" class="h-10 w-10 sm:h-11 sm:w-11 flex items-center justify-center bg-white/80 dark:bg-gray-800/80 border border-amber-300 dark:border-gray-600 rounded-xl shadow-sm transition hover:bg-gray-50 dark:hover:bg-gray-700 shrink-0 backdrop-blur-sm overflow-hidden" title="開關跑酷動畫">
+                        <img id="rimAnimIcon" src="https://i.postimg.cc/dhW04Kw2/minirim.png" alt="Rim Animation Toggle" class="w-[80%] h-[80%] object-contain transition-all duration-200">
                     </button>
 
                     <div class="relative h-10 w-10 sm:h-11 sm:w-11 group">
@@ -579,16 +578,16 @@
         // ------------------------------------------------------------
         
         // 🌟 新增：動畫開關邏輯
+        // 🌟 更新：控制 Rim 迷你圖案的灰階與透明度狀態
         function updateAnimToggleUI() {
-            const onIcon = document.getElementById('animIconOn');
-            const offIcon = document.getElementById('animIconOff');
-            if(onIcon && offIcon) {
-                if(isAnimationEnabled) {
-                    onIcon.classList.remove('hidden');
-                    offIcon.classList.add('hidden');
+            const rimIcon = document.getElementById('rimAnimIcon');
+            if (rimIcon) {
+                if (isAnimationEnabled) {
+                    // 開啟狀態：恢復色彩
+                    rimIcon.classList.remove('grayscale', 'opacity-50');
                 } else {
-                    onIcon.classList.add('hidden');
-                    offIcon.classList.remove('hidden');
+                    // 關閉狀態：變成灰階並微調透明度
+                    rimIcon.classList.add('grayscale', 'opacity-50');
                 }
             }
         }
