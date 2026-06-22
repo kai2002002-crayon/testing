@@ -1365,24 +1365,25 @@
     }
 
     topMiniSpinePlayer = new spine.SpinePlayer("topMiniSpineWrapper", {
-        // ❗ 請確認這兩個檔案真的有放在與 char_detail.html 同一個目錄下
         skelUrl: "./Minimi.skel.bytes", 
         atlasUrl: "./Minimi.atlas.txt",
         
-        showControls: true, 
-        showLoading: true, 
+        // 🌟 修正點 1：測試完畢，把醜醜的控制列跟載入圖關掉，這能解除部分點擊限制
+        showControls: false, 
+        showLoading: false, 
+        
         backgroundColor: "#00000000",
         alpha: true,
         premultipliedAlpha: false,
-        
-        // ❗ 核心修正 2：將 bounds 改為 viewport。數值可依據小人實際大小微調 (-250, 0, 500, 500 是常見 SD 比例)
         viewport: { x: -250, y: 0, width: 500, height: 500 },
         
         success: (player) => {
-            console.log("✅ 超迷你 Spine 載入成功！");
+            console.log("✅ 超迷你 Spine 載入成功！自動播放啟動中...");
             
+            // 🌟 修正點 2：套用皮膚後，強制更新世界座標，讓第一幀立刻顯現！
             player.skeleton.setSkinByName(skinName);
-            player.skeleton.setSlotsToSetupPose();
+            player.skeleton.setToSetupPose(); // 讓骨架歸位
+            player.skeleton.updateWorldTransform(); // 強制算出第一幀的畫面
             
             const anims = player.skeleton.data.animations.map(a => a.name);
             let targetAnim = anims.includes("Idle") ? "Idle" : (anims.includes("idle") ? "idle" : anims[0]);
@@ -1390,7 +1391,9 @@
                 player.animationState.setAnimation(0, targetAnim, true);
             }
 
-            // ❗ 核心修正 3：讓 Canvas 正常填滿 Wrapper，不要用 absolute 頂到最左上角
+            // 🌟 修正點 3：用程式強制點擊「播放」，跳過等待狀態
+            player.play();
+
             const canvas = container.querySelector('canvas');
             if (canvas) {
                 canvas.style.display = 'block';
@@ -1401,7 +1404,6 @@
             }
         },
         error: (player, reason) => {
-            // ❗ 核心修正 4：如果載入失敗，控制台會清楚告訴你是缺檔案還是路徑錯了
             console.error("❌ 超迷你 Spine 載入失敗，原因：", reason);
         }
     });
