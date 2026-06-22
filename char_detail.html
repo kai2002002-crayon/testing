@@ -961,28 +961,29 @@
                             canvas.addEventListener('pointercancel', handlePointerUp);
                         }
                     }
+                    // 🌟 監聽 Spine 動畫發出的所有事件
                     player.animationState.addListener({
-                // 當動畫播放完畢時觸發 (你之前有用過)
-                complete: function(entry) { },
+                        // 當動畫播放完畢時觸發 (你之前有用過)
+                        complete: function(entry) { },
         
-                // 🎧 當動畫播放到「事件幀」時觸發！
-                event: function(trackIndex, event) {
-                    // 印出事件的詳細資料，幫我們破解原廠的設定！
-                    console.log("📢 觸發 Spine 事件名稱：", event.data.name);
-                    console.log("字串參數 (String)：", event.stringValue);
-                    console.log("整數參數 (Int)：", event.intValue);
-                    console.log("浮點數參數 (Float)：", event.floatValue);
+                        // 🎧 當動畫播放到「事件幀」時觸發！
+                        event: function(trackIndex, event) {
+                            // 印出事件的詳細資料，幫我們破解原廠的設定！
+                            console.log("📢 觸發 Spine 事件名稱：", event.data.name);
+                            console.log("字串參數 (String)：", event.stringValue);
+                            console.log("整數參數 (Int)：", event.intValue);
+                            console.log("浮點數參數 (Float)：", event.floatValue);
             
-                    // 假設原廠把聲音檔名寫在 stringValue 裡面 (例如 "skill_01.mp3")
-                    // 或是事件名稱就叫做 "playSound"
-                    if (event.data.name.includes("Sound") || event.data.name.includes("Voice")) {
-                        // 這裡假設你有一個資料夾專門放聲音
-                        const audioUrl = `./voice_assets/${event.stringValue}`; 
-                        const audio = new Audio(audioUrl);
-                        audio.play().catch(e => console.log("音檔播放被瀏覽器阻擋或找不到:", e));
-                    }
-                }
-            });
+                            // 假設原廠把聲音檔名寫在 stringValue 裡面 (例如 "skill_01.mp3")
+                            // 或是事件名稱就叫做 "playSound"
+                            if (event.data.name.includes("Sound") || event.data.name.includes("Voice")) {
+                                // 這裡假設你有一個資料夾專門放聲音
+                                const audioUrl = `./voice_assets/${event.stringValue}`; 
+                                const audio = new Audio(audioUrl);
+                                audio.play().catch(e => console.log("音檔播放被瀏覽器阻擋或找不到:", e));
+                            }
+                        }
+                    });
                 },
                 error: function (player, reason) {
                     console.error("❌ Spine Load Error:", reason);
@@ -1398,7 +1399,7 @@
                 viewport: { x: -250, y: 0, width: 500, height: 500 },
 
                 success: (player) => {
-                    console.log("✅ 超迷你 Spine 載入成功！已套用 0.5 倍速與縮小比例");
+                    console.log("✅ 迷你坨坨 載入成功");
                     
                     const canvas = container.querySelector('canvas');
                     if (canvas) {
