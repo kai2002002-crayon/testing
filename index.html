@@ -779,8 +779,8 @@
         
             activeEvents.forEach((evt, idx) => {
                 const wrapper = document.createElement('div');
-                wrapper.className = "rainbow-wrapper h-7 sm:h-8 w-auto cursor-pointer shrink-0 transition-all duration-300";
-                
+                wrapper.className = "rainbow-wrapper h-7 sm:h-8 w-auto shrink-0 transition-all duration-300";
+
                 if (!isBannerHovered && idx !== currentEventIndex) {
                     wrapper.style.display = 'none';
                 } else {
