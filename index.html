@@ -921,7 +921,22 @@
                 updateEventBanner(); 
             }
         }
-        
+        // 👇 🌟 新增：點擊/觸控頁面空白處自動收起 Banner
+        document.addEventListener('click', function(event) {
+            const displayArea = document.getElementById('bannerDisplayArea');
+            // 如果 Banner 是展開狀態，且點擊的位置不在 Banner 內部，就強制收合
+            if (isBannerHovered && displayArea && !displayArea.contains(event.target)) {
+                handleBannerHover(false);
+            }
+        });
+
+        document.addEventListener('touchstart', function(event) {
+            const displayArea = document.getElementById('bannerDisplayArea');
+            if (isBannerHovered && displayArea && !displayArea.contains(event.target)) {
+                handleBannerHover(false);
+            }
+        }, { passive: true }); // passive: true 可確保不影響頁面滑動效能
+
         function initStates() {
             INITIAL_DATA.forEach(char => {
                 if (savedStates['owned_' + char.name] === undefined) savedStates['owned_' + char.name] = false;
