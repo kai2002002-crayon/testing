@@ -59,7 +59,9 @@
         }
 
         body { font-family: 'Noto Sans TC', sans-serif; }
-        .spine-player-controls { display: none !important; }
+        /* 🌟 只隱藏主立繪與技能區的控制器，保留超迷你小人的控制器 */
+        #charAvatar .spine-player-controls, 
+        #skillsContainer .spine-player-controls { display: none !important; }
         .costume-btn { transition: all 0.2s ease; }
         .costume-btn:active { transform: scale(0.95); }
 
@@ -1335,22 +1337,25 @@
         let topMiniSpinePlayer = null;
 
         function loadTopMiniSpine(charName) {
-   // 在設定 container 的地方，強制加上一個固定高度
     const container = document.getElementById('topMiniSpineContainer');
-    container.style.display = 'block';
-    container.style.height = '300px'; // ❗ 強制給高度
-    container.style.width = '300px';  // ❗ 強制給寬度
-    container.style.border = '2px solid red';
-    container.style.position = "relative";
-    container.style.zIndex = "99999"; // 讓它在最上層
     if (!container) return;
+
+    // ❗ 核心修正 1：強制解除 HTML 上的 pointer-events-none，否則按鈕點不到
+    container.style.pointerEvents = "auto";
+    
+    container.style.display = 'block';
+    container.style.height = '300px'; 
+    container.style.width = '300px';  
+    container.style.border = '2px solid red'; // 測試用紅框，確認位置後可刪除
+    container.style.position = "relative";
+    container.style.zIndex = "99999"; 
 
     if (topMiniSpinePlayer) {
         topMiniSpinePlayer.dispose();
         topMiniSpinePlayer = null;
     }
 
-    container.innerHTML = '<div id="topMiniSpineWrapper" class="w-full h-full"></div>';
+    container.innerHTML = '<div id="topMiniSpineWrapper" class="w-full h-full relative"></div>';
 
     const skinName = typeof MINI_SPINE !== 'undefined' && MINI_SPINE[charName] ? MINI_SPINE[charName] : null;
 
@@ -1359,54 +1364,48 @@
         return;
     }
 
-    // 🌟 修正點 1：確保容器有被顯示出來 (如果你之前沒補上的話)
-    container.style.display = 'block';
-    
-    // 🌟 偵錯用：給容器加上紅框，確認它在畫面上真的有佔據空間，沒有被擠成 0x0
-    container.style.border = '2px solid red';
-
     topMiniSpinePlayer = new spine.SpinePlayer("topMiniSpineWrapper", {
-        skelUrl: "Minimi.skel.bytes",
-        atlasUrl: "Minimi.atlas.txt",
+        // ❗ 請確認這兩個檔案真的有放在與 char_detail.html 同一個目錄下
+        skelUrl: "./Minimi.skel.bytes", 
+        atlasUrl: "./Minimi.atlas.txt",
         
-        // 🌟 修正點 2：暫時打開控制列與載入畫面，確認 Spine 播放器真的有啟動
-        showControls: true,
-        showLoading: true,
-        
+        showControls: true, 
+        showLoading: true, 
         backgroundColor: "#00000000",
         alpha: true,
         premultipliedAlpha: false,
         
-        // 🌟 【暴力強制鏡頭】不使用預設 viewport，改用 bounds 讓他自動找圖
-        bounds: { x: 0, y: 0, width: 500, height: 500 },
+        // ❗ 核心修正 2：將 bounds 改為 viewport。數值可依據小人實際大小微調 (-250, 0, 500, 500 是常見 SD 比例)
+        viewport: { x: -250, y: 0, width: 500, height: 500 },
+        
         success: (player) => {
-            console.log("✅ Spine 載入成功！正在進行視覺強制校正...");
+            console.log("✅ 超迷你 Spine 載入成功！");
             
-            // 1. 套用 Skin
             player.skeleton.setSkinByName(skinName);
             player.skeleton.setSlotsToSetupPose();
             
-            // 2. 確保動畫啟動
             const anims = player.skeleton.data.animations.map(a => a.name);
             let targetAnim = anims.includes("Idle") ? "Idle" : (anims.includes("idle") ? "idle" : anims[0]);
             if (targetAnim) {
                 player.animationState.setAnimation(0, targetAnim, true);
             }
 
+            // ❗ 核心修正 3：讓 Canvas 正常填滿 Wrapper，不要用 absolute 頂到最左上角
             const canvas = container.querySelector('canvas');
-    if (canvas) {
-        canvas.style.display = 'block';
-        canvas.style.position = 'absolute';
-        canvas.style.zIndex = '99999';
-        canvas.style.top = '0';
-        canvas.style.left = '0';
-        canvas.style.opacity = '1';
-        canvas.style.visibility = 'visible';
-    }
-        console.log("Canvas 寬度偵測:", canvas ? canvas.offsetWidth : "找不到 Canvas");
+            if (canvas) {
+                canvas.style.display = 'block';
+                canvas.style.position = 'relative';
+                canvas.style.zIndex = '1';
+                canvas.style.width = '100%';
+                canvas.style.height = '100%';
+            }
+        },
+        error: (player, reason) => {
+            // ❗ 核心修正 4：如果載入失敗，控制台會清楚告訴你是缺檔案還是路徑錯了
+            console.error("❌ 超迷你 Spine 載入失敗，原因：", reason);
         }
-});
-        }
+    });
+}
         // 🌟 【核心修正】加入全域監聽器：當螢幕尺寸改變或旋轉時，自動重繪 Spine
         let resizeTimeout;
         // 紀錄目前的螢幕寬度
