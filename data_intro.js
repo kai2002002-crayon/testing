@@ -145,7 +145,7 @@ const INTRO_MAP = {
         "Yomi": "物語の中の向月葵\n太陽が眠りにつけば、月が世界を照らすのです。\n月の明るいある夜に、偶然出会った月の司祭。ネルの話によると月を崇拝する司祭は昔話の中の存在だというが……時折、教団を訪れて私を慕うところを見ると優しい性格の持ち主のようだ。",
         "Yumimi": "気だるげなハンター\nわぁ~やっぱり草の香りがいいわ~\n自分の状況と境遇に満足して暮らす自給自足型の獣人。獣人の村にもあまり立ち寄らず、森で主に生活しているという。ユミミが空けた家は、獣人の子供たちの遊び場になっている。"
     },
-    "EN": {
+    "en": {
         "Alice": "Fortune Card Expert\nLet me be responsible for your future!\nAn affable phantom who reads cards filled with the power of foresight. Getting a card reading done for fun will lead to certain regret after realizing how unlucky you are",
         "Allet": "Youngest Staff Sergeant\nEverything's been updated with my new address!\nThe youngest staff sergeant of the Monatium Suppression Unit. A dedicated soldier who will carry out any of Canna's orders. Her only flaw is that she does not listen to Elena or Amelia, both of whom outrank Kanna.",
         "Amelia": "The Top Secretary\nThis is Amelia, the mayor's secretary. May I ask the reason for this call?\nThe secretary of the mayor of the elven city, Monatium. A workaholic who runs Monatium for Elena, Sometimes you can see her being a bit too obsessive with Elena... Those who have witnessed this all say that it was terrifying.",
