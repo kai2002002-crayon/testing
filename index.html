@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="no-referrer-when-downgrade">
-
+    
     <title>嘟嘟臉金蠟筆記事本</title>
     <meta name="description" content="《Trickcal: Chibi Go》嘟嘟臉金蠟筆記事本！提供最新的《嘟嘟臉惡作劇》(Trickcal Revive / トリカル) 角色圖鑑、金蠟筆與技能資料。The best Trickcal Revive Crayon Planner & Character Database. トリカル 最強キャラ・クレヨン攻略データベース。">
     <link rel="icon" href="https://i.postimg.cc/mkfSTq5k/Favicon.png" type="image/png">
@@ -261,8 +261,8 @@
         }
 
         /* ------------------------------------------------------------
-        /* 🌟 Banner 滑鼠移入自動展開特製 CSS (縱向展開版)
-        /* ------------------------------------------------------------ */
+           🌟 Banner 滑鼠移入自動展開特製 CSS (縱向展開版)
+        ------------------------------------------------------------ */
         #bannerDisplayArea {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             width: max-content; /* 確保內容決定寬度，手機版不會撐滿 */
@@ -412,11 +412,6 @@
                         <span id="themeIconDark" class="hidden dark:block">☀️</span>
                     </button>
 
-                    <button onclick="toggleRunner()" class="h-10 w-10 sm:h-11 sm:w-11 flex items-center justify-center bg-white/80 dark:bg-gray-800/80 border border-amber-300 dark:border-gray-600 rounded-xl shadow-sm transition hover:bg-gray-50 dark:hover:bg-gray-700 shrink-0 backdrop-blur-sm text-xs sm:text-sm" title="開關頂部跑酷動畫">
-                        <span id="runnerIconOn" class="block">🏃</span>
-                        <span id="runnerIconOff" class="hidden opacity-50 grayscale">🛑</span>
-                    </button>
-                    
                     <div id="authPanel" class="bg-white/90 dark:bg-gray-800/90 px-2.5 h-10 sm:h-11 rounded-xl border border-amber-300 dark:border-gray-600 shadow-sm flex flex-row items-center justify-end gap-2 sm:gap-3 backdrop-blur-sm">
                         <div id="userStatus" class="flex flex-row items-center text-left text-[11px] sm:text-xs text-gray-600 dark:text-gray-300">
                             <span class="font-bold text-amber-600 dark:text-amber-400 whitespace-nowrap" data-lang-key="auth_offline_title">🟡 未連線雲端</span></div>
@@ -434,6 +429,7 @@
                         </div>
                     </div>
                 </div>
+            </div>
         </header>
 
         <div id="errorBanner" class="hidden bg-red-100 border-2 border-red-500 text-red-800 px-4 py-3 rounded-xl mb-6 text-sm font-bold shadow-sm flex flex-col gap-1"></div>
@@ -542,42 +538,8 @@
         let noticeIconEl = null, noticeIconTimeout = null;
         let db = null, auth = null, currentUser = null;
         let activeCrayons = [];
-        // 🌟 新增：讀取玩家的開關設定，預設為開啟 (true)
-        let isRunnerEnabled = localStorage.getItem('trickcal_runner_enabled') !== 'false';
-
-        // 🌟 新增：開關切換與記憶體清除邏輯
-        function toggleRunner() {
-            isRunnerEnabled = !isRunnerEnabled;
-            localStorage.setItem('trickcal_runner_enabled', isRunnerEnabled);
-            
-            const onIcon = document.getElementById('runnerIconOn');
-            const offIcon = document.getElementById('runnerIconOff');
-            const area = document.getElementById('runnerArea');
-            
-            if (isRunnerEnabled) {
-                if (onIcon) onIcon.classList.remove('hidden');
-                if (offIcon) offIcon.classList.add('hidden');
-                if (area) area.style.display = 'block';
-                initTopRunner(); // 重新啟動跑酷
-            } else {
-                if (onIcon) onIcon.classList.add('hidden');
-                if (offIcon) offIcon.classList.remove('hidden');
-                if (area) area.style.display = 'none';
-                clearRunnerSpines(); // 清除場上物件，釋放記憶體
-            }
-        }
-
-        function clearRunnerSpines() {
-            cancelAnimationFrame(chaseLoopId);
-            clearTimeout(noticeIconTimeout);
-            if (currentRunnerPlayer) { try { currentRunnerPlayer.dispose(); } catch(e){} currentRunnerPlayer = null; }
-            if (currentBossPlayer) { try { currentBossPlayer.dispose(); } catch(e){} currentBossPlayer = null; }
-            const topC = document.getElementById('topRunnerContainer'); if(topC) topC.innerHTML = '';
-            const bossC = document.getElementById('bossRunnerContainer'); if(bossC) bossC.innerHTML = '';
-            // 強制清除所有剩餘的蠟筆
-            activeCrayons.forEach(c => { if(c && c.parentNode) c.remove(); });
-            activeCrayons = [];
-        }
+        let crayonCollisionLoopId = null; // 🌟 優化：新增全域變數控管計時器，防範掛網或多次重載造成的記憶體洩漏
+        
         // 🌟 新增：Banner 滑鼠偵測變數
         let isBannerHovered = false; 
         
@@ -707,9 +669,9 @@
         function renderPickupBanner() {
             const container = document.getElementById('pickupIconsContainer');
             const activeChars = getActivePickupChars(); 
-    
+        
             if (!container || activeChars.length === 0) return;
-    
+        
             container.innerHTML = '';
             const localRecruitTexts = { "zh-TW": "🎯 特選使者招募", "ja": "🎯 ピックアップ使徒ガチャ", "en": "🎯 Pick Up Apostles" };
             const localTooltipTexts = { "zh-TW": "特選招募中：", "ja": "ピックアップ中：", "en": "Pickup Rate Up: " };
@@ -723,7 +685,7 @@
                 const iconUrl = typeof SKILL_ICONS !== 'undefined' ? SKILL_ICONS['skill_passive_' + charName] : null; const pColorClass = personalityColors[charData.personality] || "border-gray-400 text-gray-400";
                 const iconWrapper = document.createElement('div');
                 iconWrapper.className = `w-7 h-7 sm:w-8 sm:h-8 rounded-lg border-2 ${pColorClass} bg-white dark:bg-gray-800 flex items-center justify-center relative pickup-sparkle shrink-0 cursor-pointer transition-transform`;
-        
+            
                 const prefix = localTooltipTexts[window.currentLang] || localTooltipTexts["zh-TW"]; iconWrapper.title = `${prefix}${t(charName)}`;
                 iconWrapper.onclick = () => window.open(`char_detail.html?char=${encodeURIComponent(charName)}`, '_blank');
                 if (iconUrl) { iconWrapper.innerHTML = `<img src="${iconUrl}" class="w-full h-full object-cover rounded-[5px]" alt="${t(charName)}">`; } 
@@ -763,9 +725,9 @@
             if (currentEventIndex >= activeEvents.length) currentEventIndex = 0;
 
             const langSuffix = { "zh-TW": "ZH", "ja": "JA", "en": "EN" }[window.currentLang] || "ZH";
-    
+        
             container.innerHTML = '';
-    
+        
             // 🌟 修正：渲染「所有」當期活動，並根據是否展開 (Hover) 決定顯示與否
             activeEvents.forEach((evt, idx) => {
                 const wrapper = document.createElement('div');
@@ -777,12 +739,12 @@
                 } else {
                     wrapper.style.display = 'inline-block';
                 }
-        
+            
                 const imgEl = document.createElement('img');
                 imgEl.src = `event/${evt.eventId}_${langSuffix}.png`;
                 imgEl.alt = evt.eventId;
                 imgEl.className = "rainbow-content";
-        
+            
                 wrapper.appendChild(imgEl);
                 container.appendChild(wrapper);
             });
@@ -831,11 +793,11 @@
 
         function startBannerRotation() {
             if (bannerRotationTimer) clearInterval(bannerRotationTimer);
-    
+        
             const hasPickup = getActivePickupChars().length > 0;
             const hasEvent = getActiveEvents().length > 0;
             const hasCard = getActiveCards().length > 0; 
-    
+        
             const displayArea = document.getElementById('bannerDisplayArea');
             const pickupPanel = document.getElementById('pickupPanel');
             const eventPanel = document.getElementById('eventPanel');
@@ -1019,7 +981,7 @@
 
             const layerContainer = document.getElementById("filter_gridLayer");
             if(layerContainer){
-                layerContainer.innerHTML = ""; const layers = [ {v:"all", n: t("全部")}, {v:"1", n:`🥇 ${t("level_1st")}`}, {v:"2", n:`🥈 ${t("level_2nd")}`}, {v:"3", n:`🥉 ${t("level_3st")}`} ];
+                layerContainer.innerHTML = ""; const layers = [ {v:"all", n: t("全部")}, {v:"1", n:`🥇 ${t("level_1st")}`}, {v:"2", n:`🥈 ${t("level_2nd")}`}, {v:"3", n:`🥉 ${t("level_3rd")}`} ]; // 🌟 修正：修正 level_3st 英文文法錯誤為 level_3rd
                 layers.forEach(ly => { const btn = document.createElement("button"); btn.innerText = ly.n; btn.id = `btn_filter_gridLayer_${ly.v}`; btn.className = ly.v === "all" ? btnActiveStyle : btnInactiveStyle; btn.onclick = () => selectGridLayerFilter(ly.v); layerContainer.appendChild(btn); });
             }
 
@@ -1186,7 +1148,7 @@
                             const layerBox = document.createElement('div'); layerBox.id = `layer_wrap_${char.name}_${l}`;
                             let bgStyle = "bg-amber-50/40 border-amber-100/60 dark:border-amber-900/40", badgeText = `🥇 ${t("level_1st")}`, gridCols = "grid-cols-2";
                             if (l === 2) { bgStyle = "bg-orange-50/40 border-orange-100/60 dark:border-orange-900/40"; badgeText = `🥈 ${t("level_2nd")}`; gridCols = "grid-cols-3"; }
-                            else if (l === 3) { bgStyle = "bg-red-50/40 border-red-100/60 dark:border-red-900/40"; badgeText = `🥉 ${t("level_3st")}`; gridCols = "grid-cols-4"; }
+                            else if (l === 3) { bgStyle = "bg-red-50/40 border-red-100/60 dark:border-red-900/40"; badgeText = `🥉 ${t("level_3rd")}`; gridCols = "grid-cols-4"; } // 🌟 修正：修正為 level_3rd
 
                             layerBox.className = `${bgStyle} flex-1 p-2 rounded-xl border flex-col justify-between backdrop-blur-sm`; layerBox.innerHTML = `<span class="text-[10px] font-bold mb-1 block opacity-70 whitespace-nowrap">${badgeText}</span>`;
                             const btnGroup = document.createElement('div'); btnGroup.className = `grid ${gridCols} gap-1.5 h-full content-start`;
@@ -1316,11 +1278,6 @@
 
         function initTopRunner() {
             if (window.innerWidth <= 768) return; 
-            // 🌟 防卡死機制 1：如果頁面在背景，暫停初始化小人直到玩家切回前台
-            if (document.hidden) {
-                setTimeout(initTopRunner, 2000);
-                return;
-            }
             if (typeof INITIAL_DATA === 'undefined' || INITIAL_DATA.length === 0) return;
 
             const container = document.getElementById('topRunnerContainer'); const track = document.getElementById('runnerTrack');
@@ -1374,7 +1331,7 @@
                         setTimeout(() => {
                             player.timeScale = 1.0; safePlaySpine(player, "Move", true);
                             charRunAnimation = track.animate([ { transform: 'translateX(0) scaleX(1)' }, { transform: `translateX(calc(-100vw + ${endLeftPos})) scaleX(1)` } ], { duration: runDuration, fill: 'forwards' });
-                           charRunAnimation.onfinish = () => { hasReachedEnd = true; if (!isCaught) triggerVictory(); };
+                            charRunAnimation.onfinish = () => { hasReachedEnd = true; if (!isCaught) triggerVictory(); };
 
                             if (isBossEvent) {
                                 const bossKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP['R41雷內瓦'] ? SPINE_MAP['R41雷內瓦'] : 'R41雷內瓦';
@@ -1574,39 +1531,20 @@
         }
 
         function spawnCrayonOnTrack() {
-            // 🌟 加入開關判斷
-            if (window.innerWidth <= 768 || !isRunnerEnabled) return; 
-
-            // 🌟 防卡死機制 2：如果頁面在背景，或場上蠟筆超過 8 個(避免無止盡堆疊)，暫停生成並等待
-            if (document.hidden || activeCrayons.length >= 8) {
-                setTimeout(spawnCrayonOnTrack, 5000);
-                return;
-            }
-
+            if (window.innerWidth <= 768) return; 
             const area = document.getElementById('runnerArea'); if (!area) return;
             
             const crayon = document.createElement('div'); crayon.className = 'track-crayon'; 
             const randomX = Math.floor(Math.random() * 70) + 15; crayon.style.left = `${randomX}%`;
             area.appendChild(crayon); activeCrayons.push(crayon); 
             requestAnimationFrame(() => { crayon.style.opacity = '1'; });
-
-            // 🌟 防卡死機制 3 (Garbage Collection)：蠟筆存活超過 15 秒沒被吃掉，自動移除
-            setTimeout(() => {
-                if (crayon && crayon.parentNode && !crayon.classList.contains('crayon-collected')) {
-                    crayon.style.opacity = '0';
-                    setTimeout(() => {
-                        const idx = activeCrayons.indexOf(crayon);
-                        if (idx > -1) activeCrayons.splice(idx, 1);
-                        if (crayon.parentNode) crayon.remove();
-                    }, 600);
-                }
-            }, 15000);
-
             setTimeout(spawnCrayonOnTrack, Math.random() * 7000 + 5000);
         }
 
         function checkCrayonCollision() {
             if (window.innerWidth <= 768) return; 
+            if (crayonCollisionLoopId) cancelAnimationFrame(crayonCollisionLoopId); // 🌟 優化：確保前一個 Frame 已被清除，不疊加執行
+            
             const chibi = document.getElementById('runnerTrack'); const isChibiVisible = chibi && chibi.style.opacity === '1';
             if (isChibiVisible && activeCrayons.length > 0) {
                 const chibiRect = chibi.getBoundingClientRect(); const chibiCenterX = chibiRect.left + (chibiRect.width / 2) - 20;
@@ -1615,7 +1553,7 @@
                     if (Math.abs(chibiCenterX - crayonCenterX) < 45) { crayon.classList.add('crayon-collected'); activeCrayons.splice(index, 1); setTimeout(() => { crayon.remove(); }, 600); }
                 });
             }
-            requestAnimationFrame(checkCrayonCollision);
+            crayonCollisionLoopId = requestAnimationFrame(checkCrayonCollision);
         }
 
         function initRimLive2D() {
@@ -1625,7 +1563,9 @@
                 success: function (player) {
                     loader.remove(); const animations = ["Happy_4", "Pat_End", "Tickle_Idle_2"]; let currentIndex = 1; 
                     function playNextAnimation() { const nextAnim = animations[currentIndex % animations.length]; player.skeleton.setToSetupPose(); player.animationState.setAnimation(0, nextAnim, true); currentIndex++; }
-                   setInterval(playNextAnimation, 5000);
+                    
+                    if (window.rimInterval) clearInterval(window.rimInterval); // 🌟 優化：初始化前先清除舊的 Interval 計時器，防止多次重載疊加執行
+                    window.rimInterval = setInterval(playNextAnimation, 5000);
                 } 
             }); 
         }
@@ -1633,16 +1573,6 @@
         // 🌟 合併所有 Load 事件，交錯延遲載入 (Staggered Loading) 大幅提升體感速度
         window.addEventListener('load', () => {
             document.getElementById('loader').style.display = 'none';
-
-            // 🌟 處理跑酷開關的初始顯示狀態
-            if (!isRunnerEnabled) {
-                const onIcon = document.getElementById('runnerIconOn');
-                const offIcon = document.getElementById('runnerIconOff');
-                const area = document.getElementById('runnerArea');
-                if (onIcon) onIcon.classList.add('hidden');
-                if (offIcon) offIcon.classList.remove('hidden');
-                if (area) area.style.display = 'none';
-            }
 
             try {
                 if (typeof INITIAL_DATA === 'undefined') throw new Error("找不到 INITIAL_DATA，請確認 data_core.js 是否載入成功！");
@@ -1677,7 +1607,7 @@
                 setTimeout(() => {
                     initRimLive2D();
                     setTimeout(spawnCrayonOnTrack, 4000);
-                    requestAnimationFrame(checkCrayonCollision);
+                    checkCrayonCollision(); // 🌟 優化：將原本的 requestAnimationFrame 移交給函式內部狀態處理
                 }, 300);
             }, 100);
         });
