@@ -1239,12 +1239,21 @@
                 const starData = data.stars[i];
                 if (!starData) continue;
 
+                // 🌟 設定星數對應的圖示
+                const starIcons = {
+                    1: "https://i.postimg.cc/yJmwZkSz/ASIDE-1STAR.png",
+                    2: "https://i.postimg.cc/VSq3Cdb1/ASIDE-2STAR.png",
+                    3: "https://i.postimg.cc/JyN9kGB8/ASIDE-3STAR.png"
+                };
+
                 html += `
                     <div class="relative bg-white dark:bg-slate-800/80 border-2 border-fuchsia-200 dark:border-fuchsia-800/60 rounded-xl p-4 shadow-sm flex flex-col h-full hover:shadow-md transition-shadow">
                         <div class="flex items-center gap-3 border-b border-fuchsia-100 dark:border-fuchsia-800/50 pb-3 mb-3">
                             <img src="${starData.icon}" class="w-8 h-8 rounded-lg shadow-sm border border-fuchsia-300 dark:border-fuchsia-600 bg-fuchsia-50 dark:bg-slate-700 object-contain">
                             <div>
-                                <div class="text-fuchsia-600 dark:text-fuchsia-400 text-[11px] font-black tracking-wider flex items-center gap-0.5">${'★'.repeat(i)} ${i}星願像</div>
+                                <div class="mb-0.5 flex items-center">
+                                    <img src="${starIcons[i]}" alt="${i}星願像" class="h-3.5 object-contain drop-shadow-sm">
+                                </div>
                                 <div class="font-extrabold text-gray-800 dark:text-gray-200 text-sm">${starData.name}</div>
                             </div>
                         </div>
