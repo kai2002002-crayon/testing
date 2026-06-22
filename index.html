@@ -364,8 +364,8 @@
                             <div id="pickupIconsContainer" class="flex flex-row items-center justify-end gap-1.5"></div>
                         </div>
 
-                        <div id="eventPanel" class="banner-panel-item col-start-1 row-start-1 flex items-start justify-between w-full gap-3 transition-opacity duration-500 opacity-0 pointer-events-none z-0">
-                            <span id="eventTitleText" class="text-[10px] sm:text-[11px] font-bold text-sky-700 dark:text-sky-400 whitespace-nowrap shrink-0 pt-1">🎪 今期活動</span>
+                        <div id="eventPanel" class="banner-panel-item col-start-1 row-start-1 flex items-center justify-between w-full gap-3 transition-opacity duration-500 opacity-0 pointer-events-none z-0">
+                            <span id="eventTitleText" class="text-[10px] sm:text-[11px] font-bold text-sky-700 dark:text-sky-400 whitespace-nowrap shrink-0">🎪 今期活動</span>
                             <div id="eventBannersContainer" class="flex flex-row flex-wrap items-end justify-end gap-1.5"></div>
                         </div>
                         
@@ -579,6 +579,29 @@
         
         // 🌟 新增：動畫開關邏輯
         // 🌟 更新：控制 Rim 迷你圖案的灰階與透明度狀態
+        // 1. 先放清理函式，確保所有相關變數都能被清空
+        function clearRunnerAssets() {
+            if (chaseLoopId) cancelAnimationFrame(chaseLoopId);
+            if (crayonCollisionLoopId) cancelAnimationFrame(crayonCollisionLoopId);
+            if (spawnCrayonTimer) clearTimeout(spawnCrayonTimer);
+    
+            activeCrayons.forEach(c => c.remove());
+            activeCrayons = [];
+    
+            if (currentRunnerPlayer) { try { currentRunnerPlayer.dispose(); } catch(e){} currentRunnerPlayer = null; }
+            if (currentBossPlayer) { try { currentBossPlayer.dispose(); } catch(e){} currentBossPlayer = null; }
+    
+            document.getElementById('topRunnerContainer').innerHTML = '';
+            document.getElementById('bossRunnerContainer').innerHTML = '';
+    
+            const track = document.getElementById('runnerTrack');
+            const bossTrack = document.getElementById('bossTrack');
+            track.style.opacity = '0';
+            bossTrack.style.opacity = '0';
+            track.getAnimations().forEach(a => a.cancel());
+            bossTrack.getAnimations().forEach(a => a.cancel());
+        }
+        
         function updateAnimToggleUI() {
             const rimIcon = document.getElementById('rimAnimIcon');
             if (rimIcon) {
@@ -597,26 +620,14 @@
             localStorage.setItem('trickcal_anim_enabled', isAnimationEnabled);
             updateAnimToggleUI();
 
-            const area = document.getElementById('runnerArea');
             if (isAnimationEnabled) {
-                area.style.display = ''; // 恢復 CSS 控制 (hidden md:block)
+                document.getElementById('runnerArea').style.display = '';
                 initTopRunner();
                 checkCrayonCollision();
                 spawnCrayonOnTrack();
             } else {
-                area.style.display = 'none'; // 強制隱藏
-                
-                if (chaseLoopId) cancelAnimationFrame(chaseLoopId);
-                if (crayonCollisionLoopId) cancelAnimationFrame(crayonCollisionLoopId);
-                if (spawnCrayonTimer) clearTimeout(spawnCrayonTimer);
-                
-                activeCrayons.forEach(c => c.remove());
-                activeCrayons = [];
-                
-                if (currentRunnerPlayer) { try { currentRunnerPlayer.dispose(); } catch(e){} currentRunnerPlayer = null; }
-                if (currentBossPlayer) { try { currentBossPlayer.dispose(); } catch(e){} currentBossPlayer = null; }
-                document.getElementById('topRunnerContainer').innerHTML = '';
-                document.getElementById('bossRunnerContainer').innerHTML = '';
+                clearRunnerAssets(); // 使用上面定義的新函式
+                document.getElementById('runnerArea').style.display = 'none';
             }
         }
 
@@ -1315,6 +1326,7 @@
 
         function initTopRunner() {
             if (!isAnimationEnabled) return;
+            clearRunnerAssets();
             if (window.innerWidth <= 768) return; 
             if (typeof INITIAL_DATA === 'undefined' || INITIAL_DATA.length === 0) return;
 
