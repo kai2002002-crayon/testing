@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="no-referrer-when-downgrade">
-    
+
     <title>嘟嘟臉金蠟筆記事本</title>
     <meta name="description" content="《Trickcal: Chibi Go》嘟嘟臉金蠟筆記事本！提供最新的《嘟嘟臉惡作劇》(Trickcal Revive / トリカル) 角色圖鑑、金蠟筆與技能資料。The best Trickcal Revive Crayon Planner & Character Database. トリカル 最強キャラ・クレヨン攻略データベース。">
     <link rel="icon" href="https://i.postimg.cc/mkfSTq5k/Favicon.png" type="image/png">
@@ -412,6 +412,11 @@
                         <span id="themeIconDark" class="hidden dark:block">☀️</span>
                     </button>
 
+                    <button onclick="toggleRunner()" class="h-10 w-10 sm:h-11 sm:w-11 flex items-center justify-center bg-white/80 dark:bg-gray-800/80 border border-amber-300 dark:border-gray-600 rounded-xl shadow-sm transition hover:bg-gray-50 dark:hover:bg-gray-700 shrink-0 backdrop-blur-sm text-xs sm:text-sm" title="開關頂部跑酷動畫">
+                        <span id="runnerIconOn" class="block">🏃</span>
+                        <span id="runnerIconOff" class="hidden opacity-50 grayscale">🛑</span>
+                    </button>
+                    
                     <div id="authPanel" class="bg-white/90 dark:bg-gray-800/90 px-2.5 h-10 sm:h-11 rounded-xl border border-amber-300 dark:border-gray-600 shadow-sm flex flex-row items-center justify-end gap-2 sm:gap-3 backdrop-blur-sm">
                         <div id="userStatus" class="flex flex-row items-center text-left text-[11px] sm:text-xs text-gray-600 dark:text-gray-300">
                             <span class="font-bold text-amber-600 dark:text-amber-400 whitespace-nowrap" data-lang-key="auth_offline_title">🟡 未連線雲端</span></div>
@@ -537,7 +542,42 @@
         let noticeIconEl = null, noticeIconTimeout = null;
         let db = null, auth = null, currentUser = null;
         let activeCrayons = [];
-        
+        // 🌟 新增：讀取玩家的開關設定，預設為開啟 (true)
+        let isRunnerEnabled = localStorage.getItem('trickcal_runner_enabled') !== 'false';
+
+        // 🌟 新增：開關切換與記憶體清除邏輯
+        function toggleRunner() {
+            isRunnerEnabled = !isRunnerEnabled;
+            localStorage.setItem('trickcal_runner_enabled', isRunnerEnabled);
+            
+            const onIcon = document.getElementById('runnerIconOn');
+            const offIcon = document.getElementById('runnerIconOff');
+            const area = document.getElementById('runnerArea');
+            
+            if (isRunnerEnabled) {
+                if (onIcon) onIcon.classList.remove('hidden');
+                if (offIcon) offIcon.classList.add('hidden');
+                if (area) area.style.display = 'block';
+                initTopRunner(); // 重新啟動跑酷
+            } else {
+                if (onIcon) onIcon.classList.add('hidden');
+                if (offIcon) offIcon.classList.remove('hidden');
+                if (area) area.style.display = 'none';
+                clearRunnerSpines(); // 清除場上物件，釋放記憶體
+            }
+        }
+
+        function clearRunnerSpines() {
+            cancelAnimationFrame(chaseLoopId);
+            clearTimeout(noticeIconTimeout);
+            if (currentRunnerPlayer) { try { currentRunnerPlayer.dispose(); } catch(e){} currentRunnerPlayer = null; }
+            if (currentBossPlayer) { try { currentBossPlayer.dispose(); } catch(e){} currentBossPlayer = null; }
+            const topC = document.getElementById('topRunnerContainer'); if(topC) topC.innerHTML = '';
+            const bossC = document.getElementById('bossRunnerContainer'); if(bossC) bossC.innerHTML = '';
+            // 強制清除所有剩餘的蠟筆
+            activeCrayons.forEach(c => { if(c && c.parentNode) c.remove(); });
+            activeCrayons = [];
+        }
         // 🌟 新增：Banner 滑鼠偵測變數
         let isBannerHovered = false; 
         
@@ -1276,6 +1316,11 @@
 
         function initTopRunner() {
             if (window.innerWidth <= 768) return; 
+            // 🌟 防卡死機制 1：如果頁面在背景，暫停初始化小人直到玩家切回前台
+            if (document.hidden) {
+                setTimeout(initTopRunner, 2000);
+                return;
+            }
             if (typeof INITIAL_DATA === 'undefined' || INITIAL_DATA.length === 0) return;
 
             const container = document.getElementById('topRunnerContainer'); const track = document.getElementById('runnerTrack');
@@ -1529,13 +1574,34 @@
         }
 
         function spawnCrayonOnTrack() {
-            if (window.innerWidth <= 768) return; 
+            // 🌟 加入開關判斷
+            if (window.innerWidth <= 768 || !isRunnerEnabled) return; 
+
+            // 🌟 防卡死機制 2：如果頁面在背景，或場上蠟筆超過 8 個(避免無止盡堆疊)，暫停生成並等待
+            if (document.hidden || activeCrayons.length >= 8) {
+                setTimeout(spawnCrayonOnTrack, 5000);
+                return;
+            }
+
             const area = document.getElementById('runnerArea'); if (!area) return;
             
             const crayon = document.createElement('div'); crayon.className = 'track-crayon'; 
             const randomX = Math.floor(Math.random() * 70) + 15; crayon.style.left = `${randomX}%`;
             area.appendChild(crayon); activeCrayons.push(crayon); 
             requestAnimationFrame(() => { crayon.style.opacity = '1'; });
+
+            // 🌟 防卡死機制 3 (Garbage Collection)：蠟筆存活超過 15 秒沒被吃掉，自動移除
+            setTimeout(() => {
+                if (crayon && crayon.parentNode && !crayon.classList.contains('crayon-collected')) {
+                    crayon.style.opacity = '0';
+                    setTimeout(() => {
+                        const idx = activeCrayons.indexOf(crayon);
+                        if (idx > -1) activeCrayons.splice(idx, 1);
+                        if (crayon.parentNode) crayon.remove();
+                    }, 600);
+                }
+            }, 15000);
+
             setTimeout(spawnCrayonOnTrack, Math.random() * 7000 + 5000);
         }
 
@@ -1567,6 +1633,16 @@
         // 🌟 合併所有 Load 事件，交錯延遲載入 (Staggered Loading) 大幅提升體感速度
         window.addEventListener('load', () => {
             document.getElementById('loader').style.display = 'none';
+
+            // 🌟 處理跑酷開關的初始顯示狀態
+            if (!isRunnerEnabled) {
+                const onIcon = document.getElementById('runnerIconOn');
+                const offIcon = document.getElementById('runnerIconOff');
+                const area = document.getElementById('runnerArea');
+                if (onIcon) onIcon.classList.add('hidden');
+                if (offIcon) offIcon.classList.remove('hidden');
+                if (area) area.style.display = 'none';
+            }
 
             try {
                 if (typeof INITIAL_DATA === 'undefined') throw new Error("找不到 INITIAL_DATA，請確認 data_core.js 是否載入成功！");
