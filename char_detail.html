@@ -1377,30 +1377,34 @@
         alpha: true,
         premultipliedAlpha: false,
         
-        // 🌟 終極解法：【不要寫 viewport 參數】
-        // 只要不寫，Spine 就會「自動計算」這隻小人的骨架大小，並且完美置中塞進 120x120 的框框裡！
-
+        // 🌟 恢復鏡頭設定：給他一個安全的顯示範圍，避免他縮成 0x0 大小
+        viewport: { x: -250, y: 0, width: 500, height: 500 },
+        
         success: (player) => {
-            console.log("✅ 超迷你 Spine 載入成功！自動對齊置中...");
+            console.log("✅ 超迷你 Spine 載入成功！強制播放啟動...");
             
-            // 換皮膚並歸位
+            // 🌟 1. 換裝並強制歸位
             player.skeleton.setSkinByName(skinName);
             player.skeleton.setToSetupPose();
             
-            // 找出待機動畫並播放
+            // 🌟 2. 強制計算第一幀的骨架座標（防止初始透明）
+            player.skeleton.updateWorldTransform();
+            
             const anims = player.skeleton.data.animations.map(a => a.name);
             let targetAnim = anims.includes("Idle") ? "Idle" : (anims.includes("idle") ? "idle" : anims[0]);
+            
             if (targetAnim) {
                 player.animationState.setAnimation(0, targetAnim, true);
             }
 
-            // ⚠️ 已經刪除剛剛在這裡強制修改 canvas style 的程式碼，交給 Spine 原生處理，保證不消失
+            // 🌟 3. 下達強制播放指令（取代原本滑鼠點擊控制器的動作）
+            player.play();
         },
         error: (player, reason) => {
             console.error("❌ 超迷你 Spine 載入失敗，原因：", reason);
         }
     });
-}
+        }
         // 🌟 【核心修正】加入全域監聽器：當螢幕尺寸改變或旋轉時，自動重繪 Spine
         let resizeTimeout;
         // 紀錄目前的螢幕寬度
