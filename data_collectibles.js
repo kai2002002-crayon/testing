@@ -422,7 +422,7 @@ const THOUGHT_MAP = {
             "Chloe": "A large tapestry embroidered with the Sprite Kingdom where Chloe lives. The Yggdrasil Order is also depicted.",
             "Chopi": "An autograph book of Chopi. Acting shy, she came to get my autograph earlier, but panicked and ran away, leaving it behind.",
             "Diana": "A rocking chair that Diana worked on for me whenever she had free time. She told me to sit here and relax when I'm tired.",
-            "Ed": "A picture capturing a beautiful scene from Ed's dream that Nata printed for her. It leaves me with a bittersweet feeling for some reason.",
+            "Ed": "A picture capturing a beautiful scene from ED's dream that Nata printed for her. It leaves me with a bittersweet feeling for some reason.",
             "Elena": "A laptop that she gifted to me, saying I probably miss modern products and culture... I hope it hasn't been bugged.",
             "Epica": "An epic novel written by Epica, based on my adventures. It's slightly exaggerated, but still fun to read.",
             "Erpin": "A pastel set that Erpin gifted me hesitantly, apologizing for secretly taking pastels from my storage.",
