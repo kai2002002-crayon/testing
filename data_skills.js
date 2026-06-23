@@ -4412,7 +4412,7 @@ const characterSkills = [
       }
     },
     {
-      name: "斑尼",
+      name: "班尼",
       attribute: "物理",
     skills: {
         "zh-TW": {
