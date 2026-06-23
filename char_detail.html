@@ -1058,14 +1058,21 @@
                     const makeStatChips = (statsArray) => {
                         if (!statsArray || statsArray.length === 0) return '';
                         let processedStats = [];
+    
                         statsArray.forEach(stat => {
                             if (typeof stat === 'string') {
-                                processedStats.push(...stat.split(/[、,，]/).map(s => s.trim()).filter(Boolean));
+                                // 【修改重點】直接推入字串並去除頭尾空白，不要再用 split 切割了！
+                                processedStats.push(stat.trim());
                             } else {
                                 processedStats.push(stat);
                             }
                         });
+    
+                        // 過濾掉可能是空字串的元素
+                        processedStats = processedStats.filter(Boolean);
+    
                         if (processedStats.length === 0) return '';
+    
                         return `<div class="flex flex-wrap gap-1.5 mt-2 relative z-10">` + 
                             processedStats.map(stat => `<span class="px-2 py-0.5 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 text-[11px] font-bold rounded-md shadow-sm">${stat}</span>`).join('') + 
                             `</div>`;
