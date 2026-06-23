@@ -2946,6 +2946,7 @@ const characterSkills = [
           ultimateSkill: { name: "The Universe, Yours & Mine", desc: "ED deals AoE Magical Damage 4 times to enemies near her and reduces their SP.", stats: ["Total Magical DMG: 1470%", "Total SP Reduction: 184"], cooldown: "38s" },
           passiveSkill: { desc: "At the start of a wave, applies Invincible on herself for a set period of time. Becomes immune to Blindfold.", stats: ["Invincible: Immune to all damage and debuffs.", "Blindfold: Normal Attacks miss.", "Invincible Duration: 6.9s"] }
         }
+    }
     },
     {
       name: "艾蜜莉雅",
