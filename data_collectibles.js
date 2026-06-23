@@ -4,179 +4,179 @@
 const PRESENT_MAP = {
     "Alice": { 
         url: "https://i.postimg.cc/NMq3VZL4/Present-List-Alice.png",
-        name: { "zh-TW": "愛麗絲的卡片冊", "ja": "アリスのカードブック" }
+        name: { "zh-TW": "愛麗絲的卡片冊", "ja": "アリスのカードブック", "en": "Alice's Card Deck" }
     },
     "Allet": { 
         url: "https://i.postimg.cc/B69ryRtC/Present-List-Allet.png",
-        name: { "zh-TW": "無限保存拌飯醬", "ja": "永久保存可能ソース" }
+        name: { "zh-TW": "無限保存拌飯醬", "ja": "永久保存可能ソース", "en": "Everlasting Mixing Sauce" }
     },
     "Amelia": { 
         url: "https://i.postimg.cc/cHypjP6h/Present-List-Amelia.png",
-        name: { "zh-TW": "莫納蒂姆的待審文件堆", "ja": "決裁待ち書類の山" }
+        name: { "zh-TW": "莫納蒂姆的待審文件堆", "ja": "決裁待ち書類の山", "en": "Stack of Monatium Paperwork" }
     },
     "Ashur": { 
         url: "https://i.postimg.cc/3R5s6zWL/Present-List-Ashur.png",
-        name: { "zh-TW": "艾心堂全年免費自由使用劵", "ja": "エーカリー年間無料パス" }
+        name: { "zh-TW": "艾心堂全年免費自由使用劵", "ja": "エーカリー年間無料パス", "en": "Free Pass for Ashurin\'" }
     },
     "Aya": { 
         url: "https://i.postimg.cc/JnVfgStg/Present-List-Aya.png",
-        name: { "zh-TW": "雪花雕像", "ja": "雪花の彫像" }
+        name: { "zh-TW": "雪花雕像", "ja": "雪花の彫像", "en": "Snowflake Statue" }
     },
     "Belita": { 
         url: "https://i.postimg.cc/DZk9DR8h/Present-List-Belita.png",
-        name: { "zh-TW": "老舊的木雕玩偶", "ja": "古びた木彫り人形" }
+        name: { "zh-TW": "老舊的木雕玩偶", "ja": "古びた木彫り人形", "en": "Old Wooden Doll" }
     },
     "Beni": { 
         url: "https://i.postimg.cc/ZR8GhjyQ/Present-List-Beni.png",
-        name: { "zh-TW": "高級釣魚包", "ja": "高級釣り具カバン" }
+        name: { "zh-TW": "高級釣魚包", "ja": "高級釣り具カバン", "en": "High-End Fishing Rod Bag" }
     },
     "BigWood": { 
         url: "https://i.postimg.cc/RF7kzGny/Present-List-Big-Wood.png",
-        name: { "zh-TW": "大木頭的種子", "ja": "ビッグウッドの種" }
+        name: { "zh-TW": "大木頭的種子", "ja": "ビッグウッドの種", "en": "BigWood Seed" }
     },
     "Blanchet": { 
         url: "https://i.postimg.cc/50BhMpFZ/Present-List-Blanchet.png",
-        name: { "zh-TW": "藍玫瑰花束", "ja": "青い薔薇の花束" }
+        name: { "zh-TW": "藍玫瑰花束", "ja": "青い薔薇の花束", "en": "Bouquet of Blue Roses" }
     },
     "Butter": { 
         url: "https://i.postimg.cc/fLcGh59Q/Present-List-Butter.png",
-        name: { "zh-TW": "花草花冠", "ja": "草花の花冠" }
+        name: { "zh-TW": "花草花冠", "ja": "草花の花冠", "en": "Grass Flower Crown" }
     },
     "Canna": { 
         url: "https://i.postimg.cc/wvXCdFmz/Present-List-Canna.png",
-        name: { "zh-TW": "客製化遊戲機", "ja": "カスタムゲーム機" }
+        name: { "zh-TW": "客製化遊戲機", "ja": "カスタムゲーム機", "en": "Custom Game Console" }
     },
     "Carren": { 
         url: "https://i.postimg.cc/V6qxc4C1/Present-List-Carren.png",
-        name: { "zh-TW": "胡蘿蔔幼苗種子包", "ja": "ニンジンの苗の種袋" }
+        name: { "zh-TW": "胡蘿蔔幼苗種子包", "ja": "ニンジンの苗の種袋", "en": "Carrot Seed Package" }
     },
     "Chloe": { 
         url: "https://i.postimg.cc/ZR8GhjdY/Present-List-Chloe.png",
-        name: { "zh-TW": "王國風景掛毯", "ja": "王国風景のタペストリー" }
+        name: { "zh-TW": "王國風景掛毯", "ja": "王国風景のタペストリー", "en": "Kingdom Landscape Tapestry" }
     },
     "Chopi": { 
         url: "https://i.postimg.cc/vBrJdXVm/Present-List-Chopi.png",
-        name: { "zh-TW": "教主簽名簿", "ja": "教主のサインブック" }
+        name: { "zh-TW": "教主簽名簿", "ja": "教主のサインブック", "en": "The Master's Autograph Book" }
     },
     "Diana": { 
         url: "https://i.postimg.cc/RF7kzGH6/Present-List-Diana.png",
-        name: { "zh-TW": "橡樹實木搖椅", "ja": "オーク無垢材のロッキングチェア" }
+        name: { "zh-TW": "橡樹實木搖椅", "ja": "オーク無垢材のロッキングチェア", "en": "Oak Wood Rocking Chair" }
     },
     "Ed": { 
         url: "https://i.postimg.cc/d3JzQd2V/Present-List-Ed.png",
-        name: { "zh-TW": "夢中的姐妹畫作", "ja": "夢の中の姉妹たちの絵" }
+        name: { "zh-TW": "夢中的姐妹畫作", "ja": "夢の中の姉妹たちの絵", "en": "Dreaming Sisters Portrait" }
     },
     "Elena": { 
         url: "https://i.postimg.cc/mkT0ZMYt/Present-List-Elena.png",
-        name: { "zh-TW": "精靈製最新型筆記型電腦", "ja": "エルフ製最新型ノートパソコン" }
+        name: { "zh-TW": "精靈製最新型筆記型電腦", "ja": "エルフ製最新型ノートパソコン", "en": "Latest Elven Laptop" }
     },
     "Epica": { 
         url: "https://i.postimg.cc/tJ9LRP3x/Present-List-Epica.png",
-        name: { "zh-TW": "教主史詩抄本", "ja": "教主叙事詩の写本" }
+        name: { "zh-TW": "教主史詩抄本", "ja": "教主叙事詩の写本", "en": "Master's Epic Draft" }
     },
     "Erpin": { 
         url: "https://i.postimg.cc/Kks9J1sx/Present-List-Erpin.png",
-        name: { "zh-TW": "昨晚的蠟筆", "ja": "昨晩のクレヨン" }
+        name: { "zh-TW": "昨晚的蠟筆", "ja": "昨晩のクレヨン", "en": "Last Night's Pastels" }
     },
     "Espi": { 
         url: "https://i.postimg.cc/mkT0ZMYF/Present-List-Espi.png",
-        name: { "zh-TW": "夢境筆記", "ja": "ドリームノート" }
+        name: { "zh-TW": "夢境筆記", "ja": "ドリームノート", "en": "Dream Diary" }
     },
     "Festa": { 
         url: "https://i.postimg.cc/GtbZ3YFF/Present-List-Festa.png",
-        name: { "zh-TW": "全盛時期簽名專輯", "ja": "全盛期のサイン入りアルバム" }
+        name: { "zh-TW": "全盛時期簽名專輯", "ja": "全盛期のサイン入りアルバム", "en": "Signed Album from her Glory Days" }
     },
     "Fricle": { 
         url: "https://i.postimg.cc/wM9SxJXV/Present-List-Fricle.png",
-        name: { "zh-TW": "友情荊棘戒指", "ja": "友情の茨の指輪" }
+        name: { "zh-TW": "友情荊棘戒指", "ja": "友情の茨の指輪", "en": "Thorny Friendship Ring" }
     },
     "Gabia": { 
         url: "https://i.postimg.cc/Y0tJ2g6x/Present-List-Gabia.png",
-        name: { "zh-TW": "高級奇石套裝", "ja": "高級奇石セット" }
+        name: { "zh-TW": "高級奇石套裝", "ja": "高級奇石セット", "en": "High-End Ornamental Rock Set" }
     },
     "Haley": { 
         url: "https://i.postimg.cc/5yfZ9vB7/Present-List-Haley.png",
-        name: { "zh-TW": "莫納蒂姆戰略圖", "ja": "モナティアム戦略地図" }
+        name: { "zh-TW": "莫納蒂姆戰略圖", "ja": "モナティアム戦略地図", "en": "Tactical Map of Monatium" }
     },
     "Hilde": { 
         url: "https://i.postimg.cc/d3ngh16R/Present-List-Hilde.png",
-        name: { "zh-TW": "專業學位證書", "ja": "専門学位証書" }
+        name: { "zh-TW": "專業學位證書", "ja": "専門学位証書", "en": "Medical Specialist Diploma" }
     },
     "Ifrit": { 
         url: "https://i.postimg.cc/wM9SxJXb/Present-List-Ifrit.png",
-        name: { "zh-TW": "銀箔套裝", "ja": "銀箔のスーツ" }
+        name: { "zh-TW": "銀箔套裝", "ja": "銀箔のスーツ", "en": "Silver-foil Suit" }
     },
     "Jade": { 
         url: "https://i.postimg.cc/rsg7Dmj1/Present-List-Jade.png",
-        name: { "zh-TW": "高級玉石地板", "ja": "高級翡翠マット" }
+        name: { "zh-TW": "高級玉石地板", "ja": "高級翡翠マット", "en": "Premium Jade Electric Blanket" }
     },
     "Jubee": { 
         url: "https://i.postimg.cc/901sDMbL/Present-List-Jubee.png",
-        name: { "zh-TW": "皇家蜂蜜", "ja": "ロイヤルハニー" }
+        name: { "zh-TW": "皇家蜂蜜", "ja": "ロイヤルハニー", "en": "Royal Honey" }
     },
     "Kidian": { 
         url: "https://i.postimg.cc/zvp4yB70/Present-List-Kidian.png",
-        name: { "zh-TW": "黑曜石短劍", "ja": "黒曜石の短剣" }
+        name: { "zh-TW": "黑曜石短劍", "ja": "黒曜石の短剣", "en": "Obsidian Dagger" }
     },
     "Kommy": { 
         url: "https://i.postimg.cc/XqxtrJLt/Present-List-Kommy.png",
-        name: { "zh-TW": "名牌枕頭", "ja": "高級ブランド枕" }
+        name: { "zh-TW": "名牌枕頭", "ja": "高級ブランド枕", "en": "Luxury Pillow" }
     },
     "Kyarot": { 
         url: "https://i.postimg.cc/RhG2WFdy/Present-List-Kyarot.png",
-        name: { "zh-TW": "優良農業獎盃", "ja": "優良農業トロフィー" }
+        name: { "zh-TW": "優良農業獎盃", "ja": "優良農業トロフィー", "en": "Outstanding Harvest Trophy" }
     },
     "Lazy": { 
         url: "https://i.postimg.cc/Gtz642zn/Present-List-Lazy.png",
-        name: { "zh-TW": "最先進工具組", "ja": "最先端の工具セット" }
+        name: { "zh-TW": "最先進工具組", "ja": "最先端の工具セット", "en": "High-tech Toolset" }
     },
     "Leets": { 
         url: "https://i.postimg.cc/vTXC4BXb/Present-List-Leets.png",
-        name: { "zh-TW": "超重鋼鐵盔甲", "ja": "超重量級の鋼鉄アーマー" }
+        name: { "zh-TW": "超重鋼鐵盔甲", "ja": "超重量級の鋼鉄アーマー", "en": "Utterly Heavy Steel Armor" }
     },
     "Levi": { 
         url: "https://i.postimg.cc/QCSvFtSj/Present-List-Levi.png",
-        name: { "zh-TW": "超大尺寸保暖內衣", "ja": "特大サイズの保温インナー" }
+        name: { "zh-TW": "超大尺寸保暖內衣", "ja": "特大サイズの保温インナー", "en": "Extra Large Pajama" }
     },
     "MaestroMK2": { 
         url: "https://i.postimg.cc/mZSvXX4z/Present-List-Maestro-MK2.png",
-        name: { "zh-TW": "充滿回憶的硬碟", "ja": "思い出のハードディスク" }
+        name: { "zh-TW": "充滿回憶的硬碟", "ja": "思い出のハードディスク", "en": "Hard Drive of Memories" }
     },
     "Mago": { 
         url: "https://i.postimg.cc/kMy011Ct/Present-List-Mago.png",
-        name: { "zh-TW": "羊毛大衣", "ja": "羊毛のコート" }
+        name: { "zh-TW": "羊毛大衣", "ja": "羊毛のコート", "en": "Wool Parka" }
     },
     "Marie": { 
         url: "https://i.postimg.cc/7PNFss47/Present-List-Marie.png",
-        name: { "zh-TW": "反物質中子炸彈", "ja": "反物質中性子爆弾" }
+        name: { "zh-TW": "反物質中子炸彈", "ja": "反物質中性子爆弾", "en": "Antimatter Neutron Bomb" }
     },
     "Mayo": { 
         url: "https://i.postimg.cc/zDksttN7/Present-List-Mayo.png",
-        name: { "zh-TW": "奇怪的石膏像", "ja": "奇妙な石膏像" }
+        name: { "zh-TW": "奇怪的石膏像", "ja": "奇妙な石膏像", "en": "Strange Plaster Statue" }
     },
     "Meluna": { 
         url: "https://i.postimg.cc/ry9BnnTC/Present-List-Meluna.png",
-        name: { "zh-TW": "遊艇啟動匙", "ja": "ヨットのエンジンキー" }
+        name: { "zh-TW": "遊艇啟動匙", "ja": "ヨットのエンジンキー", "en": "Yacht Ignition Key" }
     },
     "Momo": { 
         url: "https://i.postimg.cc/zDksttNF/Present-List-Momo.png",
-        name: { "zh-TW": "忍術替身木", "ja": "忍術の変わり身の丸太" }
+        name: { "zh-TW": "忍術替身木", "ja": "忍術の変わり身の丸太", "en": "Ninjutsu Log" }
     },
     "Naia": { 
         url: "https://i.postimg.cc/sfJk66zw/Present-List-Naia.png",
-        name: { "zh-TW": "海豚大砲", "ja": "イルカ大砲" }
+        name: { "zh-TW": "海豚大砲", "ja": "イルカ大砲", "en": "Dolphin Cannon" }
     },
     "Ner": { 
         url: "https://i.postimg.cc/8PPqqRkZ/Present-List-Ner.png",
-        name: { "zh-TW": "女王育兒日記", "ja": "女王の育児日記" }
+        name: { "zh-TW": "女王育兒日記", "ja": "女王の育児日記", "en": "Queen-Parenting Diary" }
     },
     "Picora": { 
         url: "https://i.postimg.cc/dQ9bHHFz/Present-List-Picora.png",
-        name: { "zh-TW": "精緻的時尚貼紙簿", "ja": "おしゃれなステッカーブック" }
+        name: { "zh-TW": "精緻的時尚貼紙簿", "ja": "おしゃれなステッカーブック", "en": "Cool and Chic Sticker Book" }
     },
     "Posher": { 
         url: "https://i.postimg.cc/7YYpp3Pt/Present-List-Posher.png",
-        name: { "zh-TW": "健康防禦葡萄汁", "ja": "健康防御ブドウジュース" }
+        name: { "zh-TW": "健康防禦葡萄汁", "ja": "健康防御ブドウジュース", "en": "Health Defense Grape Juice" }
     },
 	"RenewaAwaken": { 
         url: "https://i.postimg.cc/7YYpp3PR/Present-List-Renewa-Awaken.png",
@@ -184,87 +184,87 @@ const PRESENT_MAP = {
     },
     "Rim": { 
         url: "https://i.postimg.cc/hPPHHL4k/Present-List-Rim.png",
-        name: { "zh-TW": "高級茶杯套裝", "ja": "高級ティーカップセット" }
+        name: { "zh-TW": "高級茶杯套裝", "ja": "高級ティーカップセット", "en": "High-End Teacup Set" }
     },
     "Risty": { 
         url: "https://i.postimg.cc/bNNKKxNc/Present-List-Risty.png",
-        name: { "zh-TW": "經典遊戲大集合", "ja": "レトロなゲームパッケージ" }
+        name: { "zh-TW": "經典遊戲大集合", "ja": "レトロなゲームパッケージ", "en": "Classic Game Bundle" }
     },
     "Rohne": { 
         url: "https://i.postimg.cc/fTT66cTs/Present-List-Rohne.png",
-        name: { "zh-TW": "教主觀察日記", "ja": "教主観察日誌" }
+        name: { "zh-TW": "教主觀察日記", "ja": "教主観察日誌", "en": "Master Observation Journal" }
     },
     "Rude": { 
         url: "https://i.postimg.cc/yYYwwmY6/Present-List-Rude.png",
-        name: { "zh-TW": "莫納蒂姆健身房高級會員卡", "ja": "モナティアムジムのプレミアム会員券" }
+        name: { "zh-TW": "莫納蒂姆健身房高級會員卡", "ja": "モナティアムジムのプレミアム会員券", "en": "Monatium Gym Premium Membership" }
     },
     "Rufo": { 
         url: "https://i.postimg.cc/SNNww6Nx/Present-List-Rufo.png",
-        name: { "zh-TW": "作弊骰子", "ja": "イカサマダイス" }
+        name: { "zh-TW": "作弊骰子", "ja": "イカサマダイス", "en": "Manipulated Dice" }
     },
     "Sari": { 
         url: "https://i.postimg.cc/4NNrr6Nd/Present-List-Sari.png",
-        name: { "zh-TW": "反應卡片", "ja": "リアクションカード" }
+        name: { "zh-TW": "反應卡片", "ja": "リアクションカード", "en": "Reaction Card" }
     },
     "Selline": { 
         url: "https://i.postimg.cc/fTT66cTJ/Present-List-Selline.png",
-        name: { "zh-TW": "挑釁用的比賽服", "ja": "挑発用の勝負服" }
+        name: { "zh-TW": "挑釁用的比賽服", "ja": "挑発用の勝負服", "en": "Combat Outfit for Taunting" }
     },
     "Shady": { 
         url: "https://i.postimg.cc/DyjtFS8F/Present-List-Shady.png",
-        name: { "zh-TW": "魔法水晶珠", "ja": "魔法の水晶玉" }
+        name: { "zh-TW": "魔法水晶珠", "ja": "魔法の水晶玉", "en": "Magical Crystal Orb" }
     },
     "Shoupan": { 
         url: "https://i.postimg.cc/J469msG4/Present-List-Shoupan.png",
-        name: { "zh-TW": "艾利亞斯英雄勳章", "ja": "エリアス英雄勲章" }
+        name: { "zh-TW": "艾利亞斯英雄勳章", "ja": "エリアス英雄勲章", "en": "Elias Hero Medal" }
     },
     "Silphir": { 
         url: "https://i.postimg.cc/4NLrZYmy/Present-List-Silphir.png",
-        name: { "zh-TW": "對練用稻草人", "ja": "訓練用のカカシ" }
+        name: { "zh-TW": "對練用稻草人", "ja": "訓練用のカカシ", "en": "Training Scarecrow" }
     },
     "Sist": { 
         url: "https://i.postimg.cc/hPyHgXfh/Present-List-Sist.png",
-        name: { "zh-TW": "紫水晶存錢筒", "ja": "アメジストの貯金箱" }
+        name: { "zh-TW": "紫水晶存錢筒", "ja": "アメジストの貯金箱", "en": "Amethyst Coin Bank" }
     },
     "Snorky": { 
         url: "https://i.postimg.cc/TY7ZGKpW/Present-List-Snorky.png",
-        name: { "zh-TW": "手工豆漿48包", "ja": "手作り豆乳48パック" }
+        name: { "zh-TW": "手工豆漿48包", "ja": "手作り豆乳48パック", "en": "Craft Soymilk (48 Packs)" }
     },
     "Speaki": { 
         url: "https://i.postimg.cc/xTxWYXcK/Present-List-Speaki.png",
-        name: { "zh-TW": "南瓜南瓜套裝", "ja": "かぼちゃかぼちゃセット" }
+        name: { "zh-TW": "南瓜南瓜套裝", "ja": "かぼちゃかぼちゃセット", "en": "Pumpkin Pumpkin Set" }
     },
     "Sylla": { 
         url: "https://i.postimg.cc/nhXNLnD7/Present-List-Sylla.png",
-        name: { "zh-TW": "攜帶型電風扇", "ja": "携帯用扇風機" }
+        name: { "zh-TW": "攜帶型電風扇", "ja": "携帯用扇風機", "en": "Portable Fan" }
     },
     "Taida": { 
         url: "https://i.postimg.cc/tCSLysY2/Present-List-Taida.png",
-        name: { "zh-TW": "偷懶專用睡袋", "ja": "サボり用の寝袋" }
+        name: { "zh-TW": "偷懶專用睡袋", "ja": "サボり用の寝袋", "en": "Sleeping Bag for Skipping Work" }
     },
     "Ui": { 
         url: "https://i.postimg.cc/y8D2N7ZT/Present-List-Ui.png",
-        name: { "zh-TW": "魔靈池塘的蓮花", "ja": "精霊蓮池の蓮の花" }
+        name: { "zh-TW": "魔靈池塘的蓮花", "ja": "精霊蓮池の蓮の花", "en": "Elemental Pond Lotus" }
     },
     "Velvet": { 
         url: "https://i.postimg.cc/T3KBPTDk/Present-List-Velvet.png",
-        name: { "zh-TW": "黃金荊棘王冠", "ja": "黄金の茨の王冠" }
+        name: { "zh-TW": "黃金荊棘王冠", "ja": "黄金の茨の王冠", "en": "Golden Crown of Thorns" }
     },
     "Vivi": { 
         url: "https://i.postimg.cc/9QDsfc7K/Present-List-Vivi.png",
-        name: { "zh-TW": "銀製高腳杯", "ja": "銀のゴブレット" }
+        name: { "zh-TW": "銀製高腳杯", "ja": "銀のゴブレット", "en": "Silver Goblet" }
     },
     "xXionx": { 
         url: "https://i.postimg.cc/MpngGzQF/Present-List-x-Xionx.png",
-        name: { "zh-TW": "網絡小說單行本", "ja": "ネット小説の単行本" }
+        name: { "zh-TW": "網絡小說單行本", "ja": "ネット小説の単行本", "en": "Web Novel Monography" }
     },
     "Yomi": { 
         url: "https://i.postimg.cc/T3KBPTbv/Present-List-Yomi.png",
-        name: { "zh-TW": "向月花花環", "ja": "向月花の花冠" }
+        name: { "zh-TW": "向月花花環", "ja": "向月花の花冠", "en": "Moonflower Wreath" }
     },
     "Yumimi": { 
         url: "https://i.postimg.cc/mgPKrT9f/Present-List-Yumimi.png",
-        name: { "zh-TW": "偽裝用木製面具", "ja": "変装用の木製仮面" }
+        name: { "zh-TW": "偽裝用木製面具", "ja": "変装用の木製仮面", "en": "Camouflage Wooden Mask" }
     }
 };
 
