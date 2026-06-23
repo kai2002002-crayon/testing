@@ -149,7 +149,7 @@ const characterSkills = [
             stats: ["中毒：每秒造成傷害並減少傷害量。", "灼痛：每秒造成傷害，並使恢復量減少。", "基本攻擊傷害量增加：52%"]
           }
         },
-	  "ja": {
+      "ja": {
           normalAttack: {
             basic: "拳を振るい、敵に物理ダメージを与える。 [物理ダメージ：175%]",
             enhanced: "無"
@@ -239,7 +239,7 @@ const characterSkills = [
         }
       } // <--- 這裡是這個角色的結束括號
     }
-	}, // <--- 這個「逗號」非常重要！如果少了它，後面接 { 就會報錯
+    }, // <--- 這個「逗號」非常重要！如果少了它，後面接 { 就會報錯
     {
       name: "伊弗利特",
       attribute: "魔法",
@@ -385,9 +385,9 @@ const characterSkills = [
       }
     },
     {
-	  name: "奶油",
+      name: "奶油",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人發射石塊，造成物理傷害。 [物理傷害：100%]",
@@ -454,7 +454,7 @@ const characterSkills = [
     {
       name: "桃桃",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "朝敵軍投擲2次電弧手裡劍，對敵人造成魔法傷害。 [總魔法傷害：150%]",
@@ -496,7 +496,7 @@ const characterSkills = [
         ]
       }
     },
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "敵に電気手裏剣を2回投げ、魔法ダメージを与える。 [総魔法ダメージ：150%]",
         enhanced: "無"
@@ -535,13 +535,19 @@ const characterSkills = [
           "被ダメージ量減少：30%",
           "被ダメージ量減少の持続時間：6秒"
         ]}
+        },
+    "en": {
+          normalAttack: { basic: "Throws an electric Shuriken 2 times at the enemy, dealing Magical Damage. [Total Magical DMG: 150%]", enhanced: "無" },
+          normalSkill: { name: "Double Hug", desc: "Summons a clone that attacks a random enemy with Magical Damage. The clone is destroyed after either taking damage 3 times or a set period of time. Upon destruction, deals AoE Magical Damage and applies Electrocution. Clones cannot receive HP Recovery effects.", stats: ["Electrocution: Reduces Attack Speed and Movement Speed.", "Minion Magical Damage: 82%", "Minion Self-Destruct Damage: 123%", "Summon Duration: 12s", "Minion Durability: 3hits", "Minions: 4", "Electrocution Duration: 2s"] },
+          ultimateSkill: { name: "Rapid Momorisu", desc: "Appears behind the furthest target within the designated range, dealing AoE Magical Damage 4 times. After the attack ends, leaves behind a clone in its place and returns to the casting location. The clone has the same traits as the clones summoned by the Freshman Skill.", stats: ["Total Magical DMG: 520%", "Minion Magical DMG: 54%", "Minion Self-Destruct DMG: 81%"], cooldown: "30s" },
+          passiveSkill: { desc: "When taking Direct Damage twice, activates Swift Ruse. After Swift Ruse activates, increases Attack and reduces Incoming Damage for a set period of time.", stats: ["Direct Damage: Refers to damage caused by Direct Attacks, excluding Status Effect Damage and Damage Reflection.", "Swift Ruse: Performs a swap with a log to move backward. Applies Trickery to self, becoming unable to be targeted by enemies.", "Swift Ruse Cooldown: 8.5s", "ATK Increase: 29%", "ATK Increase Duration: 6s", "Incoming DMG Reduction: 29%", "Incoming DMG Reduction Duration: 6s"] }
         }
       }
     },
     {
       name: "瑟琳娜",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人揮動布條，造成2次魔法傷害。 [總魔法傷害：75%]",
@@ -575,7 +581,7 @@ const characterSkills = [
         ]
       }
     },
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "敵に袖を振るい、魔法ダメージを2回与える。 [総魔法ダメージ：75%]",
         enhanced: "3回目の攻撃の代わりに自身のHPを回復し、敵を挑発する。 [挑発：挑発した対象を基本攻撃で攻撃する。] [HP回復：最大HPの10%] [挑発の持続時間：3秒]"
@@ -606,13 +612,19 @@ const characterSkills = [
           "挑発：挑発した対象を基本攻撃で攻撃する。",
           "会心抵抗増加：48%"
         ]}
+        },
+    "en": {
+          normalAttack: { basic: "Whirls her cloth around and deals Magical Damage to the enemy twice. [Total Magical DMG: 75%]", enhanced: "Selene recovers HP in lieu of her third attack, Also, Taunts the enemy. [Taunt: Provokes Basic Attacks on the taunt.] [HP Recovery: 10% of Max HP] [Taunt Duration: 3s]" },
+          normalSkill: { name: "Wholeheartedly", desc: "Unleashes Heart Energy at the furthest enemy within the designated range and deals AoE Magical Damage to enemies who have come into contact with it. When the Heart Energy reaches the enemy, it explodes and applies Stun on nearby targets.", stats: ["Stun: Becomes unable to act", "Magical DMG Per Hit: 63%", "Heart Energy DMG Interval: 0.3s", "Stun Duration: 2.5s"] },
+          ultimateSkill: { name: "Pink Dust", desc: "Deals Magical Damage to the enemy with the lowest remaining HP Ratio. When an enemy is defeated with this skill, she casts a Shield on herself.", stats: ["Magical DMG: 1260%", "Shield: 58% of Max HP", "Shield Duration: 8s"], cooldown: "28s" },
+          passiveSkill: { desc: "Increases Critical Hit Resistance. Becomes immune to Taunt.", stats: ["Taunt: Provokes Basic Attacks on the taunt", "CRIT Resistance Increase: 42%"] }
         }
       }
     },
     {
       name: "羽伊",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人發射魔靈魔法，造成魔法傷害。 [魔法傷害：100%]",
@@ -646,7 +658,7 @@ const characterSkills = [
         ]
       }
     },
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "精霊魔法を放って敵に魔法ダメージを与える。 [魔法ダメージ：100%]",
         enhanced: "一定確率で敵を舌ではたいて魔法ダメージを与え、周囲の味方のSPを回復させる。 [魔法ダメージ：160%] [SP回復量：20]"
@@ -677,13 +689,19 @@ const characterSkills = [
         stats: [
           "スキル攻撃の被ダメージ量減少：26%"
         ]}
+        },
+    "en": {
+          normalAttack: { basic: "Casts Elemental Magic, dealing Magical Damage to the enemy. [Magical DMG: 100%]", enhanced: "At a set chance, Croakie lashes her tongue out at the enemy, dealing Magical Damage to them and recovering SP for nearby allies. [Magical DMG: 160%] [SP Recovery: 20]" },
+          normalSkill: { name: "Croaking Rain", desc: "Makes Croaking Rain fall on the surroundings, recovering allies' HP and SP, and AoE Magical Damage to enemies every second, Recovery and Damage are applied to up to 9 allies and enemies each.", stats: ["Continuous HP Recovery: 6.9% of own Max HP", "Continuous SP Recovery: 2.3% of target's Max SP", "Total Magical DMG: 576.1%", "Croaking Rain Duration: 6s"] },
+          ultimateSkill: { name: "As I Said!", desc: "Croakie sings to grant the following effects to 3 different allies: Fully restores HP and grants a Shield to the ally with the lowest remaining HP Ratio. Fully recovers SP of the ally with the lowest SP Ratio. Inflicts Mutate on a random enemy", stats: ["Mutate: Turns into an inanimate object and becomes unable to act.", "Shield: 18% of Max HP", "Shield Duration: 6s", "Mutation Duration: 5.6s"], cooldown: "" },
+          passiveSkill: { desc: "Reduces all allies Incoming Damage from Skill Attacks.", stats: ["Incoming Skill ATK DMG Reduction: 25%"]  }
         }
       }
     },
     {
       name: "艾皮卡",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "讓艾比康攻擊敵人，造成物理傷害。 [物理傷害：100%]",
@@ -717,7 +735,7 @@ const characterSkills = [
         ]
       }
     },
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "エピコンに敵を攻撃させ、物理ダメージを与える。 [物理ダメージ：100%]",
         enhanced: "勇敢なエピコンが一定確率で敵に範囲物理ダメージを与える。 [物理ダメージ：400%]"
@@ -748,13 +766,19 @@ const characterSkills = [
           "会心率増加：42%",
           "会心ダメージ増加：42%"
         ]}
+        },
+"en": {
+          normalAttack: { basic: "Has Epicon dealing Physical Damage to the enemy. [Physical DMG: 100%]", enhanced: "At a set chance, Brave Epicon deals AoE Physical Damage to the enemy. [Physical DMG: 400%]" },
+          normalSkill: { name: "Dramatic Staging", desc: "For a set period of time, increases the Attack Speed of herself and nearby allies, and replaces Basic Attacks with Enhanced Attacks.", stats: ["ATK SPD Increase: 93%", "Ally ATK SPD Increase: 13.5%", "ATK SPD Increase Duration: 9s"] },
+          ultimateSkill: { name: "For The Master!", desc: "Performs a heroic tale praising the Master. When it's over, the Epicons deal Physical Damage to a random enemy. This Attack Damage is treated as Basic Attack Damage. Increases the Attack of nearby allies for a set period of time.", stats: ["Minion Physical Damage: 320%", "Performance Duration: 6s", "ATK Increase: 25%", "ATK Increase Duration: 8s"], cooldown: "40s" },
+          passiveSkill: { desc: "Increases Critical Hit and Critical Damage.", stats: ["CRIT Increase: 32%", "Critical Damage Increase: 32%"] }
         }
       }
     },
     {
       name: "米雪",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人揮動劍刃，造成物理傷害。 [物理傷害：75%]",
@@ -782,7 +806,7 @@ const characterSkills = [
         ]
       }
     },
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "剣を振るって敵に物理ダメージを与える。 [物理ダメージ：75%]",
         enhanced: "無"
@@ -813,7 +837,7 @@ const characterSkills = [
     {
       name: "茱蜜",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人射出蜂刺，造成物理傷害。 [物理傷害：120%]",
@@ -845,7 +869,7 @@ const characterSkills = [
         ]
       }
     },
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "針を飛ばして敵に物理ダメージを与える。 [物理ダメージ：120%]",
         enhanced: "無"
@@ -880,7 +904,7 @@ const characterSkills = [
     {
       name: "琳",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人揮舞鐮刀，造成範圍物理傷害，並以一定機率給予灼痛效果。 [灼痛：每秒造成傷害，並使恢復量減少。] [物理傷害：100%] [灼痛持續時間：2秒]",
@@ -916,7 +940,7 @@ const characterSkills = [
         ]
       }
     },
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "鎌を薙ぎ払って敵に範囲物理ダメージを与え、一定確率で苦痛を付与する。 [苦痛：回復量が減少し、1秒ごとにダメージを受ける。] [物理ダメージ：100%] [苦痛の持続時間：2秒]",
         enhanced: "無"
@@ -955,7 +979,7 @@ const characterSkills = [
     {
     name: "莉絲蒂",
     attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
     normalAttack: {
       basic: "對敵人投擲喝完的罐子,造成物理傷害。 [物理傷害:80%]",
@@ -989,7 +1013,7 @@ const characterSkills = [
         ]
       }
     },
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "敵に飲み干した缶を投げて、物理ダメージを与える。 [物理ダメージ:80%]",
         enhanced: "4回攻撃するごとに敵をハッキングし、確定会心物理ダメージを与える。 [物理ダメージ: 120%]"
@@ -999,7 +1023,7 @@ const characterSkills = [
         desc: "敵を撃破できなかった場合、最大3回まで敵を再サーチし、範囲物理ダメージを与える。最後の一撃はより高いダメージを与える。",
         stats: [
           "物理ダメージ: 317%",
-	  "最後の一撃の物理ダメージ: 648%"
+      "最後の一撃の物理ダメージ: 648%"
         ]
       },
       ultimateSkill: {
@@ -1007,9 +1031,9 @@ const characterSkills = [
         desc: "残りHP割合が最も低い敵3体にブロックを10個ずつ落として、物理ダメージを与える。最後のブロックはより高いダメージを与え、気絶を付与する。スキル発動中に対象が変更される場合もあ",
         stats: [
           "気絕:行動不能状態になる。",
-	  "ブロックにつき物理ダメージ: 77%",
-	  "最後のブロックの物理ダメージ: 309%",
-	  "気絶の持続時間:3秒"
+      "ブロックにつき物理ダメージ: 77%",
+      "最後のブロックの物理ダメージ: 309%",
+      "気絶の持続時間:3秒"
         ],
         cooldown: "26秒"
       },
@@ -1017,7 +1041,7 @@ const characterSkills = [
         desc: "高学年スキル気組の持続時間が変更される。",
         stats: [
           "気絕:行動不能状になる。",
-	  "気絶の持続時間:6.8秒"
+      "気絶の持続時間:6.8秒"
         ]}
         }
       }
@@ -1025,7 +1049,7 @@ const characterSkills = [
     {
       name: "芙莉可",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人召喚追蹤的藤蔓，造成魔法傷害。 [魔法傷害：75%]",
@@ -1059,7 +1083,7 @@ const characterSkills = [
         ]
       }
     },
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "追跡する蔓を発射し、敵に魔法ダメージを与える。 [魔法ダメージ：75%]",
         enhanced: "一定確率で棘の触手を召喚する。棘の触手は消滅するまで、定期的に近くの敵を攻撃する。棘の触手は消滅時、前後方向に範囲攻撃を放つ。 [召喚獣魔法ダメージ：15%] [召喚獣消滅時ダメージ(1回目)：30%] [召喚獣消滅時ダメージ(2回目)：60%]"
@@ -1096,7 +1120,7 @@ const characterSkills = [
     {
       name: "綾",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人揮舞冰雪花刀，造成2次魔法傷害。 [總魔法傷害：100%]",
@@ -1133,7 +1157,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "氷刃雪花を振って敵に魔法ダメージを2回与える。 [総魔法ダメージ：100%]",
         enhanced: "一定確率で氷刃雪花を振って敵に範囲魔法ダメージを2回与える。2回目の攻撃は敵の攻撃速度を減少させる。 [総魔法ダメージ：190%] [攻撃速度減少：20%] [攻撃速度減少持続時間：4秒]"
@@ -1172,7 +1196,7 @@ const characterSkills = [
     {
       name: "帕特拉",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人用鏟子敲擊，造成物理傷害。 [物理傷害：50%]",
@@ -1203,7 +1227,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "フライ返しで叩きつけて敵に物理ダメージを与える。 [物理ダメージ：50%]",
         enhanced: "無"
@@ -1236,7 +1260,7 @@ const characterSkills = [
     {
       name: "梅露娜",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人投擲哈密瓜，造成傷害。 [魔法傷害：75%]",
@@ -1268,7 +1292,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "メロンを投げつけ、敵にダメージを与える。 [魔法ダメージ：75%]",
         enhanced: "一定確率で高級メロンを投げつけて敵にダメージを与え、目隠しを付与する。 [目隠し：普通攻撃が命中しない。] [魔法ダメージ：100%] [目隠し持続時間：3秒]"
@@ -1302,7 +1326,7 @@ const characterSkills = [
     {
       name: "傑德",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人發射咒語，造成魔法傷害。 [魔法傷害：75%]",
@@ -1334,7 +1358,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "呪文を唱えて最も近い単体対象に魔法ダメージを与える。 [魔法ダメージ：75%]",
         enhanced: "一定確率で翡翠を摂取し、翡翠玉を1スタック獲得する。翡翠玉の獲得時、自身に魔法のシールドを生成する。 [翡翠玉の最大スタック数：3] [シールド：最大HPの30%] [シールドの持続時間：6秒]"
@@ -1368,7 +1392,7 @@ const characterSkills = [
     {
       name: "艾斯皮",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人射出燭火，造成魔法傷害。 [魔法傷害：75%]",
@@ -1401,7 +1425,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "ろうそくを飛ばし、敵に魔法ダメージを与える。 [魔法ダメージ：75%]",
         enhanced: "一定確率でろうそくを2本飛ばし、敵に魔法ダメージを与える。 [総魔法ダメージ：125%]"
@@ -1436,7 +1460,7 @@ const characterSkills = [
     {
       name: "雷吉",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人發射雷射，造成範圍物理傷害。 [物理傷害：80%]",
@@ -1467,7 +1491,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "レーザーを発射して敵に範囲物理ダメージを与える。 [物理ダメージ：80%]",
         enhanced: "無"
@@ -1500,7 +1524,7 @@ const characterSkills = [
     {
       name: "瑪約",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人射出針刺，造成物理傷害。 [物理傷害：100%]",
@@ -1535,7 +1559,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "吹き矢を飛ばして敵に物理ダメージを与える。 [物理ダメージ：100%]",
         enhanced: "一定確率で毒矢を飛ばして敵に物理ダメージを与え、毒を付与する。 [毒：1秒ごとにダメージを受け、攻撃力が減少する] [物理ダメージ：125%] [毒持続時間：2秒]"
@@ -1572,7 +1596,7 @@ const characterSkills = [
     {
       name: "莉茲",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人揮舞大劍，造成2次範圍物理傷害。第2次打擊造成的傷害更高。 [物理傷害：60%] [第2次攻擊物理傷害：90%]",
@@ -1609,7 +1633,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "大剣を薙ぎ払って敵に範囲物理ダメージを2回与える。2回目はより高いダメージを与える。 [物理ダメージ：60%] [2回目の物理ダメージ：90%]",
         enhanced: "一定確率で敵に範囲物理ダメージを与え、ノックバックさせる。 [ノックバック：行動不能状態になり後ろへ押し戻される。] [物理ダメージ：200%]"
@@ -1648,7 +1672,7 @@ const characterSkills = [
     {
       name: "謝蒂",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人揮舞鏈刀，造成物理傷害。 [物理傷害：175％]",
@@ -1682,7 +1706,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "鎖鎌を振り回して敵に物理ダメージを与える。 [物理ダメージ：175%]",
         enhanced: "無"
@@ -1718,7 +1742,7 @@ const characterSkills = [
     {
       name: "寧琉",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人舉起斧頭揮砍，造成魔法傷害。 [魔法傷害：80%]",
@@ -1752,7 +1776,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "斧を振り回して敵に魔法ダメージを与える。 [魔法ダメージ：80%]",
         enhanced: "無"
@@ -1788,7 +1812,7 @@ const characterSkills = [
     {
       name: "庫洛艾",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人揮動手臂，造成魔法傷害。玩偶的意志觸發時，效果會有所改變。玩偶的意志觸發時，對敵人揮動手臂造成3次魔法傷害，最後一擊會造成範圍更大的魔法傷害。 [玩偶的意志：改變基本攻擊效果。] [魔法傷害：125%] [玩偶的意志魔法傷害：192%] [玩偶的意志最後一擊魔法傷害：288%]",
@@ -1823,7 +1847,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "腕を振って敵に魔法ダメージを与える。 ぬいぐるみの意志発動時は効果が変更される。 ぬいぐるみの意志発動すると腕を振って敵に魔法ダメージを3回与え、最後の打撃はより広範囲の魔法ダメージとなる。 [ぬいぐるの意志：基本攻撃の効果が変更される。] [魔法ダメージ：125%] [ぬいぐるの意志の魔法ダメージ：192%] [ぬいぐるの意志の最後の魔法ダメージ：288%]",
         enhanced: "3回攻撃するごとに両腕を叩きつけて敵を挑発し、範囲魔法ダメージを与え、ノックバックさせる。ぬいぐるみの意志発動中は強化攻撃を使用できない。 [挑発：挑発してきた対象を攻撃する。] [ノックバック：行動不能になり後ろへ押し戻される。] [魔法ダメージ：300%] [挑発持続時間：2秒]"
@@ -1854,13 +1878,19 @@ const characterSkills = [
         stats: [
           "普通攻撃の被ダメージ量減少：52%"
         ]}
+        },
+        "en": {
+          normalAttack: { basic: "Swings Sebastian's arms, dealing Magical Damage to the enemy. The effect of Doll's Will changes when activated. When activating Doll's Will, flails Sebastian's arms around, dealing Magical Damage 3 times to the enemy. The final hit deals greater AoE Magical Damage. [Doll's Will: The effect of Basic Attack changes.] [Magical DMG: 125%] [Doll's Will Magical DMG: 192%] [Doll's Will Final Hit Magical DMG: 288%]", enhanced: "Every third attack, strikes down with both her arms and Taunts enemies, dealing AoE Magical Damage and applying Knockback. While Doll's Will is activated, Enhanced Attack won't be used. [Taunt: Provokes Basic Attacks on the taunt.] [Knockback: is pushed back, becoming unable to act.] [Magical DMG: 300%] [Taunt Duration: 2s]" },
+          normalSkill: { name: "Merry-go-round", desc: "Mounts Sebastian and activates Doll's Will for a set period of time, casting a Shield on herself. Increases Normal Attack Damage for every Basic Attack for a set period of time. The Normal Attack Damage Boost stacks up to 9 times. Doll's Will can't be disabled.", stats: ["Doll's Will: The effect of Basic Attack changes", "Doll's Will Duration: 12s", "Shield: 80% of Max HP", "Shield Duration: 6s", "Normal ATK DMG Increase: 7%", "Normal ATK DMG Increase Duration: 10s"] },
+          ultimateSkill: { name: "Le Petit Sebastian", desc: "Summons 7 Le Petit Sebastians. Le Petit Sebastians bump into enemies and explode, dealing AoE Magical Damage and applying Knockback.", stats: ["Knockback: is pushed back, becoming unable to act", "Magical DMG Per Le Petit Sebastian: 304%"], cooldown: "50s" },
+          passiveSkill: { desc: "Reduces Incoming Damage from Normal Attacks.", stats: ["Incoming Normal ATK DMG Reduction: 46%"] }
         }
       }
     },
     {
       name: "希瑟圖",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人投擲雜物，造成傷害。 [物理傷害：110%]",
@@ -1893,7 +1923,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "敵にガラクタを投げつけてダメージを与える。 [物理ダメージ: 110%]",
         enhanced: "無"
@@ -1902,9 +1932,9 @@ const characterSkills = [
         name: "マウントガン",
         desc: "マウントガンを発射すると、自身の攻撃力と攻撃速度が増加する。",
         stats: [
-          "攻撃力増加 : 37%",
+          "攻撃力増加 : 43%",
           "攻撃力増加の持続時間 : 10秒",
-          "攻撃速度増加 : 37%",
+          "攻撃速度増加 : 43%",
           "攻撃速度増加の持続時間 : 10秒"
         ]
       },
@@ -1922,13 +1952,19 @@ const characterSkills = [
         stats: [
           "クールタイム減少:2.4秒"
         ]}
+        },
+"en": {
+          normalAttack: { basic: "Throws junk and deals damage to an enemy. [Physical DMG: 110%]", enhanced: "無" },
+          normalSkill: { name: "Flex Gun", desc: "Firing the Flex Gun increases your Attack and Attack Speed.", stats: ["ATK Increase: 43%", "ATK Increase Duration: 10s", "ATK SPD Increase: 43%", "ATK SPD Increase Duration: 10s"] },
+          ultimateSkill: { name: "Bullet Delivery", desc: "Fires a bullet at the enemy with the lowest remaining HP Ratio, dealing Physical Damage. If the target is defeated, the skill can be used again.", stats: ["Physical DMG: 1020-3100%", "Max Additional Uses: 2"], cooldown: "24s" },
+          passiveSkill: { desc: "When Basic Attack hits, reduces senior skill cooldown.", stats: ["Cooldown Reduction: 2.4s"] }
         }
       }
     },
     {
       name: "愛麗絲",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人投擲卡片，造成魔法傷害。 [魔法傷害：100%]",
@@ -1974,7 +2010,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "カードを投げつけて敵に魔法ダメージを与える。 [魔法ダメージ：100%]",
         enhanced: "4回目の攻撃時に敵にカードの束を投げつけて魔法ダメージを与える。 [魔法ダメージ：250%]"
@@ -2022,7 +2058,7 @@ const characterSkills = [
     {
       name: "蒂亞娜",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人發射咒語，造成魔法傷害。 [魔法傷害：75%]",
@@ -2054,7 +2090,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "呪文を発射し、敵に魔法ダメージを与える。 [魔法ダメージ：75%]",
         enhanced: "一定確率で強化呪文を発射し、敵に魔法ダメージを与え、残りHP割合が最も低い味方を回復させる。 [魔法ダメージ：150%] [HP回復：与ダメージ量の275%]"
@@ -2085,10 +2121,10 @@ const characterSkills = [
         }
       }
     },
-	{
+    {
       name: "奈雅",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人發射水槍，造成傷害。 [魔法傷害：45%]",
@@ -2117,7 +2153,7 @@ const characterSkills = [
         ]
       }
     },
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "水鉄砲を発射して敵にダメージを与える。 [魔法ダメージ：45%]",
         enhanced: "一定確率で水鉄砲を素早く3回発射して敵にダメージを与える。最後の一撃ではより大きなダメージを与える。 [魔法ダメージ：48%] [最後の一撃の魔法ダメージ：72%]"
@@ -2149,7 +2185,7 @@ const characterSkills = [
     {
       name: "卡洛特",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人丟擲甘蔗，造成魔法傷害。 [魔法傷害：85%]",
@@ -2184,7 +2220,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "サトウキビを投げつけて敵に魔法ダメージを与える。 [魔法ダメージ：85%]",
         enhanced: "4回目の攻撃の代わりに、魔法成長肥料を撒いて周囲の味方のSPを回復する。 [SP回復量：50]"
@@ -2221,7 +2257,7 @@ const characterSkills = [
     {
       name: "薇薇",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人操弄刀刃，造成2次魔法傷害。 [總魔法傷害：75%]",
@@ -2255,7 +2291,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "刀を撮り敵に魔法ダメージを2回与える。 [総魔法ダメージ: 75%]",
         enhanced: "一定の確率で刀で敵を4回刺し、範囲魔法ダメージを与える。[総魔法ダメージ: 260%]"
@@ -2291,7 +2327,7 @@ const characterSkills = [
     {
       name: "海莉",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人揮舞鞭子，造成範圍物理傷害。 [物理傷害：85%]",
@@ -2325,7 +2361,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "敵に鞭を振るい、範囲物理ダメージを与える。 [物理ダメージ：85%]",
         enhanced: "4回攻撃するごとに鞭を整える。一定時間、物理攻撃力が増加し、魔法防御力が増加する。 [物理攻撃力増加：20%] [物理攻撃力増加の持続時間：6秒] [魔法防御力増加：40%] [魔法防御力増加の持続時間：6秒]"
@@ -2355,13 +2391,19 @@ const characterSkills = [
         stats: [
           "ダメージ増加：53%"
         ]}
+        },
+"en": {
+          normalAttack: { basic: "Whips enemies, dealing AoE Physical Damage. [Physical DMG: 85%]", enhanced: "Every fourth attack reinforces the whip, increasing Physical ATK and Magical DEF for a set period of time. [Physical ATK Increase: 20%] [Physical ATK Increase Duration: 6s] [Magical DEF Increase: 40%] [Magical DEF Increase Duration: 6s]" },
+          normalSkill: { name: "Non Grata", desc: "At a set chance, whips the enemy 3 times, dealing AoE Physical Damage and applying Stinging. If the target is affected by Stinging, Scorch, or Poison, additional Damage is dealt based on the number of active Status Effects", stats: ["Stinging: Reduces Recovery Amount and applies damage every second", "Total Physical Damage: 524.7%", "Stinging Duration: 5s"] },
+          ultimateSkill: { name: "Plan B", desc: "Launches a smoke bomb, dealing continuous AoE Physical Damage and applying Blindfold.", stats: ["Blindfold: Normal Attacks miss.", "Physical Damage Per Second: 92.8%", "Physical Damage Duration: 7s", "Blindfold Duration: 10s"], cooldown: "32s" },
+          passiveSkill: { desc: "If the target is affected by Stinging, Scorch, or Poison, additional Damage is dealt based on the number of active Status Effects.", stats: ["Damage Increase: 38%"] }
         }
       }
     },
     {
       name: "洛涅",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人揮動劍刃，造成物理傷害 [物理傷害:150%]",
@@ -2396,7 +2438,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "剣を振り回して敵に物理ダメージを与える。 [物理ダメージ：150%]",
         enhanced: "一定確率で本気の攻撃を行い、敵に物理ダメージを与え、気絶を付与する。 [気絶：行動不能状態になる。] [気絶持続時間：2秒] [物理ダメージ：150%]"
@@ -2434,7 +2476,7 @@ const characterSkills = [
     {
       name: "加薇雅",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人突起岩石，造成魔法傷害。 [魔法傷害：100%]",
@@ -2469,7 +2511,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "岩石を突き出し、敵に魔法ダメージを与える。 [魔法ダメージ：100%]",
         enhanced: "無"
@@ -2506,7 +2548,7 @@ const characterSkills = [
     {
       name: "斯皮奇",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人發射南瓜，造成魔法傷害。 [魔法傷害：75%]",
@@ -2536,7 +2578,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "かぼちゃを発射し、敵に魔法ダメージを与える [魔法ダメージ：75%]",
         enhanced: "無"
@@ -2568,7 +2610,7 @@ const characterSkills = [
     {
       name: "大木頭",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人揮動拳頭，造成物理傷害。 [物理傷害：100%]",
@@ -2600,7 +2642,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "拳を振るい、敵に物理ダメージを与える。 [物理ダメージ：100%]",
         enhanced: "一定確率で単体対象に拳を振り回し、物理ダメージを与え、気絶を付与する。 [気絶：行動不能になる。] [物理ダメージ：300%] [気絶持続時間：3秒]"
@@ -2635,7 +2677,7 @@ const characterSkills = [
     {
       name: "阿萊特",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人使用盾牌衝撞，造成物理傷害。 [物理傷害：100%]",
@@ -2668,7 +2710,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "盾で叩きつけて敵にダメージを与える。 [物理ダメージ：100%]",
         enhanced: "無"
@@ -2698,13 +2740,13 @@ const characterSkills = [
           "防御力：42%"
         ]
         }
-		}
+        }
       }
     },
     {
       name: "莎莉",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人揮舞鐮刀，造成物理傷害。 [物理傷害:70%]",
@@ -2734,7 +2776,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "鎌を振り回して敵に物理ダメージを与える。 [物理ダメージ：70%]",
         enhanced: "無"
@@ -2767,7 +2809,7 @@ const characterSkills = [
     {
       name: "路易",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人發射咒語，造成魔法傷害。 [魔法傷害:100%]",
@@ -2796,7 +2838,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "呪文を発射し、敵に魔法ダメージを与える。 [魔法ダメージ：100%]",
         enhanced: "無"
@@ -2827,7 +2869,7 @@ const characterSkills = [
     {
       name: "伊德",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人發射4次雷射，造成魔法傷害。 [總魔法傷害:120%]",
@@ -2864,7 +2906,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "敵にレーザーを4回発射して魔法ダメージを与える。 [総魔法ダメージ：120%]",
         enhanced: "直接ダメージを9回受けるたびに、前方の敵に範囲魔法ダメージを与え、自身のHPを回復する。ダメージを受けた敵は攻撃力が減少する。強化攻撃中は、被ダメージのカウントが累積されない。 [直接ダメージ：直接攻撃によるダメージ(状態異常ダメージ、反射ダメージを除く)。] [魔法ダメージ：240%] [HP回復：最大HPの20%] [攻撃力減少：30%] [攻撃力減少の持続時間：6秒]"
@@ -2897,291 +2939,18 @@ const characterSkills = [
           "無敵の持続時間：7.2秒",
           "目隠し：普通攻撃が命中しない。"
         ]}
+        },
+    "en": {
+          normalAttack: { basic: "Shoots the laser 4 times and deals Magical Damage to the enemy. [Total Magical DMG: 120%]", enhanced: "After receiving Direct Damage 9 times, deals AoE Magical Damage to enemies in front and recovers HP. Reduces Attack of Enemies that take Damage. Hit Stacks do not accumulate during Enhanced Attack. [Direct Damage: Refers to damage caused by Direct Attacks, excluding Status Effect Damage and Damage Reflection.] [Magical DMG: 240%] [HP Recovery: 20% of Max HP] [ATK Reduction: 30%] [ATK Reduction Duration: 6s]" },
+          normalSkill: { name: "Blurry Divide", desc: "ED casts a Shield for herself and applies Protection to all allied Apostles excluding herself. This effect activates up to 2 times.", stats: ["Protection: Negates Incapacitating Direct Damage and grants a Shield.", "Direct Damage: Refers to damage caused by Direct Attacks, excluding Status Effect Damage and Damage Reflection.", "Protection Duration: 10s", "Shield: 50% of Max HP", "Shield Duration: 8s", "Ally Shield: 96% of Max HP", "Ally Shield Duration: 12s"] },
+          ultimateSkill: { name: "The Universe, Yours & Mine", desc: "ED deals AoE Magical Damage 4 times to enemies near her and reduces their SP.", stats: ["Total Magical DMG: 1470%", "Total SP Reduction: 184"], cooldown: "38s" },
+          passiveSkill: { desc: "At the start of a wave, applies Invincible on herself for a set period of time. Becomes immune to Blindfold.", stats: ["Invincible: Immune to all damage and debuffs.", "Blindfold: Normal Attacks miss.", "Invincible Duration: 6.9s"] }
         }
-      }
-    },
-    {
-      name: "艾琳娜",
-      attribute: "物理",
-	skills: {
-        "zh-TW": {
-      normalAttack: {
-        basic: "發射能量球，對敵人造成3次物理傷害，最後一擊造成更大傷害。 [物理傷害：90%] [最後一擊物理傷害：60%]",
-        enhanced: "以一定機率發射過載能量球，對敵人造成傷害。 [物理傷害：600%]"
-      },
-      normalSkill: {
-        name: "戰術無人機MK-2",
-        desc: "向前方釋放脈衝波，對敵人造成範圍物理傷害並給予觸電效果。",
-        stats: [
-          "觸電：攻擊速度及移動速度下降。",
-          "物理傷害：1260％",
-          "觸電持續時間：4秒"
-        ]
-      },
-      ultimateSkill: {
-        name: "代號D-CAT",
-        desc: "派出特殊無人機後，向周圍釋放脈衝波，對敵人造成8次範圍物理傷害。",
-        stats: [
-          "物理傷害：1470%",
-          "最後爆炸物理傷害：630％"
-        ],
-        cooldown: "28秒"
-      },
-      passiveSkill: {
-        desc: "若陣容中編入艾蜜莉雅，受到的傷害量將會減少。",
-        stats: [
-          "受到的傷害量減少：46%"
-        ]
-      }
-    },
-
-	"ja": {
-      normalAttack: {
-        basic: "エネルギー弾を発射して敵に物理ダメージを3回与える。最後の一撃はより高いダメージを与える。 [物理ダメージ：90%] [最後の一撃の物理ダメージ：60%]",
-        enhanced: "一定確率で過充電されたエネルギー弾を発射して敵にダメージを与える。 [物理ダメージ：600%]"
-      },
-      normalSkill: {
-        name: "戦術ドローンMK-2",
-        desc: "前方にパルス波を放出して、範囲物理ダメージを与え、感電を付与する。",
-        stats: [
-          "感電：攻撃力と移動速度が減少する。",
-          "物理ダメージ：1260%",
-          "感電の持続時間：4秒"
-        ]
-      },
-      ultimateSkill: {
-        name: "コードネーム：D-CAT",
-        desc: "特殊ドローンを送り出した後、パルス波を周囲に放出し、敵に8回範囲物理ダメージを与える。",
-        stats: [
-          "物理ダメージ：1470%",
-          "最後の爆破の物理ダメージ：630%"
-        ],
-        cooldown: "28秒"
-      },
-      passiveSkill: {
-        desc: "アメリアがデッキに編成されている場合、被ダメージ量が減少する。",
-        stats: [
-          "被ダメージ量減少：46%"
-        ]}
-        }
-      }
-    },
-    {
-      name: "佩佩",
-      attribute: "物理",
-	skills: {
-        "zh-TW": {
-      normalAttack: {
-        basic: "對敵人用斧頭猛擊，造成範圍物理傷害。 [物理傷害：125%]",
-        enhanced: "無"
-      },
-      normalSkill: {
-        name: "放馬過來！",
-        desc: "挑釁敵人並恢復HP，一定時間內攻擊力增加。",
-        stats: [
-          "挑釁：使目標對發動挑釁的單位進行基本攻擊。",
-          "HP恢復：攻擊力的365％",
-          "攻擊力增加：47%",
-          "攻擊力增加持續時間：6秒",
-          "挑釁持續時間：4秒"
-        ]
-      },
-      ultimateSkill: {
-        name: "魔法：離心分離",
-        desc: "對敵人快速旋轉斧頭橫掃周圍，造成11次範圍物理傷害並擊退。最後一擊將造成更大的傷害。在旋轉期間處於無敵狀態。",
-        stats: [
-          "擊退：處於無法行動的狀態，被向後推。",
-          "無敵：對所有傷害和減益效果免疫。",
-          "物理傷害：453.6%",
-          "最後一擊物理傷害：113.4%",
-          "無敵持續時間：3秒"
-        ],
-        cooldown: "20秒"
-      },
-      passiveSkill: {
-        desc: "最大HP增加。",
-        stats: [
-          "最大HP增加：42%"
-        ]
-      }
-    },
-
-	"ja": {
-      normalAttack: {
-        basic: "斧を振るい、敵に範囲物理ダメージを与える。 [物理ダメージ：125%]",
-        enhanced: "無"
-      },
-      normalSkill: {
-        name: "かかってきな！",
-        desc: "敵を挑発し、HPを回復する。一定時間、攻撃力が増加する。",
-        stats: [
-          "挑発：挑発してきた対象を攻撃する。",
-          "HP回復：攻撃力の365%",
-          "攻撃力増加：47%",
-          "攻撃力増加の持続時間：6秒",
-          "挑発の持続時間：4秒"
-        ]
-      },
-      ultimateSkill: {
-        name: "魔法：遠心分離",
-        desc: "高速回転して斧で周囲を薙ぎ払い、敵に範囲物理ダメージを11回与え、ノックバックさせる。最後の一撃ではより大きなダメージを与える、回転中は無敵になる。",
-        stats: [
-          "ノックバック：行動不能になり後ろへ押し戻される。",
-          "無敵：全てのダメージとデバフの免疫を獲得する。",
-          "物理ダメージ：453.6%",
-          "最後の物理ダメージ：113.4%",
-          "無敵持続時間：3秒"
-        ],
-        cooldown: "20秒"
-      },
-      passiveSkill: {
-        desc: "最大HPが増加する。",
-        stats: [
-          "最大HP増加：42%"
-        ]}
-        }
-      }
-    },
-    {
-      name: "希拉",
-      attribute: "物理",
-	skills: {
-        "zh-TW": {
-      normalAttack: {
-        basic: "對指定範圍內距離最遠的敵人發射箭矢，造成物理傷害。 [物理傷害：150%]",
-        enhanced: "無"
-      },
-      normalSkill: {
-        name: "快速射擊",
-        desc: "對指定範圍內距離最遠的敵人以極快的速度發射5支箭矢，造成物理傷害。",
-        stats: [
-          "總物理傷害：1215％"
-        ]
-      },
-      ultimateSkill: {
-        name: "黑特帕斯卡揮棒！",
-        desc: "對指定範圍內距離最遠的敵人釋放風之靈，造成物理傷害。",
-        stats: [
-          "物理傷害：1830%"
-        ],
-        cooldown: "18秒"
-      },
-      passiveSkill: {
-        desc: "增加基本攻擊傷害量。",
-        stats: [
-          "基本攻擊傷害量增加：52%"
-        ]
-      }
-    },
-
-	"ja": {
-      normalAttack: {
-        basic: "矢を発射し、指定された射程距離内で最も離れている敵に物理ダメージを与える。 [物理ダメージ：150%]",
-        enhanced: "無"
-      },
-      normalSkill: {
-        name: "ラピッドアロー",
-        desc: "矢を目に止まらない速さで5回発射し、指定範囲内で最も遠い敵に物理ダメージを与える。",
-        stats: [
-          "総物理ダメージ：1215%"
-        ]
-      },
-      ultimateSkill: {
-        name: "ヘクトパスカルスイング！",
-        desc: "風の精霊を飛ばして最も遠い単体対象に物理ダメージを与える。",
-        stats: [
-          "物理ダメージ：1830%"
-        ],
-        cooldown: "18秒"
-      },
-      passiveSkill: {
-        desc: "基本攻撃のダメージ量が増加する。",
-        stats: [
-          "基本攻撃のダメージ量増加：52%"
-        ]}
-        }
-      }
-    },
-    {
-      name: "皮可菈",
-      attribute: "魔法",
-	skills: {
-        "zh-TW": {
-      normalAttack: {
-        basic: "對敵人發射咒語，造成魔法傷害。 [魔法傷害：60%]",
-        enhanced: "有一定機率對隨機敵人反彈2個咒語，造成魔法傷害。 [總魔法傷害：120%]"
-      },
-      normalSkill: {
-        name: "限定貼紙",
-        desc: "在一定時間內，對剩餘HP比例最低的3名友軍貼上貼紙，並恢復其HP。貼紙會額外恢復友軍的HP，並增加爆擊抵抗與物理防禦力。該效果無法解除。",
-        stats: [
-          "HP恢復：攻擊力的1440%",
-          "貼紙HP恢復：目標最大HP的23％",
-          "爆擊抵抗增加：22%",
-          "物理防禦力增加：22%",
-          "貼紙持續時間：8秒"
-        ]
-      },
-      ultimateSkill: {
-        name: "你也可以成為時尚達人",
-        desc: "為最大HP最高的友軍解除所有狀態異常並進行裝扮。增加被裝扮友軍的最大HP，並在一定時間內挑釁敵人。裝扮結束時，會恢復相當於增加的最大HP的HP。該效果無法解除。",
-        stats: [
-          "挑釁：使目標對發動挑釁的單位進行基本攻擊。",
-          "挑釁施放過期：3秒",
-          "挑釁持續時間：2秒",
-          "最大HP增加：53%",
-          "最大HP增加持續時間：8秒"
-        ],
-        cooldown: "32秒"
-      },
-      passiveSkill: {
-        desc: "所有友軍的爆擊抵抗增加。（該效果即使皮可菈不在場上也會觸發。）",
-        stats: [
-          "爆擊抵抗增加：24%"
-        ]
-      }
-    },
-
-	"ja": {
-      normalAttack: {
-        basic: "呪文を唱えて敵に魔法ダメージを与える。 [魔法ダメージ：60%]",
-        enhanced: "一定確率でランダムな対象に呪文を2つ唱え、魔法ダメージを与える。 [総魔法ダメージ：120%]"
-      },
-      normalSkill: {
-        name: "限定ステッカー",
-        desc: "一定時間、残りHP割合が最も低い味方3名にステッカーを貼り、HPを回復する。ステッカーは味方のHPを追加で回復し、会心抵抗と物理防御力増加させる。この効果は解除できない。",
-        stats: [
-          "HP回復：攻撃力の1440%",
-          "ステッカーのHP回復：最大HPの23%",
-          "会心抵抗の増加：22%",
-          "物理防御力の増加：22%",
-          "ステッカーの持続時間：8秒"
-        ]
-      },
-      ultimateSkill: {
-        name: "これできみもファッショニスタ",
-        desc: "最大HPが最も高い味方にかかっているすべての状態異常を解除しスタイリングする。スタイリングした味方の最大HP を増加させ、一定時間、敵を挑発する。スタイリングが終わると、増加した最大HP分だけHPを回復する。この効果は解除できない。",
-        stats: [
-          "挑発：挑発してきた対象を攻撃する。",
-          "挑発の発動周期：3秒",
-          "挑発の持続時間：2秒",
-          "最大HP増加：53%",
-          "最大HP増加の持続時間：8秒"
-        ],
-        cooldown: "32秒"
-      },
-      passiveSkill: {
-        desc: "味方全員の会心抵抗が増加する。(この効果はピコラがフィールドにいなくても発動する)",
-        stats: [
-          "会心抵抗増加：24%"
-        ]}
-        }
-      }
     },
     {
       name: "艾蜜莉雅",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人發射雷射，造成範圍物理傷害。 [物理傷害：100%]",
@@ -3209,17 +2978,14 @@ const characterSkills = [
         cooldown: "32秒"
       },
       passiveSkill: {
-        desc: "對指定範圍內的隨機敵人給予觸電效果。",
+        desc: "若陣容中編入艾蜜莉雅，受到的傷害量將會減少。",
         stats: [
-          "觸電：攻擊速度及移動速度下降。",
-          "觸電持續時間：17秒",
-          "影響目標數：2名",
-          "冷卻時間：10秒"
+          "受到的傷害量減少：46%"
         ]
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "敵にレーザーを発射して範囲物理ダメージを与える。 [物理ダメージ: 100%]",
         enhanced: "一定確率で敵に強化レーザーを発射して範囲物理ダメージを与え、感電を付与する。 [感電:攻撃速度と移動速度が減少する。] [物理ダメージ: 175%] [感電の持続時間:3秒]"
@@ -3256,10 +3022,10 @@ const characterSkills = [
         }
       }
     },
-	{
+    {
       name: "斯諾奇",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "快速踢擊敵人，造成3次物理傷害。 [總物理傷害：225%]",
@@ -3297,7 +3063,7 @@ const characterSkills = [
         ]
       }
     },
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "敵を素早く蹴り、物理ダメージを3回与える。 [総物理ダメージ：225%]",
         enhanced: "普通攻撃を3回行うごとに、味方陣営から最も近い敵に向かって前方へ飛び蹴りを放ち、範囲物理ダメージを与える。強化攻撃は一定確率でもう一度発動し、連続で発動するたびに発動確率が減少する。 [物理ダメージ：350%]"
@@ -3338,7 +3104,7 @@ const characterSkills = [
     {
       name: "貝魯",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人投擲斧頭，造成物理傷害。 [物理傷害：75%]",
@@ -3368,7 +3134,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "斧を投げつけ、敵に物理ダメージを与える。 [物理ダメージ：75%]",
         enhanced: "無"
@@ -3400,7 +3166,7 @@ const characterSkills = [
     {
       name: "佩斯塔",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人使用吉他劈砍，造成物理傷害. [物理傷害：150%]",
@@ -3432,7 +3198,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "ギターで敵を叩きつけダメージを与える。 [物理ダメージ：150%]",
         enhanced: "無"
@@ -3466,7 +3232,7 @@ const characterSkills = [
     {
       name: "喬菲",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人揮動斧頭，造成物理傷害。 [物理傷害：100%]",
@@ -3495,7 +3261,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "斧を振り回して敵に物理ダメージを与える。 [物理ダメージ：100%]",
         enhanced: "無"
@@ -3526,7 +3292,7 @@ const characterSkills = [
     {
       name: "萊薇",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人揮動短刀，造成物理傷害。 [物理傷害：100%]",
@@ -3558,7 +3324,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "ダガーを振るい、敵に物理ダメージを与える。 [物理ダメージ：100%]",
         enhanced: "無"
@@ -3592,7 +3358,7 @@ const characterSkills = [
     {
       name: "卡蓮",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人發射咒語，造成魔法傷害。 [魔法傷害：100%]",
@@ -3621,7 +3387,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "呪文を唱えて敵に魔法ダメージを与える。 [魔法ダメージ：100%]",
         enhanced: "無"
@@ -3652,7 +3418,7 @@ const characterSkills = [
     {
       name: "布蘭切",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人投擲藍玫瑰，造成魔法傷害。 [魔法傷害：60%]",
@@ -3686,7 +3452,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "敵に青い薔薇を飛ばして魔法ダメージを与える。 [魔法ダメージ：60%]",
         enhanced: "一定確率で青い薔薇を飛ばして敵に魔法ダメージを与え、苦痛を付与する。 [苦痛：回復量が減少し、1秒ごとにダメージを受ける。] [魔法ダメージ：180%] [苦痛の持続時間：4秒]"
@@ -3716,13 +3482,19 @@ const characterSkills = [
           "沈黙：全てのスキルが使用できなくなる。",
           "スキルダメージ量増加：53%"
         ]}
+        },
+"en": {
+          normalAttack: { basic: "Throws a blue rose and deals Magical Damage to the enemy. [Magical DMG: 60%]", enhanced: "At a set chance, throws a blue rose, dealing Magical Damage to the enemy and applying Stinging. [Stinging: Reduces Recovery Amount and applies damage every second.] [Magical DMG: 180%] [Stinging Duration: 4s]" },
+          normalSkill: { name: "Sync Rose", desc: "Shoots a Sync Rose that ricochets up to 3 times and deals Magical Damage to the enemy. Sync Rose prioritizes targets who have not been attacked.", stats: ["Magical DMG: 588%", "Final Hit DMG: 882%"] },
+          ultimateSkill: { name: "Blue Bird Garden", desc: "Shoots 3 Sync Roses to the enemy. Deals Guaranteed AoE Critical Damage on the final hit. All hits apply Silence.", stats: ["Silence: Unable to use any skills.", "Total Magical DMG: 1008%", "Total Final Hit Magical DMG: 1512%", "Silence Duration: 6s"], cooldown: "20s" },
+          passiveSkill: { desc: "Increases Skill Damage. Becomes immune to Silence.", stats: ["Silence: Unable to use any skills.", "Skill DMG Increase: 53%"] }
         }
       }
     },
     {
       name: "優米",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人發射咒語，造成魔法傷害。 [魔法傷害：60%]",
@@ -3758,7 +3530,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "呪文を発射し、敵に魔法ダメージを与える。 [魔法ダメージ：60%]",
         enhanced: "一定確率で星光を降らせ、ランダムな敵2体に魔法ダメージを与え、攻撃速度を減少させる。追加で自身と、残りHP割合が最も低い味方を回復させる。 [魔法ダメージ：300%] [攻撃速度減少：40%] [攻撃速度減少の持続時間：3秒] [自身のHP回復：最大HPの16%] [対象のHP回復：最大HPの16%]"
@@ -3790,13 +3562,19 @@ const characterSkills = [
         stats: [
           "HP回復量増加：23%"
         ]}
+        },
+"en": {
+          normalAttack: { basic: "Casts a spell, dealing Magical Damage to the enemy. [Magical DMG: 60%]", enhanced: "At a set chance, drops starlight to deal Magical Damage to 2 random enemies and reduce their Attack Speed. Additionally recovers own HP and that of the ally with the lowest remaining HP ratio. [Magical DMG: 300%] [ATK SPD Reduction: 40%] [ATK SPD Reduction Duration: 3s] [Own HP Recovery: 16% of Max HP] [Target HP Recovery: 16% of the target's Max HP]" },
+          normalSkill: { name: "Moonflower", desc: "Summons a full moon that shines down on the ally with the highest Max HP for a set period of time. Increases Defense of allies bathed in moonlight and reduces Attack of enemies under the moonlight. During the time when there's moonlight, Yomi's Basic Attacks become Enhanced Attacks.", stats: ["Ally DEF Increase: 31%", "DEF Increase Duration: 6s", "Enemy Reduced ATK: 41%", "Reduced ATK Duration: 6s", "Moonlight Duration: 8s"] },
+          ultimateSkill: { name: "Devoted Reception", desc: "Summons a moonlight walking on clouds for a set period of time. The moonlight slowly advances in the direction Yomi is facing. Allies within the moonlight recover SP every second. Deals Damage to Enemies every second and reduces their SP.", stats: ["Ally SP Recovery: 15", "Magical DMG per sec: 470%", "Enemy SP Reduction: 20", "Moonlight Duration: 12s"], cooldown: "26s" },
+          passiveSkill: { desc: "Increases HP Recovery for all allies. (This effect activates even if Yomi is not on the field.)", stats: ["HP Recovery Increase: 23%"] }
         }
       }
     },
     {
       name: "希爾德",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人發射注射器槍，造成魔法傷害。 [魔法傷害：100%]",
@@ -3829,7 +3607,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "銃型注射器を発射して敵に魔法ダメージを与える。 [魔法ダメージ：100%]",
         enhanced: "3回目の攻撃の代わりに、HP割合が最も少ない味方のHPを回復する。 [HP回復：自身の最大HPの20%]"
@@ -3858,13 +3636,19 @@ const characterSkills = [
         stats: [
           "クールタイム：9秒"
         ]}
+        },
+"en": {
+          normalAttack: { basic: "Fires her Syringe Gun, dealing Magical Damage to the enemy. [Magical DMG: 100%]", enhanced: "Recovers the ally with the lowest HP Ratio in lieu of her third attack. [HP Recovery: 20% of own Max HP]" },
+          normalSkill: { name: "Phytoncide Wave", desc: "Unleashes a wave and recovers the HP of all nearby allies 1 time.  Additionally, recovers the HP of 2 allies with HP lower than 80% every second.", stats: ["Wave HP Recovery: Physical DMG: 22% of own Max HP", "Continuous HP Recovery: 7.9% of own Max HP", "HP Recovery Duration: 6s"] },
+          ultimateSkill: { name: "Overtreatment", desc: "Activates Indiscriminate Treatment, dealing AoE Magical Damage to enemies. Allies within range become Giant and their Attack Speed Increases.", stats: ["Magical DMG per Hit: 730%", "ATK SPD Increase: 91%", "ATK SPD Increase Duration: 10.3s"], cooldown: "36s" },
+          passiveSkill: { desc: "Removes all Status Effects on an ally within the designated range.", stats: ["Cooldown: 12s"] }
         }
       }
     },
     {
       name: "珀榭",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人投擲藥水，造成魔法傷害。 [魔法傷害：100%]",
@@ -3898,14 +3682,14 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "ポーションを投げつけて敵に魔法ダメージを与える。 [魔法ダメージ：100%]",
         enhanced: "4回目の攻撃では、ポーションを2個投げつけてランダムな敵に魔法ダメージを与える。 [総魔法ダメージ：250%]"
       },
       normalSkill: {
         name: "どれにしようかな？",
-        desc: "ランダムに3つのポーションから1つを選択し、敵に投げつける。緑のポーションはHP割合が最も少ない味方のHPを回復する。赤のポーションはランダムな敵に魔法ダメージを与える。黄のポーションはランダムな敵に魔法ダメージを与え、気絶を付与する。",
+        desc: "ランダムに3つのポーションから1つを選択し、敵に投げつける。緑のポーションはHP割合が最も少ない味方を回復する。赤のポーションはランダムな敵に魔法ダメージを与える。黄のポーションはランダムな敵に魔法ダメージを与え、気絶を付与する。",
         stats: [
           "気絶：行動不能になる。",
           "緑のポーションのHP回復：攻撃力の700～1400%",
@@ -3934,7 +3718,7 @@ const characterSkills = [
     {
       name: "艾舒爾",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "發射火焰咒語，對敵人造成魔法傷害並給予燒傷效果。 [燒傷：每秒受到傷害。] [魔法傷害：75%] [燒傷持續時間：2秒]",
@@ -3968,7 +3752,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "炎の呪文を発射して、敵に魔法ダメージを与え、火傷を付与する。 [火傷：1秒ごとにダメージを受ける。] [火傷の持続時間：2秒] [魔法ダメージ：75%]",
         enhanced: "一定確率で燃えるパンを発射して敵に魔法ダメージを与え、火傷を付与する。ダメージを受けた敵の一定距離後ろに敵がいる場合、パンくずが跳ね返って魔法ダメージを与え、火傷を付与する。パンくずは最大2体に跳ね返る。 [火傷：1秒ごとにダメージを受ける。] [火傷の持続時間：3秒] [魔法ダメージ：100%] [2回目の魔法ダメージ：150%]"
@@ -3998,13 +3782,19 @@ const characterSkills = [
           "シールドの持続時間：6秒",
           "シールドのクールタイム：25秒"
         ]}
+        },
+"en": {
+          normalAttack: { basic: "Casts a fire spell, dealing Magical Damage and applying Scorch. [Scorch: Applies Damage every second.] [Magical DMG: 75%] [Scorch Duration: 2s]", enhanced: "At a set chance, fires burning buns to deal Magical Damage to enemies, applying Scorch. If there are other enemies within a certain range behind the hit one, crumbs bounce to deal Magical Damage, applying Scorch, crumbs bounce to a max of 2 enemies. [Scorch: Applies Damage every second] [Magical DMG: 100%] [Two-Hit Magical DMG: 150%] [Scorch Duration: 3s]" },
+          normalSkill: { name: "Bread Charge", desc: "Shoots 6 buns, dealing Magical Damage to enemies hit with them.", stats: ["Total Magical DMG: 1050%"] },
+          ultimateSkill: { name: "Bread Meteor", desc: "Drops a Giant cake on the enemy at the center, dealing AoE Magical Damage and applying Stun. If there are other enemies within a certain range, slices bounce to deal Magical Damage.  Slices bounce to a max of 3 enemies.", stats: ["Stun: Becomes unable to act.", "Magical DMG: 840%", "Two-Hit Magical DMG: 840%", "Stun Duration: 3s"], cooldown: "28s" },
+          passiveSkill: { desc: "When her HP drops at 50% or below, casts a Shield on herself.", stats: ["Shield: 68% of Max HP", "Shield Duration: 6s", "Shield Cooldown: 25s"] }
         }
       }
     },
     {
       name: "希菲爾",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人投擲短劍，造成物理傷害。 [物理傷害：100%]",
@@ -4035,7 +3825,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "短剣を投げつけ、敵に物理ダメージを与える [物理ダメージ：100%]",
         enhanced: "最も近い単体対象に短剣を3回投げつけ、物理ダメージを与える。 [物理ダメージ：96%] [最後の一撃の物理ダメージ：64%] [SP減少：10%]"
@@ -4068,7 +3858,7 @@ const characterSkills = [
     {
       name: "艾爾芬",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人發射魔力彈，造成魔法傷害。 [魔法傷害：100％]",
@@ -4098,7 +3888,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "魔力弾を発射して敵に魔法ダメージを与える。 [魔法ダメージ：100%]",
         enhanced: "一定確率でケーキをつまみ食いして、SPを回復する。 [SP回復：35%]"
@@ -4130,7 +3920,7 @@ const characterSkills = [
     {
       name: "馬爾",
       attribute: "魔法",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人發射咒語，造成魔法傷害。 [魔法傷害：100%]",
@@ -4160,7 +3950,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "呪文を発射し、敵に魔法ダメージを与える。 [魔法ダメージ：100%]",
         enhanced: "無"
@@ -4192,7 +3982,7 @@ const characterSkills = [
     {
       name: "路德",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人揮動拳頭，造成物理傷害。 [物理傷害：100%]",
@@ -4235,7 +4025,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "拳を振るい、敵に物理ダメージを与える。 [物理ダメージ：100%]",
         enhanced: "無"
@@ -4280,7 +4070,7 @@ const characterSkills = [
     {
       name: "康娜",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對攻擊力最高的敵人發射砲彈，造成範圍物理傷害。 [物理傷害：125%]",
@@ -4310,7 +4100,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "攻撃力が最も高い対象に砲弾を発射し、範囲物理ダメージを与える。 [物理ダメージ：125%]",
         enhanced: "一定確率で衝撃砲弾を発射し、攻撃力が最も高い敵に範囲物理ダメージを与え、気絶を付与する。 [気絶：行動不能状態になる。] [物理ダメージ：250%] [気絶持続時間：1.5秒]"
@@ -4342,7 +4132,7 @@ const characterSkills = [
     {
       name: "斑尼",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人揮動斧頭，造成物理傷害。 [物理傷害：100%]",
@@ -4377,7 +4167,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "斧を振り回して敵に物理ダメージを与える。 [物理ダメージ：100%]",
         enhanced: "無"
@@ -4414,7 +4204,7 @@ const characterSkills = [
     {
       name: "盧波",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人揮舞短劍，造成2次物理傷害。 [總物理傷害：100%]",
@@ -4445,7 +4235,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "短剣を振るい、敵に2回物理ダメージを与える。 [総物理ダメージ：100%]",
         enhanced: "一定確率で短剣を薙ぎ払って敵に物理ダメージを与え、自身に目くらましを付与する。[目くらまし: 敵の目標にならない。他の味方がいない時は発動しない。] [物理ダメージ:200%] [目くらまし持続時間: 4秒]"
@@ -4478,7 +4268,7 @@ const characterSkills = [
     {
       name: "泰達",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人發射子彈，造成物理傷害。 [物理傷害：100%]",
@@ -4507,7 +4297,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "弾丸を発射し、敵に物理ダメージを与える。 [物理ダメージ：100%]",
         enhanced: "無"
@@ -4538,7 +4328,7 @@ const characterSkills = [
     {
       name: "瑪麗",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人投擲炸彈，造成物理傷害。 [物理傷害：75%]",
@@ -4570,7 +4360,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "敵に爆弾を投げつけて物理ダメージを与える。 [物理ダメージ：75%]",
         enhanced: "一定確率で強化爆弾を投げつけて敵に範囲物理ダメージを与え、火傷を付与する。 [火傷：1秒ごとにダメージを受ける。] [物理ダメージ：125%] [火傷の持続時間：2秒]"
@@ -4604,7 +4394,7 @@ const characterSkills = [
     {
       name: "x乂錫安乂x",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對指定範圍內距離最遠的敵人發射子彈，造成物理傷害。 [物理傷害：200%]",
@@ -4638,7 +4428,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "弾丸を発射し、指定された射程距離内で最も離れている敵に物理ダメージを与える。 [物理ダメージ：200%]",
         enhanced: "3回攻撃することに敵に範囲物理ダメージと目隠しを付与し、魔弾を1個獲得する。魔弾は最大6個まで獲得可能。 [目隠し：普通攻撃が命中しない。] [魔弾：物理ダメージ量が上昇する。] [物理ダメージ：350%] [魔弾物理ダメージ量増加：5%] [目隠しの持続時間：6秒]"
@@ -4668,13 +4458,20 @@ const characterSkills = [
           "物理攻擊力增加：53%",
           "持続時間：10秒"
         ]}
+        },
+"en": {
+          normalAttack: { basic: "Fires a shot and deals Physical Damage to the furthest single target within the designated range. [Physical DMG: 200%]", enhanced: "Every third Attack, deals AoE Physical Damage to enemies and applies Blindfold, obtaining 1 Magic Bullet. Up to 6 Magic Bullets can be obtained. [Blindfold: Normal Attacks miss.] [Magic Bullet: Increases Physical Damage.] [Physical DMG: 350%] [Magic Bullet Physical DMG Increase: 5%] [Blindfold Duration: 6s]" },
+          normalSkill: { name: "M461C BULL37 5L1N63R", desc: "Gathers dark power to obtain 2 Magic Bullets and deals Physical Damage to the farthest enemy within the designated range. Consumes Magic Bullets when attacking, increasing attack count per Magic Bullets, Up to 6 Magic Bullets can be obtained.", stats: ["Magic Bullets: Increases Physical Damage.", "Physical DMG Per Hit: 365%", "Magic Bullet Physical DMG Increase: 5%"] },
+          ultimateSkill: { name: "Apocalyptic Blast★", desc: "Deals AoE Physical Damage to the farthest enemy within the designated range and obtains 1 Magic Bullet. Up to 6 Magic Bullets can be obtained.", stats: ["Magic Bullet: Increases Physical Damage.", "Physical DMG: 365%", "Magic Bullet Physical DMG Increase: 5%"], cooldown: "18s" },
+          passiveSkill: { desc: "Increases Physical Attack for a set period of time upon acquiring a Magic Bullet.", stats: ["Physical ATK: 53%", "Duration: 10s"] }
         }
+
       }
     },
     {
       name: "基狄恩",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人揮舞短劍，造成物理傷害。 [物理傷害：100%]",
@@ -4704,7 +4501,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "短剣を振るい、敵に物理ダメージを与える。 [物理ダメージ：100%]",
         enhanced: "無"
@@ -4736,7 +4533,7 @@ const characterSkills = [
     {
       name: "柯米",
       attribute: "物理",
-	skills: {
+    skills: {
         "zh-TW": {
       normalAttack: {
         basic: "對敵人使用枕頭猛擊，造成物理傷害。 [物理傷害：150%]",
@@ -4770,7 +4567,7 @@ const characterSkills = [
       }
     },
 
-	"ja": {
+    "ja": {
       normalAttack: {
         basic: "敵を枕で殴りつけて物理ダメージを与える。 [物理ダメージ：150%]",
         enhanced: "一定確率で枕を強く叩きつけて敵に物理ダメージを与え、気絶を付与する。 [気絶：行動不能状態になる。] [物理ダメージ：300％] [気絶持続時間：1.5秒]"
@@ -4803,7 +4600,7 @@ const characterSkills = [
         }
       }
     },
-	{
+    {
       name: "雷內瓦", // プログラムの検索用キー（絶対に元の名前と一致させる）
       attribute: "物理", // 物理・魔法は全言語共通のステータスなので外側に出す
       skills: {
@@ -4867,25 +4664,25 @@ const characterSkills = [
         "en": {
           // 将来のためのプレースホルダー（準備枠）
           normalAttack: { 
-			  basic: "Unimplemented",
-			  enhanced: "Unimplemented"
-		  },
+              basic: "Unimplemented",
+              enhanced: "Unimplemented"
+          },
           normalSkill: {
-			  name: "Unimplemented",
-			  desc: "Unimplemented",
-			  stats: []
-		  },
+              name: "Unimplemented",
+              desc: "Unimplemented",
+              stats: []
+          },
           ultimateSkill: {
-			  name: "Unimplemented",
-			  desc: "Unimplemented",
-			  stats: [],
-			  cooldown: "s"
-		  },
+              name: "Unimplemented",
+              desc: "Unimplemented",
+              stats: [],
+              cooldown: "s"
+          },
           passiveSkill: {
-			  desc: "Unimplemented",
-			  stats: []
-		  }
+              desc: "Unimplemented",
+              stats: []
+          }
         }
       }
-    },
+    }
 ];
