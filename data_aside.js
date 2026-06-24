@@ -379,26 +379,26 @@ const ASIDE_DATA = {
     },
     "Selline": { 
         asideIcon: "https://i.postimg.cc/Mvnvx8gg/Aside-Icon-Selline.png", 
-        totalName: { zh: "網紅的瑟琳娜", ja: "日文願像總名稱", en: "English Total Name" }, 
+        totalName: { zh: "網紅的瑟琳娜", ja: "セレブ・セリーネ", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/hJ4xbmQw/Aside-Skill-Selline-1.png", 
-                name: { zh: "惡作劇的瑟琳娜", ja: "日文1星名稱", en: "English 1-Star Name" }, 
-                desc: { zh: "穿戴者的最大HP增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
-                effects: { zh: ["最大HP增加:22.5%"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "惡作劇的瑟琳娜", ja: "悪戯好きなセリーネ", en: "English 1-Star Name" }, 
+                desc: { zh: "穿戴者的最大HP增加。", ja: "着用者の最大HPが増加する。", en: "English 1-Star Desc" }, 
+                effects: { zh: ["最大HP增加:22.5%"], ja: ["最大HP増加: 22.5%"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/94x9xfyx/Aside-Skill-Selline-2.png", 
-                name: { zh: "挑釁專家ElfTuber", ja: "日文2星名稱", en: "English 2-Star Name" }, 
-                desc: { zh: "受到直接傷害時恢復SP。降低因強化攻擊受到挑釁的敵人的攻擊速度。強化攻擊的HP恢復比例變為2倍", ja: "日文2星描述", en: "English 2-Star Desc" }, 
-                effects: { zh: ["直接傷害:指狀態異常傷害、反射傷害以外的直接攻擊傷害。", "SP恢復量:6", "攻擊速度降低:33%", "攻擊速度降低持續時間:4秒"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "挑釁專家ElfTuber", ja: "煽り専門ElTuber", en: "English 2-Star Name" }, 
+                desc: { zh: "受到直接傷害時恢復SP。降低因強化攻擊受到挑釁的敵人的攻擊速度。強化攻擊的HP恢復比例變為2倍", ja: "直接ダメージを受けるとSPが回復する。強化攻撃で挑発した敵の攻撃速度を減少させる。強化攻撃のHP回復割合が2倍になる。", en: "English 2-Star Desc" }, 
+                effects: { zh: ["直接傷害:指狀態異常傷害、反射傷害以外的直接攻擊傷害。", "SP恢復量:6", "攻擊速度降低:33%", "攻擊速度降低持續時間:4秒"], ja: ["直接ダメージ: 直接攻撃によるダメージ(状態異常ダメージ、反射ダメージを除く)。", "SP回復量: 6", "攻擊速度減少: 33%", "攻撃速度減少の持続時間: 4秒"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/1gWFWzDB/Aside-Skill-Selline-3.png", 
-                name: { zh: "捐款挑戰", ja: "日文3星名稱", en: "English 3-Star Name" }, 
-                desc: { zh: "敵人對前排友軍造成傷害量減少。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
-                effects: { zh: ["受到的傷害量減少:97%"], ja: ["効果1"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體魔法防禦力 3%", "全體爆擊抵抗 3%"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "捐款挑戰", ja: "寄付チャレンジ", en: "English 3-Star Name" }, 
+                desc: { zh: "敵人對前排友軍造成傷害量減少。", ja: "前列の味方の敵への被ダメージ量を減少させる。", en: "English 3-Star Desc" }, 
+                effects: { zh: ["受到的傷害量減少:97%"], ja: ["被ダメージ量減少: 9.7%"], en: ["Effect 1"] }, 
+                globalEffects: { zh: ["全體魔法防禦力 3%", "全體爆擊抵抗 3%"], ja: ["全体魔法防御力 3%", "全体会心抵抗 3%"], en: ["Global Stat Bonus 1"] } 
             }
         }
     },
