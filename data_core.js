@@ -76,7 +76,7 @@ const LANG_DICT = {
         stats_layer_1_rule: "(各マス+3%, クレヨン×2)", stats_layer_2_rule: "(各マス+4%, クレヨン×4)", stats_layer_3_rule: "(各マス+5%, クレヨン×6)",
         stats_global_bonus: "📊 全体ステータスバフ", stats_need_more_prefix: "必要クレヨン数: ", stats_need_more_suffix: " 本",
         x_label: "公式 X", official_x_url: "https://x.com/trickcal_jp",
-		info_job_reward: "💰 獲得報酬", info_food: "🍲 好みノート",
+		info_job_reward: "💰 獲得報酬", info_food: "🍲 食べ物の好み",
         footer_author: "📝 ノート作成者: 冷笑話幽靈", footer_copyright: "© ゲーム著作権: EpidGames & Bilibili", footer_lastupdate: "最終更新日：18/06/2026",
         "天真": "純粋", "冷靜": "冷静", "狂亂": "狂気", "活潑": "活発", "憂鬱": "憂鬱",
         "魔女": "魔女", "獸人": "獣人", "龍族": "竜族", "魔靈": "精霊", "妖精": "妖精", "精靈": "エルフ", "幽靈": "幽霊", "???": "???",
