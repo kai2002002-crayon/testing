@@ -254,26 +254,26 @@ const ASIDE_DATA = {
     },
     "Posher": { 
         asideIcon: "https://i.postimg.cc/QHvVdy3B/Aside-Icon-Posher.png", 
-        totalName: { zh: "大家的藥水", ja: "日文願像總名稱", en: "English Total Name" }, 
+        totalName: { zh: "大家的藥水", ja: "みんなのポーション", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/fVfm9Cys/Aside-Skill-Posher-1.png", 
-                name: { zh: "藥水達人珀榭", ja: "日文1星名稱", en: "English 1-Star Name" }, 
-                desc: { zh: "穿戴者的最大HP、魔法攻擊力、爆擊、爆擊傷害增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
-                effects: { zh: ["最大HP增加:6%", "魔法攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "藥水達人珀榭", ja: "ポーション職人ポーシャー", en: "English 1-Star Name" }, 
+                desc: { zh: "穿戴者的最大HP、魔法攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、魔法攻撃力、会心、会心ダメージが増加する。", en: "English 1-Star Desc" }, 
+                effects: { zh: ["最大HP增加:6%", "魔法攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加: 6%", "魔法攻撃力増加: 6%", "会心増加: 6%", "会心ダメージ増加: 6%"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/k2vKbsGq/Aside-Skill-Posher-2.png", 
-                name: { zh: "臨床實驗大成功", ja: "日文2星名稱", en: "English 2-Star Name" }, 
-                desc: { zh: "使用普通技能後,恢復後排友軍的SP。高級技能的變異對象額外增加1名。", ja: "日文2星描述", en: "English 2-Star Desc" }, 
-                effects: { zh: ["SP恢復量:20~50"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "臨床實驗大成功", ja: "臨床実験大成功", en: "English 2-Star Name" }, 
+                desc: { zh: "使用普通技能後,恢復後排友軍的SP。高級技能的變異對象額外增加1名。", ja: "低学年スキルを使用すると、後列の味方のSPを回復する。高学年スキルに変異が1体追加される。", en: "English 2-Star Desc" }, 
+                effects: { zh: ["SP恢復量:20~50"], ja: ["SP回復量: 20～50"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/xX3Mz58f/Aside-Skill-Posher-3.png", 
-                name: { zh: "新藥革命", ja: "日文3星名稱", en: "English 3-Star Name" }, 
-                desc: { zh: "增加所有友軍的爆擊抵抗與爆擊傷害抵抗。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
-                effects: { zh: ["爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["効果1"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體爆擊傷害 3%", "全體爆擊抵抗 3%"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "新藥革命", ja: "新薬革命", en: "English 3-Star Name" }, 
+                desc: { zh: "增加所有友軍的爆擊抵抗與爆擊傷害抵抗。", ja: "味方全員の会心抵抗と会心ダメージ抵抗を増加させる。", en: "English 3-Star Desc" }, 
+                effects: { zh: ["爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Effect 1"] }, 
+                globalEffects: { zh: ["全體爆擊傷害 3%", "全體爆擊抵抗 3%"], ja: ["全体会心ダメージ 3%", "全体会心抵抗 3%"], en: ["Global Stat Bonus 1"] } 
             }
         }
     },
