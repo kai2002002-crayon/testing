@@ -48,7 +48,7 @@ const ASIDE_DATA = {
                 name: { zh: "伸展台開場", ja: "ランウェイオープニング", en: "English 3-Star Name" }, 
                 desc: { zh: "增加前排友軍對敵人造成的傷害量,並減少前排友軍受到敵人的傷害量。", ja: "前列の味方の敵への与ダメージ量を増加させ、前列味方の敵からの被ダメージ量を減少させる。", en: "English 3-Star Desc" }, 
                 effects: { zh: ["傷害量增加:19.5%", "受到的傷害量減少:8.8%"], ja: ["ダメージ量増加: 19.5%", "被ダメージ量減少: 8.8%"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體魔法防禦力 4%", "全體爆擊抵抗 4%"], ja: ["全体魔法防御力 4%", "会心抵抗全体会心抵抗 4%"], en: ["Global Stat Bonus 1"] } 
+                globalEffects: { zh: ["全體魔法防禦力 4%", "全體爆擊抵抗 4%"], ja: ["全体魔法防御力 4%", "全体会心抵抗 4%"], en: ["Global Stat Bonus 1"] } 
             }
         }
     },
@@ -154,26 +154,26 @@ const ASIDE_DATA = {
     },
     "Kyarot": { 
         asideIcon: "https://i.postimg.cc/pp3yL6HW/Aside-Icon-Kyarot.png", 
-        totalName: { zh: "小太陽", ja: "日文願像總名稱", en: "English Total Name" }, 
+        totalName: { zh: "小太陽", ja: "おひさま", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/Xrb9qmj0/Aside-Skill-Kyarot-1.png", 
-                name: { zh: "快快長大吧!", ja: "日文1星名稱", en: "English 1-Star Name" }, 
-                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
-                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗:6%"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "快快長大吧!", ja: "すくすく育って！", en: "English 1-Star Name" }, 
+                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "English 1-Star Desc" }, 
+                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗:6%"], ja: ["最大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/LJpj5w9p/Aside-Skill-Kyarot-2.png", 
-                name: { zh: "讓胡蘿蔔保持新鮮", ja: "日文2星名稱", en: "English 2-Star Name" }, 
-                desc: { zh: "強化攻擊追加護盾。護盾被破壞時,額外恢復SP。", ja: "日文2星描述", en: "English 2-Star Desc" }, 
-                effects: { zh: ["護盾:最大HP的30%", "護盾持續時間:5秒", "SP恢復量:45"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "讓胡蘿蔔保持新鮮", ja: "ニンジンの鮮度維持", en: "English 2-Star Name" }, 
+                desc: { zh: "強化攻擊追加護盾。護盾被破壞時,額外恢復SP。", ja: "強化攻撃にシールドが追加される。シールドが破壊されると、追加でSPを回復する。", en: "English 2-Star Desc" }, 
+                effects: { zh: ["護盾:最大HP的30%", "護盾持續時間:5秒", "SP恢復量:45"], ja: ["シールド: 最大HPの30%", "シールドの持続時間: 5秒", "SP回復量: 45"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/nXJqrgFx/Aside-Skill-Kyarot-3.png", 
-                name: { zh: "冰凍胡蘿蔔", ja: "日文3星名稱", en: "English 3-Star Name" }, 
-                desc: { zh: "增加後排友軍對敵人造成的傷害量。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
-                effects: { zh: ["造成的傷害量增加:19.5%"], ja: ["効果1"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體爆擊傷害 3%", "全體爆擊傷害抵抗 3%"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "冰凍胡蘿蔔", ja: "アイスニンジン", en: "English 3-Star Name" }, 
+                desc: { zh: "增加後排友軍對敵人造成的傷害量。", ja: "後列の味方が敵に与えるダメージ量を増加させる。", en: "English 3-Star Desc" }, 
+                effects: { zh: ["造成的傷害量增加:19.5%"], ja: ["ダメージ量増加: 19.5%"], en: ["Effect 1"] }, 
+                globalEffects: { zh: ["全體爆擊傷害 3%", "全體爆擊傷害抵抗 3%"], ja: ["全体会心ダメージ 3%", "全体会心ダメージ抵抗 3%"], en: ["Global Stat Bonus 1"] } 
             }
         }
     },
@@ -204,26 +204,26 @@ const ASIDE_DATA = {
     },
     "Ner": { 
         asideIcon: "https://i.postimg.cc/fJ1kRrNy/Aside-Icon-Ner.png", 
-        totalName: { zh: "聖君艾爾芬", ja: "日文願像總名稱", en: "English Total Name" }, 
+        totalName: { zh: "聖君艾爾芬", ja: "聖君エルフィン", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/mPyCHjDK/Aside-Skill-Ner-1.png", 
-                name: { zh: "女王特別輔佐官", ja: "日文1星名稱", en: "English 1-Star Name" }, 
-                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
-                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "女王特別輔佐官", ja: "女王特別補佐役", en: "English 1-Star Name" }, 
+                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "English 1-Star Desc" }, 
+                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/XrkdCLJT/Aside-Skill-Ner-2.png", 
-                name: { zh: "祭司長無敵權", ja: "日文2星名稱", en: "English 2-Star Name" }, 
-                desc: { zh: "基本攻撃命中時,自身受到的傷害量減少,並恢復HP與SP。使用高級技能時,給予自身與前排使者無敵效果。", ja: "日文2星描述", en: "English 2-Star Desc" }, 
-                effects: { zh: ["無敵:對所有傷害及減益效果免疫。", "受到的傷害量減少:15%", "受到的傷害量減少持續時間:3秒", "HP恢復:最大HP的3%", "SP恢復量:30", "無敵持續時間:5秒"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "祭司長無敵權", ja: "司祭長の無敵権", en: "English 2-Star Name" }, 
+                desc: { zh: "基本攻撃命中時,自身受到的傷害量減少,並恢復HP與SP。使用高級技能時,給予自身與前排使者無敵效果。", ja: "基本攻撃が命中すると、自身の被ダメージ量が減少し、HPとSPを回復する。高学年スキル使用時、自身と前衛使徒に無敵を付与する。", en: "English 2-Star Desc" }, 
+                effects: { zh: ["無敵:對所有傷害及減益效果免疫。", "受到的傷害量減少:15%", "受到的傷害量減少持續時間:3秒", "HP恢復:最大HP的3%", "SP恢復量:30", "無敵持續時間:5秒"], ja: ["無敵: 全てのダメージおよび状態異常に対して免疫を持つ。", "被ダメージ量減少: 15%", "被ダメージ量減少の持続時間: 3秒", "HP回復: 最大HPの3%", "SP回復量: 30", "無敵の持続時間: 5秒"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/MnmVQ5TC/Aside-Skill-Ner-3.png", 
-                name: { zh: "以世界樹之名!", ja: "日文3星名稱", en: "English 3-Star Name" }, 
-                desc: { zh: "所有友軍對敵人造成的傷害量增加,敵人對所有友軍造成的傷害量減少。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
-                effects: { zh: ["傷害量增加:10.5%", "受到的傷害量減少:4.5%"], ja: ["効果1"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體魔法攻撃力 3%", "全體爆擊抵抗 3%"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "以世界樹之名!", ja: "世界樹の名前で！", en: "English 3-Star Name" }, 
+                desc: { zh: "所有友軍對敵人造成的傷害量增加,敵人對所有友軍造成的傷害量減少。", ja: "味方全員の敵への与ダメージ量が増加し、味方全員の敵からの被ダメージ量が減少する。", en: "English 3-Star Desc" }, 
+                effects: { zh: ["傷害量增加:10.5%", "受到的傷害量減少:4.5%"], ja: ["ダメージ量増加: 10.5%", "被ダメージ量減少: 4.5%"], en: ["Effect 1"] }, 
+                globalEffects: { zh: ["全體魔法攻撃力 3%", "全體爆擊抵抗 3%"], ja: ["全体魔法攻撃力 3%", "全体会心抵抗 3%"], en: ["Global Stat Bonus 1"] } 
             }
         }
     },
