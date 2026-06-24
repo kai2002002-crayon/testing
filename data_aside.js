@@ -479,26 +479,26 @@ const ASIDE_DATA = {
     },
     "Vivi": { 
         asideIcon: "https://i.postimg.cc/mtPtRG0b/Aside-Icon-Vivi.png", 
-        totalName: { zh: "被鎖鏈鎖上的箱子", ja: "日文願像總名稱", en: "English Total Name" }, 
+        totalName: { zh: "被鎖鏈鎖上的箱子", ja: "鎖で閉ざされた箱", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/MvRyWq8M/Aside-Skill-Vivi-1.png", 
-                name: { zh: "上鎖的回憶箱", ja: "日文1星名稱", en: "English 1-Star Name" }, 
-                desc: { zh: "戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
-                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "上鎖的回憶箱", ja: "閉ざされた記憶の箱", en: "English 1-Star Name" }, 
+                desc: { zh: "戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "English 1-Star Desc" }, 
+                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["最大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/9rTGWCjq/Aside-skill-vivi-2.png", 
-                name: { zh: "本少女會保護你的", ja: "日文2星名稱", en: "English 2-Star Name" }, 
-                desc: { zh: "減少受到的技能傷害量。基本攻撃命中時,所攻擊敵人SP減少。(世界首領的SP減少值會降低。) 使用普通技能後,賦予除自身以外剩下HP比例最低的友軍水銀護盾。高級技能的水銀槍將額外飛向隨機2名敵人。", ja: "日文2星描述", en: "English 2-Star Desc" }, 
-                effects: { zh: ["受到的技能傷害量減少:33%", "SP減少量:45", "世界首領SP減少量:15", "護盾:最大HP的64%", "護盾持續時間:6秒"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "本少女會保護你的", ja: "わたくしがお守りいたしますわ", en: "English 2-Star Name" }, 
+                desc: { zh: "減少受到的技能傷害量。基本攻撃命中時,所攻擊敵人SP減少。(世界首領的SP減少值會降低。) 使用普通技能後,賦予除自身以外剩下HP比例最低的友軍水銀護盾。高級技能的水銀槍將額外飛向隨機2名敵人。", ja: "敵からの被スキルダメージ量が減少する。基本攻撃が命中時、攻撃した敵のSPを減少させる。(ワールドボスはSP減少量が低下する。)低学年スキル使用後、自身を除き、残りHP割合が最も低い味方に水銀シールドを付与する。高学年スキルの水銀の槍が、ランダムな2体に追加で発射される。", en: "English 2-Star Desc" }, 
+                effects: { zh: ["受到的技能傷害量減少:33%", "SP減少量:45", "世界首領SP減少量:15", "護盾:最大HP的64%", "護盾持續時間:6秒"], ja: ["被スキルダメージ量減少: 33%", "SP減少量: 45", "ワールドボスSP減少量: 15", "シールド: 最大HPの64%", "シールドの持続時間: 6秒"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/F7cj9NQk/Aside-skill-vivi-3.png", 
-                name: { zh: "榮耀的薇薇", ja: "日文3星名稱", en: "English 3-Star Name" }, 
-                desc: { zh: "所有友軍受到敵人的傷害量減少。所有友軍的攻擊速度提升。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
-                effects: { zh: ["受到的傷害量減少:6%", "攻擊速度提升:5.25%"], ja: ["効果1"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體 HP 4%", "全體魔法防禦力 4%"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "榮耀的薇薇", ja: "名誉あるヴィヴィ", en: "English 3-Star Name" }, 
+                desc: { zh: "所有友軍受到敵人的傷害量減少。所有友軍的攻擊速度提升。", ja: "味方全員の敵からの被ダメージ量を減少させる。味方全員の攻撃速度を増加させる。", en: "English 3-Star Desc" }, 
+                effects: { zh: ["受到的傷害量減少:6%", "攻擊速度提升:5.25%"], ja: ["被ダメージ量減少: 6%", "攻撃速度増加: 5.25%"], en: ["Effect 1"] }, 
+                globalEffects: { zh: ["全體 HP 4%", "全體魔法防禦力 4%"], ja: ["全体HP 4%", "全体魔法防御力 4%"], en: ["Global Stat Bonus 1"] } 
             }
         }
     },
