@@ -54,26 +54,26 @@ const ASIDE_DATA = {
     },
     "Diana": { 
         asideIcon: "https://i.postimg.cc/9rDrVjv0/Aside-Icon-Diana.png", 
-        totalName: { zh: "小蒂亞娜", ja: "日文願像總名稱", en: "English Total Name" }, 
+        totalName: { zh: "小蒂亞娜", ja: "ちびディアナ", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/SnhcR3yf/Aside-Skill-Diana-1.png", 
-                name: { zh: "小鹿加油?", ja: "日文1星名稱", en: "English 1-Star Name" }, 
-                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、 爆擊抵抗、爆擊傷害抵抗增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
-                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗:6%"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "小鹿加油?", ja: "子ジカの応援？", en: "English 1-Star Name" }, 
+                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、 爆擊抵抗、爆擊傷害抵抗增加。", ja: "日着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "English 1-Star Desc" }, 
+                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗:6%"], ja: ["大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/PCj1J9tW/Aside-Skill-Diana-2.png", 
-                name: { zh: "厲害的治療方法", ja: "日文2星名稱", en: "English 2-Star Name" }, 
-                desc: { zh: "強化攻擊的恢復目標增加至3名。戰鬥開始時,減少除自身外友軍狂亂性格使者受到的爆擊傷害量。", ja: "日文2星描述", en: "English 2-Star Desc" }, 
-                effects: { zh: ["受到的爆擊傷害量減少:66%"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "厲害的治療方法", ja: "すごい治療法", en: "English 2-Star Name" }, 
+                desc: { zh: "強化攻擊的恢復目標增加至3名。戰鬥開始時,減少除自身外友軍狂亂性格使者受到的爆擊傷害量。", ja: "強化攻撃の回復対象が3体に増加する。戦闘開始時、自身を除く狂気の味方使徒の会心被ダメージ量を減少させる。", en: "English 2-Star Desc" }, 
+                effects: { zh: ["受到的爆擊傷害量減少:66%"], ja: ["会心被ダメージ量減少: 66%"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/18QDX29H/Aside-Skill-Diana-3.png", 
-                name: { zh: "自然之力", ja: "日文3星名稱", en: "English 3-Star Name" }, 
-                desc: { zh: "中排友軍對敵人造成的傷害量增加、敵人對中排友軍造成的傷害量減少。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
-                effects: { zh: ["傷害量增加:13.6%", "受到的傷害量減少:5.9%"], ja: ["効果1"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體魔法防禦力 3%", "全體爆擊傷害抵抗 3%"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "自然之力", ja: "自然の力", en: "English 3-Star Name" }, 
+                desc: { zh: "中排友軍對敵人造成的傷害量增加、敵人對中排友軍造成的傷害量減少。", ja: "中列の味方の敵への与ダメージ量が増加し、中列の味方の敵からの被ダメージ量が減少する。", en: "English 3-Star Desc" }, 
+                effects: { zh: ["傷害量增加:13.6%", "受到的傷害量減少:5.9%"], ja: ["ダメージ量増加: 13.6%", "被ダメージ量減少: 5.9%"], en: ["Effect 1"] }, 
+                globalEffects: { zh: ["全體魔法防禦力 3%", "全體爆擊傷害抵抗 3%"], ja: ["全体魔法防御力 3%", "全体会心ダメージ抵抗 3%"], en: ["Global Stat Bonus 1"] } 
             }
         }
     },
