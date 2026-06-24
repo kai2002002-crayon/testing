@@ -179,26 +179,26 @@ const ASIDE_DATA = {
     },
     "Momo": { 
         asideIcon: "https://i.postimg.cc/TpBh3463/Aside-Icon-Momo.png", 
-        totalName: { zh: "傳說中的手裡劍", ja: "日文願像總名稱", en: "English Total Name" }, 
+        totalName: { zh: "傳說中的手裡劍", ja: "伝説の手裏剣", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/PCj1J9XT/Aside-Skill-Momo-1.png", 
-                name: { zh: "櫻花手裡劍", ja: "日文1星名稱", en: "English 1-Star Name" }, 
-                desc: { zh: "穿戴者的最大HP、魔法攻擊力、爆擊、爆擊傷害增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
-                effects: { zh: ["最大HP增加:6%", "魔法攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "櫻花手裡劍", ja: "桜花手裏剣", en: "English 1-Star Name" }, 
+                desc: { zh: "穿戴者的最大HP、魔法攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、魔法攻撃力、会心、会心ダメージが増加する。", en: "English 1-Star Desc" }, 
+                effects: { zh: ["最大HP增加:6%", "魔法攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加: 6%", "魔法攻撃力増加: 6%", "会心増加: 6%", "会心ダメージ増加: 6%"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/xX3Mz5Ch/Aside-Skill-Momo-2.png", 
-                name: { zh: "開眼的忍者", ja: "日文2星名稱", en: "English 2-Star Name" }, 
-                desc: { zh: "召喚獸自爆傷害增加。召喚獸被破壞時,恢復自身SP。使用高級技能時,在一段時間內,減少桃桃受到的傷害量。", ja: "日文2星描述", en: "English 2-Star Desc" }, 
-                effects: { zh: ["召喚獸自爆傷害增加:200%", "SP恢復量:10", "受到的傷害量減少:50%", "受到的傷害量減少持續時間:3秒"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "開眼的忍者", ja: "目覚めたニンジャ", en: "English 2-Star Name" }, 
+                desc: { zh: "召喚獸自爆傷害增加。召喚獸被破壞時,恢復自身SP。使用高級技能時,在一段時間內,減少桃桃受到的傷害量。", ja: "召喚獣の自爆ダメージが増加する。", "召喚獣が破壊されると、自身のSPを回復する。", "高学年スキル使用時、一定時間、モモの被ダメージ量が減少する。", en: "English 2-Star Desc" }, 
+                effects: { zh: ["召喚獸自爆傷害增加:200%", "SP恢復量:10", "受到的傷害量減少:50%", "受到的傷害量減少持續時間:3秒"], ja: ["召喚獣の自爆ダメージ増加: 200%", "SP回復量: 10", "被ダメージ量減少: 50%", "被ダメージ量減少の持続時間: 3秒"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/yDH0xt17/Aside-Skill-Momo-3.png", 
-                name: { zh: "桃桃~喝!", ja: "日文3星名稱", en: "English 3-Star Name" }, 
-                desc: { zh: "所有友軍對敵人造成的傷害量增加。敵人對所有友軍造成的傷害量減少。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
-                effects: { zh: ["傷害量增加:10,5%", "受到的傷害量減少:4.5%"], ja: ["効果1"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體魔法攻撃力 3%", "全體爆擊傷害 3%"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "桃桃~喝!", ja: "モモ～ハッ！", en: "English 3-Star Name" }, 
+                desc: { zh: "所有友軍對敵人造成的傷害量增加。敵人對所有友軍造成的傷害量減少。", ja: "味方全員の敵への与ダメージ量が増加し、味方全員の敵からの被ダメージ量が減少する。", en: "English 3-Star Desc" }, 
+                effects: { zh: ["傷害量增加:10,5%", "受到的傷害量減少:4.5%"], ja: ["ダメージ量増加: 10.5%", "被ダメージ量減少: 4.5%"], en: ["Effect 1"] }, 
+                globalEffects: { zh: ["全體魔法攻撃力 3%", "全體爆擊傷害 3%"], ja: ["全体魔法攻撃力 3%", "全体会心ダメージ: 3%"], en: ["Global Stat Bonus 1"] } 
             }
         }
     },
