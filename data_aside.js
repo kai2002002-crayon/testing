@@ -4,24 +4,24 @@
 const ASIDE_DATA = {
     "Amelia": { 
         asideIcon: "https://i.postimg.cc/bsZs8jKN/Aside-Icon-Amelia.png", 
-        totalName: { zh: "[王子艾琳娜]", ja: "[日文願像總名稱]", en: "[English Total Name]" }, 
+        totalName: { zh: "王子艾琳娜", ja: "日文願像總名稱", en: "English Total Nam]" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/rKWS8MLS/Aside-Skill-Amelia-1.png", 
-                name: { zh: "[王子的恩寵]", ja: "[日文1星名稱]", en: "[English 1-Star Name]" }, 
-                desc: { zh: "[穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。]", ja: "[日文1星描述]", en: "[English 1-Star Desc]" }, 
+                name: { zh: "王子的恩寵", ja: "[日文1星名稱]", en: "[English 1-Star Name]" }, 
+                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "[日文1星描述]", en: "[English 1-Star Desc]" }, 
                 effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["効果1", "効果2"], en: ["Effect 1", "Effect 2"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/4mtzJsTp/Aside-Skill-Amelia-2.png", 
-                name: { zh: "[超高速雷射光]", ja: "[日文2星名稱]", en: "[English 2-Star Name]" }, 
-                desc: { zh: "[提升強化攻擊的施展機率。對處於觸電狀態的敵人造成的普通攻擊傷害量增加。被動技能施加觸電的目標數變為3名。]", ja: "[日文2星描述]", en: "[English 2-Star Desc]" }, 
+                name: { zh: "超高速雷射光", ja: "日文2星名稱", en: "English 2-Star Name" }, 
+                desc: { zh: "提升強化攻擊的施展機率。對處於觸電狀態的敵人造成的普通攻擊傷害量增加。被動技能施加觸電的目標數變為3名。", ja: "[日文2星描述]", en: "[English 2-Star Desc]" }, 
                 effects: { zh: ["強化攻擊施展機率增加:15%", "普通攻擊傷害量增加:40%"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/6yRd9tNr/Aside-Skill-Amelia-3.png", 
-                name: { zh: "[請求支援]", ja: "[日文3星名稱]", en: "[English 3-Star Name]" }, 
-                desc: { zh: "[增加後排友軍的每秒SP恢復量。]", ja: "[日文3星描述]", en: "[English 3-Star Desc]" }, 
+                name: { zh: "請求支援", ja: "[日文3星名稱]", en: "[English 3-Star Name]" }, 
+                desc: { zh: "增加後排友軍的每秒SP恢復量。", ja: "[日文3星描述]", en: "[English 3-Star Desc]" }, 
                 effects: { zh: ["每秒SP恢復量:4"], ja: ["効果1"], en: ["Effect 1"] }, 
                 globalEffects: { zh: ["全體物理攻擊力 3%", "全體爆擊 3%"], ja: ["攻撃力 +X%", "体力 +Y%"], en: ["ATK +X%", "HP +Y%"] } 
             }
