@@ -104,26 +104,26 @@ const ASIDE_DATA = {
     },
     "Haley": { 
         asideIcon: "https://i.postimg.cc/BXRtnV0J/Aside-Icon-Haley.png", 
-        totalName: { zh: "宇宙戰艦", ja: "日文願像總名稱", en: "English Total Name" }, 
+        totalName: { zh: "宇宙戰艦", ja: "宇宙船艦", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/Xrb9qmV2/Aside-Skill-Haley-1.png", 
-                name: { zh: "宇宙戰艦海莉", ja: "日文1星名稱", en: "English 1-Star Name" }, 
-                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
-                effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "宇宙戰艦海莉", ja: "宇宙船艦ヘイリー", en: "English 1-Star Name" }, 
+                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、物理攻撃力、会心、会心ダメージが増加する。", en: "English 1-Star Desc" }, 
+                effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加: 6%", "物理攻撃力増加: 6%", "会心増加: 6%", "会心ダメージ増加: 6%"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/9Dhy0KW8/Aside-Skill-Haley-2.png", 
-                name: { zh: "航行經過地球", ja: "日文2星名稱", en: "English 2-Star Name" }, 
-                desc: { zh: "獲得強化攻擊增益效果時,增加除自己以外的中排友軍使者的攻擊力與防禦力。普通技能的最後一擊必定赋予灼痛。使用高級技能時會召喚軍艦。軍艦會對前方的敵人投下6枚砲彈,造成範圍物理傷害。", ja: "日文2星描述", en: "English 2-Star Desc" }, 
-                effects: { zh: ["灼痛:每秒造成傷害,並使恢復量減少。", "攻擊力增加:32%", "攻擊力增加持續時間:6秒", "防禦力增加:16%", "防禦力增加持續時間:6秒", "灼痛持續時間:5秒", "每枚砲彈物理傷害:375%"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "航行經過地球", ja: "地球をフライバイ", en: "English 2-Star Name" }, 
+                desc: { zh: "獲得強化攻擊增益效果時,增加除自己以外的中排友軍使者的攻擊力與防禦力。普通技能的最後一擊必定赋予灼痛。使用高級技能時會召喚軍艦。軍艦會對前方的敵人投下6枚砲彈,造成範圍物理傷害。", ja: "強化攻撃バフの獲得時、自身を除く中列の味方使徒の攻撃力と防御力を増加させる。低学年スキルの最後の一撃に確定で苦痛を付与する。高学年スキル使用時、軍艦が召喚される。軍艦は前方の敵に砲弾を6発降らせ、範囲物理ダメージを与える。", en: "English 2-Star Desc" }, 
+                effects: { zh: ["灼痛:每秒造成傷害,並使恢復量減少。", "攻擊力增加:32%", "攻擊力增加持續時間:6秒", "防禦力增加:16%", "防禦力增加持續時間:6秒", "灼痛持續時間:5秒", "每枚砲彈物理傷害:375%"], ja: ["苦痛: 1秒ごとにダメージを受け、回復量が減少する。", "攻撃力増加: 32%", "攻撃力増加の持続時間: 6秒", "防御力増加: 16%", "攻撃力増加の持続時間: 6秒", "苦痛の持続時間: 5秒", "砲弾につき物理ダメージ: 375%"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/tsjFJwXM/Aside-Skill-Haley-3.png", 
-                name: { zh: "友軍基地保護作戰", ja: "日文3星名稱", en: "English 3-Star Name" }, 
-                desc: { zh: "使敵人對所有友軍造成的傷害量減少。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
-                effects: { zh: ["受到的傷害量減少:7.5%"], ja: ["効果1"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體爆擊 3%", "全體物理防禦力 3%"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "友軍基地保護作戰", ja: "味方基地防衛作戦", en: "English 3-Star Name" }, 
+                desc: { zh: "使敵人對所有友軍造成的傷害量減少。", ja: "味方全員の敵からの被ダメージ量を減少させる。", en: "English 3-Star Desc" }, 
+                effects: { zh: ["受到的傷害量減少:7.5%"], ja: ["被ダメージ量減少: 7.5%"], en: ["Effect 1"] }, 
+                globalEffects: { zh: ["全體爆擊 3%", "全體物理防禦力 3%"], ja: ["全体会心 3%", "全体物理防御力 3%"], en: ["Global Stat Bonus 1"] } 
             }
         }
     },
