@@ -241,8 +241,7 @@ const ASIDE_DATA = {
                 icon: "https://i.postimg.cc/XrkdCLJT/Aside-Skill-Ner-2.png", 
                 name: { zh: "[祭司長無敵權]", ja: "[日文2星名稱]", en: "[English 2-Star Name]" }, 
                 desc: { zh: "[基本攻撃命中時,自身受到的傷害量減少,並恢復HP與SP。使用高級技能時,給予自身與前排使者無敵效果。]", ja: "[日文2星描述]", en: "[English 2-Star Desc]" }, 
-                effects: { zh: ["無敵:對所有傷害及減益效果免疫。", "受到的傷害量減少:15%", "受到的傷害量減少持續時間:3秒
-HP恢復:最大HP的3%", "SP恢復量:30", "無敵持續時間:5秒"], ja: ["効果1"], en: ["Effect 1"] } 
+                effects: { zh: ["無敵:對所有傷害及減益效果免疫。", "受到的傷害量減少:15%", "受到的傷害量減少持續時間:3秒", "HP恢復:最大HP的3%", "SP恢復量:30", "無敵持續時間:5秒"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/MnmVQ5TC/Aside-Skill-Ner-3.png", 
@@ -260,8 +259,7 @@ HP恢復:最大HP的3%", "SP恢復量:30", "無敵持續時間:5秒"], ja: ["効
             1: { 
                 icon: "https://i.postimg.cc/LJ3L1D5d/Aside-Skill-Picora-1.png", 
                 name: { zh: "[購物王皮可菈]", ja: "[日文1星名稱]", en: "[English 1-Star Name]" }, 
-                desc: { zh: "[穿戴者的最大HP、物理防禦力、魔法防禦力、 爆擊抵抗、爆擊傷害抵抗增加。
-]", ja: "[日文1星描述]", en: "[English 1-Star Desc]" }, 
+                desc: { zh: "[穿戴者的最大HP、物理防禦力、魔法防禦力、 爆擊抵抗、爆擊傷害抵抗增加。]", ja: "[日文1星描述]", en: "[English 1-Star Desc]" }, 
                 effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             2: { 
@@ -317,8 +315,7 @@ HP恢復:最大HP的3%", "SP恢復量:30", "無敵持續時間:5秒"], ja: ["効
             2: { 
                 icon: "https://i.postimg.cc/18rwqBXV/Aside-Skill-Renewa-Awaken-2.png", 
                 name: { zh: "[飛向時空彼端!]", ja: "[日文2星名稱]", en: "[English 2-Star Name]" }, 
-                desc: { zh: "[經過6秒,或使用強化攻擊、普通技能時,對中間的敵人投下飛彈。飛彈會對敵人造成範圍物理傷害,命中時增加高級技能的冷卻時間。飛彈爆炸時,立即減少當前自身的高級技能冷卻時間。
-]", ja: "[日文2星描述]", en: "[English 2-Star Desc]" }, 
+                desc: { zh: "[經過6秒,或使用強化攻擊、普通技能時,對中間的敵人投下飛彈。飛彈會對敵人造成範圍物理傷害,命中時增加高級技能的冷卻時間。飛彈爆炸時,立即減少當前自身的高級技能冷卻時間。]", ja: "[日文2星描述]", en: "[English 2-Star Desc]" }, 
                 effects: { zh: ["飛彈物理傷害:200%", "冷卻時間增加:1秒", "冷卻時間立即減少:2秒"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             3: { 
