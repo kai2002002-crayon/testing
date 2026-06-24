@@ -404,26 +404,26 @@ const ASIDE_DATA = {
     },
     "Sist": { 
         asideIcon: "https://i.postimg.cc/9rDrVjvj/Aside-Icon-Sist.png", 
-        totalName: { zh: "名牌包", ja: "日文願像總名稱", en: "English Total Name" }, 
+        totalName: { zh: "名牌包", ja: "ブランドバック", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/kVjSj5Ww/Aside-Skill-Sist-1.png", 
-                name: { zh: "商業天才希瑟圖", ja: "日文1星名稱", en: "English 1-Star Name" }, 
-                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
-                effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "商業天才希瑟圖", ja: "商売の天才シスト", en: "English 1-Star Name" }, 
+                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、物理攻撃力、会心、会心ダメージが増加する。", en: "English 1-Star Desc" }, 
+                effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加: 6%", "物理攻撃力増加: 6%", "会心増加: 6%", "会心ダメージ増加: 6%"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/3yLGLw2b/Aside-Skill-Sist-2.png", 
-                name: { zh: "賭上友誼的勝負", ja: "日文2星名稱", en: "English 2-Star Name" }, 
-                desc: { zh: "得普通技能增益效果時,增加隨機友軍攻擊型使者的攻擊力與攻擊速度。若無攻擊型使者,則隨機套用於友軍隊友。高級技能固定造成最大物理傷害。", ja: "日文2星描述", en: "English 2-Star Desc" }, 
-                effects: { zh: ["隨機友軍使者:2名", "攻擊力增加:41%", "攻擊力增加持續時間:10秒", "攻擊速度提升:41%", "攻擊速度提升持續時間:10秒"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "賭上友誼的勝負", ja: "友情をかけた勝負", en: "English 2-Star Name" }, 
+                desc: { zh: "得普通技能增益效果時,增加隨機友軍攻擊型使者的攻擊力與攻擊速度。若無攻擊型使者,則隨機套用於友軍隊友。高級技能固定造成最大物理傷害。", ja: "低学年スキルのバフを獲得時、ランダムな味方アタッカー使徒の攻撃力と攻撃速度を増加させる。アタッカー使徒がいない場合は、ランダムな味方に適用される。高学年スキルは、常に最大物理ダメージ量を与える。", en: "English 2-Star Desc" }, 
+                effects: { zh: ["隨機友軍使者:2名", "攻擊力增加:41%", "攻擊力增加持續時間:10秒", "攻擊速度提升:41%", "攻擊速度提升持續時間:10秒"], ja: ["ランダムな味方の使徒: 2体", "攻撃力増加: 41%", "攻撃力増加の持続時間: 10秒", "攻撃速度増加: 41%"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/LhGtKhGg/Aside-Skill-Sist-3.png", 
-                name: { zh: "天真目標商品", ja: "日文3星名稱", en: "English 3-Star Name" }, 
-                desc: { zh: "使所有友軍爆擊及爆擊傷害增加。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
-                effects: { zh: ["爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["効果1"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體物理攻擊力 3%", "全體爆擊 3%"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "天真目標商品", ja: "味方ターゲット商品", en: "English 3-Star Name" }, 
+                desc: { zh: "使所有友軍爆擊及爆擊傷害增加。", ja: "味方全員の会心と会心ダメージを増加させる。", en: "English 3-Star Desc" }, 
+                effects: { zh: ["爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["会心増加: 6%", "会心ダメージ増加: 6%"], en: ["Effect 1"] }, 
+                globalEffects: { zh: ["全體物理攻擊力 3%", "全體爆擊 3%"], ja: ["全体物理攻撃力 3%", "全体会心 3%"], en: ["Global Stat Bonus 1"] } 
             }
         }
     },
