@@ -9,7 +9,7 @@ const ASIDE_DATA = {
             1: { 
                 icon: "https://i.postimg.cc/rKWS8MLS/Aside-Skill-Amelia-1.png", 
                 name: { zh: "王子的恩寵", ja: "日文1星名稱", en: "English 1-Star Name" }, 
-                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "日文1星描述]", en: "English 1-Star Desc]" }, 
+                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
                 effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["効果1", "効果2"], en: ["Effect 1", "Effect 2"] } 
             },
             2: { 
@@ -24,31 +24,6 @@ const ASIDE_DATA = {
                 desc: { zh: "增加後排友軍的每秒SP恢復量。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
                 effects: { zh: ["每秒SP恢復量:4"], ja: ["効果1"], en: ["Effect 1"] }, 
                 globalEffects: { zh: ["全體物理攻擊力 3%", "全體爆擊 3%"], ja: ["攻撃力 +X%", "体力 +Y%"], en: ["ATK +X%", "HP +Y%"] } 
-            }
-        }
-    },
-    "Canna": { 
-        asideIcon: "https://i.postimg.cc/2V1VmfPj/Aside-Icon-Canna.png", 
-        totalName: { zh: "中文願像總名稱", ja: "日文願像總名稱", en: "English Total Name" }, 
-        stars: {
-            1: { 
-                icon: "https://i.postimg.cc/2Vv4zrf7/Aside-Skill-Canna-1.png", 
-                name: { zh: "中文1星名稱", ja: "日文1星名稱", en: "English 1-Star Name" }, 
-                desc: { zh: "中文1星描述", ja: "日文1星描述", en: "English 1-Star Desc" }, 
-                effects: { zh: ["效果1"], ja: ["効果1"], en: ["Effect 1"] } 
-            },
-            2: { 
-                icon: "https://i.postimg.cc/JGJb1MWK/Aside-Skill-Canna-2.png", 
-                name: { zh: "中文2星名稱", ja: "日文2星名稱", en: "English 2-Star Name" }, 
-                desc: { zh: "中文2星描述", ja: "日文2星描述", en: "English 2-Star Desc" }, 
-                effects: { zh: ["效果1"], ja: ["効果1"], en: ["Effect 1"] } 
-            },
-            3: { 
-                icon: "https://i.postimg.cc/nC7vHptk/Aside-Skill-Canna-3.png", 
-                name: { zh: "中文3星名稱", ja: "日文3星名稱", en: "English 3-Star Name" }, 
-                desc: { zh: "中文3星描述", ja: "日文3星描述", en: "English 3-Star Desc" }, 
-                effects: { zh: ["效果1"], ja: ["効果1"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["能力加成1"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
             }
         }
     },
@@ -154,24 +129,24 @@ const ASIDE_DATA = {
     },
     "Hilde": { 
         asideIcon: "https://i.postimg.cc/crP6LbSs/Aside-Icon-Hilde.png", 
-        totalName: { zh: "泡溫泉的希爾德]", ja: "日文願像總名稱]", en: "English Total Name]" }, 
+        totalName: { zh: "泡溫泉的希爾德", ja: "日文願像總名稱", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/TK6n1FRS/Aside-Skill-Hilde-1.png", 
-                name: { zh: "自我治療]", ja: "日文1星名稱]", en: "English 1-Star Name]" }, 
-                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。]", ja: "日文1星描述]", en: "English 1-Star Desc]" }, 
+                name: { zh: "自我治療", ja: "日文1星名稱", en: "English 1-Star Name" }, 
+                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
                 effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗:6%"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/yDH0xtVG/Aside-Skill-Hilde-2.png", 
-                name: { zh: "醫務人員保護法]", ja: "日文2星名稱]", en: "English 2-Star Name]" }, 
-                desc: { zh: "提升強化攻擊恢復目標的攻擊速度。強化攻擊的HP恢復比例變為2倍。]", ja: "日文2星描述]", en: "English 2-Star Desc]" }, 
+                name: { zh: "醫務人員保護法", ja: "日文2星名稱", en: "English 2-Star Name" }, 
+                desc: { zh: "提升強化攻擊恢復目標的攻擊速度。強化攻擊的HP恢復比例變為2倍。", ja: "日文2星描述", en: "English 2-Star Desc" }, 
                 effects: { zh: ["攻擊速度提升:60%", "攻擊速度提升持續時間:6秒"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/5XV8yTxZ/Aside-Skill-Hilde-3.png", 
-                name: { zh: "溫泉功效]", ja: "日文3星名稱]", en: "English 3-Star Name]" }, 
-                desc: { zh: "敵人對所有友軍造成的魔法傷害量減少。]", ja: "日文3星描述]", en: "English 3-Star Desc]" }, 
+                name: { zh: "溫泉功效", ja: "日文3星名稱", en: "English 3-Star Name" }, 
+                desc: { zh: "敵人對所有友軍造成的魔法傷害量減少。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
                 effects: { zh: ["受到的魔法傷害量減少:10.5%"], ja: ["効果1"], en: ["Effect 1"] }, 
                 globalEffects: { zh: ["全體魔法攻撃力 3%", "全體爆擊傷害抵抗 3%"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
             }
@@ -179,24 +154,24 @@ const ASIDE_DATA = {
     },
     "Kyarot": { 
         asideIcon: "https://i.postimg.cc/pp3yL6HW/Aside-Icon-Kyarot.png", 
-        totalName: { zh: "小太陽]", ja: "日文願像總名稱]", en: "English Total Name]" }, 
+        totalName: { zh: "小太陽", ja: "日文願像總名稱", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/Xrb9qmj0/Aside-Skill-Kyarot-1.png", 
-                name: { zh: "快快長大吧!]", ja: "日文1星名稱]", en: "English 1-Star Name]" }, 
-                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。]", ja: "日文1星描述]", en: "English 1-Star Desc]" }, 
+                name: { zh: "快快長大吧!", ja: "日文1星名稱", en: "English 1-Star Name" }, 
+                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
                 effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗:6%"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/LJpj5w9p/Aside-Skill-Kyarot-2.png", 
-                name: { zh: "讓胡蘿蔔保持新鮮]", ja: "日文2星名稱]", en: "English 2-Star Name]" }, 
-                desc: { zh: "強化攻擊追加護盾。護盾被破壞時,額外恢復SP。]", ja: "日文2星描述]", en: "English 2-Star Desc]" }, 
+                name: { zh: "讓胡蘿蔔保持新鮮", ja: "日文2星名稱", en: "English 2-Star Name" }, 
+                desc: { zh: "強化攻擊追加護盾。護盾被破壞時,額外恢復SP。", ja: "日文2星描述", en: "English 2-Star Desc" }, 
                 effects: { zh: ["護盾:最大HP的30%", "護盾持續時間:5秒", "SP恢復量:45"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/nXJqrgFx/Aside-Skill-Kyarot-3.png", 
-                name: { zh: "冰凍胡蘿蔔]", ja: "日文3星名稱]", en: "English 3-Star Name]" }, 
-                desc: { zh: "增加後排友軍對敵人造成的傷害量。]", ja: "日文3星描述]", en: "English 3-Star Desc]" }, 
+                name: { zh: "冰凍胡蘿蔔", ja: "日文3星名稱", en: "English 3-Star Name" }, 
+                desc: { zh: "增加後排友軍對敵人造成的傷害量。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
                 effects: { zh: ["造成的傷害量增加:19.5%"], ja: ["効果1"], en: ["Effect 1"] }, 
                 globalEffects: { zh: ["全體爆擊傷害 3%", "全體爆擊傷害抵抗 3%"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
             }
@@ -204,24 +179,24 @@ const ASIDE_DATA = {
     },
     "Momo": { 
         asideIcon: "https://i.postimg.cc/TpBh3463/Aside-Icon-Momo.png", 
-        totalName: { zh: "傳說中的手裡劍]", ja: "日文願像總名稱]", en: "English Total Name]" }, 
+        totalName: { zh: "傳說中的手裡劍", ja: "日文願像總名稱", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/PCj1J9XT/Aside-Skill-Momo-1.png", 
-                name: { zh: "櫻花手裡劍]", ja: "日文1星名稱]", en: "English 1-Star Name]" }, 
-                desc: { zh: "穿戴者的最大HP、魔法攻擊力、爆擊、爆擊傷害增加。]", ja: "日文1星描述]", en: "English 1-Star Desc]" }, 
+                name: { zh: "櫻花手裡劍", ja: "日文1星名稱", en: "English 1-Star Name" }, 
+                desc: { zh: "穿戴者的最大HP、魔法攻擊力、爆擊、爆擊傷害增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
                 effects: { zh: ["最大HP增加:6%", "魔法攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/xX3Mz5Ch/Aside-Skill-Momo-2.png", 
-                name: { zh: "開眼的忍者]", ja: "日文2星名稱]", en: "English 2-Star Name]" }, 
-                desc: { zh: "召喚獸自爆傷害增加。召喚獸被破壞時,恢復自身SP。使用高級技能時,在一段時間內,減少桃桃受到的傷害量。]", ja: "日文2星描述]", en: "English 2-Star Desc]" }, 
+                name: { zh: "開眼的忍者", ja: "日文2星名稱", en: "English 2-Star Name" }, 
+                desc: { zh: "召喚獸自爆傷害增加。召喚獸被破壞時,恢復自身SP。使用高級技能時,在一段時間內,減少桃桃受到的傷害量。", ja: "日文2星描述", en: "English 2-Star Desc" }, 
                 effects: { zh: ["召喚獸自爆傷害增加:200%", "SP恢復量:10", "受到的傷害量減少:50%", "受到的傷害量減少持續時間:3秒"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/yDH0xt17/Aside-Skill-Momo-3.png", 
-                name: { zh: "桃桃~喝!]", ja: "日文3星名稱]", en: "English 3-Star Name]" }, 
-                desc: { zh: "所有友軍對敵人造成的傷害量增加。敵人對所有友軍造成的傷害量減少。]", ja: "日文3星描述]", en: "English 3-Star Desc]" }, 
+                name: { zh: "桃桃~喝!", ja: "日文3星名稱", en: "English 3-Star Name" }, 
+                desc: { zh: "所有友軍對敵人造成的傷害量增加。敵人對所有友軍造成的傷害量減少。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
                 effects: { zh: ["傷害量增加:10,5%", "受到的傷害量減少:4.5%"], ja: ["効果1"], en: ["Effect 1"] }, 
                 globalEffects: { zh: ["全體魔法攻撃力 3%", "全體爆擊傷害 3%"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
             }
@@ -229,24 +204,24 @@ const ASIDE_DATA = {
     },
     "Ner": { 
         asideIcon: "https://i.postimg.cc/fJ1kRrNy/Aside-Icon-Ner.png", 
-        totalName: { zh: "聖君艾爾芬]", ja: "日文願像總名稱]", en: "English Total Name]" }, 
+        totalName: { zh: "聖君艾爾芬", ja: "日文願像總名稱", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/mPyCHjDK/Aside-Skill-Ner-1.png", 
-                name: { zh: "女王特別輔佐官]", ja: "日文1星名稱]", en: "English 1-Star Name]" }, 
-                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。]", ja: "日文1星描述]", en: "English 1-Star Desc]" }, 
+                name: { zh: "女王特別輔佐官", ja: "日文1星名稱", en: "English 1-Star Name" }, 
+                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
                 effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/XrkdCLJT/Aside-Skill-Ner-2.png", 
-                name: { zh: "祭司長無敵權]", ja: "日文2星名稱]", en: "English 2-Star Name]" }, 
-                desc: { zh: "基本攻撃命中時,自身受到的傷害量減少,並恢復HP與SP。使用高級技能時,給予自身與前排使者無敵效果。]", ja: "日文2星描述]", en: "English 2-Star Desc]" }, 
+                name: { zh: "祭司長無敵權", ja: "日文2星名稱", en: "English 2-Star Name" }, 
+                desc: { zh: "基本攻撃命中時,自身受到的傷害量減少,並恢復HP與SP。使用高級技能時,給予自身與前排使者無敵效果。", ja: "日文2星描述", en: "English 2-Star Desc" }, 
                 effects: { zh: ["無敵:對所有傷害及減益效果免疫。", "受到的傷害量減少:15%", "受到的傷害量減少持續時間:3秒", "HP恢復:最大HP的3%", "SP恢復量:30", "無敵持續時間:5秒"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/MnmVQ5TC/Aside-Skill-Ner-3.png", 
-                name: { zh: "以世界樹之名!]", ja: "日文3星名稱]", en: "English 3-Star Name]" }, 
-                desc: { zh: "所有友軍對敵人造成的傷害量增加,敵人對所有友軍造成的傷害量減少。]", ja: "日文3星描述]", en: "English 3-Star Desc]" }, 
+                name: { zh: "以世界樹之名!", ja: "日文3星名稱", en: "English 3-Star Name" }, 
+                desc: { zh: "所有友軍對敵人造成的傷害量增加,敵人對所有友軍造成的傷害量減少。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
                 effects: { zh: ["傷害量增加:10.5%", "受到的傷害量減少:4.5%"], ja: ["効果1"], en: ["Effect 1"] }, 
                 globalEffects: { zh: ["全體魔法攻撃力 3%", "全體爆擊抵抗 3%"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
             }
@@ -254,24 +229,24 @@ const ASIDE_DATA = {
     },
     "Picola": { 
         asideIcon: "https://i.postimg.cc/0bhryBsK/Aside-Icon-Picora.png", 
-        totalName: { zh: "最愛購物]", ja: "日文願像總名稱]", en: "English Total Name]" }, 
+        totalName: { zh: "最愛購物", ja: "日文願像總名稱", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/LJ3L1D5d/Aside-Skill-Picora-1.png", 
-                name: { zh: "購物王皮可菈]", ja: "日文1星名稱]", en: "English 1-Star Name]" }, 
-                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、 爆擊抵抗、爆擊傷害抵抗增加。]", ja: "日文1星描述]", en: "English 1-Star Desc]" }, 
+                name: { zh: "購物王皮可菈", ja: "日文1星名稱", en: "English 1-Star Name" }, 
+                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、 爆擊抵抗、爆擊傷害抵抗增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
                 effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/xX3Mz58S/Aside-Skill-Picora-2.png", 
-                name: { zh: "皮可菈貼紙是附贈的!]", ja: "日文2星名稱]", en: "English 2-Star Name]" }, 
-                desc: { zh: "最大HP增加。強化攻擊後、一定時間內對剩餘HP比例最低的 2名友軍貼上皮可菈貼紙。皮可菈貼紙會恢復 2次HP,並增加傷害量。減少高級技能冷卻時間。]", ja: "日文2星描述]", en: "English 2-Star Desc]" }, 
+                name: { zh: "皮可菈貼紙是附贈的!", ja: "日文2星名稱", en: "English 2-Star Name" }, 
+                desc: { zh: "最大HP增加。強化攻擊後、一定時間內對剩餘HP比例最低的 2名友軍貼上皮可菈貼紙。皮可菈貼紙會恢復 2次HP,並增加傷害量。減少高級技能冷卻時間。", ja: "日文2星描述", en: "English 2-Star Desc" }, 
                 effects: { zh: ["大HP增加:20%", "皮可菈貼紙持續時間:7秒", "HP恢復:目標最大HP的22%", "傷害量增加:30%", "冷卻時間減少:12秒"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/217hZGyD/Aside-Skill-Picora-3.png", 
-                name: { zh: "聚集吧時尚達人]", ja: "日文3星名稱]", en: "English 3-Star Name]" }, 
-                desc: { zh: "使敵人對所有友軍造成的傷害量減少。]", ja: "日文3星描述]", en: "English 3-Star Desc]" }, 
+                name: { zh: "聚集吧時尚達人", ja: "日文3星名稱", en: "English 3-Star Name" }, 
+                desc: { zh: "使敵人對所有友軍造成的傷害量減少。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
                 effects: { zh: ["受到的傷害量減少:7.5%"], ja: ["効果1"], en: ["Effect 1"] }, 
                 globalEffects: { zh: ["全體 HP 3%", "全體爆擊傷害抵抗 3%"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
             }
@@ -279,24 +254,24 @@ const ASIDE_DATA = {
     },
     "Posher": { 
         asideIcon: "https://i.postimg.cc/QHvVdy3B/Aside-Icon-Posher.png", 
-        totalName: { zh: "大家的藥水]", ja: "日文願像總名稱]", en: "English Total Name]" }, 
+        totalName: { zh: "大家的藥水", ja: "日文願像總名稱", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/fVfm9Cys/Aside-Skill-Posher-1.png", 
-                name: { zh: "藥水達人珀榭]", ja: "日文1星名稱]", en: "English 1-Star Name]" }, 
-                desc: { zh: "穿戴者的最大HP、魔法攻擊力、爆擊、爆擊傷害增加。]", ja: "日文1星描述]", en: "English 1-Star Desc]" }, 
+                name: { zh: "藥水達人珀榭", ja: "日文1星名稱", en: "English 1-Star Name" }, 
+                desc: { zh: "穿戴者的最大HP、魔法攻擊力、爆擊、爆擊傷害增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
                 effects: { zh: ["最大HP增加:6%", "魔法攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/k2vKbsGq/Aside-Skill-Posher-2.png", 
-                name: { zh: "臨床實驗大成功]", ja: "日文2星名稱]", en: "English 2-Star Name]" }, 
-                desc: { zh: "使用普通技能後,恢復後排友軍的SP。高級技能的變異對象額外增加1名。]", ja: "日文2星描述]", en: "English 2-Star Desc]" }, 
+                name: { zh: "臨床實驗大成功", ja: "日文2星名稱", en: "English 2-Star Name" }, 
+                desc: { zh: "使用普通技能後,恢復後排友軍的SP。高級技能的變異對象額外增加1名。", ja: "日文2星描述", en: "English 2-Star Desc" }, 
                 effects: { zh: ["SP恢復量:20~50"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/xX3Mz58f/Aside-Skill-Posher-3.png", 
-                name: { zh: "新藥革命]", ja: "日文3星名稱]", en: "English 3-Star Name]" }, 
-                desc: { zh: "增加所有友軍的爆擊抵抗與爆擊傷害抵抗。]", ja: "日文3星描述]", en: "English 3-Star Desc]" }, 
+                name: { zh: "新藥革命", ja: "日文3星名稱", en: "English 3-Star Name" }, 
+                desc: { zh: "增加所有友軍的爆擊抵抗與爆擊傷害抵抗。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
                 effects: { zh: ["爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["効果1"], en: ["Effect 1"] }, 
                 globalEffects: { zh: ["全體爆擊傷害 3%", "全體爆擊抵抗 3%"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
             }
@@ -304,24 +279,24 @@ const ASIDE_DATA = {
     },
     "RenewaAwaken": { 
         asideIcon: "https://i.postimg.cc/3dzWxcTD/Aside-Icon-Renewa-Awaken.png", 
-        totalName: { zh: "故障的末日鐘]", ja: "日文願像總名稱]", en: "English Total Name]" }, 
+        totalName: { zh: "故障的末日鐘", ja: "日文願像總名稱", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/rDNxrjsm/Aside-Skill-Renewa-Awaken-1.png", 
-                name: { zh: "停止的時間]", ja: "日文1星名稱]", en: "English 1-Star Name]" }, 
-                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。]", ja: "日文1星描述]", en: "English 1-Star Desc]" }, 
+                name: { zh: "停止的時間", ja: "日文1星名稱", en: "English 1-Star Name" }, 
+                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
                 effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/18rwqBXV/Aside-Skill-Renewa-Awaken-2.png", 
-                name: { zh: "飛向時空彼端!]", ja: "日文2星名稱]", en: "English 2-Star Name]" }, 
-                desc: { zh: "經過6秒,或使用強化攻擊、普通技能時,對中間的敵人投下飛彈。飛彈會對敵人造成範圍物理傷害,命中時增加高級技能的冷卻時間。飛彈爆炸時,立即減少當前自身的高級技能冷卻時間。]", ja: "日文2星描述]", en: "English 2-Star Desc]" }, 
+                name: { zh: "飛向時空彼端!", ja: "日文2星名稱", en: "English 2-Star Name" }, 
+                desc: { zh: "經過6秒,或使用強化攻擊、普通技能時,對中間的敵人投下飛彈。飛彈會對敵人造成範圍物理傷害,命中時增加高級技能的冷卻時間。飛彈爆炸時,立即減少當前自身的高級技能冷卻時間。", ja: "日文2星描述", en: "English 2-Star Desc" }, 
                 effects: { zh: ["飛彈物理傷害:200%", "冷卻時間增加:1秒", "冷卻時間立即減少:2秒"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/hX1Tdsvm/Aside-Skill-Renewa-Awaken-3.png", 
-                name: { zh: "屬於我們的和平時光]", ja: "日文3星名稱]", en: "English 3-Star Name]" }, 
-                desc: { zh: "我方全體對敵人造成的傷害量增加。]", ja: "日文3星描述]", en: "English 3-Star Desc]" }, 
+                name: { zh: "屬於我們的和平時光", ja: "日文3星名稱", en: "English 3-Star Name" }, 
+                desc: { zh: "我方全體對敵人造成的傷害量增加。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
                 effects: { zh: ["造成的傷害量增加:22%"], ja: ["効果1"], en: ["Effect 1"] }, 
                 globalEffects: { zh: ["全體物理攻擊力 4%", "全體爆擊 4%"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
             }
@@ -329,24 +304,24 @@ const ASIDE_DATA = {
     },
     "Rim": { 
         asideIcon: "https://i.postimg.cc/xcXcYSBw/Aside-Icon-Rim.png", 
-        totalName: { zh: "中文願像總名稱]", ja: "日文願像總名稱]", en: "English Total Name]" }, 
+        totalName: { zh: "中文願像總名稱", ja: "日文願像總名稱", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/5H9vqzQ0/Aside-Skill-Rim-1.png", 
-                name: { zh: "中文1星名稱]", ja: "日文1星名稱]", en: "English 1-Star Name]" }, 
-                desc: { zh: "中文1星描述]", ja: "日文1星描述]", en: "English 1-Star Desc]" }, 
+                name: { zh: "中文1星名稱", ja: "日文1星名稱", en: "English 1-Star Name" }, 
+                desc: { zh: "中文1星描述", ja: "日文1星描述", en: "English 1-Star Desc" }, 
                 effects: { zh: ["效果1"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/VSsMBt0d/Aside-Skill-Rim-2.png", 
-                name: { zh: "中文2星名稱]", ja: "日文2星名稱]", en: "English 2-Star Name]" }, 
-                desc: { zh: "中文2星描述]", ja: "日文2星描述]", en: "English 2-Star Desc]" }, 
+                name: { zh: "中文2星名稱", ja: "日文2星名稱", en: "English 2-Star Name" }, 
+                desc: { zh: "中文2星描述", ja: "日文2星描述", en: "English 2-Star Desc" }, 
                 effects: { zh: ["效果1"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/1gR6cFV8/Aside-Skill-Rim-3.png", 
-                name: { zh: "中文3星名稱]", ja: "日文3星名稱]", en: "English 3-Star Name]" }, 
-                desc: { zh: "中文3星描述]", ja: "日文3星描述]", en: "English 3-Star Desc]" }, 
+                name: { zh: "中文3星名稱", ja: "日文3星名稱", en: "English 3-Star Name" }, 
+                desc: { zh: "中文3星描述", ja: "日文3星描述", en: "English 3-Star Desc" }, 
                 effects: { zh: ["效果1"], ja: ["効果1"], en: ["Effect 1"] }, 
                 globalEffects: { zh: ["能力加成1"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
             }
@@ -354,24 +329,24 @@ const ASIDE_DATA = {
     },
     "Risty": { 
         asideIcon: "https://i.postimg.cc/1f8fPZLh/Aside-Icon-Risty.png", 
-        totalName: { zh: "今日的POTG]", ja: "日文願像總名稱]", en: "English Total Name]" }, 
+        totalName: { zh: "今日的POTG", ja: "日文願像總名稱", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/qtBnXK6h/Aside-Skill-Risty-1.png", 
-                name: { zh: "精靈聯盟最強者]", ja: "日文1星名稱]", en: "English 1-Star Name]" }, 
-                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。]", ja: "日文1星描述]", en: "English 1-Star Desc]" }, 
+                name: { zh: "精靈聯盟最強者", ja: "日文1星名稱", en: "English 1-Star Name" }, 
+                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
                 effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/GB3YJDTs/Aside-Skill-Risty-2.png", 
-                name: { zh: "天才駭客登場]", ja: "日文2星名稱]", en: "English 2-Star Name]" }, 
-                desc: { zh: "以普通技能擊殺敵人時恢復SP。使用高級技能後,對剩餘HP比例最低的3名敵人額外造成3次物理傷害。]", ja: "日文2星描述]", en: "English 2-Star Desc]" }, 
+                name: { zh: "天才駭客登場", ja: "日文2星名稱", en: "English 2-Star Name" }, 
+                desc: { zh: "以普通技能擊殺敵人時恢復SP。使用高級技能後,對剩餘HP比例最低的3名敵人額外造成3次物理傷害。", ja: "日文2星描述", en: "English 2-Star Desc" }, 
                 effects: { zh: ["SP恢復:75%", "SP恢復冷卻時間:10秒", "每個方塊物理傷害:160%"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/2qjvFWLn/Aside-Skill-Risty-3.png", 
-                name: { zh: "莉絲蒂的超級救援]", ja: "日文3星名稱]", en: "English 3-Star Name]" }, 
-                desc: { zh: "增加後排友軍的每秒SP恢復量。]", ja: "日文3星描述]", en: "English 3-Star Desc]" }, 
+                name: { zh: "莉絲蒂的超級救援", ja: "日文3星名稱", en: "English 3-Star Name" }, 
+                desc: { zh: "增加後排友軍的每秒SP恢復量。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
                 effects: { zh: ["每秒SP恢復量:4"], ja: ["効果1"], en: ["Effect 1"] }, 
                 globalEffects: { zh: ["全體爆擊傷害 3%", "全體物理防禦力 3%"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
             }
@@ -379,24 +354,24 @@ const ASIDE_DATA = {
     },
     "Rufo": { 
         asideIcon: "https://i.postimg.cc/8j7jDVq8/Aside-Icon-Rufo.png", 
-        totalName: { zh: "智囊盧波]", ja: "日文願像總名稱]", en: "English Total Name]" }, 
+        totalName: { zh: "智囊盧波", ja: "日文願像總名稱", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/t1RPt6n5/Aside-Skill-Rufo-1.png", 
-                name: { zh: "反對獸糧黨知識王]", ja: "日文1星名稱]", en: "English 1-Star Name]" }, 
-                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。]", ja: "日文1星描述]", en: "English 1-Star Desc]" }, 
+                name: { zh: "反對獸糧黨知識王", ja: "日文1星名稱", en: "English 1-Star Name" }, 
+                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
                 effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/mcZMN91S/Aside-Skill-Rufo-2.png", 
-                name: { zh: "三劍客的大冒險]", ja: "日文2星名稱]", en: "English 2-Star Name]" }, 
-                desc: { zh: "普通攻擊傷害量增加。當自身處於障眼法狀態時,攻擊速度提升,且立即減少目前高級技能冷卻時間。回合開始時,自身的第一下普通攻擊將以強化攻擊施放。]", ja: "日文2星描述]", en: "English 2-Star Desc]" }, 
+                name: { zh: "三劍客的大冒險", ja: "日文2星名稱", en: "English 2-Star Name" }, 
+                desc: { zh: "普通攻擊傷害量增加。當自身處於障眼法狀態時,攻擊速度提升,且立即減少目前高級技能冷卻時間。回合開始時,自身的第一下普通攻擊將以強化攻擊施放。", ja: "日文2星描述", en: "English 2-Star Desc" }, 
                 effects: { zh: ["障眼法:不會成為敵人的攻擊目標。沒有友軍時不會觸發。", "普通攻擊傷害量增加:200%", "攻擊速度提升:75%", "攻擊速度提升持續時間:6秒", "冷卻時間立即減少:4秒"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/676RLZ4Y/Aside-Skill-Rufo-3.png", 
-                name: { zh: "我就是最棒的戰略家!]", ja: "日文3星名稱]", en: "English 3-Star Name]" }, 
-                desc: { zh: "提升所有友軍的攻擊速度。]", ja: "日文3星描述]", en: "English 3-Star Desc]" }, 
+                name: { zh: "我就是最棒的戰略家!", ja: "日文3星名稱", en: "English 3-Star Name" }, 
+                desc: { zh: "提升所有友軍的攻擊速度。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
                 effects: { zh: ["攻擊速度增加:7%"], ja: ["効果1"], en: ["Effect 1"] }, 
                 globalEffects: { zh: ["全體物理攻擊力 3%", "全體爆擊傷害抵抗 3%"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
             }
@@ -404,24 +379,24 @@ const ASIDE_DATA = {
     },
     "Selline": { 
         asideIcon: "https://i.postimg.cc/Mvnvx8gg/Aside-Icon-Selline.png", 
-        totalName: { zh: "網紅的瑟琳娜]", ja: "日文願像總名稱]", en: "English Total Name]" }, 
+        totalName: { zh: "網紅的瑟琳娜", ja: "日文願像總名稱", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/hJ4xbmQw/Aside-Skill-Selline-1.png", 
-                name: { zh: "惡作劇的瑟琳娜]", ja: "日文1星名稱]", en: "English 1-Star Name]" }, 
-                desc: { zh: "穿戴者的最大HP增加。]", ja: "日文1星描述]", en: "English 1-Star Desc]" }, 
+                name: { zh: "惡作劇的瑟琳娜", ja: "日文1星名稱", en: "English 1-Star Name" }, 
+                desc: { zh: "穿戴者的最大HP增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
                 effects: { zh: ["最大HP增加:22.5%"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/94x9xfyx/Aside-Skill-Selline-2.png", 
-                name: { zh: "挑釁專家ElfTuber]", ja: "日文2星名稱]", en: "English 2-Star Name]" }, 
-                desc: { zh: "受到直接傷害時恢復SP。降低因強化攻擊受到挑釁的敵人的攻擊速度。強化攻擊的HP恢復比例變為2倍]", ja: "日文2星描述]", en: "English 2-Star Desc]" }, 
+                name: { zh: "挑釁專家ElfTuber", ja: "日文2星名稱", en: "English 2-Star Name" }, 
+                desc: { zh: "受到直接傷害時恢復SP。降低因強化攻擊受到挑釁的敵人的攻擊速度。強化攻擊的HP恢復比例變為2倍", ja: "日文2星描述", en: "English 2-Star Desc" }, 
                 effects: { zh: ["直接傷害:指狀態異常傷害、反射傷害以外的直接攻擊傷害。", "SP恢復量:6", "攻擊速度降低:33%", "攻擊速度降低持續時間:4秒"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/1gWFWzDB/Aside-Skill-Selline-3.png", 
-                name: { zh: "捐款挑戰]", ja: "日文3星名稱]", en: "English 3-Star Name]" }, 
-                desc: { zh: "敵人對前排友軍造成傷害量減少。]", ja: "日文3星描述]", en: "English 3-Star Desc]" }, 
+                name: { zh: "捐款挑戰", ja: "日文3星名稱", en: "English 3-Star Name" }, 
+                desc: { zh: "敵人對前排友軍造成傷害量減少。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
                 effects: { zh: ["受到的傷害量減少:97%"], ja: ["効果1"], en: ["Effect 1"] }, 
                 globalEffects: { zh: ["全體魔法防禦力 3%", "全體爆擊抵抗 3%"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
             }
@@ -429,24 +404,24 @@ const ASIDE_DATA = {
     },
     "Sist": { 
         asideIcon: "https://i.postimg.cc/9rDrVjvj/Aside-Icon-Sist.png", 
-        totalName: { zh: "名牌包]", ja: "日文願像總名稱]", en: "English Total Name]" }, 
+        totalName: { zh: "名牌包", ja: "日文願像總名稱", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/kVjSj5Ww/Aside-Skill-Sist-1.png", 
-                name: { zh: "商業天才希瑟圖]", ja: "日文1星名稱]", en: "English 1-Star Name]" }, 
-                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。]", ja: "日文1星描述]", en: "English 1-Star Desc]" }, 
+                name: { zh: "商業天才希瑟圖", ja: "日文1星名稱", en: "English 1-Star Name" }, 
+                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
                 effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/3yLGLw2b/Aside-Skill-Sist-2.png", 
-                name: { zh: "賭上友誼的勝負]", ja: "日文2星名稱]", en: "English 2-Star Name]" }, 
-                desc: { zh: "得普通技能增益效果時,增加隨機友軍攻擊型使者的攻擊力與攻擊速度。若無攻擊型使者,則隨機套用於友軍隊友。高級技能固定造成最大物理傷害。]", ja: "日文2星描述]", en: "English 2-Star Desc]" }, 
+                name: { zh: "賭上友誼的勝負", ja: "日文2星名稱", en: "English 2-Star Name" }, 
+                desc: { zh: "得普通技能增益效果時,增加隨機友軍攻擊型使者的攻擊力與攻擊速度。若無攻擊型使者,則隨機套用於友軍隊友。高級技能固定造成最大物理傷害。", ja: "日文2星描述", en: "English 2-Star Desc" }, 
                 effects: { zh: ["隨機友軍使者:2名", "攻擊力增加:41%", "攻擊力增加持續時間:10秒", "攻擊速度提升:41%", "攻擊速度提升持續時間:10秒"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/LhGtKhGg/Aside-Skill-Sist-3.png", 
-                name: { zh: "天真目標商品]", ja: "日文3星名稱]", en: "English 3-Star Name]" }, 
-                desc: { zh: "使所有友軍爆擊及爆擊傷害增加。]", ja: "日文3星描述]", en: "English 3-Star Desc]" }, 
+                name: { zh: "天真目標商品", ja: "日文3星名稱", en: "English 3-Star Name" }, 
+                desc: { zh: "使所有友軍爆擊及爆擊傷害增加。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
                 effects: { zh: ["爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["効果1"], en: ["Effect 1"] }, 
                 globalEffects: { zh: ["全體物理攻擊力 3%", "全體爆擊 3%"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
             }
@@ -454,24 +429,24 @@ const ASIDE_DATA = {
     },
     "Snorky": { 
         asideIcon: "https://i.postimg.cc/nsB3PgH9/Aside-Icon-Snorky.png", 
-        totalName: { zh: "大BOSS斯諾奇]", ja: "日文願像總名稱]", en: "English Total Name]" }, 
+        totalName: { zh: "大BOSS斯諾奇", ja: "日文願像總名稱", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/bsbQzpjz/Aside-Skill-Snorky-1.png", 
-                name: { zh: "我的夢想是大Boss!]", ja: "日文1星名稱]", en: "English 1-Star Name]" }, 
-                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。]", ja: "日文1星描述]", en: "English 1-Star Desc]" }, 
+                name: { zh: "我的夢想是大Boss!", ja: "日文1星名稱", en: "English 1-Star Name" }, 
+                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
                 effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/c6PRy6Pg/Aside-Skill-Snorky-2.png", 
-                name: { zh: "義氣的代名詞]", ja: "日文2星名稱]", en: "English 2-Star Name]" }, 
-                desc: { zh: "回合開始時,賦予前排友軍護盾並增加造成的傷害量。強化攻擊時,減少周圍友軍受到的傷害量。]", ja: "日文2星描述]", en: "English 2-Star Desc]" }, 
+                name: { zh: "義氣的代名詞", ja: "日文2星名稱", en: "English 2-Star Name" }, 
+                desc: { zh: "回合開始時,賦予前排友軍護盾並增加造成的傷害量。強化攻擊時,減少周圍友軍受到的傷害量。", ja: "日文2星描述", en: "English 2-Star Desc" }, 
                 effects: { zh: ["護盾:最大HP的24%", "護盾持續時間:12秒", "傷害量增加:32%", "傷害量增加持續時間:12秒", "受到的傷害量減少:46%", "受到的傷害量減少持續時間:3秒"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/nC7vHptc/Aside-Skill-Snorky-3.png", 
-                name: { zh: "吃我一拳]", ja: "日文3星名稱]", en: "English 3-Star Name]" }, 
-                desc: { zh: "使敵人對所有友軍造成的傷害量減少。]", ja: "日文3星描述]", en: "English 3-Star Desc]" }, 
+                name: { zh: "吃我一拳", ja: "日文3星名稱", en: "English 3-Star Name" }, 
+                desc: { zh: "使敵人對所有友軍造成的傷害量減少。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
                 effects: { zh: ["受到的傷害量減少:7.5%"], ja: ["効果1"], en: ["Effect 1"] }, 
                 globalEffects: { zh: ["全體物理攻擊力 3%", "全體物理防禦力 3%"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
             }
@@ -479,24 +454,24 @@ const ASIDE_DATA = {
     },
     "Ui": { 
         asideIcon: "https://i.postimg.cc/qzNz0d9T/Aside-Icon-Ui.png", 
-        totalName: { zh: "不快樂的羽伊]", ja: "日文願像總名稱]", en: "English Total Name]" }, 
+        totalName: { zh: "不快樂的羽伊", ja: "日文願像總名稱", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/tYPhXpHY/Aside-Skill-Ui-1.png", 
-                name: { zh: "耶魯呱呱叫]", ja: "日文1星名稱]", en: "English 1-Star Name]" }, 
-                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。]", ja: "日文1星描述]", en: "English 1-Star Desc]" }, 
+                name: { zh: "耶魯呱呱叫", ja: "日文1星名稱", en: "English 1-Star Name" }, 
+                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
                 effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗:6%"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/WhrM2TP3/Aside-Skill-Ui-2.png", 
-                name: { zh: "正向王羽伊]", ja: "日文2星名稱]", en: "English 2-Star Name]" }, 
-                desc: { zh: "額外追加1個活潑性格。使用普通技能時,增加中排友軍的傷害量。]", ja: "日文2星描述]", en: "English 2-Star Desc]" }, 
+                name: { zh: "正向王羽伊", ja: "日文2星名稱", en: "English 2-Star Name" }, 
+                desc: { zh: "額外追加1個活潑性格。使用普通技能時,增加中排友軍的傷害量。", ja: "日文2星描述", en: "English 2-Star Desc" }, 
                 effects: { zh: ["傷害量增加:16%", "傷害量增加持續時間:7秒"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/rKWS8MLs/Aside-Skill-Ui-3.png", 
-                name: { zh: "穿雨靴的羽伊]", ja: "日文3星名稱]", en: "English 3-Star Name]" }, 
-                desc: { zh: "敵人對中排友軍造成的傷害量減少。]", ja: "日文3星描述]", en: "English 3-Star Desc]" }, 
+                name: { zh: "穿雨靴的羽伊", ja: "日文3星名稱", en: "English 3-Star Name" }, 
+                desc: { zh: "敵人對中排友軍造成的傷害量減少。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
                 effects: { zh: ["受到的傷害量減少:14%"], ja: ["効果1"], en: ["Effect 1"] }, 
                 globalEffects: { zh: ["全體 HP 4%", "全體魔法攻撃力 4%"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
             }
@@ -504,24 +479,24 @@ const ASIDE_DATA = {
     },
     "Vivi": { 
         asideIcon: "https://i.postimg.cc/mtPtRG0b/Aside-Icon-Vivi.png", 
-        totalName: { zh: "被鎖鏈鎖上的箱子]", ja: "日文願像總名稱]", en: "English Total Name]" }, 
+        totalName: { zh: "被鎖鏈鎖上的箱子", ja: "日文願像總名稱", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/MvRyWq8M/Aside-Skill-Vivi-1.png", 
-                name: { zh: "上鎖的回憶箱]", ja: "日文1星名稱]", en: "English 1-Star Name]" }, 
-                desc: { zh: "戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。]", ja: "日文1星描述]", en: "English 1-Star Desc]" }, 
+                name: { zh: "上鎖的回憶箱", ja: "日文1星名稱", en: "English 1-Star Name" }, 
+                desc: { zh: "戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
                 effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/9rTGWCjq/Aside-skill-vivi-2.png", 
-                name: { zh: "本少女會保護你的]", ja: "日文2星名稱]", en: "English 2-Star Name]" }, 
-                desc: { zh: "減少受到的技能傷害量。基本攻撃命中時,所攻擊敵人SP減少。(世界首領的SP減少值會降低。) 使用普通技能後,賦予除自身以外剩下HP比例最低的友軍水銀護盾。高級技能的水銀槍將額外飛向隨機2名敵人。]", ja: "日文2星描述]", en: "English 2-Star Desc]" }, 
+                name: { zh: "本少女會保護你的", ja: "日文2星名稱", en: "English 2-Star Name" }, 
+                desc: { zh: "減少受到的技能傷害量。基本攻撃命中時,所攻擊敵人SP減少。(世界首領的SP減少值會降低。) 使用普通技能後,賦予除自身以外剩下HP比例最低的友軍水銀護盾。高級技能的水銀槍將額外飛向隨機2名敵人。", ja: "日文2星描述", en: "English 2-Star Desc" }, 
                 effects: { zh: ["受到的技能傷害量減少:33%", "SP減少量:45", "世界首領SP減少量:15", "護盾:最大HP的64%", "護盾持續時間:6秒"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/F7cj9NQk/Aside-skill-vivi-3.png", 
-                name: { zh: "榮耀的薇薇]", ja: "日文3星名稱]", en: "English 3-Star Name]" }, 
-                desc: { zh: "所有友軍受到敵人的傷害量減少。所有友軍的攻擊速度提升。]", ja: "日文3星描述]", en: "English 3-Star Desc]" }, 
+                name: { zh: "榮耀的薇薇", ja: "日文3星名稱", en: "English 3-Star Name" }, 
+                desc: { zh: "所有友軍受到敵人的傷害量減少。所有友軍的攻擊速度提升。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
                 effects: { zh: ["受到的傷害量減少:6%", "攻擊速度提升:5.25%"], ja: ["効果1"], en: ["Effect 1"] }, 
                 globalEffects: { zh: ["全體 HP 4%", "全體魔法防禦力 4%"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
             }
@@ -529,24 +504,24 @@ const ASIDE_DATA = {
     },
     "xXionx": { 
         asideIcon: "https://i.postimg.cc/vc4cMdpY/Aside-Icon-x-Xionx.png", 
-        totalName: { zh: "中文願像總名稱]", ja: "日文願像總名稱]", en: "English Total Name]" }, 
+        totalName: { zh: "中文願像總名稱", ja: "日文願像總名稱", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/1f6p9sZq/Aside-Skill-x-Xionx-1.png", 
-                name: { zh: "中文1星名稱]", ja: "日文1星名稱]", en: "English 1-Star Name]" }, 
-                desc: { zh: "中文1星描述]", ja: "日文1星描述]", en: "English 1-Star Desc]" }, 
+                name: { zh: "中文1星名稱", ja: "日文1星名稱", en: "English 1-Star Name" }, 
+                desc: { zh: "中文1星描述", ja: "日文1星描述", en: "English 1-Star Desc" }, 
                 effects: { zh: ["效果1"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/qzn8k4dK/Aside-Skill-x-Xionx-2.png", 
-                name: { zh: "中文2星名稱]", ja: "日文2星名稱]", en: "English 2-Star Name]" }, 
-                desc: { zh: "中文2星描述]", ja: "日文2星描述]", en: "English 2-Star Desc]" }, 
+                name: { zh: "中文2星名稱", ja: "日文2星名稱", en: "English 2-Star Name" }, 
+                desc: { zh: "中文2星描述", ja: "日文2星描述", en: "English 2-Star Desc" }, 
                 effects: { zh: ["效果1"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/CzDjFSVC/Aside-Skill-x-Xionx-3.png", 
-                name: { zh: "中文3星名稱]", ja: "日文3星名稱]", en: "English 3-Star Name]" }, 
-                desc: { zh: "中文3星描述]", ja: "日文3星描述]", en: "English 3-Star Desc]" }, 
+                name: { zh: "中文3星名稱", ja: "日文3星名稱", en: "English 3-Star Name" }, 
+                desc: { zh: "中文3星描述", ja: "日文3星描述", en: "English 3-Star Desc" }, 
                 effects: { zh: ["效果1"], ja: ["効果1"], en: ["Effect 1"] }, 
                 globalEffects: { zh: ["能力加成1"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
             }
