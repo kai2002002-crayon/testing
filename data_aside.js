@@ -504,7 +504,7 @@ const ASIDE_DATA = {
     },
     "xXionx": { 
         asideIcon: "https://i.postimg.cc/vc4cMdpY/Aside-Icon-x-Xionx.png", 
-        totalName: { zh: "中文願像總名稱", ja: "日文願像總名稱", en: "English Total Name" }, 
+        totalName: { zh: "喋喋不休的伊德", ja: "おしゃべりイード", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/1f6p9sZq/Aside-Skill-x-Xionx-1.png", 
