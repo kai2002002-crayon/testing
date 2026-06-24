@@ -454,26 +454,26 @@ const ASIDE_DATA = {
     },
     "Ui": { 
         asideIcon: "https://i.postimg.cc/qzNz0d9T/Aside-Icon-Ui.png", 
-        totalName: { zh: "不快樂的羽伊", ja: "日文願像總名稱", en: "English Total Name" }, 
+        totalName: { zh: "不快樂的羽伊", ja: "アンハッピーウイ", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/tYPhXpHY/Aside-Skill-Ui-1.png", 
-                name: { zh: "耶魯呱呱叫", ja: "日文1星名稱", en: "English 1-Star Name" }, 
-                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
-                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗:6%"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "耶魯呱呱叫", ja: "エルはケロケロ", en: "English 1-Star Name" }, 
+                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "English 1-Star Desc" }, 
+                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗:6%"], ja: ["最大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/WhrM2TP3/Aside-Skill-Ui-2.png", 
-                name: { zh: "正向王羽伊", ja: "日文2星名稱", en: "English 2-Star Name" }, 
-                desc: { zh: "額外追加1個活潑性格。使用普通技能時,增加中排友軍的傷害量。", ja: "日文2星描述", en: "English 2-Star Desc" }, 
-                effects: { zh: ["傷害量增加:16%", "傷害量增加持續時間:7秒"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "正向王羽伊", ja: "ポジティブの王ウイ", en: "English 2-Star Name" }, 
+                desc: { zh: "額外追加1個活潑性格。使用普通技能時,增加中排友軍的傷害量。", ja: "活発を1個追加する。低学年スキル使用時、中列の味方のダメージ量を増加させる。", en: "English 2-Star Desc" }, 
+                effects: { zh: ["傷害量增加:16%", "傷害量增加持續時間:7秒"], ja: ["ダメージ量増加: 16%", "ダメージ量増加の持続時間: 7秒"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/rKWS8MLs/Aside-Skill-Ui-3.png", 
-                name: { zh: "穿雨靴的羽伊", ja: "日文3星名稱", en: "English 3-Star Name" }, 
-                desc: { zh: "敵人對中排友軍造成的傷害量減少。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
-                effects: { zh: ["受到的傷害量減少:14%"], ja: ["効果1"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體 HP 4%", "全體魔法攻撃力 4%"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "穿雨靴的羽伊", ja: "長ぐつをはいたウイ", en: "English 3-Star Name" }, 
+                desc: { zh: "敵人對中排友軍造成的傷害量減少。", ja: "中列の味方の敵からの被ダメージ量が減少する。", en: "English 3-Star Desc" }, 
+                effects: { zh: ["受到的傷害量減少:14%"], ja: ["被ダメージ量減少: 14%"], en: ["Effect 1"] }, 
+                globalEffects: { zh: ["全體 HP 4%", "全體魔法攻撃力 4%"], ja: ["全体HP 4%", "全体魔法攻撃力 4%"], en: ["Global Stat Bonus 1"] } 
             }
         }
     },
