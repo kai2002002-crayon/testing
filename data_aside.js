@@ -229,26 +229,26 @@ const ASIDE_DATA = {
     },
     "Picola": { 
         asideIcon: "https://i.postimg.cc/0bhryBsK/Aside-Icon-Picora.png", 
-        totalName: { zh: "最愛購物", ja: "日文願像總名稱", en: "English Total Name" }, 
+        totalName: { zh: "最愛購物", ja: "ショッピングが大好き", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/LJ3L1D5d/Aside-Skill-Picora-1.png", 
-                name: { zh: "購物王皮可菈", ja: "日文1星名稱", en: "English 1-Star Name" }, 
-                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、 爆擊抵抗、爆擊傷害抵抗增加。", ja: "日文1星描述", en: "English 1-Star Desc" }, 
-                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "購物王皮可菈", ja: "ショッピング王ピコラ", en: "English 1-Star Name" }, 
+                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、 爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "English 1-Star Desc" }, 
+                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["最大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Effect 1"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/xX3Mz58S/Aside-Skill-Picora-2.png", 
-                name: { zh: "皮可菈貼紙是附贈的!", ja: "日文2星名稱", en: "English 2-Star Name" }, 
-                desc: { zh: "最大HP增加。強化攻擊後、一定時間內對剩餘HP比例最低的 2名友軍貼上皮可菈貼紙。皮可菈貼紙會恢復 2次HP,並增加傷害量。減少高級技能冷卻時間。", ja: "日文2星描述", en: "English 2-Star Desc" }, 
-                effects: { zh: ["大HP增加:20%", "皮可菈貼紙持續時間:7秒", "HP恢復:目標最大HP的22%", "傷害量增加:30%", "冷卻時間減少:12秒"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "皮可菈貼紙是附贈的!", ja: "ピコラのステッカーはオマケ！", en: "English 2-Star Name" }, 
+                desc: { zh: "最大HP增加。強化攻擊後、一定時間內對剩餘HP比例最低的 2名友軍貼上皮可菈貼紙。皮可菈貼紙會恢復 2次HP,並增加傷害量。減少高級技能冷卻時間。", ja: "最大HPが増加する。強化攻撃後、一定時間、残りHP割合が最も低い味方2名にピコラのステッカーを貼る。ピコラのステッカーはHPを2回回復させ、与ダメージ量を増加させる。高学年スキルのクールタイムが減少する。", en: "English 2-Star Desc" }, 
+                effects: { zh: ["大HP增加:20%", "皮可菈貼紙持續時間:7秒", "HP恢復:目標最大HP的22%", "傷害量增加:30%", "冷卻時間減少:12秒"], ja: ["最大HP増加: 20%", "ピコラのステッカーの持続時間: 7秒", "HP回復: 対象の最大HPの22%", "与ダメージ量増加: 30%", "クールタイム減少: 12秒"], en: ["Effect 1"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/217hZGyD/Aside-Skill-Picora-3.png", 
-                name: { zh: "聚集吧時尚達人", ja: "日文3星名稱", en: "English 3-Star Name" }, 
-                desc: { zh: "使敵人對所有友軍造成的傷害量減少。", ja: "日文3星描述", en: "English 3-Star Desc" }, 
-                effects: { zh: ["受到的傷害量減少:7.5%"], ja: ["効果1"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體 HP 3%", "全體爆擊傷害抵抗 3%"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "聚集吧時尚達人", ja: "おしゃれピープル、集合！", en: "English 3-Star Name" }, 
+                desc: { zh: "使敵人對所有友軍造成的傷害量減少。", ja: "味方全員の敵への被ダメージ量を減少させる。", en: "English 3-Star Desc" }, 
+                effects: { zh: ["受到的傷害量減少:7.5%"], ja: ["被ダメージ量減少: 7.5%"], en: ["Effect 1"] }, 
+                globalEffects: { zh: ["全體 HP 3%", "全體爆擊傷害抵抗 3%"], ja: ["全体HP 3%", "全体会心ダメージ抵抗 3%"], en: ["Global Stat Bonus 1"] } 
             }
         }
     },
