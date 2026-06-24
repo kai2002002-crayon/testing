@@ -79,11 +79,11 @@ const ASIDE_DATA = {
     },
     "Ed": { 
         asideIcon: "https://i.postimg.cc/9rDrVjvD/Aside-Icon-Ed.png", 
-        totalName: { zh: "伊德永恆子彈", ja: "日文願像總名稱", en: "English Total Name" }, 
+        totalName: { zh: "伊德永恆子彈", ja: "イード・ジ・エターナルブレット", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/jDby2msc/Aside-Skill-Ed-1.png", 
-                name: { zh: "心地善良的伊德", ja: "イード・ジ・エターナルブレット", en: "English 1-Star Name" }, 
+                name: { zh: "心地善良的伊德", ja: "心優しいイード", en: "English 1-Star Name" }, 
                 desc: { zh: "[穿戴者的最大HP、物理防禦力、魔法防禦力、 爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "English 1-Star Desc" }, 
                 effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["最大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Effect 1"] } 
             },
