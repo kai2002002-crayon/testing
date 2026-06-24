@@ -15,8 +15,7 @@ const ASIDE_DATA = {
             2: { 
                 icon: "https://i.postimg.cc/4mtzJsTp/Aside-Skill-Amelia-2.png", 
                 name: { zh: "[超高速雷射光]", ja: "[日文2星名稱]", en: "[English 2-Star Name]" }, 
-                desc: { zh: "[提升強化攻擊的施展機率。對處於觸電狀態的敵人造成的普通攻擊傷害量增加。被動技能施加觸電的目標數變為3名。
-]", ja: "[日文2星描述]", en: "[English 2-Star Desc]" }, 
+                desc: { zh: "[提升強化攻擊的施展機率。對處於觸電狀態的敵人造成的普通攻擊傷害量增加。被動技能施加觸電的目標數變為3名。]", ja: "[日文2星描述]", en: "[English 2-Star Desc]" }, 
                 effects: { zh: ["強化攻擊施展機率增加:15%", "普通攻擊傷害量增加:40%"], ja: ["効果1"], en: ["Effect 1"] } 
             },
             3: { 
