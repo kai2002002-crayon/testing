@@ -304,7 +304,7 @@ const ASIDE_DATA = {
     },
     "Rim": { 
         asideIcon: "https://i.postimg.cc/xcXcYSBw/Aside-Icon-Rim.png", 
-        totalName: { zh: "中文願像總名稱", ja: "日文願像總名稱", en: "English Total Name" }, 
+        totalName: { zh: "派對主人琳", ja: "パーティの主宰リム", en: "English Total Name" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/5H9vqzQ0/Aside-Skill-Rim-1.png", 
