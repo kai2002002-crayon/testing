@@ -429,26 +429,26 @@ const ASIDE_DATA = {
     },
     "Snorky": { 
         asideIcon: "https://i.postimg.cc/nsB3PgH9/Aside-Icon-Snorky.png", 
-        totalName: { zh: "大BOSS斯諾奇", ja: "ビッグボススノキー", en: "English Total Name" }, 
+        totalName: { zh: "大BOSS斯諾奇", ja: "ビッグボススノキー", en: "Big Boss Snorky" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/bsbQzpjz/Aside-Skill-Snorky-1.png", 
-                name: { zh: "我的夢想是大Boss!", ja: "夢はビッグボス", en: "English 1-Star Name" }, 
-                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "English 1-Star Desc" }, 
-                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["最大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Effect 1"] } 
+                name: { zh: "我的夢想是大Boss!", ja: "夢はビッグボス", en: "Being the Big Boss Is My Dream" }, 
+                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "Increases the bearer's Max HP, Physical DEF, Magical DEF, CRIT Resistance, and CRIT DMG Resistance." }, 
+                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["最大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Max HP Increase: 6%", "Physical DEF Increase: 6%", "Magical DEF Increase: 6%", "CRIT Resistance Increase: 6%", "CRIT DMG Resistance Increase: 6%"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/c6PRy6Pg/Aside-Skill-Snorky-2.png", 
-                name: { zh: "義氣的代名詞", ja: "義理の代名詞", en: "English 2-Star Name" }, 
-                desc: { zh: "回合開始時,賦予前排友軍護盾並增加造成的傷害量。強化攻擊時,減少周圍友軍受到的傷害量。", ja: "ウェーブ開始時に前列の味方にシールドを付与し、与えるダメージ量を増加させる。強化攻撃時、周囲の味方の被ダメージ量を減少させる。", en: "English 2-Star Desc" }, 
-                effects: { zh: ["護盾:最大HP的24%", "護盾持續時間:12秒", "傷害量增加:32%", "傷害量增加持續時間:12秒", "受到的傷害量減少:46%", "受到的傷害量減少持續時間:3秒"], ja: ["シールド: 最大HPの24%", "シールドの持続時間: 12秒", "ダメージ量増加: 32%", "ダメージ量増加の持続時間: 12秒", "被ダメージ量減少: 24%", "被ダメージ量減少の持続時間: 3秒"], en: ["Effect 1"] } 
+                name: { zh: "義氣的代名詞", ja: "義理の代名詞", en: "Epitome of Loyalty" }, 
+                desc: { zh: "回合開始時,賦予前排友軍護盾並增加造成的傷害量。強化攻擊時,減少周圍友軍受到的傷害量。", ja: "ウェーブ開始時に前列の味方にシールドを付与し、与えるダメージ量を増加させる。強化攻撃時、周囲の味方の被ダメージ量を減少させる。", en: "At the start of a wave, grants a Shield to Front Row allies and increases their Outgoing Damage. When using an Enhanced Attack, reduces Incoming Damage for nearby allies." }, 
+                effects: { zh: ["護盾:最大HP的24%", "護盾持續時間:12秒", "傷害量增加:32%", "傷害量增加持續時間:12秒", "受到的傷害量減少:46%", "受到的傷害量減少持續時間:3秒"], ja: ["シールド: 最大HPの24%", "シールドの持続時間: 12秒", "ダメージ量増加: 32%", "ダメージ量増加の持続時間: 12秒", "被ダメージ量減少: 24%", "被ダメージ量減少の持続時間: 3秒"], en: ["Shield: 24% of Max HP", "Shield Duration: 12s", "DMG Increase: 32%", "DMG Increase Duration: 12s", "Incoming DMG Reduction: 46%", "Incoming DMG Reduction Duration: 3s"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/nC7vHptc/Aside-Skill-Snorky-3.png", 
-                name: { zh: "吃我一拳", ja: "拳の味を見せてやる", en: "English 3-Star Name" }, 
-                desc: { zh: "使敵人對所有友軍造成的傷害量減少。", ja: "味方全員の敵からの被ダメージ量を減少させる。", en: "English 3-Star Desc" }, 
-                effects: { zh: ["受到的傷害量減少:7.5%"], ja: ["被ダメージ量減少: 7.5%"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體物理攻擊力 3%", "全體物理防禦力 3%"], ja: ["全体物理攻撃力 3%", "全体物理防御力 3%"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "吃我一拳", ja: "拳の味を見せてやる", en: "Here's a Taste of My Fists!" }, 
+                desc: { zh: "使敵人對所有友軍造成的傷害量減少。", ja: "味方全員の敵からの被ダメージ量を減少させる。", en: "Reduces the Incoming Damage of all allies." }, 
+                effects: { zh: ["受到的傷害量減少:7.5%"], ja: ["被ダメージ量減少: 7.5%"], en: ["Incoming DMG Reduction: 7.5%"] }, 
+                globalEffects: { zh: ["全體物理攻擊力 3%", "全體物理防禦力 3%"], ja: ["全体物理攻撃力 3%", "全体物理防御力 3%"], en: ["All Physical ATK 3%", "All Physical DEF 3%"] } 
             }
         }
     },
