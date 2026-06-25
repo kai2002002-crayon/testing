@@ -179,7 +179,7 @@ const ASIDE_DATA = {
     },
     "Momo": { 
         asideIcon: "https://i.postimg.cc/TpBh3463/Aside-Icon-Momo.png", 
-        totalName: { zh: "傳說中的手裡劍", ja: "伝説の手裏剣", en: "English Total Name" }, 
+        totalName: { zh: "傳說中的手裡劍", ja: "伝説の手裏剣", en: "Legendary Shuriken" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/PCj1J9XT/Aside-Skill-Momo-1.png", 
@@ -204,26 +204,26 @@ const ASIDE_DATA = {
     },
     "Ner": { 
         asideIcon: "https://i.postimg.cc/fJ1kRrNy/Aside-Icon-Ner.png", 
-        totalName: { zh: "聖君艾爾芬", ja: "聖君エルフィン", en: "Legendary Shuriken" }, 
+        totalName: { zh: "聖君艾爾芬", ja: "聖君エルフィン", en: "The Sage Ruler, Erpin" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/mPyCHjDK/Aside-Skill-Ner-1.png", 
-                name: { zh: "女王特別輔佐官", ja: "女王特別補佐役", en: "Cherry Blossom Shuriken" }, 
-                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "Increases bearer's Max HP, Magical ATK, CRIT, and CRIT DMG." }, 
-                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Max HP Increase: 6%", "Magical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
+                name: { zh: "女王特別輔佐官", ja: "女王特別補佐役", en: "Queen's Special Aide" }, 
+                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "Increases the bearer's Max HP, Physical Defense, Magical Defense, Critical Hit Resistance, and Critical Damage Resistance." }, 
+                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Max HP Increase: 6%", "Physical DEF Increase: 6%", "Magical DEF Increase: 6%", "CRIT Resistance Increase: 6%", "CRIT DMG Resistance Increase: 6%"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/XrkdCLJT/Aside-Skill-Ner-2.png", 
-                name: { zh: "祭司長無敵權", ja: "司祭長の無敵権", en: "" }, 
-                desc: { zh: "基本攻撃命中時,自身受到的傷害量減少,並恢復HP與SP。使用高級技能時,給予自身與前排使者無敵效果。", ja: "基本攻撃が命中すると、自身の被ダメージ量が減少し、HPとSPを回復する。高学年スキル使用時、自身と前衛使徒に無敵を付与する。", en: "English 2-Star Desc" }, 
-                effects: { zh: ["無敵:對所有傷害及減益效果免疫。", "受到的傷害量減少:15%", "受到的傷害量減少持續時間:3秒", "HP恢復:最大HP的3%", "SP恢復量:30", "無敵持續時間:5秒"], ja: ["無敵: 全てのダメージおよび状態異常に対して免疫を持つ。", "被ダメージ量減少: 15%", "被ダメージ量減少の持続時間: 3秒", "HP回復: 最大HPの3%", "SP回復量: 30", "無敵の持続時間: 5秒"], en: ["Effect 1"] } 
+                name: { zh: "祭司長無敵權", ja: "司祭長の無敵権", en: "Head Priestess' Unconditional Invincibility" }, 
+                desc: { zh: "基本攻撃命中時,自身受到的傷害量減少,並恢復HP與SP。使用高級技能時,給予自身與前排使者無敵效果。", ja: "基本攻撃が命中すると、自身の被ダメージ量が減少し、HPとSPを回復する。高学年スキル使用時、自身と前衛使徒に無敵を付与する。", en: "When Basic Attack hits, reduces Incoming Damage and recovers HP and SP.", "When Senior Skill is used, applies Invincible to self and Front RowApostles." }, 
+                effects: { zh: ["無敵:對所有傷害及減益效果免疫。", "受到的傷害量減少:15%", "受到的傷害量減少持續時間:3秒", "HP恢復:最大HP的3%", "SP恢復量:30", "無敵持續時間:5秒"], ja: ["無敵: 全てのダメージおよび状態異常に対して免疫を持つ。", "被ダメージ量減少: 15%", "被ダメージ量減少の持続時間: 3秒", "HP回復: 最大HPの3%", "SP回復量: 30", "無敵の持続時間: 5秒"], en: ["Invincible: Immune to all damage and debuffs.", "Incoming DMG Reduction: 15%", "Incoming DMG Reduction Duration: 3s", "HP Recovery: 3% of Max HP", "SP Recovery: 30", "Invincible Duration: 5s"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/MnmVQ5TC/Aside-Skill-Ner-3.png", 
-                name: { zh: "以世界樹之名!", ja: "世界樹の名前で！", en: "English 3-Star Name" }, 
-                desc: { zh: "所有友軍對敵人造成的傷害量增加,敵人對所有友軍造成的傷害量減少。", ja: "味方全員の敵への与ダメージ量が増加し、味方全員の敵からの被ダメージ量が減少する。", en: "English 3-Star Desc" }, 
-                effects: { zh: ["傷害量增加:10.5%", "受到的傷害量減少:4.5%"], ja: ["ダメージ量増加: 10.5%", "被ダメージ量減少: 4.5%"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體魔法攻撃力 3%", "全體爆擊抵抗 3%"], ja: ["全体魔法攻撃力 3%", "全体会心抵抗 3%"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "以世界樹之名!", ja: "世界樹の名前で！", en: "In the Name of Yggdrasil!" }, 
+                desc: { zh: "所有友軍對敵人造成的傷害量增加,敵人對所有友軍造成的傷害量減少。", ja: "味方全員の敵への与ダメージ量が増加し、味方全員の敵からの被ダメージ量が減少する。", en: "Increases Outgoing Damage and reduces Incoming Damage for all allies." }, 
+                effects: { zh: ["傷害量增加:10.5%", "受到的傷害量減少:4.5%"], ja: ["ダメージ量増加: 10.5%", "被ダメージ量減少: 4.5%"], en: ["DMG Increase: 10.5%", "Incoming DMG Reduction: 4.5%"] }, 
+                globalEffects: { zh: ["全體魔法攻撃力 3%", "全體爆擊抵抗 3%"], ja: ["全体魔法攻撃力 3%", "全体会心抵抗 3%"], en: ["All Magical ATK 3%", "All CRIT Resistance 3%"] } 
             }
         }
     },
