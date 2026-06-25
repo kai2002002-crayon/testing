@@ -354,26 +354,26 @@ const ASIDE_DATA = {
     },
     "Rufo": { 
         asideIcon: "https://i.postimg.cc/8j7jDVq8/Aside-Icon-Rufo.png", 
-        totalName: { zh: "智囊盧波", ja: "ブレーンルポ", en: "English Total Name" }, 
+        totalName: { zh: "智囊盧波", ja: "ブレーンルポ", en: "Rufo the Brain" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/t1RPt6n5/Aside-Skill-Rufo-1.png", 
-                name: { zh: "反對獸糧黨知識王", ja: "反アニマル缶戦線の知識王", en: "English 1-Star Name" }, 
-                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、物理攻撃力、会心、会心ダメージが増加する。", en: "English 1-Star Desc" }, 
-                effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加: 6%", "物理攻撃力増加: 6%", "会心増加: 6%", "会心ダメージ増加: 6%"], en: ["Effect 1"] } 
+                name: { zh: "反對獸糧黨知識王", ja: "反アニマル缶戦線の知識王", en: "Chow Rebels Knowledge Queen" }, 
+                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、物理攻撃力、会心、会心ダメージが増加する。", en: "Increases the bearer's Max HP, Physical ATK, CRIT Hit, and CRIT DMG." }, 
+                effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加: 6%", "物理攻撃力増加: 6%", "会心増加: 6%", "会心ダメージ増加: 6%"], en: ["Max HP Increase: 6%", "Physical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/mcZMN91S/Aside-Skill-Rufo-2.png", 
-                name: { zh: "三劍客的大冒險", ja: "三銃士の大冒険", en: "English 2-Star Name" }, 
-                desc: { zh: "普通攻擊傷害量增加。當自身處於障眼法狀態時,攻擊速度提升,且立即減少目前高級技能冷卻時間。回合開始時,自身的第一下普通攻擊將以強化攻擊施放。", ja: "普通攻撃の与ダメージが増加する。自身に目くらましが付与されると攻撃速度が増加し、高学年スキルのクールタイムが減少する。ウェーブ開始時、自身の最初の普通攻撃は強化攻撃で発動する。", en: "English 2-Star Desc" }, 
-                effects: { zh: ["障眼法:不會成為敵人的攻擊目標。沒有友軍時不會觸發。", "普通攻擊傷害量增加:200%", "攻擊速度提升:75%", "攻擊速度提升持續時間:6秒", "冷卻時間立即減少:4秒"], ja: ["目くらまし: 敵の目標にならない。他の味方がいない時は発動しない。", "普通攻撃のダメージ量増加: 200%", "攻撃速度増加: 75%", "攻撃速度増加の持続時間: 6秒", "クールタイム減少: 4秒"], en: ["Effect 1"] } 
+                name: { zh: "三劍客的大冒險", ja: "三銃士の大冒険", en: "The Three Musketeers' Great Adventure" }, 
+                desc: { zh: "普通攻擊傷害量增加。當自身處於障眼法狀態時,攻擊速度提升,且立即減少目前高級技能冷卻時間。回合開始時,自身的第一下普通攻擊將以強化攻擊施放。", ja: "普通攻撃の与ダメージが増加する。自身に目くらましが付与されると攻撃速度が増加し、高学年スキルのクールタイムが減少する。ウェーブ開始時、自身の最初の普通攻撃は強化攻撃で発動する。", en: "Increases Normal Attack Damage. When Trickery is applied to self, increases Attack Speed and instantly reduces current Senior Skill Cooldown. At the start of a wave, her first Normal Attack is cast as an Enhanced Attack." }, 
+                effects: { zh: ["障眼法:不會成為敵人的攻擊目標。沒有友軍時不會觸發。", "普通攻擊傷害量增加:200%", "攻擊速度提升:75%", "攻擊速度提升持續時間:6秒", "冷卻時間立即減少:4秒"], ja: ["目くらまし: 敵の目標にならない。他の味方がいない時は発動しない。", "普通攻撃のダメージ量増加: 200%", "攻撃速度増加: 75%", "攻撃速度増加の持続時間: 6秒", "クールタイム減少: 4秒"], en: ["Trickery: Cannot be targeted by enemies. Does not trigger when no allies are present.", "Normal ATK DMG Increase: 200%", "ATK SPD Increase: 75%", "ATK SPD Increase Duration: 6s", "Instant Cooldown Reduction: 4s"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/676RLZ4Y/Aside-Skill-Rufo-3.png", 
-                name: { zh: "我就是最棒的戰略家!", ja: "最高の戦友なのだ！", en: "English 3-Star Name" }, 
-                desc: { zh: "提升所有友軍的攻擊速度。", ja: "味方全員の攻撃速度を増加させる。", en: "English 3-Star Desc" }, 
-                effects: { zh: ["攻擊速度增加:7%"], ja: ["攻撃速度増加: 7%"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體物理攻擊力 3%", "全體爆擊傷害抵抗 3%"], ja: ["全体物理攻撃力 3%", "全体会心ダメージ抵抗 3%"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "我就是最棒的戰略家!", ja: "最高の戦友なのだ！", en: "The Greatest Strategist!" }, 
+                desc: { zh: "提升所有友軍的攻擊速度。", ja: "味方全員の攻撃速度を増加させる。", en: "Increases the Attack Speed of all allies." }, 
+                effects: { zh: ["攻擊速度增加:7%"], ja: ["攻撃速度増加: 7%"], en: ["ATK SPD Increase: 7%"] }, 
+                globalEffects: { zh: ["全體物理攻擊力 3%", "全體爆擊傷害抵抗 3%"], ja: ["全体物理攻撃力 3%", "全体会心ダメージ抵抗 3%"], en: ["All Physical ATK 3%", "All CRIT DMG RES 3%"] } 
             }
         }
     },
