@@ -308,7 +308,7 @@ const ASIDE_DATA = {
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/5H9vqzQ0/Aside-Skill-Rim-1.png", 
-                name: { zh: "愛神派對", ja: "", en: "Amor Party" }, 
+                name: { zh: "愛神派對", ja: "アモール・パーティー", en: "Amor Party" }, 
                 desc: { zh: "穿載使者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、物理攻撃力、会心、会心ダメージが増加する。", en: "Increases bearing Apostle's Max HP, Physical ATK, CRIT Hit, and CRIT DMG." }, 
                 effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加: 6%", "物理攻撃力増加: 6%", "会心増加: 6%", "会心ダメージ増加: 6%"], en: ["Max HP Increase: 6%", "Physical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
             },
