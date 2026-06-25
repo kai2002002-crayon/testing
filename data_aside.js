@@ -304,26 +304,26 @@ const ASIDE_DATA = {
     },
     "Rim": { 
         asideIcon: "https://i.postimg.cc/xcXcYSBw/Aside-Icon-Rim.png", 
-        totalName: { zh: "派對主人琳", ja: "パーティの主宰リム", en: "English Total Name" }, 
+        totalName: { zh: "派對主人琳", ja: "パーティの主宰リム", en: "Party Host, Rim" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/5H9vqzQ0/Aside-Skill-Rim-1.png", 
-                name: { zh: "中文1星名稱", ja: "日文1星名稱", en: "English 1-Star Name" }, 
-                desc: { zh: "中文1星描述", ja: "日文1星描述", en: "English 1-Star Desc" }, 
-                effects: { zh: ["效果1"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "愛神派對", ja: "", en: "Amor Party" }, 
+                desc: { zh: "穿載使者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、物理攻撃力、会心、会心ダメージが増加する。", en: "Increases bearing Apostle's Max HP, Physical ATK, CRIT Hit, and CRIT DMG." }, 
+                effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加: 6%", "物理攻撃力増加: 6%", "会心増加: 6%", "会心ダメージ増加: 6%"], en: ["Max HP Increase: 6%", "Physical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/VSsMBt0d/Aside-Skill-Rim-2.png", 
-                name: { zh: "中文2星名稱", ja: "日文2星名稱", en: "English 2-Star Name" }, 
-                desc: { zh: "中文2星描述", ja: "日文2星描述", en: "English 2-Star Desc" }, 
-                effects: { zh: ["效果1"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "恢復原樣", ja: "リカバリム", en: "RecoveRim" }, 
+                desc: { zh: "對陷入灼痛的敵人造成直接傷害時,物理攻擊力增加。物理攻擊力增加最多可疊加4次。普通、高級技能的傷害增加。普通HP恢復數值變為2倍。", ja: "苦痛を付与された敵に直接ダメージを与えると物理攻撃力が増加する。物理攻撃力増加は、最大4回スタックする。低学年、高学年スキルのダメージが増加する。低学年のHP回復値が2倍になる。", en: "Dealing Direct Damage to an enemy afflicted with Stinging increases Physical Attack. Physical Attack Increase stacks up to 4 times. Freshman and Senior Skill Damage are increased.Freshman HP Recovery amount is doubled." }, 
+                effects: { zh: ["灼痛:每秒造成傷害,並使恢復量減少。", "直接傷害:指狀態異常傷害、反射傷害以外的直接攻擊傷害。", "物理攻擊力增加:15%", "物理攻擊力增加持續時間:4秒", "普通技能傷害增加:50%", "高級技能傷害增加:50%"], ja: ["苦痛: 1秒ごとにダメージを受け、回復量が減少する。", "直接ダメージ: 直接攻撃によるダメージ(状態異常ダメージ、反射ダメージを除く)。", "物理攻撃力増加: 15%", "物理攻撃力増加の持続時間: 4秒", "低学年スキルダメージ増加: 50％", "高学年スキルダメージ増加: 50％"], en: ["Stinging: Reduces Recovery and applies Damage every second.", "Direct Damage: Refers to damage caused by Direct Attacks, excluding Status Effect Damage and Damage Reflection.", "Physical ATK Increase: 15%", "Physical ATK Increase Duration: 4s", "Freshman Skill DMG Increase: 50%", "Senior Skill DMG Increase: 50%"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/1gR6cFV8/Aside-Skill-Rim-3.png", 
-                name: { zh: "中文3星名稱", ja: "日文3星名稱", en: "English 3-Star Name" }, 
-                desc: { zh: "中文3星描述", ja: "日文3星描述", en: "English 3-Star Desc" }, 
-                effects: { zh: ["效果1"], ja: ["効果1"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["能力加成1"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "敬你們的眼珠!", ja: "君たちの瞳に乾杯！", en: "Here's looking at you, kid!" }, 
+                desc: { zh: "敵人對所有友軍造成的物理傷害量減少。", ja: "味方全員の敵からの物理被ダメージ量が減少する。", en: "Reduces Incoming Physical Damage for all allies." }, 
+                effects: { zh: ["受到的物理傷害量減少:10.5%"], ja: ["物理被ダメージ量減少: 10.5%"], en: ["Incoming Physical DMG Reduction: 10.5%"] }, 
+                globalEffects: { zh: ["全體HP 3%", "全體爆擊 3%"], ja: ["全体HP 3%", "全体会心 3%"], en: ["All HP 3%", "All CRIT Hit 3%"] } 
             }
         }
     },
