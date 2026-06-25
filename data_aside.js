@@ -504,26 +504,26 @@ const ASIDE_DATA = {
     },
     "xXionx": { 
         asideIcon: "https://i.postimg.cc/vc4cMdpY/Aside-Icon-x-Xionx.png", 
-        totalName: { zh: "喋喋不休的伊德", ja: "おしゃべりイード", en: "English Total Name" }, 
+        totalName: { zh: "喋喋不休的伊德", ja: "おしゃべりイード", en: "Chattering ED" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/1f6p9sZq/Aside-Skill-x-Xionx-1.png", 
-                name: { zh: "中文1星名稱", ja: "日文1星名稱", en: "English 1-Star Name" }, 
-                desc: { zh: "中文1星描述", ja: "日文1星描述", en: "English 1-Star Desc" }, 
-                effects: { zh: ["效果1"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "本大人、登場★", ja: "我、参上★", en: "I Have Arrived ★" }, 
+                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、物理攻撃力、会心、会心ダメージが増加する。", en: "Increases the bearer's Max HP, Physical ATK, CRIT Hit, and CRIT DMG." }, 
+                effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加: 6%", "物理攻撃増加: 6%", "会心増加: 6%", "会心ダメージ増加: 6%"], en: ["Max HP Increase: 6%", "Physical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/qzn8k4dK/Aside-Skill-x-Xionx-2.png", 
-                name: { zh: "中文2星名稱", ja: "日文2星名稱", en: "English 2-Star Name" }, 
-                desc: { zh: "中文2星描述", ja: "日文2星描述", en: "English 2-Star Desc" }, 
-                effects: { zh: ["效果1"], ja: ["効果1"], en: ["Effect 1"] } 
+                name: { zh: "這就是魔彈的絕對威力?", ja: "絶対なる魔弾の力と言うべきだろうか？", en: "Absolute Power of Magic Bullets" }, 
+                desc: { zh: "中最大HP增加,且基本攻撃命中時恢復HP。使用普通技能、高級技能後,攻擊速度增加。使用普通技能時,如果數人只有1名,則傷害增加。", ja: "最大HPが増加し、基本攻撃命中時、HPを回復する。低学年スキル、高学年スキル使用後、攻撃速度が増加する。低学年スキル使用中、敵が一体しかいない場合、ダメージが増加する。", en: "Increases Max HP. When Basic Attack hits, recovers HP. Using a Freshman or Senior Skill increases Attack Speed, Increases Damage if there is only one enemy while using Freshman Skill." }, 
+                effects: { zh: ["最大HP增加:30%", "HP恢復:最大HP的3%", "攻擊速度提升:100%", "攻擊速度提升持續時間:6秒", "普通技能傷害增加:100%"], ja: ["最大HP増加: 30%", "HP回復: 最大HPの3%", "攻撃速度増加: 100%", "攻撃速度増加の持続時間: 6秒", "低学年スキルのダメージ増加: 100%"], en: ["Max HP Increase: 30%", "HP Recovery: 3% of Max HP", "ATK SPD Increase: 100%", "ATK SPD Increase Duration: 6s", "Freshman Skill DMG Increase: 100%"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/CzDjFSVC/Aside-Skill-x-Xionx-3.png", 
-                name: { zh: "中文3星名稱", ja: "日文3星名稱", en: "English 3-Star Name" }, 
-                desc: { zh: "中文3星描述", ja: "日文3星描述", en: "English 3-Star Desc" }, 
-                effects: { zh: ["效果1"], ja: ["効果1"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["能力加成1"], ja: ["ステータスボーナス1"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "暗·黑·救・援・者★", ja: "闇・の・救・世・主★", en: "Savior of Darkness ★" }, 
+                desc: { zh: "使後排友軍對敵人造成的傷害量增加,並使敵人對後排友軍造成的傷害量減少。", ja: "後列の味方の敵への与ダメージ量を増加させ、後列の味方の敵からの被ダメージ量を減少させる。", en: "Increases Outgoing Damage and reduces Incoming Damage of Back Row allies." }, 
+                effects: { zh: ["傷害量增加:19.5%", "受到的傷害量減少:8.8%"], ja: ["ダメージ量増加: 19.5%", "被ダメージ量減少: 8.8%"], en: ["DMG Increase: 19.5%", "Incoming DMG Reduction: 8.8%"] }, 
+                globalEffects: { zh: ["全體物理攻擊力 4%", "全體爆擊傷害 4%"], ja: ["全体物理攻撃力 4%", "全体会心ダメージ 4%"], en: ["All Physical ATK 4%", "All CRIT DMG 4%"] } 
             }
         }
     }
