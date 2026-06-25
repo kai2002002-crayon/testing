@@ -1,19 +1,13 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
-
 <head>
-       
-    <meta charset="UTF-8">
-       
+     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-       
     <meta name="referrer" content="no-referrer-when-downgrade">
-       
     <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-2Z87YT118P"></script>
         <script>
         window.dataLayer = window.dataLayer || [];
-
         function gtag() {
             dataLayer.push(arguments);
         }
@@ -21,23 +15,13 @@
         gtag('config', 'G-2Z87YT118P');
     </script>
         <title>嘟嘟臉金蠟筆記事本</title>
-       
     <meta name="description" content="《Trickcal: Chibi Go》嘟嘟臉金蠟筆記事本！提供最新的《嘟嘟臉惡作劇》(Trickcal Revive / トリカル) 角色圖鑑、金蠟筆與技能資料。The best Trickcal Revive Crayon Planner & Character Database. トリカル 最強キャラ・クレヨン攻略データベース。">
-       
     <link rel="icon" href="https://i.postimg.cc/mkfSTq5k/Favicon.png" type="image/png">
-        
-       
     <link rel="preconnect" href="https://fonts.googleapis.com">
-       
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-       
     <link rel="preconnect" href="https://www.gstatic.com">
-       
     <link rel="preconnect" href="https://unpkg.com">
-        
-       
     <link rel="preload" as="image" href="https://i.postimg.cc/qvjNxZzg/golden-crayon.png">
-
         <script src="data_core.js"></script>
         <script src="data_skills.js"></script>
         <script src="https://cdn.tailwindcss.com"></script>
@@ -46,16 +30,12 @@
             darkMode: 'class',
         }
     </script>
-       
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
-        
         <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
         <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
         <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-       
     <link rel="stylesheet" href="https://unpkg.com/@esotericsoftware/spine-player@4.1/dist/spine-player.css">
         <script defer src="https://unpkg.com/@esotericsoftware/spine-player@4.1/dist/iife/spine-player.js"></script>
-        
         <style>
         /* 🌟 統一的金蠟筆載入圖案 */
         .spine-loader-crayon {
@@ -71,21 +51,17 @@
             z-index: 999;
             pointer-events: none;
         }
-
         @keyframes crayonFloat {
-
             0%,
             100% {
                 transform: translateY(0) scale(1);
                 filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.5));
             }
-
             50% {
                 transform: translateY(-10px) scale(1.05);
                 filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.9));
             }
         }
-
         #topRunnerContainer {
             width: 100% !important;
             height: 100% !important;
@@ -93,7 +69,6 @@
             z-index: 120 !important;
             transition: transform 0.2s ease;
         }
-
         #bossRunnerContainer {
             width: 100% !important;
             height: 100% !important;
@@ -102,58 +77,47 @@
             pointer-events: none;
             overflow: visible !important;
         }
-
         /* 💥 受擊震動特效 */
         @keyframes shakeEffect {
-
             0%,
             100% {
                 transform: translateX(0);
                 filter: brightness(1);
             }
-
             20%,
             60% {
                 transform: translateX(-15px) rotate(-2deg);
                 filter: brightness(1.2) drop-shadow(0 0 10px rgba(255, 0, 0, 0.6));
             }
-
             40%,
             80% {
                 transform: translateX(15px) rotate(2deg);
                 filter: brightness(1.2);
             }
         }
-
         .shake-anim {
             animation: shakeEffect 0.35s ease-in-out;
         }
-
         @keyframes shakeStrongEffect {
-
             0%,
             100% {
                 transform: translateX(0);
                 filter: brightness(1);
             }
-
             20%,
             60% {
                 transform: translateX(-25px) rotate(-4deg) scale(1.05);
                 filter: brightness(1.5) drop-shadow(0 0 25px rgba(255, 0, 0, 0.9));
             }
-
             40%,
             80% {
                 transform: translateX(25px) rotate(4deg) scale(1.05);
                 filter: brightness(1.5);
             }
         }
-
         .shake-strong-anim {
             animation: shakeStrongEffect 0.5s ease-in-out;
         }
-
         /* 🚀 效能優化 4：合併投擲物與爆破特效的共用 CSS 屬性 */
         .projectile-crayon,
         .burst-crayon {
@@ -163,42 +127,35 @@
             z-index: 200;
             pointer-events: none;
         }
-
         .projectile-crayon {
             width: 25px;
             height: 25px;
             filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.8));
             transform-origin: center;
         }
-
         .burst-crayon {
             width: 20px;
             height: 20px;
         }
-
         #topRunnerContainer canvas,
         #bossRunnerContainer canvas {
             width: 100% !important;
             height: 100% !important;
             display: block !important;
         }
-
         #topRunnerContainer .spine-player-canvas,
         #bossRunnerContainer .spine-player-canvas {
             background-color: transparent !important;
         }
-
         :root {
             --user-bg-image: url('https://i.postimg.cc/fTJ36ZFT/CG-Schedule-Rim.png');
         }
-
         body {
             font-family: 'Noto Sans TC', sans-serif;
             background-color: #fcf8f2;
             -webkit-tap-highlight-color: transparent;
             transition: color 0.3s ease;
         }
-
         body::before {
             content: "";
             position: fixed;
@@ -212,7 +169,6 @@
             background-position: center;
             background-repeat: no-repeat;
         }
-
         body::after {
             content: "";
             position: fixed;
@@ -224,65 +180,52 @@
             background-color: rgba(252, 248, 242, 0.75);
             transition: background-color 0.3s ease;
         }
-
         .dark body {
             color: #e2e8f0;
         }
-
         .dark body::after {
             background-color: rgba(26, 32, 44, 0.85);
         }
-
         .char-btn {
             transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
             user-select: none;
             touch-action: manipulation;
         }
-
         .char-btn:active {
             transform: scale(0.94);
         }
-
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
-
         ::-webkit-scrollbar-track {
             background: transparent;
         }
-
         ::-webkit-scrollbar-thumb {
             background: #cbd5e1;
             border-radius: 4px;
         }
-
         .dark ::-webkit-scrollbar-thumb {
             background: #4a5568;
         }
-
         .google-login-btn {
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.15);
             transition: all 0.15s ease;
         }
-
         .google-login-btn:hover {
             box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.12);
             background-color: #fcfcfc;
         }
-
         .unowned-avatar {
             opacity: 0.35;
             filter: grayscale(100%);
         }
-
         /* 🌟 神秘剪影專用特效 */
         .silhouette-mode {
             filter: brightness(0) contrast(0) drop-shadow(0 0 3px rgba(0, 0, 0, 0.4)) !important;
             opacity: 0.7;
             pointer-events: none;
         }
-
         .char-avatar-container {
             transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
             cursor: pointer;
@@ -297,20 +240,17 @@
             backface-visibility: hidden;
             will-change: transform;
         }
-
         @media (hover: hover) and (pointer: fine) {
             .char-avatar-container:not(.pointer-events-none):hover {
                 transform: scale(1.5) translateZ(0);
                 z-index: 50;
                 box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
             }
-
             .hover-scale:hover {
                 transform: scale(1.15) translateZ(0);
                 z-index: 10;
             }
         }
-
         .char-avatar-container img {
             position: absolute;
             top: 0;
@@ -319,16 +259,13 @@
             height: 100%;
             object-fit: cover;
         }
-
         .avatar-alt {
             opacity: 0;
             transition: opacity 0.3s ease-in-out;
         }
-
         .swap-avatars .avatar-alt {
             opacity: 1;
         }
-
         .hover-scale {
             transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
             position: relative;
@@ -336,7 +273,6 @@
             transform: translateZ(0);
             backface-visibility: hidden;
         }
-
         .marquee-box {
             display: block;
             width: 120px;
@@ -344,46 +280,37 @@
             white-space: nowrap;
             text-overflow: ellipsis;
         }
-
         .char-card-wrapper:hover .marquee-box {
             text-overflow: clip;
         }
-
         .char-card-wrapper:hover .marquee-content {
             display: inline-block;
         }
-
         @keyframes text-marquee {
-
             0%,
             20% {
                 transform: translateX(0);
             }
-
             80%,
             100% {
                 transform: translateX(-35px);
             }
         }
-
         .social-fixed {
             position: fixed;
             bottom: 20px;
             right: 20px;
             z-index: 100;
         }
-
         .social-menu {
             display: none;
             margin-bottom: 8px;
             flex-direction: column;
             gap: 8px;
         }
-
         .social-fixed:hover .social-menu {
             display: flex;
         }
-
         #rim-live-container {
             position: fixed !important;
             bottom: 15px !important;
@@ -393,7 +320,6 @@
             z-index: 2147483647 !important;
             pointer-events: none;
         }
-
         @media (min-width: 768px) {
             #rim-live-container {
                 bottom: 20px !important;
@@ -402,17 +328,14 @@
                 height: 150px !important;
             }
         }
-
         #rim-live-container canvas {
             width: 100% !important;
             height: 100% !important;
             display: block !important;
         }
-
         #rim-live-container .spine-player-canvas {
             background-color: transparent !important;
         }
-
         .track-crayon {
             position: absolute;
             width: 23px;
@@ -428,27 +351,23 @@
             transition: transform 0.6s ease-out, opacity 0.5s ease-out, filter 0.6s ease-out;
             opacity: 0;
         }
-
         .crayon-collected {
             animation: none !important;
             transform: scale(1.8) translateY(-40px) !important;
             opacity: 0 !important;
             filter: drop-shadow(0 0 15px rgba(251, 191, 36, 1));
         }
-
         @keyframes crayonIdle {
 
             0%,
             100% {
                 transform: translateY(0) rotate(-5deg);
             }
-
             50% {
                 transform: translateY(-10px) rotate(5deg);
                 filter: drop-shadow(0 8px 6px rgba(0, 0, 0, 0.2));
             }
         }
-
         /* 🌟 Pickup 閃閃發光特效 */
         @keyframes pickupGlow {
 
@@ -457,26 +376,22 @@
                 filter: drop-shadow(0 0 3px currentColor);
                 transform: scale(1);
             }
-
             50% {
                 filter: drop-shadow(0 0 8px currentColor);
                 transform: scale(1.05);
             }
         }
-
         .pickup-sparkle {
             animation: pickupGlow 2s infinite ease-in-out;
             position: relative;
             transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-
         .pickup-sparkle:hover {
             animation: none;
             transform: scale(1.30) !important;
             filter: drop-shadow(0 0 8px currentColor);
             z-index: 10;
         }
-
         .pickup-sparkle::after {
             content: "✨";
             position: absolute;
@@ -486,70 +401,59 @@
             z-index: 20;
             animation: starRunAround 3s linear infinite;
         }
-
         .card-artifact {
             border-color: #00f0ff !important;
             /* 螢光藍 */
             color: #00f0ff !important;
             filter: drop-shadow(0 0 4px rgba(0, 240, 255, 0.8));
         }
-
         .card-rune {
             border-color: #ff00ff !important;
             /* 螢光粉紅 */
             color: #ff00ff !important;
             filter: drop-shadow(0 0 4px rgba(255, 0, 255, 0.8));
         }
-
         @keyframes starRunAround {
             0% {
                 top: -6px;
                 left: -6px;
                 transform: rotate(0deg) scale(0.9);
             }
-
             25% {
                 top: -6px;
                 left: calc(100% - 6px);
                 transform: rotate(90deg) scale(1.3);
             }
-
             50% {
                 top: calc(100% - 6px);
                 left: calc(100% - 6px);
                 transform: rotate(180deg) scale(0.9);
             }
-
             75% {
                 top: calc(100% - 6px);
                 left: -6px;
                 transform: rotate(270deg) scale(1.3);
             }
-
             100% {
                 top: -6px;
                 left: -6px;
                 transform: rotate(360deg) scale(0.9);
             }
         }
-
         /* 🌟 Banner 輪播淡入特效 */
         @keyframes fadeInBanner {
             0% {
                 opacity: 0;
                 transform: translateY(3px);
             }
-
             100% {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-
         .animate-banner-fade {
             animation: fadeInBanner 0.4s ease-out forwards;
         }
-
         /* 🌈 外層：彩虹流動邊框容器 */
         .rainbow-wrapper {
             position: relative;
@@ -562,7 +466,6 @@
             filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
             transition: transform 0.3s ease;
         }
-
         .rainbow-content {
             display: block;
             height: 100%;
@@ -572,7 +475,6 @@
             border-radius: 7px;
             overflow: hidden;
         }
-
         @keyframes rainbowMove {
             0% {
                 background-position: 0 0;
@@ -582,12 +484,10 @@
                 background-position: 400% 0;
             }
         }
-
         .rainbow-wrapper:hover {
             transform: scale(1.30);
             filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
         }
-
         /* ------------------------------------------------------------
            🌟 Banner 滑鼠移入自動展開特製 CSS (縱向展開版)
         ------------------------------------------------------------ */
@@ -596,7 +496,6 @@
             width: max-content;
             max-width: 100%;
         }
-
         #bannerDisplayArea.banner-expanded {
             position: relative;
             /* 確保 z-index 生效 */
@@ -614,12 +513,10 @@
             z-index: 100 !important;
             /* 確保懸浮在最上層 */
         }
-
         .dark #bannerDisplayArea.banner-expanded {
             background: rgba(31, 41, 55, 0.95);
             border-color: #4b5563;
         }
-
         #bannerDisplayArea.banner-expanded>.banner-panel-item {
             opacity: 1 !important;
             pointer-events: auto !important;
@@ -627,20 +524,16 @@
             border-bottom: 1px dashed rgba(217, 119, 6, 0.2);
             padding-bottom: 8px;
         }
-
         .dark #bannerDisplayArea.banner-expanded>.banner-panel-item {
             border-bottom-color: rgba(156, 163, 175, 0.2);
         }
-
         #bannerDisplayArea.banner-expanded>.banner-panel-item:last-child {
             border-bottom: none !important;
             padding-bottom: 0px !important;
         }
-
         #bannerDisplayArea.banner-expanded>.banner-panel-item.panel-empty-hide {
             display: none !important;
         }
-
         #bannerDisplayArea.banner-expanded #eventBannersContainer {
             flex-direction: column !important;
             align-items: flex-end !important;
@@ -648,7 +541,6 @@
             width: max-content !important;
             margin-left: auto;
         }
-
         #bannerDisplayArea.banner-expanded #eventBannersContainer .rainbow-wrapper {
             display: flex !important;
             height: 32px !important;
@@ -656,61 +548,48 @@
         }
     </style>
 </head>
-
 <body class="p-3 sm:p-6 md:p-8 text-gray-800 dark:text-gray-100">
-        
-       <div id="runnerArea" class="hidden md:block fixed top-[-1px] left-0 w-full h-[220px] z-[100] pointer-events-none overflow-visible">
+        <div id="runnerArea" class="hidden md:block fixed top-[-1px] left-0 w-full h-[220px] z-[100] pointer-events-none overflow-visible">
                 <div id="runnerTrack" class="absolute top-0 w-[250px] h-full pointer-events-none z-40" style="right: 0px; transform: translateX(0); opacity: 0;">
                         <div style="width: 100%; height: 100%; transform: scale(0.75); transform-origin: center;">
                                 <div id="topRunnerContainer" class="w-full h-full relative pointer-events-none"></div>
                             </div>
                     </div>
-                
-                <div id="bossTrack" class="absolute top-[-1px] w-[1000px] h-full pointer-events-none z-20" style="right: -300px; transform: translateX(0); opacity: 0; overflow: visible;">
+                 <div id="bossTrack" class="absolute top-[-1px] w-[1000px] h-full pointer-events-none z-20" style="right: -300px; transform: translateX(0); opacity: 0; overflow: visible;">
                         <div style="width: 100%; height: 100%; transform: scale(0.85); transform-origin: center;">
                                 <div id="bossRunnerContainer" class="w-full h-full relative"></div>
                             </div>
                     </div>
             </div>
-        
         <div id="loader" class="fixed inset-0 bg-[#fcf8f2] dark:bg-slate-900 z-[9999] flex items-center justify-center">
                 <img src="https://i.postimg.cc/qvjNxZzg/golden-crayon.png" class="animate-bounce h-10 w-auto object-contain drop-shadow-md" alt="Loading...">
             </div>
-        
         <div class="max-w-7xl mx-auto">
                 <header class="bg-gradient-to-r from-amber-100/90 via-yellow-100/90 to-orange-100/90 dark:from-gray-800/90 dark:via-gray-700/90 dark:to-gray-800/90 rounded-2xl p-4 sm:p-6 shadow-md mb-6 border-4 border-amber-400 dark:border-gray-600 flex flex-col transition-colors backdrop-blur-sm relative z-10">
                         <div class="w-full flex flex-row justify-between items-start mb-3 gap-2 relative z-[60] h-10 sm:h-11">
                                 <div class="flex items-center gap-1.5 text-[10px] sm:text-xs font-bold text-amber-900/70 dark:text-gray-300 bg-white/60 dark:bg-gray-800/60 px-2.5 py-1 rounded-md backdrop-blur-sm border border-amber-200/80 dark:border-gray-600/80 shadow-sm shrink-0">
                                         👥 <span data-lang-key="visit_count_prefix">累計利用回數</span>: <span id="top_visit_counter" class="text-amber-700 dark:text-amber-400 tracking-wider">讀取中...</span>
                                     </div>
-                                
-                                <div class="flex flex-row items-start justify-end gap-2 ml-auto shrink-0 z-20">
-                                        
+                                 <div class="flex flex-row items-start justify-end gap-2 ml-auto shrink-0 z-20">
                                         <a href="gacha.html" target="_blank" title="前往招募模擬器" class="h-10 w-10 sm:h-11 sm:w-11 flex items-center justify-center bg-white/80 dark:bg-gray-800/80 border border-amber-300 dark:border-gray-600 rounded-xl shadow-sm transition hover:bg-amber-100 dark:hover:bg-gray-700 shrink-0 backdrop-blur-sm overflow-hidden group">
                                                 <img src="https://i.postimg.cc/9wG2WRPg/Gacha-Button.png" alt="Gacha Simulator" class="w-[85%] h-[85%] object-contain drop-shadow-sm group-hover:scale-110 transition-transform">
                                             </a>
-
                                         <div id="bannerDisplayArea" onmouseenter="handleBannerHover(true)" onmouseleave="handleBannerHover(false)" class="grid items-center bg-gradient-to-r from-amber-50 to-white dark:from-gray-800 dark:to-gray-700 px-2.5 h-10 sm:h-11 rounded-xl border border-amber-300 dark:border-gray-600 shadow-sm backdrop-blur-sm shrink-0 overflow-hidden">
-                                                
                                                 <div id="pickupPanel" class="banner-panel-item col-start-1 row-start-1 flex items-center justify-between w-full gap-3 transition-opacity duration-500 opacity-100 z-10">
                                                         <span id="pickupTitleText" class="text-[10px] sm:text-[11px] font-bold text-amber-700 dark:text-amber-300 whitespace-nowrap shrink-0">🎯 特選使者招募</span>
                                                         <div id="pickupIconsContainer" class="flex flex-row items-center justify-end gap-1.5"></div>
                                                     </div>
-
                                                 <div id="eventPanel" class="banner-panel-item col-start-1 row-start-1 flex items-center justify-between w-full gap-3 transition-opacity duration-500 opacity-0 pointer-events-none z-0">
                                                         <span id="eventTitleText" class="text-[10px] sm:text-[11px] font-bold text-sky-700 dark:text-sky-400 whitespace-nowrap shrink-0">🎪 今期活動</span>
                                                         <div id="eventBannersContainer" class="flex flex-row flex-wrap items-end justify-end gap-1.5"></div>
                                                     </div>
-                                                
                                                 <div id="cardPanel" class="banner-panel-item col-start-1 row-start-1 flex items-center justify-between w-full gap-3 transition-opacity duration-500 opacity-0 pointer-events-none z-0">
                                                         <span id="cardTitleText" class="text-[10px] sm:text-[11px] font-bold text-indigo-700 dark:text-indigo-300 whitespace-nowrap shrink-0">🃏 特選卡片抽取</span>
                                                         <div id="cardIconsContainer" class="flex flex-row items-center justify-end gap-1.5"></div>
                                                     </div>
                                             </div>
-
                                     </div>
                             </div>
-
                         <div class="flex flex-col lg:flex-row justify-between items-center gap-4 w-full">
                                 <div class="flex flex-row items-center justify-center lg:justify-start gap-3 text-center lg:text-left">
                                         <div class="flex flex-col items-center lg:items-start">
@@ -721,18 +600,14 @@
                                                 <p data-lang-key="app_subtitle" class="text-amber-800 dark:text-gray-300 text-xs sm:text-sm">祝各位教主日日出金蠟筆</p>
                                             </div>
                                     </div>
-                                
-                                <div class="flex flex-row items-center justify-end gap-2 w-full lg:w-auto">
-                                        
+                                 <div class="flex flex-row items-center justify-end gap-2 w-full lg:w-auto">
                                         <button onclick="toggleAnimation()" class="hidden md:flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center bg-white/80 dark:bg-gray-800/80 border border-amber-300 dark:border-gray-600 rounded-xl shadow-sm transition hover:bg-gray-50 dark:hover:bg-gray-700 shrink-0 backdrop-blur-sm text-xs sm:text-sm" title="開關小坨坨動畫">
                                                 <img id="rimAnimIcon" src="https://i.postimg.cc/dhW04Kw2/minirim.png" alt="Rim Animation Toggle" class="w-[80%] h-[80%] object-contain transition-all duration-200">
                                             </button>
-
                                         <div class="relative h-10 w-10 sm:h-11 sm:w-11 group">
                                                 <div class="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-gray-800/80 border border-amber-300 dark:border-gray-600 rounded-xl shadow-sm backdrop-blur-sm transition group-hover:bg-gray-50 dark:group-hover:bg-gray-700 pointer-events-none text-amber-900 dark:text-amber-400">
                                                         <span class="text-sm">
                                                                 <svg class="w-5 h-5 !text-amber-600" fill="currentColor" viewBox="0 0 24 24">
-                                                                       
                                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
                                                                     </svg>
                                                             </span>
@@ -743,27 +618,20 @@
                                                         <option value="en">EN</option>
                                                     </select>
                                             </div>
-
                                         <button onclick="toggleDarkMode()" class="h-10 w-10 sm:h-11 sm:w-11 flex items-center justify-center bg-white/80 dark:bg-gray-800/80 border border-amber-300 dark:border-gray-600 rounded-xl shadow-sm transition hover:bg-gray-50 dark:hover:bg-gray-700 shrink-0 backdrop-blur-sm text-xs sm:text-sm">
                                                 <span id="themeIconLight" class="block dark:hidden">🌙</span>
                                                 <span id="themeIconDark" class="hidden dark:block">☀️</span>
                                             </button>
-
                                         <div id="authPanel" class="bg-white/90 dark:bg-gray-800/90 px-2.5 h-10 sm:h-11 rounded-xl border border-amber-300 dark:border-gray-600 shadow-sm flex flex-row items-center justify-end gap-2 sm:gap-3 backdrop-blur-sm">
                                                 <div id="userStatus" class="flex flex-row items-center text-left text-[11px] sm:text-xs text-gray-600 dark:text-gray-300">
                                                         <span class="font-bold text-amber-600 dark:text-amber-400 whitespace-nowrap" data-lang-key="auth_offline_title">🟡 未連線雲端</span></div>
-                                                
-                                                <div id="authBtnContainer" class="shrink-0 flex items-center">
+                                                   <div id="authBtnContainer" class="shrink-0 flex items-center">
                                                         <button id="authBtn" onclick="handleAuth()" class="google-login-btn bg-white dark:bg-gray-700 rounded-lg h-7 sm:h-8 px-1.5 flex items-center justify-center transition border border-gray-200 dark:border-gray-600 shrink-0">
                                                                 <svg id="googleLogoSvg" class="w-4 h-4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                                       
-                                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-                                                                       
-                                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                                                                       
-                                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05" />
-                                                                       
-                                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335" />
+                                      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                                      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                                      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05" />
+                                      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335" />
                                                                     </svg>
                                                                 <span id="logoutText" class="hidden text-white font-bold text-[10px] sm:text-xs px-1" data-lang-key="auth_logout">登出</span>
                                                             </button>
@@ -772,9 +640,7 @@
                                     </div>
                             </div>
                     </header>
-
                 <div id="errorBanner" class="hidden bg-red-100 border-2 border-red-500 text-red-800 px-4 py-3 rounded-xl mb-6 text-sm font-bold shadow-sm flex flex-col gap-1"></div>
-
                 <section class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-2xl p-4 shadow border-2 border-amber-200/80 dark:border-gray-700 mb-6 transition-colors">
                         <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 pb-2 cursor-pointer" onclick="toggleFilterPanel()">
                                 <h3 class="font-bold text-amber-955 dark:text-amber-400 text-sm flex items-center gap-1 shrink-0"><span data-lang-key="filter_title">🔍 篩選器</span> <span id="filterToggleIcon" class="text-xs opacity-70 ml-1">▼</span></h3>
@@ -783,7 +649,6 @@
                                         <button onclick="event.stopPropagation(); resetFilters()" class="text-[10px] sm:text-xs text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-300 font-bold bg-amber-50 dark:bg-gray-700 px-1.5 py-1 rounded border border-amber-200 dark:border-gray-600 transition whitespace-nowrap" data-lang-key="filter_reset">重置全部篩選</button>
                                     </div>
                             </div>
-                        
                         <div id="filterPanelBody" class="space-y-3 text-xs mt-3">
                                 <div class="flex items-start gap-2 w-full"><span class="font-bold text-gray-500 dark:text-gray-400 shrink-0 pt-1 whitespace-nowrap" data-lang-key="stats_personality">🔮 性格：</span>
                     <div id="filter_personality" class="flex flex-wrap gap-1.5 flex-1"></div>
@@ -797,7 +662,6 @@
                                 <div class="flex items-start gap-2 w-full"><span class="font-bold text-gray-500 dark:text-gray-400 shrink-0 pt-1 whitespace-nowrap" data-lang-key="stats_job">⚔️ 職業：</span>
                     <div id="filter_job" class="flex flex-wrap gap-1.5 flex-1"></div>
                 </div>
-                    
                                 <div class="flex flex-col sm:flex-row items-start gap-2 border-t border-dashed border-gray-100 dark:border-gray-700 pt-2 w-full">
                                         <span class="font-bold text-amber-800 dark:text-amber-500 shrink-0 pt-1 flex items-center gap-0.5 whitespace-nowrap" data-lang-key="stats_cell">🖍️ 金蠟筆格：</span>
                                         <div class="flex flex-col gap-2 flex-1 w-full">
@@ -809,7 +673,6 @@
                         </div>
                                             </div>
                                     </div>
-                    
                                 <div class="flex flex-col sm:flex-row items-start gap-2 border-t border-dashed border-gray-100 dark:border-gray-700 pt-2 w-full">
                                         <span class="font-bold text-blue-700 dark:text-blue-400 shrink-0 pt-1 flex items-center gap-0.5 whitespace-nowrap" data-lang-key="filter_display_mode">👁️ 版面顯示：</span>
                                         <div id="filter_displayMode" class="flex flex-wrap gap-1.5 flex-1 w-full">
@@ -821,7 +684,6 @@
                                     </div>
                             </div>
                     </section>
-
                 <div class="flex justify-between items-center mb-2 px-1 cursor-pointer select-none" onclick="toggleStatsPanel()">
                         <h3 class="font-bold text-amber-955 dark:text-amber-400 text-sm flex items-center gap-1 drop-shadow-md">
                                 <span data-lang-key="stats_title">📊 統計與加成資訊</span> <span id="statsToggleIcon" class="text-xs opacity-70 ml-1">▼</span>
@@ -830,7 +692,6 @@
                                 點擊展開 / 收起
                             </span>
                     </div>
-
                 <section id="statsPanelBody" class="grid grid-cols-1 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 transition-all">
                         <div class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-xl p-3 sm:p-4 shadow border-2 border-amber-200 dark:border-amber-900 flex flex-col justify-between h-full">
                                 <div class="border-b border-amber-100 dark:border-gray-700 pb-1.5 mb-2">
@@ -868,9 +729,7 @@
                                     </div>
                             </div>
                     </section>
-
                 <main id="matrixContainer" class="space-y-6 sm:space-y-8"></main>
-
                 <footer class="mt-12 mb-6 text-center border-t border-gray-200 dark:border-gray-700 pt-6">
                         <div class="flex flex-col gap-1 text-[11px] text-gray-500 dark:text-gray-400 opacity-80">
                                 <p data-lang-key="footer_author">📝 記事本製作者: 冷笑話幽靈</p>
@@ -879,16 +738,13 @@
                             </div>
                     </footer>
             </div>
-
         <div class="social-fixed group">
                 <div id="socialMenu" class="social-menu group-hover:flex">
                         <a id="dynamicXLink" href="https://x.com/trickcal_TW" target="_blank" class="bg-sky-500 text-white px-3 py-1 rounded-lg text-[10px] font-bold shadow-lg hover:bg-sky-600 transition" data-lang-key="x_label">台港澳服官方X</a>
                     </div>
                 <button class="bg-black text-white w-10 h-10 rounded-full shadow-xl flex items-center justify-center font-bold text-sm">X</button>
             </div>
-        
         <div id="rim-live-container"></div>
-
         <script>
         // ------------------------------------------------------------
         // 全域變數與常數宣告
@@ -903,13 +759,10 @@
             currentUser = null;
         let activeCrayons = [];
         let crayonCollisionLoopId = null;
-
         let isBannerHovered = false;
-
         // 🌟 新增：動畫開關設定
         let isAnimationEnabled = localStorage.getItem('trickcal_anim_enabled') !== 'false';
         let spawnCrayonTimer = null;
-
         const storageKey = 'trickcal_matrix_saved_states_iron_v26';
         let savedStates = {};
         try {
@@ -917,7 +770,6 @@
         } catch (e) {
             savedStates = {};
         }
-
         let activeFilters = {
             personality: [],
             race: [],
@@ -930,7 +782,6 @@
         };
         let isFilterOpen = true;
         let isStatsOpen = window.innerWidth >= 768;
-
         const LAYER_RULES = {
             1: {
                 name: "🥇 第一層",
@@ -981,11 +832,9 @@
         const btnActiveStyle = "whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-bold transition bg-amber-500 text-white border-amber-600 shadow-sm";
         const btnInactiveStyle = "whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-medium transition bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600";
         const btnDispActiveStyle = "whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-bold transition bg-blue-500 text-white border-blue-600 shadow-sm";
-
         // ------------------------------------------------------------
         // 基本工具函式 (開關動畫、翻譯、主題、資料預載)
         // ------------------------------------------------------------
-
         // 🌟 新增：動畫開關邏輯
         // 🌟 更新：控制 Rim 迷你圖案的灰階與透明度狀態
         function updateAnimToggleUI() {
@@ -1000,12 +849,10 @@
                 }
             }
         }
-
         function toggleAnimation() {
             isAnimationEnabled = !isAnimationEnabled;
             localStorage.setItem('trickcal_anim_enabled', isAnimationEnabled);
             updateAnimToggleUI();
-
             const area = document.getElementById('runnerArea');
             if (isAnimationEnabled) {
                 area.style.display = ''; // 恢復 CSS 控制 (hidden md:block)
@@ -1014,14 +861,11 @@
                 spawnCrayonOnTrack();
             } else {
                 area.style.display = 'none'; // 強制隱藏
-
                 if (chaseLoopId) cancelAnimationFrame(chaseLoopId);
                 if (crayonCollisionLoopId) cancelAnimationFrame(crayonCollisionLoopId);
                 if (spawnCrayonTimer) clearTimeout(spawnCrayonTimer);
-
                 activeCrayons.forEach(c => c.remove());
                 activeCrayons = [];
-
                 if (currentRunnerPlayer) {
                     try {
                         currentRunnerPlayer.dispose();
@@ -1038,9 +882,7 @@
                 document.getElementById('bossRunnerContainer').innerHTML = '';
             }
         }
-
         const preloadedSpines = new Set();
-
         function preloadSpineAssets(charName) {
             if (preloadedSpines.has(charName)) return;
             const spineKey = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[charName] : null;
@@ -1057,7 +899,6 @@
             });
             preloadedSpines.add(charName);
         }
-
         function detectDefaultLanguage() {
             const savedLang = localStorage.getItem('user_lang');
             if (savedLang) return savedLang;
@@ -1066,10 +907,8 @@
             if (browserLang.includes('zh')) return 'zh-TW';
             return 'en';
         }
-
         window.currentLang = detectDefaultLanguage();
         document.getElementById('langSelect').value = window.currentLang;
-
         function t(key) {
             if (!key) return key;
             const lang = window.currentLang || 'zh-TW';
@@ -1078,7 +917,6 @@
             if (typeof LANG_DICT !== 'undefined' && LANG_DICT[safeLang] && LANG_DICT[safeLang][cleanKey]) return LANG_DICT[safeLang][cleanKey];
             return cleanKey;
         }
-
         function changeLanguage(lang) {
             window.currentLang = lang;
             localStorage.setItem('user_lang', lang);
@@ -1087,25 +925,20 @@
             if (selectEl) selectEl.value = lang;
             const safeLang = (typeof LANG_DICT !== 'undefined' && LANG_DICT[lang]) ? lang : 'zh-TW';
             const dict = typeof LANG_DICT !== 'undefined' ? LANG_DICT[safeLang] : {};
-
             const statusText = document.getElementById('authStatusText');
             if (statusText) statusText.innerText = t("auth_online_title");
             document.title = t('app_title') || dict.app_title || "嘟嘟臉金蠟筆記事本";
-
             document.querySelectorAll('[data-lang-key]').forEach(el => {
                 const key = el.getAttribute('data-lang-key');
                 if (dict[key]) el.innerText = dict[key];
             });
-
             const searchInput = document.getElementById('searchInput');
             if (searchInput) searchInput.placeholder = t('filter_search_placeholder') || dict.filter_search_placeholder || "搜尋坨坨...";
-
             const xLink = document.getElementById('dynamicXLink');
             if (xLink) {
                 xLink.href = dict.official_x_url || "https://x.com/trickcal_TW";
                 xLink.innerText = dict.x_label || "台港澳服官方X";
             }
-
             if (typeof INITIAL_DATA !== 'undefined') {
                 buildFilterPanel();
                 renderMatrix();
@@ -1116,7 +949,6 @@
             if (typeof renderCardBanner === 'function') renderCardBanner();
             if (typeof updateEventBanner === 'function') updateEventBanner();
         }
-
         let isDarkMode = localStorage.getItem('theme') === 'dark';
         if (isDarkMode) {
             document.documentElement.classList.add('dark');
@@ -1124,13 +956,11 @@
             document.documentElement.classList.add('dark');
             isDarkMode = true;
         }
-
         function toggleDarkMode() {
             document.documentElement.classList.toggle('dark');
             isDarkMode = document.documentElement.classList.contains('dark');
             localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
         }
-
         window.onerror = function(message, source, lineno, colno, error) {
             const banner = document.getElementById('errorBanner');
             if (banner) {
@@ -1139,7 +969,6 @@
             }
             return false;
         }
-
         // ------------------------------------------------------------
         // 面板與矩陣渲染邏輯
         // ------------------------------------------------------------
@@ -1153,13 +982,10 @@
             });
             return active ? active.chars : [];
         }
-
         function renderPickupBanner() {
             const container = document.getElementById('pickupIconsContainer');
             const activeChars = getActivePickupChars();
-
             if (!container || activeChars.length === 0) return;
-
             container.innerHTML = '';
             const localRecruitTexts = {
                 "zh-TW": "🎯 特選使者招募",
@@ -1181,7 +1007,6 @@
                 "活潑": "border-yellow-400 text-yellow-400",
                 "憂鬱": "border-purple-400 text-purple-400"
             };
-
             activeChars.forEach(charName => {
                 const charData = INITIAL_DATA.find(c => c.name === charName);
                 if (!charData) return;
@@ -1189,7 +1014,6 @@
                 const pColorClass = personalityColors[charData.personality] || "border-gray-400 text-gray-400";
                 const iconWrapper = document.createElement('div');
                 iconWrapper.className = `w-7 h-7 sm:w-8 sm:h-8 rounded-lg border-2 ${pColorClass} bg-white dark:bg-gray-800 flex items-center justify-center relative pickup-sparkle shrink-0 cursor-pointer transition-transform`;
-
                 const prefix = localTooltipTexts[window.currentLang] || localTooltipTexts["zh-TW"];
                 iconWrapper.title = `${prefix}${t(charName)}`;
                 iconWrapper.onclick = () => window.open(`char_detail.html?char=${encodeURIComponent(charName)}`, '_blank');
@@ -1201,7 +1025,6 @@
                 container.appendChild(iconWrapper);
             });
         }
-
         function getActiveEvents() {
             if (typeof EVENT_SCHEDULE === 'undefined') return [];
             const now = new Date();
@@ -1211,52 +1034,40 @@
                 return now.getTime() >= startDate.getTime() && now.getTime() <= endDate.getTime();
             });
         }
-
         let currentEventIndex = 0;
-
         function updateEventBanner() {
             const container = document.getElementById('eventBannersContainer');
             const activeEvents = getActiveEvents();
             if (!container) return;
-
             const titleEl = document.getElementById('eventTitleText');
             if (titleEl) titleEl.innerText = t("event_title") || "🎪 今期活動";
-
             if (activeEvents.length === 0) {
                 container.innerHTML = '';
                 return;
             }
-
             if (currentEventIndex >= activeEvents.length) currentEventIndex = 0;
-
             const langSuffix = {
                 "zh-TW": "ZH",
                 "ja": "JA",
                 "en": "EN"
             } [window.currentLang] || "ZH";
-
             container.innerHTML = '';
-
             activeEvents.forEach((evt, idx) => {
                 const wrapper = document.createElement('div');
                 wrapper.className = "rainbow-wrapper h-7 sm:h-8 w-auto shrink-0 transition-all duration-300";
-
                 if (!isBannerHovered && idx !== currentEventIndex) {
                     wrapper.style.display = 'none';
                 } else {
                     wrapper.style.display = 'inline-block';
                 }
-
                 const imgEl = document.createElement('img');
                 imgEl.src = `event/${evt.eventId}_${langSuffix}.png`;
                 imgEl.alt = evt.eventId;
                 imgEl.className = "rainbow-content";
-
                 wrapper.appendChild(imgEl);
                 container.appendChild(wrapper);
             });
         }
-
         function getActiveCards() {
             if (typeof CARD_SCHEDULE === 'undefined') return [];
             const now = new Date();
@@ -1266,12 +1077,10 @@
                 return now.getTime() >= startDate.getTime() && now.getTime() <= endDate.getTime();
             });
         }
-
         function renderCardBanner() {
             const container = document.getElementById('cardIconsContainer');
             const activeCards = getActiveCards();
             if (!container || activeCards.length === 0) return;
-
             container.innerHTML = '';
             const localTexts = {
                 "zh-TW": "🃏 特選卡片抽取",
@@ -1280,36 +1089,28 @@
             };
             const titleEl = document.getElementById('cardTitleText');
             if (titleEl) titleEl.innerText = localTexts[window.currentLang] || localTexts["zh-TW"];
-
             activeCards.forEach(card => {
                 const borderClass = card.type === "Artifact" ? "card-artifact" : "card-rune";
                 const iconWrapper = document.createElement('div');
                 iconWrapper.className = `w-7 h-7 sm:w-8 sm:h-8 rounded-lg border-2 bg-white dark:bg-gray-800 flex items-center justify-center relative pickup-sparkle shrink-0 transition-transform ${borderClass}`;
-
                 const iconUrl = `event/${card.id}.png`;
                 iconWrapper.innerHTML = `<img src="${iconUrl}" class="w-full h-full object-cover rounded-[5px]" alt="${card.id}" onerror="this.style.display='none'">`;
                 container.appendChild(iconWrapper);
             });
         }
-
         let bannerRotationTimer = null;
         let rotationSequence = [];
         let currentSequenceIndex = 0;
-
         function startBannerRotation() {
             if (bannerRotationTimer) clearInterval(bannerRotationTimer);
-
             const hasPickup = getActivePickupChars().length > 0;
             const hasEvent = getActiveEvents().length > 0;
             const hasCard = getActiveCards().length > 0;
-
             const displayArea = document.getElementById('bannerDisplayArea');
             const pickupPanel = document.getElementById('pickupPanel');
             const eventPanel = document.getElementById('eventPanel');
             const cardPanel = document.getElementById('cardPanel');
-
             if (!displayArea || !pickupPanel || !eventPanel || !cardPanel) return;
-
             if (!hasPickup && !hasEvent && !hasCard) {
                 displayArea.style.display = 'grid';
                 const maintenanceMsg = t('maintenance_msg') !== 'maintenance_msg' ? t('maintenance_msg') : '🔧 維護更新中...';
@@ -1323,7 +1124,6 @@
                 eventPanel.classList.remove('hidden');
                 cardPanel.classList.remove('hidden');
             }
-
             rotationSequence = [];
             if (hasPickup && hasEvent && hasCard) {
                 rotationSequence = ['pickup', 'event', 'card', 'event'];
@@ -1340,13 +1140,11 @@
             } else if (hasCard) {
                 rotationSequence = ['card'];
             }
-
             const panels = {
                 'pickup': pickupPanel,
                 'event': eventPanel,
                 'card': cardPanel
             };
-
             const showPanel = (panelId) => {
                 panels[panelId].classList.remove('opacity-0', 'pointer-events-none', 'z-0');
                 panels[panelId].classList.add('opacity-100', 'pointer-events-auto', 'z-10');
@@ -1357,20 +1155,15 @@
                     panel.classList.add('opacity-0', 'pointer-events-none', 'z-0');
                 });
             };
-
             currentSequenceIndex = 0;
             hideAllPanels();
             showPanel(rotationSequence[0]);
-
             if (rotationSequence.length <= 1) return;
-
             bannerRotationTimer = setInterval(() => {
                 hideAllPanels();
                 currentSequenceIndex = (currentSequenceIndex + 1) % rotationSequence.length;
                 const nextPanelId = rotationSequence[currentSequenceIndex];
-
                 showPanel(nextPanelId);
-
                 if (nextPanelId === 'event') {
                     const activeEvents = getActiveEvents();
                     if (activeEvents.length > 0) {
@@ -1380,13 +1173,10 @@
                 }
             }, 5000);
         }
-
         function handleBannerHover(isHover) {
             isBannerHovered = isHover;
             const displayArea = document.getElementById('bannerDisplayArea');
-
             if (getActivePickupChars().length === 0 && getActiveEvents().length === 0 && getActiveCards().length === 0) return;
-
             if (isHover) {
                 if (bannerRotationTimer) clearInterval(bannerRotationTimer);
                 displayArea.classList.add('banner-expanded');
@@ -1405,7 +1195,6 @@
                 handleBannerHover(false);
             }
         });
-
         document.addEventListener('touchstart', function(event) {
             const displayArea = document.getElementById('bannerDisplayArea');
             if (isBannerHovered && displayArea && !displayArea.contains(event.target)) {
@@ -1414,7 +1203,6 @@
         }, {
             passive: true
         }); // passive: true 可確保不影響頁面滑動效能
-
         function initStates() {
             INITIAL_DATA.forEach(char => {
                 if (savedStates['owned_' + char.name] === undefined) savedStates['owned_' + char.name] = false;
@@ -1426,7 +1214,6 @@
                 });
             });
         }
-
         function toggleStatsPanel() {
             isStatsOpen = !isStatsOpen;
             const body = document.getElementById("statsPanelBody");
@@ -1441,13 +1228,11 @@
                 icon.innerText = "▶";
             }
         }
-
         function toggleOwnership(charName) {
             savedStates['owned_' + charName] = !savedStates['owned_' + charName];
             updateOwnershipUI(charName);
             calculateStats();
         }
-
         function updateOwnershipUI(charName) {
             const container = document.getElementById(`avatar_container_${charName}`);
             const fallAvatar = document.getElementById(`fall_av_${charName}`);
@@ -1461,7 +1246,6 @@
                 }
             }
         }
-
         function calculateStats() {
             let layerTotals = {
                     1: {},
@@ -1501,12 +1285,9 @@
                 },
                 ownedCount = 0;
             let validCharCount = 0;
-
             const nowTime = Date.now();
-
             INITIAL_DATA.forEach(char => {
                 if (char.releaseDate && new Date(char.releaseDate).getTime() > nowTime) return;
-
                 validCharCount++;
                 if (savedStates['owned_' + char.name]) ownedCount++;
                 [1, 2, 3].forEach(l => {
@@ -1528,17 +1309,14 @@
                     });
                 });
             });
-
             document.getElementById('total_char_count').innerText = validCharCount;
             document.getElementById('owned_char_count').innerText = ownedCount;
             document.getElementById('total_used_crayon').innerText = globalUsedCrayons;
             document.getElementById('total_needed_crayon').innerText = globalNeededCrayons;
-
             Object.keys(attrs).forEach(k => {
                 const el = document.getElementById(`attr_${k}`);
                 if (el) el.innerText = `+${attrs[k]}%`;
             });
-
             [1, 2, 3].forEach(l => {
                 let html = '<div><div class="grid grid-cols-2 gap-x-2 gap-y-1 mt-1">';
                 ATTR_PRIORITY.forEach(attr => {
@@ -1549,7 +1327,6 @@
                 const layerStatBox = document.getElementById(`stat_layer_${l}`);
                 if (layerStatBox) layerStatBox.innerHTML = html;
             });
-
             try {
                 localStorage.setItem(storageKey, JSON.stringify(savedStates));
             } catch (e) {}
@@ -1559,7 +1336,6 @@
             }).catch(e => {});
             applyFilterUI();
         }
-
         function toggleFilterPanel() {
             isFilterOpen = !isFilterOpen;
             const body = document.getElementById("filterPanelBody");
@@ -1572,12 +1348,10 @@
                 icon.innerText = "▶";
             }
         }
-
         function handleSearch() {
             activeFilters.search = document.getElementById("searchInput").value.trim().toLowerCase();
             applyFilterUI();
         }
-
         function setDisplayMode(mode) {
             activeFilters.displayMode = mode;
             ["all", "1", "2", "3"].forEach(m => {
@@ -1586,7 +1360,6 @@
             });
             applyFilterUI();
         }
-
         function buildFilterPanel() {
             const keys = {
                 personality: ["天真", "冷靜", "狂亂", "活潑", "憂鬱"],
@@ -1622,7 +1395,6 @@
                     container.appendChild(btn);
                 });
             });
-
             const layerContainer = document.getElementById("filter_gridLayer");
             if (layerContainer) {
                 layerContainer.innerHTML = "";
@@ -1648,7 +1420,6 @@
                     layerContainer.appendChild(btn);
                 });
             }
-
             const typeContainer = document.getElementById("filter_gridType");
             if (typeContainer) {
                 typeContainer.innerHTML = "";
@@ -1669,7 +1440,6 @@
                 });
             }
         }
-
         function selectFilter(category, value) {
             const btnAll = document.getElementById(`btn_filter_${category}_all`);
             if (value === "") {
@@ -1693,7 +1463,6 @@
             }
             applyFilterUI();
         }
-
         function selectGridLayerFilter(layerValue) {
             activeFilters.gridLayer = layerValue;
             const buttons = document.getElementById("filter_gridLayer").getElementsByTagName("button");
@@ -1703,7 +1472,6 @@
             }
             applyFilterUI();
         }
-
         function selectGridTypeFilter(typeValue) {
             activeFilters.gridType = typeValue;
             const buttons = document.getElementById("filter_gridType").getElementsByTagName("button");
@@ -1713,7 +1481,6 @@
             }
             applyFilterUI();
         }
-
         function resetFilters() {
             selectFilter("personality", "");
             selectFilter("race", "");
@@ -1725,7 +1492,6 @@
             activeFilters.search = "";
             setDisplayMode('all');
         }
-
         function applyFilterUI() {
             INITIAL_DATA.forEach(char => {
                 const matchP = activeFilters.personality.length === 0 || activeFilters.personality.includes(char.personality);
@@ -1752,7 +1518,6 @@
                     });
                 }
             });
-
             const personalities = ["天真", "冷靜", "狂亂", "活潑", "憂鬱"];
             personalities.forEach(pName => {
                 const pSection = document.getElementById(`section_p_${pName}`);
@@ -1763,7 +1528,6 @@
                 }
             });
         }
-
         function renderMatrix() {
             const container = document.getElementById('matrixContainer');
             if (!container) return;
@@ -1776,9 +1540,7 @@
                 "活潑": "border-yellow-400",
                 "憂鬱": "border-purple-500"
             };
-
             const nowTime = Date.now();
-
             personalities.forEach(pName => {
                 const pChars = INITIAL_DATA.filter(c => c.personality === pName);
                 if (pChars.length === 0) return;
@@ -1788,10 +1550,8 @@
                 pSection.innerHTML = `<div class="border-b-2 border-amber-400 dark:border-gray-600 pb-2.5 mb-4 flex justify-between items-center flex-wrap gap-2"><h2 class="text-lg sm:text-xl font-extrabold text-amber-955 dark:text-amber-400 flex items-center">📂 ${t(pName)}${t('stats_character')}</h2></div>`;
                 const charListContainer = document.createElement('div');
                 charListContainer.className = "space-y-4";
-
                 pChars.forEach(char => {
                     const isUnreleased = char.releaseDate && new Date(char.releaseDate).getTime() > nowTime;
-
                     const charCard = document.createElement('div');
                     charCard.id = `char_card_${char.name}`;
                     charCard.className = "char-card-wrapper bg-white/50 dark:bg-gray-750/50 rounded-xl border border-gray-200/60 dark:border-gray-600 flex flex-row items-stretch transition-all duration-200 overflow-hidden";
@@ -1800,7 +1560,6 @@
                         charCard.setAttribute('onmouseenter', `checkMarquee(this, true); preloadSpineAssets('${char.name}');`);
                         charCard.setAttribute('onmouseleave', 'checkMarquee(this, false)');
                     }
-
                     const avatarPath = typeof IMAGE_MAP !== 'undefined' ? (IMAGE_MAP[`avatar_${char.name}`] || "") : "";
                     const hoverPath = typeof IMAGE_MAP !== 'undefined' ? (IMAGE_MAP[`hover_avatar_${char.name}`] || avatarPath) : avatarPath;
                     const pPath = typeof IMAGE_MAP !== 'undefined' ? (IMAGE_MAP[`personality_${char.personality}`] || "") : "";
@@ -1811,14 +1570,11 @@
                     const jobPath = typeof IMAGE_MAP !== 'undefined' ? (IMAGE_MAP[`job_${char.job}`] || "") : "";
                     const borderColorClass = personalityBorderColors[char.personality] || "border-gray-300";
                     const isOwned = savedStates['owned_' + char.name];
-
                     const bgUrl = (typeof CHAR_BACKGROUNDS !== 'undefined' && CHAR_BACKGROUNDS[char.race]) ? CHAR_BACKGROUNDS[char.race] : "";
                     const bgInlineStyle = bgUrl ? `background-image: url('${bgUrl}'); background-size: cover; background-position: center;` : "background-color: #fef3c7;";
-
                     const avatarClass = isOwned && !isUnreleased ? "" : "unowned-avatar";
                     const displayName = isUnreleased ? "???" : t(char.name);
                     const hoverImgHtml = isUnreleased ? "" : `<img src="${hoverPath}" class="avatar-alt" alt="${displayName}" onerror="this.style.display='none';" loading="lazy">`;
-
                     const detailBtn = document.createElement('button');
                     detailBtn.onclick = () => window.open(`char_detail.html?char=${encodeURIComponent(char.name)}`, '_blank');
                     const displayClass = isUnreleased ? 'hidden' : 'flex';
@@ -1826,12 +1582,10 @@
                     detailBtn.title = (window.currentLang === 'en') ? `View details for ${t(char.name)}` : ((window.currentLang === 'ja') ? `${t(char.name)}の詳細データを見る` : `查看 ${t(char.name)} 的詳細資料`);
                     detailBtn.innerHTML = `<img src="https://i.postimg.cc/T1Y9CC22/Album-Icon-Info.png" alt="Info" class="w-5 h-5 sm:w-6 sm:h-6 opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all duration-200">`;
                     charCard.appendChild(detailBtn);
-
                     const cardInner = document.createElement('div');
                     cardInner.className = "flex-1 p-3 sm:p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-4 w-full overflow-hidden";
                     const nameCol = document.createElement('div');
                     nameCol.className = "flex flex-row items-center justify-start gap-3 min-w-[210px] w-full md:w-auto border-b md:border-b-0 pb-2 md:pb-0 border-gray-200/50 dark:border-gray-700";
-
                     const traitsHtml = isUnreleased ?
                         `<div class="flex items-center gap-1.5 pt-1 border-t border-dashed border-gray-100 dark:border-gray-700 text-gray-400 dark:text-gray-500 text-[10px] font-bold tracking-widest">DATA CLASSIFIED</div>` :
                         `<div class="flex items-center gap-1.5 pt-1 border-t border-dashed border-gray-100 dark:border-gray-700">
@@ -1840,7 +1594,6 @@
                             <div class="flex items-center hover-scale cursor-help"><img src="${posPath}" alt="${t(char.position)}" title="${t('stats_position')} ${t(char.position)}" onerror="this.style.display='none'; document.getElementById('fall_pos_${char.name}').classList.remove('hidden');" class="w-4 h-4 object-contain opacity-85" loading="lazy"><span id="fall_pos_${char.name}" class="hidden bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-1 rounded text-[9px] font-medium whitespace-nowrap">${t(char.position)}</span></div>
                             <div class="flex items-center hover-scale cursor-help"><img src="${jobPath}" alt="${t(char.job)}" title="${t('stats_job')} ${t(char.job)}" onerror="this.style.display='none'; document.getElementById('fall_j_${char.name}').classList.remove('hidden');" class="w-4 h-4 object-contain opacity-85" loading="lazy"><span id="fall_j_${char.name}" class="hidden bg-purple-50 dark:bg-purple-900 text-purple-700 dark:text-purple-300 px-1 rounded text-[9px] font-medium whitespace-nowrap">${t(char.job)}</span></div>
                         </div>`;
-
                     nameCol.innerHTML = `
                         <div class="relative shrink-0 w-12 h-12" ${isUnreleased ? '' : `onclick="toggleOwnership('${char.name}')"`}>
                             <div id="avatar_container_${char.name}" class="char-avatar-container w-12 h-12 rounded-lg border-2 ${borderColorClass} shadow-inner ${avatarClass} ${isUnreleased ? 'pointer-events-none' : ''}" style="${bgInlineStyle}">
@@ -1855,13 +1608,10 @@
                         </div>
                     `;
                     cardInner.appendChild(nameCol);
-
                     const layersContainer = document.createElement('div');
                     layersContainer.className = "flex flex-col sm:flex-row gap-3 w-full md:flex-1 relative";
-
                     if (isUnreleased) {
                         const releaseDateObj = new Date(char.releaseDate);
-
                         const localeFormat = window.currentLang === 'en' ? 'en-US' : (window.currentLang === 'ja' ? 'ja-JP' : 'zh-TW');
                         const dateStr = releaseDateObj.toLocaleString(localeFormat, {
                             month: 'numeric',
@@ -1869,7 +1619,6 @@
                             hour: '2-digit',
                             minute: '2-digit'
                         });
-
                         const localComingSoon = {
                             "zh-TW": "即將登場",
                             "ja": "近日登場",
@@ -1880,7 +1629,6 @@
                             "ja": "解禁",
                             "en": "Unlocks"
                         } [window.currentLang] || "解禁";
-
                         layersContainer.innerHTML = `
                             <div class="absolute inset-0 bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-[2px] rounded-xl flex flex-col items-center justify-center z-10 border border-dashed border-gray-300 dark:border-gray-600 shadow-sm">
                                 <span class="text-2xl mb-1 drop-shadow-md">🔒</span>
@@ -1905,13 +1653,11 @@
                                 badgeText = `🥉 ${t("level_3rd")}`;
                                 gridCols = "grid-cols-4";
                             }
-
                             layerBox.className = `${bgStyle} flex-1 p-2 rounded-xl border flex-col justify-between backdrop-blur-sm`;
                             layerBox.innerHTML = `<span class="text-[10px] font-bold mb-1 block opacity-70 whitespace-nowrap">${badgeText}</span>`;
                             const btnGroup = document.createElement('div');
                             btnGroup.className = `grid ${gridCols} gap-1.5 h-full content-start`;
                             const sortedAttrs = char[`layer${l}`].slice().sort((a, b) => ATTR_PRIORITY.indexOf(a) - ATTR_PRIORITY.indexOf(b));
-
                             sortedAttrs.forEach((attr, idx) => {
                                 const originalIdx = char[`layer${l}`].indexOf(attr);
                                 const stateKey = `${char.name}_l${l}_${attr}_${originalIdx}`;
@@ -1949,11 +1695,9 @@
             });
             applyFilterUI();
         }
-
         setInterval(() => {
             document.body.classList.toggle('swap-avatars');
         }, 3000);
-
         function checkMarquee(card, isHover) {
             const box = card.querySelector('.marquee-box');
             const content = card.querySelector('.marquee-content');
@@ -1962,7 +1706,6 @@
                 else content.style.animation = 'none';
             }
         }
-
         // ------------------------------------------------------------
         // Spine 動畫與小遊戲邏輯
         // ------------------------------------------------------------
@@ -1970,11 +1713,9 @@
             if (!player || !player.skeleton.data) return [defaultMs];
             const anim = player.skeleton.data.animations.find(a => a.name === animName);
             if (!anim) return [defaultMs];
-
             const totalDurMs = anim.duration * 1000;
             let validEventTimes = [];
             let foundEvents = [];
-
             for (let i = 0; i < anim.timelines.length; i++) {
                 const timeline = anim.timelines[i];
                 if (timeline.events) {
@@ -2000,7 +1741,6 @@
                     if (t - lastHit > 150) finalHits.push(t);
                 }
             });
-
             let isMultiHitDesc = false;
             try {
                 if (typeof characterSkills !== 'undefined' && characterSkills[charName]) {
@@ -2013,17 +1753,14 @@
             } catch (e) {
                 console.warn(`⚠️ 讀取 ${charName} 的技能文本失敗，將使用預設判斷。`);
             }
-
             if (!isMultiHitDesc && finalHits.length > 1) {
                 console.log(`📖 文本判定：${charName} 的 [${animName}] 無「總」字，強制轉為單發判定。`);
                 finalHits = [finalHits[0]];
             }
-
             if (finalHits.length > 0) return finalHits;
             else if (validEventTimes.length > 0) return [validEventTimes[validEventTimes.length - 1]];
             return [defaultMs];
         }
-
         function safePlaySpine(playerObj, animName, loop) {
             if (!playerObj || !playerObj.animationState) return null;
             try {
@@ -2042,7 +1779,6 @@
                 return null;
             }
         }
-
         function createCrayonBurst(x, y, area) {
             for (let i = 0; i < 8; i++) {
                 const burst = document.createElement('div');
@@ -2067,7 +1803,6 @@
                 }).onfinish = () => burst.remove();
             }
         }
-
         function triggerCrayonAttack(isRanged, attackDurationMs, bossContainer, runnerContainer, offsetPx = 0, customLaunchDelay = 500) {
             const area = document.getElementById('runnerArea');
             const rRect = runnerContainer.getBoundingClientRect();
@@ -2077,7 +1812,6 @@
             const endX = bRect.left + bRect.width * 0.5 - 30;
             const endY = bRect.top + bRect.height * 0.5;
             const burstTime = Math.max(customLaunchDelay + 100, attackDurationMs - 800);
-
             if (isRanged) {
                 setTimeout(() => {
                     const proj = document.createElement('div');
@@ -2101,24 +1835,20 @@
                 createCrayonBurst(endX, endY, area);
             }, burstTime);
         }
-
         function initTopRunner() {
             if (!isAnimationEnabled) return;
             if (window.innerWidth <= 768) return;
             if (typeof INITIAL_DATA === 'undefined' || INITIAL_DATA.length === 0) return;
-
             const container = document.getElementById('topRunnerContainer');
             const track = document.getElementById('runnerTrack');
             const bossContainer = document.getElementById('bossRunnerContainer');
             const bossTrack = document.getElementById('bossTrack');
-
             const trackRightOffset = '-110px';
             const bossRightOffset = '-410px';
             track.style.right = trackRightOffset;
             bossTrack.style.right = bossRightOffset;
             const endLeftPosNum = 110;
             const endLeftPos = `${endLeftPosNum}px`;
-
             cancelAnimationFrame(chaseLoopId);
             track.style.opacity = '0';
             track.style.transition = 'none';
@@ -2130,7 +1860,6 @@
             bossTrack.style.pointerEvents = 'none';
             bossTrack.getAnimations().forEach(anim => anim.cancel());
             bossTrack.style.transform = 'translateX(0) scaleX(1)';
-
             if (currentRunnerPlayer) {
                 try {
                     currentRunnerPlayer.dispose();
@@ -2147,13 +1876,11 @@
             bossContainer.innerHTML = '';
             track.onclick = null;
             bossTrack.onclick = null;
-
             if (noticeIconEl) {
                 noticeIconEl.remove();
                 noticeIconEl = null;
             }
             clearTimeout(noticeIconTimeout);
-
             const isBossEvent = Math.random() < 0.7;
             let isCaught = false,
                 isEscaped = false,
@@ -2164,7 +1891,6 @@
             const runDuration = 14000;
             let charRunAnimation = null,
                 bossRunAnimation = null;
-
             function triggerVictory() {
                 if (isEscaped || !isAnimationEnabled) return;
                 isEscaped = true;
@@ -2184,14 +1910,12 @@
                     setTimeout(initTopRunner, 600);
                 }, 3000);
             }
-
             const loader = document.createElement('div');
             loader.className = 'spine-loader-crayon';
             container.appendChild(loader);
             const randomCharData = INITIAL_DATA[Math.floor(Math.random() * INITIAL_DATA.length)];
             const charName = randomCharData.name;
             const folderKey = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[charName] : charName;
-
             currentRunnerPlayer = new spine.SpinePlayer("topRunnerContainer", {
                 skelUrl: `./spine_sd_assets/${folderKey}.skel.bytes`,
                 atlasUrl: `./spine_sd_assets/${folderKey}.atlas.txt`,
@@ -2245,7 +1969,6 @@
                                 hasReachedEnd = true;
                                 if (!isCaught) triggerVictory();
                             };
-
                             if (isBossEvent) {
                                 const bossKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP['R41雷內瓦'] ? SPINE_MAP['R41雷內瓦'] : 'R41雷內瓦';
                                 currentBossPlayer = new spine.SpinePlayer("bossRunnerContainer", {
@@ -2275,7 +1998,6 @@
                                             bossPlayer.skeleton.setSkinByName(skinToUse);
                                             bossPlayer.skeleton.setSlotsToSetupPose();
                                         } catch (e) {}
-
                                         function waitRunner15Percent() {
                                             if (isEscaped || isCaught || !isAnimationEnabled) return;
                                             let currentTime = charRunAnimation ? (charRunAnimation.currentTime || 0) : 0;
@@ -2311,7 +2033,6 @@
                     }, 50);
                 }
             });
-
             function setupPlayerKnockback(bossPlayer) {
                 bossTrack.style.pointerEvents = 'auto';
                 bossTrack.style.cursor = 'pointer';
@@ -2345,7 +2066,6 @@
                     requestAnimationFrame(tweenKnockback);
                 };
             }
-
             function startChaseRadar(runnerPlayer, bossPlayer) {
                 function checkChase() {
                     if (isEscaped || chasePhase === 0 || !isAnimationEnabled) return;
@@ -2408,7 +2128,6 @@
                 }
                 chaseLoopId = requestAnimationFrame(checkChase);
             }
-
             function handleCollision(runnerPlayer, bossPlayer) {
                 if (noticeIconEl) {
                     noticeIconEl.remove();
@@ -2421,7 +2140,6 @@
                 const isRanged = ["中排", "後排"].includes(randomCharData.position);
                 const rangedOffsetPx = -240;
                 const attackOffset = isRanged ? `translateX(${rangedOffsetPx}px)` : "translateX(0px)";
-
                 if (chasePhase === 1) {
                     if (Math.random() < 0.4) {
                         container.style.transform = `${attackOffset} scaleX(-1)`;
@@ -2440,7 +2158,6 @@
                             bossContainer.classList.add('shake-strong-anim');
                             setTimeout(() => bossContainer.classList.remove('shake-strong-anim'), 500);
                         }, Math.max(atkDur - 500, lastHitTimeMs - 200));
-
                         setTimeout(() => {
                             if (!isAnimationEnabled) return;
                             if (hasReachedEnd) {
@@ -2579,7 +2296,6 @@
                     } else bossExecuteKill(runnerPlayer, bossPlayer);
                 }
             }
-
             function bossExecuteKill(runnerPlayer, bossPlayer) {
                 chasePhase = 0;
                 safePlaySpine(runnerPlayer, "Groggy", true);
@@ -2603,7 +2319,6 @@
                 }, attackDuration + 1000);
             }
         }
-
         // ------------------------------------------------------------
         // Firebase 與全域系統初始化
         // ------------------------------------------------------------
@@ -2629,7 +2344,6 @@
                 console.error("計數器更新失敗:", err);
             });
         }
-
         function handleAuth() {
             if (!auth) {
                 alert("目前處於斷線單機模式（可能被擴充功能阻擋），無法登入雲端。");
@@ -2647,7 +2361,6 @@
                 }, 50);
             }
         }
-
         function updateAuthButtonUI(user) {
             const btn = document.getElementById('authBtn');
             const svgLogo = document.getElementById('googleLogoSvg');
@@ -2663,7 +2376,6 @@
                 btn.className = "google-login-btn bg-white dark:bg-gray-700 rounded-lg h-7 sm:h-8 px-1.5 flex items-center justify-center transition border border-gray-200 dark:border-gray-600 shrink-0 hover:bg-gray-50 dark:hover:bg-gray-600";
             }
         }
-
         function spawnCrayonOnTrack() {
             if (!isAnimationEnabled) return;
             if (window.innerWidth <= 768) return;
@@ -2673,10 +2385,8 @@
                 spawnCrayonTimer = setTimeout(spawnCrayonOnTrack, 5000);
                 return;
             }
-
             const area = document.getElementById('runnerArea');
             if (!area) return;
-
             const crayon = document.createElement('div');
             crayon.className = 'track-crayon';
             const randomX = Math.floor(Math.random() * 70) + 15;
@@ -2686,15 +2396,12 @@
             requestAnimationFrame(() => {
                 crayon.style.opacity = '1';
             });
-
             spawnCrayonTimer = setTimeout(spawnCrayonOnTrack, Math.random() * 7000 + 5000);
         }
-
         function checkCrayonCollision() {
             if (!isAnimationEnabled) return;
             if (window.innerWidth <= 768) return;
             if (crayonCollisionLoopId) cancelAnimationFrame(crayonCollisionLoopId);
-
             const chibi = document.getElementById('runnerTrack');
             const isChibiVisible = chibi && chibi.style.opacity === '1';
             if (isChibiVisible && activeCrayons.length > 0) {
@@ -2714,7 +2421,6 @@
             }
             crayonCollisionLoopId = requestAnimationFrame(checkCrayonCollision);
         }
-
         function initRimLive2D() {
             if (typeof spine === 'undefined') return;
             const rimContainer = document.getElementById("rim-live-container");
@@ -2745,17 +2451,14 @@
                         player.animationState.setAnimation(0, nextAnim, true);
                         currentIndex++;
                     }
-
                     if (window.rimInterval) clearInterval(window.rimInterval);
                     window.rimInterval = setInterval(playNextAnimation, 5000);
                 }
             });
         }
-
         // 🌟 合併所有 Load 事件，交錯延遲載入 (Staggered Loading) 大幅提升體感速度
         window.addEventListener('load', () => {
             document.getElementById('loader').style.display = 'none';
-
             try {
                 if (typeof INITIAL_DATA === 'undefined') throw new Error("找不到 INITIAL_DATA，請確認 data_core.js 是否載入成功！");
                 renderPickupBanner();
@@ -2781,7 +2484,6 @@
                     errBanner.classList.remove('hidden');
                 }
             }
-
             // 啟動 Firebase
             // Google cloud console 安全風險已設定
             try {
@@ -2820,7 +2522,6 @@
                     });
                 }
             } catch (e) {}
-
             // 錯開重度渲染，讓主畫面先出現，不會白畫面卡死
             setTimeout(() => {
                 if (isAnimationEnabled) {
@@ -2839,5 +2540,4 @@
         });
     </script>
 </body>
-
 </html>
