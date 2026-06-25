@@ -154,26 +154,26 @@ const ASIDE_DATA = {
     },
     "Kyarot": { 
         asideIcon: "https://i.postimg.cc/pp3yL6HW/Aside-Icon-Kyarot.png", 
-        totalName: { zh: "小太陽", ja: "おひさま", en: "English Total Name" }, 
+        totalName: { zh: "小太陽", ja: "おひさま", en: "Sunny" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/Xrb9qmj0/Aside-Skill-Kyarot-1.png", 
-                name: { zh: "快快長大吧!", ja: "すくすく育って！", en: "English 1-Star Name" }, 
-                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "English 1-Star Desc" }, 
-                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗:6%"], ja: ["最大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Effect 1"] } 
+                name: { zh: "快快長大吧!", ja: "すくすく育って！", en: "Grow Stronger!" }, 
+                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "Increases the bearer's Max HP, Physical DEF, Magical DEF, CRIT Resistance, and CRIT DMG Resistance." }, 
+                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗:6%"], ja: ["最大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Max HP Increase: 6%", "Physical DEF Increase: 6%", "Magical DEF Increase: 6%", "CRIT Resistance Increase: 6%", "CRIT DMG Resistance Increase: 6%"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/LJpj5w9p/Aside-Skill-Kyarot-2.png", 
-                name: { zh: "讓胡蘿蔔保持新鮮", ja: "ニンジンの鮮度維持", en: "English 2-Star Name" }, 
-                desc: { zh: "強化攻擊追加護盾。護盾被破壞時,額外恢復SP。", ja: "強化攻撃にシールドが追加される。シールドが破壊されると、追加でSPを回復する。", en: "English 2-Star Desc" }, 
-                effects: { zh: ["護盾:最大HP的30%", "護盾持續時間:5秒", "SP恢復量:45"], ja: ["シールド: 最大HPの30%", "シールドの持続時間: 5秒", "SP回復量: 45"], en: ["Effect 1"] } 
+                name: { zh: "讓胡蘿蔔保持新鮮", ja: "ニンジンの鮮度維持", en: "Fresh Carrot Saved" }, 
+                desc: { zh: "強化攻擊追加護盾。護盾被破壞時,額外恢復SP。", ja: "強化攻撃にシールドが追加される。シールドが破壊されると、追加でSPを回復する。", en: "Adds a Shield to Enhanced Attack. If the Shield is destroyed, recovers additional SP." }, 
+                effects: { zh: ["護盾:最大HP的30%", "護盾持續時間:5秒", "SP恢復量:45"], ja: ["シールド: 最大HPの30%", "シールドの持続時間: 5秒", "SP回復量: 45"], en: ["Shield: 30% of Max HP", "Shield Duration: 5s", "SP Recovery: 45"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/nXJqrgFx/Aside-Skill-Kyarot-3.png", 
-                name: { zh: "冰凍胡蘿蔔", ja: "アイスニンジン", en: "English 3-Star Name" }, 
-                desc: { zh: "增加後排友軍對敵人造成的傷害量。", ja: "後列の味方が敵に与えるダメージ量を増加させる。", en: "English 3-Star Desc" }, 
-                effects: { zh: ["造成的傷害量增加:19.5%"], ja: ["ダメージ量増加: 19.5%"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體爆擊傷害 3%", "全體爆擊傷害抵抗 3%"], ja: ["全体会心ダメージ 3%", "全体会心ダメージ抵抗 3%"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "冰凍胡蘿蔔", ja: "アイスニンジン", en: "Icy Carrot-Carrot" }, 
+                desc: { zh: "增加後排友軍對敵人造成的傷害量。", ja: "後列の味方が敵に与えるダメージ量を増加させる。", en: "Increases Outgoing DMG to enemies for Back Row allies." }, 
+                effects: { zh: ["造成的傷害量增加:19.5%"], ja: ["ダメージ量増加: 19.5%"], en: ["DMG Increase: 19.5%"] }, 
+                globalEffects: { zh: ["全體爆擊傷害 3%", "全體爆擊傷害抵抗 3%"], ja: ["全体会心ダメージ 3%", "全体会心ダメージ抵抗 3%"], en: ["All CRIT DMG 3%", "All CRIT DMG RES 3%"] } 
             }
         }
     },
