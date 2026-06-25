@@ -129,26 +129,26 @@ const ASIDE_DATA = {
     },
     "Hilde": { 
         asideIcon: "https://i.postimg.cc/crP6LbSs/Aside-Icon-Hilde.png", 
-        totalName: { zh: "泡溫泉的希爾德", ja: "温泉のヒルデ", en: "English Total Name" }, 
+        totalName: { zh: "泡溫泉的希爾德", ja: "温泉のヒルデ", en: "Hilde in a Hot Spring" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/TK6n1FRS/Aside-Skill-Hilde-1.png", 
-                name: { zh: "自我治療", ja: "自己治療", en: "English 1-Star Name" }, 
-                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "English 1-Star Desc" }, 
-                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗:6%"], ja: ["最大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗: 6%", "会心ダメージ抵抗: 6%"], en: ["Effect 1"] } 
+                name: { zh: "自我治療", ja: "自己治療", en: "Self-Care" }, 
+                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "Increases the bearer's Max HP, Physical DEF, Magical DEF, CRIT Resistance, and CRIT DMG Resistance." }, 
+                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗:6%"], ja: ["最大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗: 6%", "会心ダメージ抵抗: 6%"], en: ["Max HP Increase: 6%", "Physical DEF Increase: 6%", "Magical DEF Increase: 6%", "CRIT Resistance Increase: 6%", "CRIT DMG Resistance Increase: 6%"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/yDH0xtVG/Aside-Skill-Hilde-2.png", 
-                name: { zh: "醫務人員保護法", ja: "医療従事者保護法", en: "English 2-Star Name" }, 
-                desc: { zh: "提升強化攻擊恢復目標的攻擊速度。強化攻擊的HP恢復比例變為2倍。", ja: "強化攻撃の回復対象の攻撃速度を増加させる。強化攻撃のHP回復割合が2倍になる。", en: "English 2-Star Desc" }, 
-                effects: { zh: ["攻擊速度提升:60%", "攻擊速度提升持續時間:6秒"], ja: ["攻撃速度増加: 60%", "攻撃速度増加の持続時間: 6秒"], en: ["Effect 1"] } 
+                name: { zh: "醫務人員保護法", ja: "医療従事者保護法", en: "Healthcare Protection Act" }, 
+                desc: { zh: "提升強化攻擊恢復目標的攻擊速度。強化攻擊的HP恢復比例變為2倍。", ja: "強化攻撃の回復対象の攻撃速度を増加させる。強化攻撃のHP回復割合が2倍になる。", en: "Increases the Attack Speed for the Enhanced Attack Recovery Target. Enhanced Attack's HP Recovery Ratio is doubled." }, 
+                effects: { zh: ["攻擊速度提升:60%", "攻擊速度提升持續時間:6秒"], ja: ["攻撃速度増加: 60%", "攻撃速度増加の持続時間: 6秒"], en: ["ATK SPD Increase: 60%", "ATK SPD Increase Duration: 6s"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/5XV8yTxZ/Aside-Skill-Hilde-3.png", 
-                name: { zh: "溫泉功效", ja: "温泉の効能", en: "English 3-Star Name" }, 
-                desc: { zh: "敵人對所有友軍造成的魔法傷害量減少。", ja: "味方全員の敵からの魔法被ダメージ量が減少する。", en: "English 3-Star Desc" }, 
-                effects: { zh: ["受到的魔法傷害量減少:10.5%"], ja: ["魔法被ダメージ量減少: 10.5%"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體魔法攻撃力 3%", "全體爆擊傷害抵抗 3%"], ja: ["全体魔法攻撃力 3%", "全体会心ダメージ抵抗 3%"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "溫泉功效", ja: "温泉の効能", en: "Hot Springs Benefits" }, 
+                desc: { zh: "敵人對所有友軍造成的魔法傷害量減少。", ja: "味方全員の敵からの魔法被ダメージ量が減少する。", en: "Reduces Incoming Magical Damage for all allies." }, 
+                effects: { zh: ["受到的魔法傷害量減少:10.5%"], ja: ["魔法被ダメージ量減少: 10.5%"], en: ["Incoming Magical DMG Reduction: 10.5%"] }, 
+                globalEffects: { zh: ["全體魔法攻撃力 3%", "全體爆擊傷害抵抗 3%"], ja: ["全体魔法攻撃力 3%", "全体会心ダメージ抵抗 3%"], en: ["All Magical ATK 3%", "All CRIT DMG RES 3%"] } 
             }
         }
     },
@@ -379,26 +379,26 @@ const ASIDE_DATA = {
     },
     "Selline": { 
         asideIcon: "https://i.postimg.cc/Mvnvx8gg/Aside-Icon-Selline.png", 
-        totalName: { zh: "網紅的瑟琳娜", ja: "セレブ・セリーネ", en: "English Total Name" }, 
+        totalName: { zh: "網紅的瑟琳娜", ja: "セレブ・セリーネ", en: "Selene the Celeb" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/hJ4xbmQw/Aside-Skill-Selline-1.png", 
-                name: { zh: "惡作劇的瑟琳娜", ja: "悪戯好きなセリーネ", en: "English 1-Star Name" }, 
-                desc: { zh: "穿戴者的最大HP增加。", ja: "着用者の最大HPが増加する。", en: "English 1-Star Desc" }, 
-                effects: { zh: ["最大HP增加:22.5%"], ja: ["最大HP増加: 22.5%"], en: ["Effect 1"] } 
+                name: { zh: "惡作劇的瑟琳娜", ja: "悪戯好きなセリーネ", en: "Playful Selene" }, 
+                desc: { zh: "穿戴者的最大HP增加。", ja: "着用者の最大HPが増加する。", en: "Increases the bearer's Max HP." }, 
+                effects: { zh: ["最大HP增加:22.5%"], ja: ["最大HP増加: 22.5%"], en: ["Max HP Increase: 22.5%"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/94x9xfyx/Aside-Skill-Selline-2.png", 
-                name: { zh: "挑釁專家ElfTuber", ja: "煽り専門ElTuber", en: "English 2-Star Name" }, 
-                desc: { zh: "受到直接傷害時恢復SP。降低因強化攻擊受到挑釁的敵人的攻擊速度。強化攻擊的HP恢復比例變為2倍", ja: "直接ダメージを受けるとSPが回復する。強化攻撃で挑発した敵の攻撃速度を減少させる。強化攻撃のHP回復割合が2倍になる。", en: "English 2-Star Desc" }, 
-                effects: { zh: ["直接傷害:指狀態異常傷害、反射傷害以外的直接攻擊傷害。", "SP恢復量:6", "攻擊速度降低:33%", "攻擊速度降低持續時間:4秒"], ja: ["直接ダメージ: 直接攻撃によるダメージ(状態異常ダメージ、反射ダメージを除く)。", "SP回復量: 6", "攻擊速度減少: 33%", "攻撃速度減少の持続時間: 4秒"], en: ["Effect 1"] } 
+                name: { zh: "挑釁專家ElfTuber", ja: "煽り専門ElTuber", en: "Bait-Specialist ElfTuber" }, 
+                desc: { zh: "受到直接傷害時恢復SP。降低因強化攻擊受到挑釁的敵人的攻擊速度。強化攻擊的HP恢復比例變為2倍", ja: "直接ダメージを受けるとSPが回復する。強化攻撃で挑発した敵の攻撃速度を減少させる。強化攻撃のHP回復割合が2倍になる。", en: "When taking Direct Damage, recovers SP. Reduces the Attack Speed of the enemy taunted by the Enhanced Attack. Enhanced Attack's HP Recovery Ratio is doubled." }, 
+                effects: { zh: ["直接傷害:指狀態異常傷害、反射傷害以外的直接攻擊傷害。", "SP恢復量:6", "攻擊速度降低:33%", "攻擊速度降低持續時間:4秒"], ja: ["直接ダメージ: 直接攻撃によるダメージ(状態異常ダメージ、反射ダメージを除く)。", "SP回復量: 6", "攻擊速度減少: 33%", "攻撃速度減少の持続時間: 4秒"], en: ["Direct Damage: Refers to damage caused by Direct Attacks, excluding Status Effect Damage and Damage Reflection.", "SP Recovery: 6", "ATK SPD Reduction: 33%", "ATK SPD Reduction Duration: 4s"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/1gWFWzDB/Aside-Skill-Selline-3.png", 
-                name: { zh: "捐款挑戰", ja: "寄付チャレンジ", en: "English 3-Star Name" }, 
-                desc: { zh: "敵人對前排友軍造成傷害量減少。", ja: "前列の味方の敵への被ダメージ量を減少させる。", en: "English 3-Star Desc" }, 
-                effects: { zh: ["受到的傷害量減少:97%"], ja: ["被ダメージ量減少: 9.7%"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體魔法防禦力 3%", "全體爆擊抵抗 3%"], ja: ["全体魔法防御力 3%", "全体会心抵抗 3%"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "捐款挑戰", ja: "寄付チャレンジ", en: "Donation Campaign" }, 
+                desc: { zh: "敵人對前排友軍造成傷害量減少。", ja: "前列の味方の敵への被ダメージ量を減少させる。", en: "Reduces Incoming Damage of Front Row allies." }, 
+                effects: { zh: ["受到的傷害量減少:97%"], ja: ["被ダメージ量減少: 9.7%"], en: ["Incoming DMG Reduction: 9.7%"] }, 
+                globalEffects: { zh: ["全體魔法防禦力 3%", "全體爆擊抵抗 3%"], ja: ["全体魔法防御力 3%", "全体会心抵抗 3%"], en: ["All Magical DEF 3%", "All CRIT Resistance 3%"] } 
             }
         }
     },
@@ -454,26 +454,26 @@ const ASIDE_DATA = {
     },
     "Ui": { 
         asideIcon: "https://i.postimg.cc/qzNz0d9T/Aside-Icon-Ui.png", 
-        totalName: { zh: "不快樂的羽伊", ja: "アンハッピーウイ", en: "English Total Name" }, 
+        totalName: { zh: "不快樂的羽伊", ja: "アンハッピーウイ", en: "Unhappy Ui" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/tYPhXpHY/Aside-Skill-Ui-1.png", 
-                name: { zh: "耶魯呱呱叫", ja: "エルはケロケロ", en: "English 1-Star Name" }, 
-                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "English 1-Star Desc" }, 
-                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗:6%"], ja: ["最大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Effect 1"] } 
+                name: { zh: "耶魯呱呱叫", ja: "エルはケロケロ", en: "Croak-Croak Croakie" }, 
+                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "Increases the bearer's Max HP, Physical Defense, Magical Defense, CRIT Resistance, and CRIT DMG Resistance." }, 
+                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗:6%"], ja: ["最大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Max HP Increase: 6%", "Physical DEF Increase: 6%", "Magical DEF Increase: 6%", "CRIT Resistance Increase: 6%", "CRIT DMG Resistance Increase: 6%"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/WhrM2TP3/Aside-Skill-Ui-2.png", 
-                name: { zh: "正向王羽伊", ja: "ポジティブの王ウイ", en: "English 2-Star Name" }, 
-                desc: { zh: "額外追加1個活潑性格。使用普通技能時,增加中排友軍的傷害量。", ja: "活発を1個追加する。低学年スキル使用時、中列の味方のダメージ量を増加させる。", en: "English 2-Star Desc" }, 
-                effects: { zh: ["傷害量增加:16%", "傷害量增加持續時間:7秒"], ja: ["ダメージ量増加: 16%", "ダメージ量増加の持続時間: 7秒"], en: ["Effect 1"] } 
+                name: { zh: "正向王羽伊", ja: "ポジティブの王ウイ", en: "Ui, Queen of Positivity" }, 
+                desc: { zh: "額外追加1個活潑性格。使用普通技能時,增加中排友軍的傷害量。", ja: "活発を1個追加する。低学年スキル使用時、中列の味方のダメージ量を増加させる。", en: "Adds 1 additional Vivacious Personality. When Freshman Skill is used, increases the Damage for Middle Row allies." }, 
+                effects: { zh: ["傷害量增加:16%", "傷害量增加持續時間:7秒"], ja: ["ダメージ量増加: 16%", "ダメージ量増加の持続時間: 7秒"], en: ["DMG Increase: 16%", "DMG Increase Duration: 7s"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/rKWS8MLs/Aside-Skill-Ui-3.png", 
-                name: { zh: "穿雨靴的羽伊", ja: "長ぐつをはいたウイ", en: "English 3-Star Name" }, 
-                desc: { zh: "敵人對中排友軍造成的傷害量減少。", ja: "中列の味方の敵からの被ダメージ量が減少する。", en: "English 3-Star Desc" }, 
-                effects: { zh: ["受到的傷害量減少:14%"], ja: ["被ダメージ量減少: 14%"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體 HP 4%", "全體魔法攻撃力 4%"], ja: ["全体HP 4%", "全体魔法攻撃力 4%"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "穿雨靴的羽伊", ja: "長ぐつをはいたウイ", en: "Ui in Boots" }, 
+                desc: { zh: "敵人對中排友軍造成的傷害量減少。", ja: "中列の味方の敵からの被ダメージ量が減少する。", en: "Reduces Incoming Damage for Middle Row allies." }, 
+                effects: { zh: ["受到的傷害量減少:14%"], ja: ["被ダメージ量減少: 14%"], en: ["Incoming DMG Reduction: 14%"] }, 
+                globalEffects: { zh: ["全體 HP 4%", "全體魔法攻撃力 4%"], ja: ["全体HP 4%", "全体魔法攻撃力 4%"], en: ["All HP 4%", "All Magical ATK 4%"] } 
             }
         }
     },
