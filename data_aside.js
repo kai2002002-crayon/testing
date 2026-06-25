@@ -29,26 +29,26 @@ const ASIDE_DATA = {
     },
     "Chloe": { 
         asideIcon: "https://i.postimg.cc/tYsYyHLT/Aside-Icon-Chloe.png", 
-        totalName: { zh: "時尚封面庫洛艾", ja: "ファッションカバークロエ", en: "English Total Name" }, 
+        totalName: { zh: "時尚封面庫洛艾", ja: "ファッションカバークロエ", en: "Fashion Cover Chloe" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/w7Jh6gd0/Aside-Skill-Chloe-1.png", 
-                name: { zh: "名人庫洛艾", ja: "セレブリティ・クロエ", en: "English 1-Star Name" }, 
-                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、 爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "English 1-Star Desc" }, 
-                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗:6%"], ja: ["最大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Effect 1"] } 
+                name: { zh: "名人庫洛艾", ja: "セレブリティ・クロエ", en: "Celebrity Chloe" }, 
+                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、 爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "Increases the bearer's Max HP, Physical DEF, Magical DEF, CRIT Resistance, and CRIT DMG Resistance." }, 
+                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗:6%"], ja: ["最大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Max HP Increase: 6%", "Physical DEF Increase: 6%", "Magical DEF Increase: 6%", "CRIT Resistance Increase: 6%", "CRIT DMG Resistance Increase: 6%"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/YvHQ0Zpf/Aside-Skill-Chloe-2.png", 
-                name: { zh: "F/W 庫洛艾穿搭", ja: "F/W クロエルック", en: "English 2-Star Name" }, 
-                desc: { zh: "免疫昏迷與變異。受到14次直接傷害時,會挑釁周圍敵人並造成範圍魔法傷害。發動玩偶的意志時,一定時間內攻擊速度提升,且每秒恢復HP。", ja: "気絶と変異の免疫を持つ。直接ダメージによって14回ダメージを受けると、周囲の敵を挑発して範囲魔法ダメージを与える。ぬいぐるみの意思が発動すると、一定時間、攻撃速度が増加し、1秒ごとにHPが回復する。", en: "English 2-Star Desc" }, 
-                effects: { zh: ["昏迷:無法進行任何行動。", "變異:使目標變成物品並且無法進行任何行動。", "直接傷害:指狀態異常傷害、反射傷害以外的直接攻擊傷害。", "挑釁:使目標對發動挑釁的單位進行基本攻擊。", "玩偶的意志:改變基本攻擊效果。", "挑戰持續時間:3秒", "魔法傷害:300%", "攻擊速度提升: 30%", "攻擊速度提升持續時間:7秒", "每秒HP恢復:最大HP的1%", "每秒HP恢復持續時間:7秒"], ja: ["気絶: 行動不能になる。", "変異: 物体に変化し、行動不能になる。", "直接ダメージ: 直接攻撃によるダメージ(状態異常ダメージ、反射ダメージを除く)。", "挑発: 挑発した対象を基本攻撃で攻撃する。", "ぬいぐるみの意思: 基本攻撃の効果が変更される。", "挑発の持続時間: 3秒", "魔法ダメージ: 300%", "攻撃速度増加: 30%", "攻撃速度増加の持続時間: 7秒", "1秒ごとのHP回復: 最大HPの1%", "1秒ごとのHP回復の持続時間: 7秒"], en: ["Effect 1"] } 
+                name: { zh: "F/W 庫洛艾穿搭", ja: "F/W クロエルック", en: "F/W Chloe Look" }, 
+                desc: { zh: "免疫昏迷與變異。受到14次直接傷害時,會挑釁周圍敵人並造成範圍魔法傷害。發動玩偶的意志時,一定時間內攻擊速度提升,且每秒恢復HP。", ja: "気絶と変異の免疫を持つ。直接ダメージによって14回ダメージを受けると、周囲の敵を挑発して範囲魔法ダメージを与える。ぬいぐるみの意思が発動すると、一定時間、攻撃速度が増加し、1秒ごとにHPが回復する。", en: "Becomes immune to Stun and Mutate, After taking 14 hits from Direct Damage, Taunts nearby enemies and deals AoE Magical Damage. When Doll's Will is activated, increases Attack Speed for a set period of time and recovers HP every second." }, 
+                effects: { zh: ["昏迷:無法進行任何行動。", "變異:使目標變成物品並且無法進行任何行動。", "直接傷害:指狀態異常傷害、反射傷害以外的直接攻擊傷害。", "挑釁:使目標對發動挑釁的單位進行基本攻擊。", "玩偶的意志:改變基本攻擊效果。", "挑戰持續時間:3秒", "魔法傷害:300%", "攻擊速度提升: 30%", "攻擊速度提升持續時間:7秒", "每秒HP恢復:最大HP的1%", "每秒HP恢復持續時間:7秒"], ja: ["気絶: 行動不能になる。", "変異: 物体に変化し、行動不能になる。", "直接ダメージ: 直接攻撃によるダメージ(状態異常ダメージ、反射ダメージを除く)。", "挑発: 挑発した対象を基本攻撃で攻撃する。", "ぬいぐるみの意思: 基本攻撃の効果が変更される。", "挑発の持続時間: 3秒", "魔法ダメージ: 300%", "攻撃速度増加: 30%", "攻撃速度増加の持続時間: 7秒", "1秒ごとのHP回復: 最大HPの1%", "1秒ごとのHP回復の持続時間: 7秒"], en: ["Stun: Becomes unable to act.", "Mutate: Turns into an inanimate object and becomes unable to act.", "Direct Damage: Refers to damage caused by Direct Attacks, excluding Status Effect Damage and Damage Reflection.", "Taunt: Provokes Basic Attacks on the taunt.", "Doll's Will: The effect of Basic Attack changes.", "Taunt Duration: 3s", "Magical DMG: 300%", "ATK SPD Increase: 30%", "ATK SPD Increase Duration: 7s", "HP Recovery Per Second: 1% of Max HP", "HP Recovery Duration: 7s"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/4YgpyqJp/Aside-Skill-Chloe-3.png", 
-                name: { zh: "伸展台開場", ja: "ランウェイオープニング", en: "English 3-Star Name" }, 
-                desc: { zh: "增加前排友軍對敵人造成的傷害量,並減少前排友軍受到敵人的傷害量。", ja: "前列の味方の敵への与ダメージ量を増加させ、前列味方の敵からの被ダメージ量を減少させる。", en: "English 3-Star Desc" }, 
-                effects: { zh: ["傷害量增加:19.5%", "受到的傷害量減少:8.8%"], ja: ["ダメージ量増加: 19.5%", "被ダメージ量減少: 8.8%"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體魔法防禦力 4%", "全體爆擊抵抗 4%"], ja: ["全体魔法防御力 4%", "全体会心抵抗 4%"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "伸展台開場", ja: "ランウェイオープニング", en: "Runway Opening" }, 
+                desc: { zh: "增加前排友軍對敵人造成的傷害量,並減少前排友軍受到敵人的傷害量。", ja: "前列の味方の敵への与ダメージ量を増加させ、前列味方の敵からの被ダメージ量を減少させる。", en: "Increases Outgoing Damage and reduces Incoming Damage Rate of Front Row allies." }, 
+                effects: { zh: ["傷害量增加:19.5%", "受到的傷害量減少:8.8%"], ja: ["ダメージ量増加: 19.5%", "被ダメージ量減少: 8.8%"], en: ["DMG Increase: 19.5%", "Incoming DMG Reduction: 8.8%"] }, 
+                globalEffects: { zh: ["全體魔法防禦力 4%", "全體爆擊抵抗 4%"], ja: ["全体魔法防御力 4%", "全体会心抵抗 4%"], en: ["All Magical DEF 4%", "All CRIT Resistance 4%"] } 
             }
         }
     },
