@@ -79,26 +79,26 @@ const ASIDE_DATA = {
     },
     "Ed": { 
         asideIcon: "https://i.postimg.cc/9rDrVjvD/Aside-Icon-Ed.png", 
-        totalName: { zh: "伊德永恆子彈", ja: "イード・ジ・エターナルブレット", en: "English Total Name" }, 
+        totalName: { zh: "伊德永恆子彈", ja: "イード・ジ・エターナルブレット", en: "ED the Eternal Bullet" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/jDby2msc/Aside-Skill-Ed-1.png", 
-                name: { zh: "心地善良的伊德", ja: "心優しいイード", en: "English 1-Star Name" }, 
-                desc: { zh: "[穿戴者的最大HP、物理防禦力、魔法防禦力、 爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "English 1-Star Desc" }, 
-                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["最大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Effect 1"] } 
+                name: { zh: "心地善良的伊德", ja: "心優しいイード", en: "Kind-Hearted ED" }, 
+                desc: { zh: "[穿戴者的最大HP、物理防禦力、魔法防禦力、 爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "Increases the bearer's Max HP, Physical DEF, Magical DEF, CRIT Resistance, and CRIT DMG Resistance." }, 
+                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["最大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Max HP Increase: 6%", "Physical DEF Increase: 6%", "Magical DEF Increase: 6%", "CRIT Resistance Increase: 6%", "CRIT DMG Resistance Increase: 6%"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/75kShdxX/Aside-Skill-Ed-2.png", 
-                name: { zh: "未醒之夢", ja: "まだ夢から覚めていない", en: "English 2-Star Name" }, 
-                desc: { zh: "使用強化攻擊時,在一段時間內增加自己的防禦力。使用普通技能時,額外赋予剩下HP比例最低的友軍護盾。恢復觸發保護友軍的SP。", ja: "強化攻撃使用時、一定時間、自身の防御力を増加させる。低学年スキル使用時、残りHP割合が最も低い味方に追加でシールドを付与する。保護が発動した味方のSPを回復させる。", en: "English 2-Star Desc" }, 
-                effects: { zh: ["保護:因直接傷害陷入無法戰鬥狀態時,該傷害將被無效化並賦予護盾。", "直接傷害:指狀態異常傷害、反射傷害以外的直接攻擊傷害。", "防禦力增加:25%", "防禦力增加持續時間:5秒", "護盾:最大HP的50%", "護盾持續時間:8秒", "友軍SP恢復:30%"], ja: ["保護: 直接ダメージによって戦闘不能になった時、そのダメージを無効化してシールドを付与する。", "直接ダメージ: 直接攻撃によるダメージ(状態異常ダメージ、反射ダメージを除く)。", "防御力増加: 25%", "防御力増加の持続時間: 5秒", "シールド: 最大HPの24%/46%/48%/50%/52% (低学年スキルLvに依存)", "シールドの持続時間: 8秒", "味方SP回復: 30%"], en: ["Effect 1"] } 
+                name: { zh: "未醒之夢", ja: "まだ夢から覚めていない", en: "Not Yet Awake from the Dream" }, 
+                desc: { zh: "使用強化攻擊時,在一段時間內增加自己的防禦力。使用普通技能時,額外赋予剩下HP比例最低的友軍護盾。恢復觸發保護友軍的SP。", ja: "強化攻撃使用時、一定時間、自身の防御力を増加させる。低学年スキル使用時、残りHP割合が最も低い味方に追加でシールドを付与する。保護が発動した味方のSPを回復させる。", en: "When Enhanced Attack is used, increases her Defense for a set period of time.When Freshman Skill is used, additionally grants a Shield to the ally with the lowest remaining HP Ratio. Recovers the SP of allies with Protection activated." }, 
+                effects: { zh: ["保護:因直接傷害陷入無法戰鬥狀態時,該傷害將被無效化並賦予護盾。", "直接傷害:指狀態異常傷害、反射傷害以外的直接攻擊傷害。", "防禦力增加:25%", "防禦力增加持續時間:5秒", "護盾:最大HP的50%", "護盾持續時間:8秒", "友軍SP恢復:30%"], ja: ["保護: 直接ダメージによって戦闘不能になった時、そのダメージを無効化してシールドを付与する。", "直接ダメージ: 直接攻撃によるダメージ(状態異常ダメージ、反射ダメージを除く)。", "防御力増加: 25%", "防御力増加の持続時間: 5秒", "シールド: 最大HPの24%/46%/48%/50%/52% (低学年スキルLvに依存)", "シールドの持続時間: 8秒", "味方SP回復: 30%"], en: ["Protection: Negates incapacitating Direct Damage and grants a Shield.", "Direct Damage: Refers to damage caused by Direct Attacks, excluding Status Effect Damage and Damage Reflection.", "DEF Increase: 25%", "DEF Increase Duration: 55", "Shield: 50 of Max HP", "Shield Duration: 85", "Ally SP Recovery: 30%"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/dhYG3pq5/Aside-Skill-Ed-3.png", 
-                name: { zh: "共同的夢", ja: "共に見る夢", en: "English 3-Star Name" }, 
-                desc: { zh: "增加所有友軍的最大HP。", ja: "味方全員の最大HPを増加させる。", en: "English 3-Star Desc" }, 
-                effects: { zh: ["最大HP增加:18%"], ja: ["最大HP増加: 18%"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體 HP 4%", "全體爆擊抵抗 4%"], ja: ["全体HP 4%","全体会心抵抗 4%"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "共同的夢", ja: "共に見る夢", en: "Shared Dream" }, 
+                desc: { zh: "增加所有友軍的最大HP。", ja: "味方全員の最大HPを増加させる。", en: "Increases Max HP of all allies." }, 
+                effects: { zh: ["最大HP增加:18%"], ja: ["最大HP増加: 18%"], en: ["Max HP Increase: 18%"] }, 
+                globalEffects: { zh: ["全體 HP 4%", "全體爆擊抵抗 4%"], ja: ["全体HP 4%","全体会心抵抗 4%"], en: ["All HP 4%", "All CRIT Resistance 4%"] } 
             }
         }
     },
