@@ -41,7 +41,7 @@ const ASIDE_DATA = {
                 icon: "https://i.postimg.cc/YvHQ0Zpf/Aside-Skill-Chloe-2.png", 
                 name: { zh: "F/W 庫洛艾穿搭", ja: "F/W クロエルック", en: "F/W Chloe Look" }, 
                 desc: { zh: "免疫昏迷與變異。受到14次直接傷害時,會挑釁周圍敵人並造成範圍魔法傷害。發動玩偶的意志時,一定時間內攻擊速度提升,且每秒恢復HP。", ja: "気絶と変異の免疫を持つ。直接ダメージによって14回ダメージを受けると、周囲の敵を挑発して範囲魔法ダメージを与える。ぬいぐるみの意思が発動すると、一定時間、攻撃速度が増加し、1秒ごとにHPが回復する。", en: "Becomes immune to Stun and Mutate, After taking 14 hits from Direct Damage, Taunts nearby enemies and deals AoE Magical Damage. When Doll's Will is activated, increases Attack Speed for a set period of time and recovers HP every second." }, 
-                effects: { zh: ["昏迷:無法進行任何行動。", "變異:使目標變成物品並且無法進行任何行動。", "直接傷害:指狀態異常傷害、反射傷害以外的直接攻擊傷害。", "挑釁:使目標對發動挑釁的單位進行基本攻擊。", "玩偶的意志:改變基本攻擊效果。", "挑戰持續時間:3秒", "魔法傷害:300%", "攻擊速度提升: 30%", "攻擊速度提升持續時間:7秒", "每秒HP恢復:最大HP的1%", "每秒HP恢復持續時間:7秒"], ja: ["気絶: 行動不能になる。", "変異: 物体に変化し、行動不能になる。", "直接ダメージ: 直接攻撃によるダメージ(状態異常ダメージ、反射ダメージを除く)。", "挑発: 挑発した対象を基本攻撃で攻撃する。", "ぬいぐるみの意思: 基本攻撃の効果が変更される。", "挑発の持続時間: 3秒", "魔法ダメージ: 300%", "攻撃速度増加: 30%", "攻撃速度増加の持続時間: 7秒", "1秒ごとのHP回復: 最大HPの1%", "1秒ごとのHP回復の持続時間: 7秒"], en: ["Stun: Becomes unable to act.", "Mutate: Turns into an inanimate object and becomes unable to act.", "Direct Damage: Refers to damage caused by Direct Attacks, excluding Status Effect Damage and Damage Reflection.", "Taunt: Provokes Basic Attacks on the taunt.", "Doll's Will: The effect of Basic Attack changes.", "Taunt Duration: 3s", "Magical DMG: 300%", "ATK SPD Increase: 30%", "ATK SPD Increase Duration: 7s", "HP Recovery Per Second: 1% of Max HP", "HP Recovery Duration: 7s"] } 
+                effects: { zh: ["昏迷:無法進行任何行動。", "變異:使目標變成物品並且無法進行任何行動。", "直接傷害:指狀態異常傷害、反射傷害以外的直接攻擊傷害。", "挑釁:使目標對發動挑釁的單位進行基本攻擊。", "玩偶的意志:改變基本攻擊效果。", "挑釁持續時間:3秒", "魔法傷害:300%", "攻擊速度提升: 30%", "攻擊速度提升持續時間:7秒", "每秒HP恢復:最大HP的1%", "每秒HP恢復持續時間:7秒"], ja: ["気絶: 行動不能になる。", "変異: 物体に変化し、行動不能になる。", "直接ダメージ: 直接攻撃によるダメージ(状態異常ダメージ、反射ダメージを除く)。", "挑発: 挑発した対象を基本攻撃で攻撃する。", "ぬいぐるみの意思: 基本攻撃の効果が変更される。", "挑発の持続時間: 3秒", "魔法ダメージ: 300%", "攻撃速度増加: 30%", "攻撃速度増加の持続時間: 7秒", "1秒ごとのHP回復: 最大HPの1%", "1秒ごとのHP回復の持続時間: 7秒"], en: ["Stun: Becomes unable to act.", "Mutate: Turns into an inanimate object and becomes unable to act.", "Direct Damage: Refers to damage caused by Direct Attacks, excluding Status Effect Damage and Damage Reflection.", "Taunt: Provokes Basic Attacks on the taunt.", "Doll's Will: The effect of Basic Attack changes.", "Taunt Duration: 3s", "Magical DMG: 300%", "ATK SPD Increase: 30%", "ATK SPD Increase Duration: 7s", "HP Recovery Per Second: 1% of Max HP", "HP Recovery Duration: 7s"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/4YgpyqJp/Aside-Skill-Chloe-3.png", 
@@ -59,8 +59,8 @@ const ASIDE_DATA = {
             1: { 
                 icon: "https://i.postimg.cc/SnhcR3yf/Aside-Skill-Diana-1.png", 
                 name: { zh: "小鹿加油?", ja: "子ジカの応援？", en: "Baby Deer Cheer?" }, 
-                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、 爆擊抵抗、爆擊傷害抵抗增加。", ja: "日着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "Increases the bearer's Max HP, Physical DEF, Magical DEF, CRIT Resistance, and CRIT DMG Resistance." }, 
-                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗:6%"], ja: ["大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Max HP Increase: 6%", "Physical DEF Increase: 6%", "Magical DEF Increase: 6%", "CRIT Resistance Increase: 6%", "CRIT DMG Resistance Increase: 6%"] } 
+                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、 爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "Increases the bearer's Max HP, Physical DEF, Magical DEF, CRIT Resistance, and CRIT DMG Resistance." }, 
+                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗:6%"], ja: ["最大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Max HP Increase: 6%", "Physical DEF Increase: 6%", "Magical DEF Increase: 6%", "CRIT Resistance Increase: 6%", "CRIT DMG Resistance Increase: 6%"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/PCj1J9tW/Aside-Skill-Diana-2.png", 
@@ -84,14 +84,14 @@ const ASIDE_DATA = {
             1: { 
                 icon: "https://i.postimg.cc/jDby2msc/Aside-Skill-Ed-1.png", 
                 name: { zh: "心地善良的伊德", ja: "心優しいイード", en: "Kind-Hearted ED" }, 
-                desc: { zh: "[穿戴者的最大HP、物理防禦力、魔法防禦力、 爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "Increases the bearer's Max HP, Physical DEF, Magical DEF, CRIT Resistance, and CRIT DMG Resistance." }, 
+                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、 爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "Increases the bearer's Max HP, Physical DEF, Magical DEF, CRIT Resistance, and CRIT DMG Resistance." }, 
                 effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["最大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Max HP Increase: 6%", "Physical DEF Increase: 6%", "Magical DEF Increase: 6%", "CRIT Resistance Increase: 6%", "CRIT DMG Resistance Increase: 6%"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/75kShdxX/Aside-Skill-Ed-2.png", 
                 name: { zh: "未醒之夢", ja: "まだ夢から覚めていない", en: "Not Yet Awake from the Dream" }, 
-                desc: { zh: "使用強化攻擊時,在一段時間內增加自己的防禦力。使用普通技能時,額外赋予剩下HP比例最低的友軍護盾。恢復觸發保護友軍的SP。", ja: "強化攻撃使用時、一定時間、自身の防御力を増加させる。低学年スキル使用時、残りHP割合が最も低い味方に追加でシールドを付与する。保護が発動した味方のSPを回復させる。", en: "When Enhanced Attack is used, increases her Defense for a set period of time.When Freshman Skill is used, additionally grants a Shield to the ally with the lowest remaining HP Ratio. Recovers the SP of allies with Protection activated." }, 
-                effects: { zh: ["保護:因直接傷害陷入無法戰鬥狀態時,該傷害將被無效化並賦予護盾。", "直接傷害:指狀態異常傷害、反射傷害以外的直接攻擊傷害。", "防禦力增加:25%", "防禦力增加持續時間:5秒", "護盾:最大HP的50%", "護盾持續時間:8秒", "友軍SP恢復:30%"], ja: ["保護: 直接ダメージによって戦闘不能になった時、そのダメージを無効化してシールドを付与する。", "直接ダメージ: 直接攻撃によるダメージ(状態異常ダメージ、反射ダメージを除く)。", "防御力増加: 25%", "防御力増加の持続時間: 5秒", "シールド: 最大HPの24%/46%/48%/50%/52% (低学年スキルLvに依存)", "シールドの持続時間: 8秒", "味方SP回復: 30%"], en: ["Protection: Negates incapacitating Direct Damage and grants a Shield.", "Direct Damage: Refers to damage caused by Direct Attacks, excluding Status Effect Damage and Damage Reflection.", "DEF Increase: 25%", "DEF Increase Duration: 55", "Shield: 50 of Max HP", "Shield Duration: 85", "Ally SP Recovery: 30%"] } 
+                desc: { zh: "使用強化攻擊時,在一段時間內增加自己的防禦力。使用普通技能時,額外赋予剩下HP比例最低的友軍護盾。恢復觸發保護友軍的SP。", ja: "強化攻撃使用時、一定時間、自身の防御力を増加させる。低学年スキル使用時、残りHP割合が最も低い味方に追加でシールドを付与する。保護が発動した味方のSPを回復させる。", en: "When Enhanced Attack is used, increases her Defense for a set period of time. When Freshman Skill is used, additionally grants a Shield to the ally with the lowest remaining HP Ratio. Recovers the SP of allies with Protection activated." }, 
+                effects: { zh: ["保護:因直接傷害陷入無法戰鬥狀態時,該傷害將被無效化並賦予護盾。", "直接傷害:指狀態異常傷害、反射傷害以外的直接攻擊傷害。", "防禦力增加:25%", "防禦力增加持續時間:5秒", "護盾:最大HP的50%", "護盾持續時間:8秒", "友軍SP恢復:30%"], ja: ["保護: 直接ダメージによって戦闘不能になった時、そのダメージを無効化してシールドを付与する。", "直接ダメージ: 直接攻撃によるダメージ(状態異常ダメージ、反射ダメージを除く)。", "防御力増加: 25%", "防御力増加の持続時間: 5秒", "シールド: 最大HPの24%/46%/48%/50%/52% (低学年スキルLvに依存)", "シールドの持続時間: 8秒", "味方SP回復: 30%"], en: ["Protection: Negates incapacitating Direct Damage and grants a Shield.", "Direct Damage: Refers to damage caused by Direct Attacks, excluding Status Effect Damage and Damage Reflection.", "DEF Increase: 25%", "DEF Increase Duration: 5s", "Shield: 50% of Max HP", "Shield Duration: 8s", "Ally SP Recovery: 30%"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/dhYG3pq5/Aside-Skill-Ed-3.png", 
@@ -116,11 +116,11 @@ const ASIDE_DATA = {
                 icon: "https://i.postimg.cc/9Dhy0KW8/Aside-Skill-Haley-2.png", 
                 name: { zh: "航行經過地球", ja: "地球をフライバイ", en: "Sailing Over Earth" }, 
                 desc: { zh: "獲得強化攻擊增益效果時,增加除自己以外的中排友軍使者的攻擊力與防禦力。普通技能的最後一擊必定赋予灼痛。使用高級技能時會召喚軍艦。軍艦會對前方的敵人投下6枚砲彈,造成範圍物理傷害。", ja: "強化攻撃バフの獲得時、自身を除く中列の味方使徒の攻撃力と防御力を増加させる。低学年スキルの最後の一撃に確定で苦痛を付与する。高学年スキル使用時、軍艦が召喚される。軍艦は前方の敵に砲弾を6発降らせ、範囲物理ダメージを与える。", en: "When acquiring an Enhanced Attack Buff, increases ATK and DEF of all Middle Row allied Apostles except self. The final hit of the Freshman Skill always applies Stinging. When Senior Skill is used, summons a battleship. The battleship drops 6 cannon shells on enemies in front, dealing AoE Physical Damage." }, 
-                effects: { zh: ["灼痛:每秒造成傷害,並使恢復量減少。", "攻擊力增加:32%", "攻擊力增加持續時間:6秒", "防禦力增加:16%", "防禦力增加持續時間:6秒", "灼痛持續時間:5秒", "每枚砲彈物理傷害:375%"], ja: ["苦痛: 1秒ごとにダメージを受け、回復量が減少する。", "攻撃力増加: 32%", "攻撃力増加の持続時間: 6秒", "防御力増加: 16%", "攻撃力増加の持続時間: 6秒", "苦痛の持続時間: 5秒", "砲弾につき物理ダメージ: 375%"], en: ["Stinging: Reduces Recovery and applies Damage every second.", "ATK Increase: 32%", "ATK Increase Duration: 65", "DEF Increase: 16%", "DEF Increase Duration: 6s", "Stinging Duration: 5s", "Physical DMG per Cannon: 375%"] } 
+                effects: { zh: ["灼痛:每秒造成傷害,並使恢復量減少。", "攻擊力增加:32%", "攻擊力增加持續時間:6秒", "防禦力增加:16%", "防禦力增加持續時間:6秒", "灼痛持續時間:5秒", "每枚砲彈物理傷害:375%"], ja: ["苦痛: 1秒ごとにダメージを受け、回復量が減少する。", "攻撃力増加: 32%", "攻撃力増加の持続時間: 6秒", "防御力増加: 16%", "攻撃力増加の持続時間: 6秒", "苦痛の持続時間: 5秒", "砲弾につき物理ダメージ: 375%"], en: ["Stinging: Reduces Recovery and applies Damage every second.", "ATK Increase: 32%", "ATK Increase Duration: 6s", "DEF Increase: 16%", "DEF Increase Duration: 6s", "Stinging Duration: 5s", "Physical DMG per Cannon: 375%"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/tsjFJwXM/Aside-Skill-Haley-3.png", 
-                name: { zh: "友軍基地保護作戰", ja: "味方基地防衛作戦", en: "Ally Base Defensive Operation (Use of mlitary terminology)" }, 
+                name: { zh: "友軍基地保護作戰", ja: "味方基地防衛作戦", en: "Ally Base Defensive Operation" }, 
                 desc: { zh: "使敵人對所有友軍造成的傷害量減少。", ja: "味方全員の敵からの被ダメージ量を減少させる。", en: "Reduces the Incoming Damage of all allies." }, 
                 effects: { zh: ["受到的傷害量減少:7.5%"], ja: ["被ダメージ量減少: 7.5%"], en: ["Incoming DMG Reduction: 7.5%"] }, 
                 globalEffects: { zh: ["全體爆擊 3%", "全體物理防禦力 3%"], ja: ["全体会心 3%", "全体物理防御力 3%"], en: ["All CRIT Hit 3%", "All Physical DEF 3%"] } 
@@ -197,7 +197,7 @@ const ASIDE_DATA = {
                 icon: "https://i.postimg.cc/yDH0xt17/Aside-Skill-Momo-3.png", 
                 name: { zh: "桃桃~喝!", ja: "モモ～ハッ！", en: "Momo, Combine!" }, 
                 desc: { zh: "所有友軍對敵人造成的傷害量增加。敵人對所有友軍造成的傷害量減少。", ja: "味方全員の敵への与ダメージ量が増加し、味方全員の敵からの被ダメージ量が減少する。", en: "Increases Outgoing Damage to enemies for all allies. Reduces Incoming Damage from enemies for all allies." }, 
-                effects: { zh: ["傷害量增加:10,5%", "受到的傷害量減少:4.5%"], ja: ["ダメージ量増加: 10.5%", "被ダメージ量減少: 4.5%"], en: ["DMG Increase: 10.5%", "Incoming DMG Reduction: 4.5%"] }, 
+                effects: { zh: ["傷害量增加:10.5%", "受到的傷害量減少:4.5%"], ja: ["ダメージ量増加: 10.5%", "被ダメージ量減少: 4.5%"], en: ["DMG Increase: 10.5%", "Incoming DMG Reduction: 4.5%"] }, 
                 globalEffects: { zh: ["全體魔法攻撃力 3%", "全體爆擊傷害 3%"], ja: ["全体魔法攻撃力 3%", "全体会心ダメージ: 3%"], en: ["All Magical ATK 3%", "All CRIT DMG 3%"] } 
             }
         }
@@ -210,12 +210,12 @@ const ASIDE_DATA = {
                 icon: "https://i.postimg.cc/mPyCHjDK/Aside-Skill-Ner-1.png", 
                 name: { zh: "女王特別輔佐官", ja: "女王特別補佐役", en: "Queen's Special Aide" }, 
                 desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "Increases the bearer's Max HP, Physical Defense, Magical Defense, Critical Hit Resistance, and Critical Damage Resistance." }, 
-                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Max HP Increase: 6%", "Physical DEF Increase: 6%", "Magical DEF Increase: 6%", "CRIT Resistance Increase: 6%", "CRIT DMG Resistance Increase: 6%"] } 
+                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["最大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Max HP Increase: 6%", "Physical DEF Increase: 6%", "Magical DEF Increase: 6%", "CRIT Resistance Increase: 6%", "CRIT DMG Resistance Increase: 6%"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/XrkdCLJT/Aside-Skill-Ner-2.png", 
                 name: { zh: "祭司長無敵權", ja: "司祭長の無敵権", en: "Head Priestess' Unconditional Invincibility" }, 
-                desc: { zh: "基本攻撃命中時,自身受到的傷害量減少,並恢復HP與SP。使用高級技能時,給予自身與前排使者無敵效果。", ja: "基本攻撃が命中すると、自身の被ダメージ量が減少し、HPとSPを回復する。高学年スキル使用時、自身と前衛使徒に無敵を付与する。", en: "When Basic Attack hits, reduces Incoming Damage and recovers HP and SP.", "When Senior Skill is used, applies Invincible to self and Front RowApostles." }, 
+                desc: { zh: "基本攻撃命中時,自身受到的傷害量減少,並恢復HP與SP。使用高級技能時,給予自身與前排使者無敵效果。", ja: "基本攻撃が命中すると、自身の被ダメージ量が減少し、HPとSPを回復する。高学年スキル使用時、自身と前衛使徒に無敵を付与する。", en: "When Basic Attack hits, reduces Incoming Damage and recovers HP and SP. When Senior Skill is used, applies Invincible to self and Front Row Apostles." }, 
                 effects: { zh: ["無敵:對所有傷害及減益效果免疫。", "受到的傷害量減少:15%", "受到的傷害量減少持續時間:3秒", "HP恢復:最大HP的3%", "SP恢復量:30", "無敵持續時間:5秒"], ja: ["無敵: 全てのダメージおよび状態異常に対して免疫を持つ。", "被ダメージ量減少: 15%", "被ダメージ量減少の持続時間: 3秒", "HP回復: 最大HPの3%", "SP回復量: 30", "無敵の持続時間: 5秒"], en: ["Invincible: Immune to all damage and debuffs.", "Incoming DMG Reduction: 15%", "Incoming DMG Reduction Duration: 3s", "HP Recovery: 3% of Max HP", "SP Recovery: 30", "Invincible Duration: 5s"] } 
             },
             3: { 
@@ -241,7 +241,7 @@ const ASIDE_DATA = {
                 icon: "https://i.postimg.cc/xX3Mz58S/Aside-Skill-Picora-2.png", 
                 name: { zh: "皮可菈貼紙是附贈的!", ja: "ピコラのステッカーはオマケ！", en: "Picora Sticker Included!" }, 
                 desc: { zh: "最大HP增加。強化攻擊後、一定時間內對剩餘HP比例最低的 2名友軍貼上皮可菈貼紙。皮可菈貼紙會恢復 2次HP,並增加傷害量。減少高級技能冷卻時間。", ja: "最大HPが増加する。強化攻撃後、一定時間、残りHP割合が最も低い味方2名にピコラのステッカーを貼る。ピコラのステッカーはHPを2回回復させ、与ダメージ量を増加させる。高学年スキルのクールタイムが減少する。", en: "Increases Max HP. After an Enhanced Attack, applies Picora Stickers to the 2 allies with the lowest remaining HP Ratio for a set period of time. Picora Stickers recover HP twice and increases DMG. Reduces Senior Skill Cooldown." }, 
-                effects: { zh: ["大HP增加:20%", "皮可菈貼紙持續時間:7秒", "HP恢復:目標最大HP的22%", "傷害量增加:30%", "冷卻時間減少:12秒"], ja: ["最大HP増加: 20%", "ピコラのステッカーの持続時間: 7秒", "HP回復: 対象の最大HPの22%", "与ダメージ量増加: 30%", "クールタイム減少: 12秒"], en: ["Max HP Increase: 20%", "Picora Sticker Duration: 7s", "HP Recovery: 22% of the target's Max HP", "DMG Increase: 30%", "Cooldown Reduction: 12s"] } 
+                effects: { zh: ["最大HP增加:20%", "皮可菈貼紙持續時間:7秒", "HP恢復:目標最大HP的22%", "傷害量增加:30%", "冷卻時間減少:12秒"], ja: ["最大HP増加: 20%", "ピコラのステッカーの持続時間: 7秒", "HP回復: 対象の最大HPの22%", "与ダメージ量増加: 30%", "クールタイム減少: 12秒"], en: ["Max HP Increase: 20%", "Picora Sticker Duration: 7s", "HP Recovery: 22% of the target's Max HP", "DMG Increase: 30%", "Cooldown Reduction: 12s"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/217hZGyD/Aside-Skill-Picora-3.png", 
@@ -309,13 +309,13 @@ const ASIDE_DATA = {
             1: { 
                 icon: "https://i.postimg.cc/5H9vqzQ0/Aside-Skill-Rim-1.png", 
                 name: { zh: "愛神派對", ja: "アモール・パーティー", en: "Amor Party" }, 
-                desc: { zh: "穿載使者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、物理攻撃力、会心、会心ダメージが増加する。", en: "Increases bearing Apostle's Max HP, Physical ATK, CRIT Hit, and CRIT DMG." }, 
+                desc: { zh: "穿戴使者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、物理攻撃力、会心、会心ダメージが増加する。", en: "Increases bearing Apostle's Max HP, Physical ATK, CRIT Hit, and CRIT DMG." }, 
                 effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加: 6%", "物理攻撃力増加: 6%", "会心増加: 6%", "会心ダメージ増加: 6%"], en: ["Max HP Increase: 6%", "Physical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/VSsMBt0d/Aside-Skill-Rim-2.png", 
                 name: { zh: "恢復原樣", ja: "リカバリム", en: "RecoveRim" }, 
-                desc: { zh: "對陷入灼痛的敵人造成直接傷害時,物理攻擊力增加。物理攻擊力增加最多可疊加4次。普通、高級技能的傷害增加。普通HP恢復數值變為2倍。", ja: "苦痛を付与された敵に直接ダメージを与えると物理攻撃力が増加する。物理攻撃力増加は、最大4回スタックする。低学年、高学年スキルのダメージが増加する。低学年のHP回復値が2倍になる。", en: "Dealing Direct Damage to an enemy afflicted with Stinging increases Physical Attack. Physical Attack Increase stacks up to 4 times. Freshman and Senior Skill Damage are increased.Freshman HP Recovery amount is doubled." }, 
+                desc: { zh: "對陷入灼痛的敵人造成直接傷害時,物理攻擊力增加。物理攻擊力增加最多可疊加4次。普通、高級技能的傷害增加。普通HP恢復數值變為2倍。", ja: "苦痛を付与された敵に直接ダメージを与えると物理攻撃力が増加する。物理攻撃力増加は、最大4回スタックする。低学年、高学年スキルのダメージが増加する。低学年のHP回復値が2倍になる。", en: "Dealing Direct Damage to an enemy afflicted with Stinging increases Physical Attack. Physical Attack Increase stacks up to 4 times. Freshman and Senior Skill Damage are increased. Freshman HP Recovery amount is doubled." }, 
                 effects: { zh: ["灼痛:每秒造成傷害,並使恢復量減少。", "直接傷害:指狀態異常傷害、反射傷害以外的直接攻擊傷害。", "物理攻擊力增加:15%", "物理攻擊力增加持續時間:4秒", "普通技能傷害增加:50%", "高級技能傷害增加:50%"], ja: ["苦痛: 1秒ごとにダメージを受け、回復量が減少する。", "直接ダメージ: 直接攻撃によるダメージ(状態異常ダメージ、反射ダメージを除く)。", "物理攻撃力増加: 15%", "物理攻撃力増加の持続時間: 4秒", "低学年スキルダメージ増加: 50％", "高学年スキルダメージ増加: 50％"], en: ["Stinging: Reduces Recovery and applies Damage every second.", "Direct Damage: Refers to damage caused by Direct Attacks, excluding Status Effect Damage and Damage Reflection.", "Physical ATK Increase: 15%", "Physical ATK Increase Duration: 4s", "Freshman Skill DMG Increase: 50%", "Senior Skill DMG Increase: 50%"] } 
             },
             3: { 
@@ -397,7 +397,7 @@ const ASIDE_DATA = {
                 icon: "https://i.postimg.cc/1gWFWzDB/Aside-Skill-Selline-3.png", 
                 name: { zh: "捐款挑戰", ja: "寄付チャレンジ", en: "Donation Campaign" }, 
                 desc: { zh: "敵人對前排友軍造成傷害量減少。", ja: "前列の味方の敵への被ダメージ量を減少させる。", en: "Reduces Incoming Damage of Front Row allies." }, 
-                effects: { zh: ["受到的傷害量減少:97%"], ja: ["被ダメージ量減少: 9.7%"], en: ["Incoming DMG Reduction: 9.7%"] }, 
+                effects: { zh: ["受到的傷害量減少:9.7%"], ja: ["被ダメージ量減少: 9.7%"], en: ["Incoming DMG Reduction: 9.7%"] }, 
                 globalEffects: { zh: ["全體魔法防禦力 3%", "全體爆擊抵抗 3%"], ja: ["全体魔法防御力 3%", "全体会心抵抗 3%"], en: ["All Magical DEF 3%", "All CRIT Resistance 3%"] } 
             }
         }
@@ -408,14 +408,14 @@ const ASIDE_DATA = {
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/kVjSj5Ww/Aside-Skill-Sist-1.png", 
-                name: { zh: "商業天才希瑟圖", ja: "商売の天才シスト", en: "Business Genius Sist" }, 
+                name: { zh: "商業天才希絲特", ja: "商売の天才シスト", en: "Business Genius Sist" }, 
                 desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、物理攻撃力、会心、会心ダメージが増加する。", en: "Increases the bearer's Max HP, Physical ATK, CRIT Hit, and CRIT DMG." }, 
-                effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加: 6%", "物理攻撃力増加: 6%", "会心増加: 6%", "会心ダメージ増加: 6%"], en: ["Increases the bearer's Max HP, Physical ATK, CRIT Hit, and CRIT DMG.", "Max HP Increase: 6%", "Physical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
+                effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加: 6%", "物理攻撃力増加: 6%", "会心増加: 6%", "会心ダメージ増加: 6%"], en: ["Max HP Increase: 6%", "Physical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/3yLGLw2b/Aside-Skill-Sist-2.png", 
                 name: { zh: "賭上友誼的勝負", ja: "友情をかけた勝負", en: "Friendship Duel" }, 
-                desc: { zh: "得普通技能增益效果時,增加隨機友軍攻擊型使者的攻擊力與攻擊速度。若無攻擊型使者,則隨機套用於友軍隊友。高級技能固定造成最大物理傷害。", ja: "低学年スキルのバフを獲得時、ランダムな味方アタッカー使徒の攻撃力と攻撃速度を増加させる。アタッカー使徒がいない場合は、ランダムな味方に適用される。高学年スキルは、常に最大物理ダメージ量を与える。", en: "Upon receiving her Freshman Skill Buff, increases the Attack and Attack Speed of a random allied DPS Apostle. If there are no DPS Apostles, this applies to a random ally instead. Senior Skill always deals Max Physical Damage." }, 
+                desc: { zh: "獲得普通技能增益效果時,增加隨機友軍攻擊型使者的攻擊力與攻擊速度。若無攻擊型使者,則隨機套用於友軍隊友。高級技能固定造成最大物理傷害。", ja: "低学年スキルのバフを獲得時、ランダムな味方アタッカー使徒の攻撃力と攻撃速度を増加させる。アタッカー使徒がいない場合は、ランダムな味方に適用される。高学年スキルは、常に最大物理ダメージ量を与える。", en: "Upon receiving her Freshman Skill Buff, increases the Attack and Attack Speed of a random allied DPS Apostle. If there are no DPS Apostles, this applies to a random ally instead. Senior Skill always deals Max Physical Damage." }, 
                 effects: { zh: ["隨機友軍使者:2名", "攻擊力增加:41%", "攻擊力增加持續時間:10秒", "攻擊速度提升:41%", "攻擊速度提升持續時間:10秒"], ja: ["ランダムな味方の使徒: 2体", "攻撃力増加: 41%", "攻撃力増加の持続時間: 10秒", "攻撃速度増加: 41%"], en: ["Random Allied Apostles: 2", "ATK Increase: 41%", "ATK Increase Duration: 10s", "ATK SPD Increase: 41%", "ATK SPD Increase Duration: 10s"] } 
             },
             3: { 
@@ -484,7 +484,7 @@ const ASIDE_DATA = {
             1: { 
                 icon: "https://i.postimg.cc/MvRyWq8M/Aside-Skill-Vivi-1.png", 
                 name: { zh: "上鎖的回憶箱", ja: "閉ざされた記憶の箱", en: "Chest of Locked Memories" }, 
-                desc: { zh: "戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "Increases the bearer's Max HP, Physical DEF, Magical DEF, CRIT Resistance, and CRIT DMG Resistance." }, 
+                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "Increases the bearer's Max HP, Physical DEF, Magical DEF, CRIT Resistance, and CRIT DMG Resistance." }, 
                 effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["最大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Max HP Increase: 6%", "Physical DEF Increase: 6%", "Magical DEF Increase: 6%", "CRIT Resistance Increase: 6%", "CRIT DMG Resistance Increase: 6%"] } 
             },
             2: { 
@@ -510,12 +510,12 @@ const ASIDE_DATA = {
                 icon: "https://i.postimg.cc/1f6p9sZq/Aside-Skill-x-Xionx-1.png", 
                 name: { zh: "本大人、登場★", ja: "我、参上★", en: "I Have Arrived ★" }, 
                 desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、物理攻撃力、会心、会心ダメージが増加する。", en: "Increases the bearer's Max HP, Physical ATK, CRIT Hit, and CRIT DMG." }, 
-                effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加: 6%", "物理攻撃増加: 6%", "会心増加: 6%", "会心ダメージ増加: 6%"], en: ["Max HP Increase: 6%", "Physical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
+                effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加: 6%", "物理攻撃力増加: 6%", "会心増加: 6%", "会心ダメージ増加: 6%"], en: ["Max HP Increase: 6%", "Physical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/qzn8k4dK/Aside-Skill-x-Xionx-2.png", 
                 name: { zh: "這就是魔彈的絕對威力?", ja: "絶対なる魔弾の力と言うべきだろうか？", en: "Absolute Power of Magic Bullets" }, 
-                desc: { zh: "中最大HP增加,且基本攻撃命中時恢復HP。使用普通技能、高級技能後,攻擊速度增加。使用普通技能時,如果數人只有1名,則傷害增加。", ja: "最大HPが増加し、基本攻撃命中時、HPを回復する。低学年スキル、高学年スキル使用後、攻撃速度が増加する。低学年スキル使用中、敵が一体しかいない場合、ダメージが増加する。", en: "Increases Max HP. When Basic Attack hits, recovers HP. Using a Freshman or Senior Skill increases Attack Speed, Increases Damage if there is only one enemy while using Freshman Skill." }, 
+                desc: { zh: "最大HP增加,且基本攻撃命中時恢復HP。使用普通技能、高級技能後,攻擊速度增加。使用普通技能時,如果敵人只有1名,則傷害增加。", ja: "最大HPが増加し、基本攻撃命中時、HPを回復する。低学年スキル、高学年スキル使用後、攻撃速度が増加する。低学年スキル使用中、敵が一体しかいない場合、ダメージが増加する。", en: "Increases Max HP. When Basic Attack hits, recovers HP. Using a Freshman or Senior Skill increases Attack Speed, Increases Damage if there is only one enemy while using Freshman Skill." }, 
                 effects: { zh: ["最大HP增加:30%", "HP恢復:最大HP的3%", "攻擊速度提升:100%", "攻擊速度提升持續時間:6秒", "普通技能傷害增加:100%"], ja: ["最大HP増加: 30%", "HP回復: 最大HPの3%", "攻撃速度増加: 100%", "攻撃速度増加の持続時間: 6秒", "低学年スキルのダメージ増加: 100%"], en: ["Max HP Increase: 30%", "HP Recovery: 3% of Max HP", "ATK SPD Increase: 100%", "ATK SPD Increase Duration: 6s", "Freshman Skill DMG Increase: 100%"] } 
             },
             3: { 
