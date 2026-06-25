@@ -329,26 +329,26 @@ const ASIDE_DATA = {
     },
     "Risty": { 
         asideIcon: "https://i.postimg.cc/1f8fPZLh/Aside-Icon-Risty.png", 
-        totalName: { zh: "今日的POTG", ja: "本日のPOTG", en: "English Total Name" }, 
+        totalName: { zh: "今日的POTG", ja: "本日のPOTG", en: "POTG of the day" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/qtBnXK6h/Aside-Skill-Risty-1.png", 
-                name: { zh: "精靈聯盟最強者", ja: "リーグ・オブ・エルフ最強者", en: "English 1-Star Name" }, 
-                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、物理攻撃力、会心、会心ダメージが増加する。", en: "English 1-Star Desc" }, 
-                effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加: 6%", "物理攻撃力増加: 6%", "会心增加: 6%", "会心ダメージ増加: 6%"], en: ["Effect 1"] } 
+                name: { zh: "精靈聯盟最強者", ja: "リーグ・オブ・エルフ最強者", en: "League of Elves Champion" }, 
+                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、物理攻撃力、会心、会心ダメージが増加する。", en: "Increases the bearer's Max HP, Physical ATK, CRIT Hit, and CRIT DMG." }, 
+                effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加: 6%", "物理攻撃力増加: 6%", "会心增加: 6%", "会心ダメージ増加: 6%"], en: ["Max HP Increase: 6%", "Physical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/GB3YJDTs/Aside-Skill-Risty-2.png", 
-                name: { zh: "天才駭客登場", ja: "天才ハッカーの登場", en: "English 2-Star Name" }, 
-                desc: { zh: "以普通技能擊殺敵人時恢復SP。使用高級技能後,對剩餘HP比例最低的3名敵人額外造成3次物理傷害。", ja: "低学年スキルで敵を退治すると、SPを回復する。高学年スキル使用後、残りHP割合が最も低い敵3体に追加で3回物理ダメージを与える", en: "English 2-Star Desc" }, 
-                effects: { zh: ["SP恢復:75%", "SP恢復冷卻時間:10秒", "每個方塊物理傷害:160%"], ja: ["SP回復: 75%", "SP回復クールタイム: 10秒", "ブロックにつき物理ダメージ: 160%"], en: ["Effect 1"] } 
+                name: { zh: "天才駭客登場", ja: "天才ハッカーの登場", en: "The Genius Hacker Appears" }, 
+                desc: { zh: "以普通技能擊殺敵人時恢復SP。使用高級技能後,對剩餘HP比例最低的3名敵人額外造成3次物理傷害。", ja: "低学年スキルで敵を退治すると、SPを回復する。高学年スキル使用後、残りHP割合が最も低い敵3体に追加で3回物理ダメージを与える", en: "Recovers SP when defeating an enemy with her Freshman Skill. After using her Senior Skill, deals Physical Damage 3 additional times to the 3 enemies with the lowest remaining HP Ratio." }, 
+                effects: { zh: ["SP恢復:75%", "SP恢復冷卻時間:10秒", "每個方塊物理傷害:160%"], ja: ["SP回復: 75%", "SP回復クールタイム: 10秒", "ブロックにつき物理ダメージ: 160%"], en: ["SP Recovery: 75%", "SP Recovery Cooldown: 10s", "Physical DMG per Block: 160%"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/2qjvFWLn/Aside-Skill-Risty-3.png", 
-                name: { zh: "莉絲蒂的超級救援", ja: "リスティのスーパーセーブ", en: "English 3-Star Name" }, 
-                desc: { zh: "增加後排友軍的每秒SP恢復量。", ja: "後列の味方の1秒ごとのSP回復量を増加させる。", en: "English 3-Star Desc" }, 
-                effects: { zh: ["每秒SP恢復量:4"], ja: ["1秒ごとのSP回復量: 4"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體爆擊傷害 3%", "全體物理防禦力 3%"], ja: ["全体 会心ダメージ 3%", "全体 物理防御力 3%"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "莉絲蒂的超級救援", ja: "リスティのスーパーセーブ", en: "Risty's Super Save" }, 
+                desc: { zh: "增加後排友軍的每秒SP恢復量。", ja: "後列の味方の1秒ごとのSP回復量を増加させる。", en: "Increases SP Recovery per second for Back Row allies." }, 
+                effects: { zh: ["每秒SP恢復量:4"], ja: ["1秒ごとのSP回復量: 4"], en: ["SP Recovery per second: 4"] }, 
+                globalEffects: { zh: ["全體爆擊傷害 3%", "全體物理防禦力 3%"], ja: ["全体 会心ダメージ 3%", "全体 物理防御力 3%"], en: ["All CRIT DMG 3%", "All Physical DEF 3%"] } 
             }
         }
     },
