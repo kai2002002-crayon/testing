@@ -4,26 +4,26 @@
 const ASIDE_DATA = {
     "Amelia": { 
         asideIcon: "https://i.postimg.cc/bsZs8jKN/Aside-Icon-Amelia.png", 
-        totalName: { zh: "王子艾琳娜", ja: "王子エレナ", en: "English Total Nam" }, 
+        totalName: { zh: "王子艾琳娜", ja: "王子エレナ", en: "White Knight Elena" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/rKWS8MLS/Aside-Skill-Amelia-1.png", 
-                name: { zh: "王子的恩寵", ja: "王子さまの恵み", en: "English 1-Star Name" }, 
-                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、物理攻撃力、会心、会心ダメージが増加する。", en: "English 1-Star Desc" }, 
-                effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加: 6%", "物理攻撃力増加: 6%", "会心増加: 6%", "会心ダメージ増加: 6%"], en: ["Effect 1", "Effect 2"] } 
+                name: { zh: "王子的恩寵", ja: "王子さまの恵み", en: "White Knight's Blessing" }, 
+                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、物理攻撃力、会心、会心ダメージが増加する。", en: "Increases the bearer's Max HP, Physical ATK, CRIT Hit, and CRIT DMG." }, 
+                effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加: 6%", "物理攻撃力増加: 6%", "会心増加: 6%", "会心ダメージ増加: 6%"], en: ["Max HP Increase: 6%", "Physical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/4mtzJsTp/Aside-Skill-Amelia-2.png", 
-                name: { zh: "超高速雷射光", ja: "超高速サンダーレーザー", en: "English 2-Star Name" }, 
-                desc: { zh: "提升強化攻擊的施展機率。對處於觸電狀態的敵人造成的普通攻擊傷害量增加。被動技能施加觸電的目標數變為3名。", ja: "強化攻撃の発動確率が増加する。感電状態の敵に与える普通攻撃のダメージ量が増加する。パッシブスキルで付与する感電の対象数が3体になる。", en: "English 2-Star Desc" }, 
-                effects: { zh: ["強化攻擊施展機率增加:15%", "普通攻擊傷害量增加:40%"], ja: ["強化攻擊発動確率増加: 15%", "普通攻撃のダメージ量増加: 40%"], en: ["Effect 1"] } 
+                name: { zh: "超高速雷射光", ja: "超高速サンダーレーザー", en: "High-Speed Thunder Laser" }, 
+                desc: { zh: "提升強化攻擊的施展機率。對處於觸電狀態的敵人造成的普通攻擊傷害量增加。被動技能施加觸電的目標數變為3名。", ja: "強化攻撃の発動確率が増加する。感電状態の敵に与える普通攻撃のダメージ量が増加する。パッシブスキルで付与する感電の対象数が3体になる。", en: "Increases the Enhanced Attack Cast Rate. Increases the Normal Attack Damage on enemies inflicted with Electrocution, Passive Skill inflicts Electrocution on 3 targets." }, 
+                effects: { zh: ["強化攻擊施展機率增加:15%", "普通攻擊傷害量增加:40%"], ja: ["強化攻擊発動確率増加: 15%", "普通攻撃のダメージ量増加: 40%"], en: ["Chance of Enhanced Attack Increase: 15%", "Normal ATK DMG Increase: 40%"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/6yRd9tNr/Aside-Skill-Amelia-3.png", 
-                name: { zh: "請求支援", ja: "援軍要請の件", en: "English 3-Star Name" }, 
-                desc: { zh: "增加後排友軍的每秒SP恢復量。", ja: "後列の味方の1秒ごとのSP回復量を増加させる。", en: "English 3-Star Desc" }, 
-                effects: { zh: ["每秒SP恢復量:4"], ja: ["1秒ごとのSP回復量: 4"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體物理攻擊力 3%", "全體爆擊 3%"], ja: ["全体物理攻撃力 3%", "全体会心 3%"], en: ["ATK +X%", "HP +Y%"] } 
+                name: { zh: "請求支援", ja: "援軍要請の件", en: "Request for Support" }, 
+                desc: { zh: "增加後排友軍的每秒SP恢復量。", ja: "後列の味方の1秒ごとのSP回復量を増加させる。", en: "Increases SP Recovery per second for Back Row allies." }, 
+                effects: { zh: ["每秒SP恢復量:4"], ja: ["1秒ごとのSP回復量: 4"], en: ["SP Recovery per second: 4"] }, 
+                globalEffects: { zh: ["全體物理攻擊力 3%", "全體爆擊 3%"], ja: ["全体物理攻撃力 3%", "全体会心 3%"], en: ["All Physical ATK 3%", "All CRIT Hit 3%"] } 
             }
         }
     },
@@ -54,26 +54,26 @@ const ASIDE_DATA = {
     },
     "Diana": { 
         asideIcon: "https://i.postimg.cc/9rDrVjv0/Aside-Icon-Diana.png", 
-        totalName: { zh: "小蒂亞娜", ja: "ちびディアナ", en: "English Total Name" }, 
+        totalName: { zh: "小蒂亞娜", ja: "ちびディアナ", en: "Runt Diana" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/SnhcR3yf/Aside-Skill-Diana-1.png", 
-                name: { zh: "小鹿加油?", ja: "子ジカの応援？", en: "English 1-Star Name" }, 
-                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、 爆擊抵抗、爆擊傷害抵抗增加。", ja: "日着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "English 1-Star Desc" }, 
-                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗:6%"], ja: ["大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Effect 1"] } 
+                name: { zh: "小鹿加油?", ja: "子ジカの応援？", en: "Baby Deer Cheer?" }, 
+                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、 爆擊抵抗、爆擊傷害抵抗增加。", ja: "日着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "Increases the bearer's Max HP, Physical DEF, Magical DEF, CRIT Resistance, and CRIT DMG Resistance." }, 
+                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗:6%"], ja: ["大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Max HP Increase: 6%", "Physical DEF Increase: 6%", "Magical DEF Increase: 6%", "CRIT Resistance Increase: 6%", "CRIT DMG Resistance Increase: 6%"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/PCj1J9tW/Aside-Skill-Diana-2.png", 
-                name: { zh: "厲害的治療方法", ja: "すごい治療法", en: "English 2-Star Name" }, 
-                desc: { zh: "強化攻擊的恢復目標增加至3名。戰鬥開始時,減少除自身外友軍狂亂性格使者受到的爆擊傷害量。", ja: "強化攻撃の回復対象が3体に増加する。戦闘開始時、自身を除く狂気の味方使徒の会心被ダメージ量を減少させる。", en: "English 2-Star Desc" }, 
-                effects: { zh: ["受到的爆擊傷害量減少:66%"], ja: ["会心被ダメージ量減少: 66%"], en: ["Effect 1"] } 
+                name: { zh: "厲害的治療方法", ja: "すごい治療法", en: "Incredible Healing Method" }, 
+                desc: { zh: "強化攻擊的恢復目標增加至3名。戰鬥開始時,減少除自身外友軍狂亂性格使者受到的爆擊傷害量。", ja: "強化攻撃の回復対象が3体に増加する。戦闘開始時、自身を除く狂気の味方使徒の会心被ダメージ量を減少させる。", en: "Increases Enhanced Attack Recovery Targets to 3. When the combat starts, reduces the Incoming Critical Damage of all allied Mad Personality Apostles excluding herself." }, 
+                effects: { zh: ["受到的爆擊傷害量減少:66%"], ja: ["会心被ダメージ量減少: 66%"], en: ["Incoming CRIT DMG Reduction: 66%"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/18QDX29H/Aside-Skill-Diana-3.png", 
-                name: { zh: "自然之力", ja: "自然の力", en: "English 3-Star Name" }, 
-                desc: { zh: "中排友軍對敵人造成的傷害量增加、敵人對中排友軍造成的傷害量減少。", ja: "中列の味方の敵への与ダメージ量が増加し、中列の味方の敵からの被ダメージ量が減少する。", en: "English 3-Star Desc" }, 
-                effects: { zh: ["傷害量增加:13.6%", "受到的傷害量減少:5.9%"], ja: ["ダメージ量増加: 13.6%", "被ダメージ量減少: 5.9%"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體魔法防禦力 3%", "全體爆擊傷害抵抗 3%"], ja: ["全体魔法防御力 3%", "全体会心ダメージ抵抗 3%"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "自然之力", ja: "自然の力", en: "Power of Nature" }, 
+                desc: { zh: "中排友軍對敵人造成的傷害量增加、敵人對中排友軍造成的傷害量減少。", ja: "中列の味方の敵への与ダメージ量が増加し、中列の味方の敵からの被ダメージ量が減少する。", en: "Increases Outgoing Damage for and reduces Incoming Damage for Middle Row allies." }, 
+                effects: { zh: ["傷害量增加:13.6%", "受到的傷害量減少:5.9%"], ja: ["ダメージ量増加: 13.6%", "被ダメージ量減少: 5.9%"], en: ["DMG Increase: 13.6%", "Incoming DMG Reduction: 5.9%"] }, 
+                globalEffects: { zh: ["全體魔法防禦力 3%", "全體爆擊傷害抵抗 3%"], ja: ["全体魔法防御力 3%", "全体会心ダメージ抵抗 3%"], en: ["All Magical DEF 3%", "All CRIT DMG RES 3%"] } 
             }
         }
     },
