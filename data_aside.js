@@ -279,26 +279,26 @@ const ASIDE_DATA = {
     },
     "RenewaAwaken": { 
         asideIcon: "https://i.postimg.cc/3dzWxcTD/Aside-Icon-Renewa-Awaken.png", 
-        totalName: { zh: "故障的末日鐘", ja: "壊れたドゥームズデイ・クロック", en: "English Total Name" }, 
+        totalName: { zh: "故障的末日鐘", ja: "壊れたドゥームズデイ・クロック", en: "Broken Doomsday Clock" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/rDNxrjsm/Aside-Skill-Renewa-Awaken-1.png", 
-                name: { zh: "停止的時間", ja: "止まった時間", en: "English 1-Star Name" }, 
-                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、物理攻撃力、会心、会心ダメージが増加する。", en: "English 1-Star Desc" }, 
-                effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加: 6%", "物理攻撃力増加: 6%", "会心増加: 6%", "会心ダメージ増加: 6%"], en: ["Effect 1"] } 
+                name: { zh: "停止的時間", ja: "止まった時間", en: "Halted Time" }, 
+                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、物理攻撃力、会心、会心ダメージが増加する。", en: "Increases the bearer's Max HP, Physical ATK, CRIT Hit, and CRIT DMG." }, 
+                effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加: 6%", "物理攻撃力増加: 6%", "会心増加: 6%", "会心ダメージ増加: 6%"], en: ["Max HP Increase: 6%", "Physical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/18rwqBXV/Aside-Skill-Renewa-Awaken-2.png", 
-                name: { zh: "飛向時空彼端!", ja: "時空の彼方へ！", en: "English 2-Star Name" }, 
-                desc: { zh: "經過6秒,或使用強化攻擊、普通技能時,對中間的敵人投下飛彈。飛彈會對敵人造成範圍物理傷害,命中時增加高級技能的冷卻時間。飛彈爆炸時,立即減少當前自身的高級技能冷卻時間。", ja: "6秒経過、または強化攻撃、低学年スキル使用時、中央に位置する敵にミサイルを投下する。ミサイルは敵に範囲物理ダメージを与え、命中時に現在高学年スキルのクールタイムを即時増加させる。ミサイルが爆発すると、自身の現在高学年スキルのクールタイムが即時減少する。", en: "English 2-Star Desc" }, 
-                effects: { zh: ["飛彈物理傷害:200%", "冷卻時間增加:1秒", "冷卻時間立即減少:2秒"], ja: ["ミサイル物理ダメージ: 200%", "クールタイム即時増加: 1秒", "クールタイム即時減少: 2秒"], en: ["Effect 1"] } 
+                name: { zh: "飛向時空彼端!", ja: "時空の彼方へ！", en: "To Spacetime, and Beyond!" }, 
+                desc: { zh: "經過6秒,或使用強化攻擊、普通技能時,對中間的敵人投下飛彈。飛彈會對敵人造成範圍物理傷害,命中時增加高級技能的冷卻時間。飛彈爆炸時,立即減少當前自身的高級技能冷卻時間。", ja: "6秒経過、または強化攻撃、低学年スキル使用時、中央に位置する敵にミサイルを投下する。ミサイルは敵に範囲物理ダメージを与え、命中時に現在高学年スキルのクールタイムを即時増加させる。ミサイルが爆発すると、自身の現在高学年スキルのクールタイムが即時減少する。", en: "After 6 seconds have passed, or when an Enhanced Attack or Freshman Skill is used, launches a missile at the enemy in the center. The missile deals AoE Physical Damage to enemies and increases Senior Skill Cooldown on hit. When the missile explodes, reduces her own Senior Skill Cooldown." }, 
+                effects: { zh: ["飛彈物理傷害:200%", "冷卻時間增加:1秒", "冷卻時間立即減少:2秒"], ja: ["ミサイル物理ダメージ: 200%", "クールタイム即時増加: 1秒", "クールタイム即時減少: 2秒"], en: ["Missile Physical DMG: 200%", "Cooldown Increase: 1s", "Instant Cooldown Reduction: 2s"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/hX1Tdsvm/Aside-Skill-Renewa-Awaken-3.png", 
-                name: { zh: "屬於我們的和平時光", ja: "私たちの平和な時間", en: "English 3-Star Name" }, 
-                desc: { zh: "我方全體對敵人造成的傷害量增加。", ja: "味方全員の敵への与ダメージ量を増加させる。", en: "English 3-Star Desc" }, 
-                effects: { zh: ["造成的傷害量增加:22%"], ja: ["ダメージ量増加: 22%"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體物理攻擊力 4%", "全體爆擊 4%"], ja: ["全体物理攻撃力 4%", "全体会心 4%"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "屬於我們的和平時光", ja: "私たちの平和な時間", en: "Our Peaceful Time" }, 
+                desc: { zh: "我方全體對敵人造成的傷害量增加。", ja: "味方全員の敵への与ダメージ量を増加させる。", en: "Increases Outgoing Damage to enemies for all allies." }, 
+                effects: { zh: ["造成的傷害量增加:22%"], ja: ["ダメージ量増加: 22%"], en: ["DMG Increase: 22%"] }, 
+                globalEffects: { zh: ["全體物理攻擊力 4%", "全體爆擊 4%"], ja: ["全体物理攻撃力 4%", "全体会心 4%"], en: ["All Physical ATK 4%", "All CRIT Hit 4%"] } 
             }
         }
     },
