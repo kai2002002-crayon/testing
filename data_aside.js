@@ -183,38 +183,38 @@ const ASIDE_DATA = {
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/PCj1J9XT/Aside-Skill-Momo-1.png", 
-                name: { zh: "櫻花手裡劍", ja: "桜花手裏剣", en: "English 1-Star Name" }, 
-                desc: { zh: "穿戴者的最大HP、魔法攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、魔法攻撃力、会心、会心ダメージが増加する。", en: "English 1-Star Desc" }, 
-                effects: { zh: ["最大HP增加:6%", "魔法攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加: 6%", "魔法攻撃力増加: 6%", "会心増加: 6%", "会心ダメージ増加: 6%"], en: ["Effect 1"] } 
+                name: { zh: "櫻花手裡劍", ja: "桜花手裏剣", en: "Cherry Blossom Shuriken" }, 
+                desc: { zh: "穿戴者的最大HP、魔法攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、魔法攻撃力、会心、会心ダメージが増加する。", en: "Increases bearer's Max HP, Magical ATK, CRIT, and CRIT DMG." }, 
+                effects: { zh: ["最大HP增加:6%", "魔法攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加: 6%", "魔法攻撃力増加: 6%", "会心増加: 6%", "会心ダメージ増加: 6%"], en: ["Max HP Increase: 6%", "Magical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/xX3Mz5Ch/Aside-Skill-Momo-2.png", 
-                name: { zh: "開眼的忍者", ja: "目覚めたニンジャ", en: "English 2-Star Name" }, 
-                desc: { zh: "召喚獸自爆傷害增加。召喚獸被破壞時,恢復自身SP。使用高級技能時,在一段時間內,減少桃桃受到的傷害量。", ja: "召喚獣の自爆ダメージが増加する。召喚獣が破壊されると、自身のSPを回復する。高学年スキル使用時、一定時間、モモの被ダメージ量が減少する。", en: "English 2-Star Desc" }, 
-                effects: { zh: ["召喚獸自爆傷害增加:200%", "SP恢復量:10", "受到的傷害量減少:50%", "受到的傷害量減少持續時間:3秒"], ja: ["召喚獣の自爆ダメージ増加: 200%", "SP回復量: 10", "被ダメージ量減少: 50%", "被ダメージ量減少の持続時間: 3秒"], en: ["Effect 1"] } 
+                name: { zh: "開眼的忍者", ja: "目覚めたニンジャ", en: "Awakened Ninja" }, 
+                desc: { zh: "召喚獸自爆傷害增加。召喚獸被破壞時,恢復自身SP。使用高級技能時,在一段時間內,減少桃桃受到的傷害量。", ja: "召喚獣の自爆ダメージが増加する。召喚獣が破壊されると、自身のSPを回復する。高学年スキル使用時、一定時間、モモの被ダメージ量が減少する。", en: "Increases Minion Self-Destruct Damage. When a Minion is destroyed, recovers her SP. When Senior Skill is used, reduces Incoming Damage to Momo for a set period of time." }, 
+                effects: { zh: ["召喚獸自爆傷害增加:200%", "SP恢復量:10", "受到的傷害量減少:50%", "受到的傷害量減少持續時間:3秒"], ja: ["召喚獣の自爆ダメージ増加: 200%", "SP回復量: 10", "被ダメージ量減少: 50%", "被ダメージ量減少の持続時間: 3秒"], en: ["Minion Self-Destruct DMG Increase: 200%", "SP Recovery: 10", "Incoming DMG Reduction: 50%", "Incoming DMG Reduction Duration: 3s"] } 
             },
             3: { 
                 icon: "https://i.postimg.cc/yDH0xt17/Aside-Skill-Momo-3.png", 
-                name: { zh: "桃桃~喝!", ja: "モモ～ハッ！", en: "English 3-Star Name" }, 
-                desc: { zh: "所有友軍對敵人造成的傷害量增加。敵人對所有友軍造成的傷害量減少。", ja: "味方全員の敵への与ダメージ量が増加し、味方全員の敵からの被ダメージ量が減少する。", en: "English 3-Star Desc" }, 
-                effects: { zh: ["傷害量增加:10,5%", "受到的傷害量減少:4.5%"], ja: ["ダメージ量増加: 10.5%", "被ダメージ量減少: 4.5%"], en: ["Effect 1"] }, 
-                globalEffects: { zh: ["全體魔法攻撃力 3%", "全體爆擊傷害 3%"], ja: ["全体魔法攻撃力 3%", "全体会心ダメージ: 3%"], en: ["Global Stat Bonus 1"] } 
+                name: { zh: "桃桃~喝!", ja: "モモ～ハッ！", en: "Momo, Combine!" }, 
+                desc: { zh: "所有友軍對敵人造成的傷害量增加。敵人對所有友軍造成的傷害量減少。", ja: "味方全員の敵への与ダメージ量が増加し、味方全員の敵からの被ダメージ量が減少する。", en: "Increases Outgoing Damage to enemies for all allies. Reduces Incoming Damage from enemies for all allies." }, 
+                effects: { zh: ["傷害量增加:10,5%", "受到的傷害量減少:4.5%"], ja: ["ダメージ量増加: 10.5%", "被ダメージ量減少: 4.5%"], en: ["DMG Increase: 10.5%", "Incoming DMG Reduction: 4.5%"] }, 
+                globalEffects: { zh: ["全體魔法攻撃力 3%", "全體爆擊傷害 3%"], ja: ["全体魔法攻撃力 3%", "全体会心ダメージ: 3%"], en: ["All Magical ATK 3%", "All CRIT DMG 3%"] } 
             }
         }
     },
     "Ner": { 
         asideIcon: "https://i.postimg.cc/fJ1kRrNy/Aside-Icon-Ner.png", 
-        totalName: { zh: "聖君艾爾芬", ja: "聖君エルフィン", en: "English Total Name" }, 
+        totalName: { zh: "聖君艾爾芬", ja: "聖君エルフィン", en: "Legendary Shuriken" }, 
         stars: {
             1: { 
                 icon: "https://i.postimg.cc/mPyCHjDK/Aside-Skill-Ner-1.png", 
-                name: { zh: "女王特別輔佐官", ja: "女王特別補佐役", en: "English 1-Star Name" }, 
-                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "English 1-Star Desc" }, 
-                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Effect 1"] } 
+                name: { zh: "女王特別輔佐官", ja: "女王特別補佐役", en: "Cherry Blossom Shuriken" }, 
+                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "Increases bearer's Max HP, Magical ATK, CRIT, and CRIT DMG." }, 
+                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["大HP増加: 6%", "物理防御力増加: 6%", "魔法防御力増加: 6%", "会心抵抗増加: 6%", "会心ダメージ抵抗増加: 6%"], en: ["Max HP Increase: 6%", "Magical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
             },
             2: { 
                 icon: "https://i.postimg.cc/XrkdCLJT/Aside-Skill-Ner-2.png", 
-                name: { zh: "祭司長無敵權", ja: "司祭長の無敵権", en: "English 2-Star Name" }, 
+                name: { zh: "祭司長無敵權", ja: "司祭長の無敵権", en: "" }, 
                 desc: { zh: "基本攻撃命中時,自身受到的傷害量減少,並恢復HP與SP。使用高級技能時,給予自身與前排使者無敵效果。", ja: "基本攻撃が命中すると、自身の被ダメージ量が減少し、HPとSPを回復する。高学年スキル使用時、自身と前衛使徒に無敵を付与する。", en: "English 2-Star Desc" }, 
                 effects: { zh: ["無敵:對所有傷害及減益效果免疫。", "受到的傷害量減少:15%", "受到的傷害量減少持續時間:3秒", "HP恢復:最大HP的3%", "SP恢復量:30", "無敵持續時間:5秒"], ja: ["無敵: 全てのダメージおよび状態異常に対して免疫を持つ。", "被ダメージ量減少: 15%", "被ダメージ量減少の持続時間: 3秒", "HP回復: 最大HPの3%", "SP回復量: 30", "無敵の持続時間: 5秒"], en: ["Effect 1"] } 
             },
