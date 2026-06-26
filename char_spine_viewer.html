@@ -442,8 +442,12 @@
                             player.skeleton.setSlotsToSetupPose(); 
                         }
                     }
-                    player.skeleton.setToSetupPose(); 
 
+                    console.log(player.skeleton.x, player.skeleton.y, player.viewport);
+                    player.viewport.x = 0;
+                    player.viewport.y = 0;
+
+                    player.skeleton.setToSetupPose(); 
                     buildAnimationDropdown(player);
                     buildSlotsPanel(player);
                     setupComplexInteractions(player, container);
@@ -457,6 +461,8 @@
                         const animSelectText = document.getElementById('animSelectText');
                         if (animSelectText) animSelectText.innerText = animToPlay;
                     }
+                    console.log("available animations:", player.skeleton.data.animations.map(a=>a.name));
+                    console.log("initAnim:", initAnim);
                 },
                 error: function (player, reason) {
                     console.error("❌ Spine Load Error:", reason);
