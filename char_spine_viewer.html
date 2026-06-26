@@ -422,7 +422,7 @@
                 alpha: true,
                 showControls: false,
                 showLoading: false, 
-                viewport: { x: -400, y: 0, width: 800, height: 1000 },
+                viewport: { x: 0, y: 0, width: 800, height: 1000 }
 
                 success: function (player) {
                     const loader = container.querySelector('.spine-player-loading-custom');
@@ -448,6 +448,18 @@
                     player.viewport.y = 0;
 
                     player.skeleton.setToSetupPose(); 
+                    // reset view & transform
+                    try {
+                          player.viewport.x = 0;
+                          player.viewport.y = 0;
+                          player.skeleton.scaleX = 1;
+                          player.skeleton.scaleY = 1;
+                          player.skeleton.x = 0;
+                          player.skeleton.y = 0;
+                        } catch (err) {
+                          console.warn("reset viewport failed:", err);
+                        }
+
                     buildAnimationDropdown(player);
                     buildSlotsPanel(player);
                     setupComplexInteractions(player, container);
@@ -607,6 +619,8 @@
         }
 
         function setupComplexInteractions(player, container) {
+            if (container.__spineInteractionsBound) return;
+            container.__spineInteractionsBound = true;
             const canvas = container.querySelector('canvas');
             if (!canvas) return;
             canvas.style.touchAction = 'none';
