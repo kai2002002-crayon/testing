@@ -119,7 +119,7 @@ const LANG_DICT = {
         race_witch: "Witch", race_beast: "Beast", race_dragon: "Dragon", race_spirit: "Spirit", race_fairy: "Fairy", race_elf: "Elf", race_ghost: "Ghost", race_unknown: "???",
         position_front: "Front", position_middle: "Mid", position_back: "Back", job_attacker: "Attacker", job_defender: "Tank", job_supporter: "Support",
         visit_count_prefix: "Total Visits", maintenance_msg: "🔧 Under Maintenance...", event_title: "🎪 Current Event",
-        auth_offline_title: "Status: Offline Mode", auth_offline_desc: "Data saved locally", auth_online_title: "🟢 Connected to Cloud", auth_logout: "Logout",
+        auth_offline_title: "Status: Offline Mode", auth_offline_desc: "Data saved locally", auth_online_title: "🟢 Connected", auth_logout: "Logout",
         filter_title: "🔍 Filter", filter_search_placeholder: "Search Apostle...", filter_reset: "Reset All", filter_display_mode: "👁️ View Mode:",
         filter_btn_all: "All", filter_btn_show_all: "Show All", filter_btn_show_1: "Board 1 Only", filter_btn_show_2: "Board 2 Only", filter_btn_show_3: "Board 3 Only",
         stats_toggle_hint: "Click to Expand / Collapse", stats_layer_1_title: "🥇 Board 1 Stats", stats_layer_2_title: "🥈 Board 2 Stats", stats_layer_3_title: "🥉 Board 3 Stats",
@@ -420,6 +420,16 @@ const LOBBY_BACKGROUNDS = [
     "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/lobby%2FLobby-100010-1.webp?alt=media&token=91171715-07aa-4c3d-aee6-0daf8099536c", "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/lobby%2FLobby-10002-1.webp?alt=media&token=e44c4eba-f9b0-4e1e-bd2c-bbcd5891be84", "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/lobby%2FLobby-10003-1.webp?alt=media&token=11071be4-520c-4bd4-ae9d-10aae72e6dd1",
     "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/lobby%2FLobby-10007-1.webp?alt=media&token=d5e8d59e-8dc0-41af-a18b-ed5e62a7cff2", "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/lobby%2FLobby-10008-1.webp?alt=media&token=daba6fe4-8708-4767-896f-e40867e86a2f", "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/lobby%2FLobby-10009-1.webp?alt=media&token=153f26aa-b336-4301-bffa-130172c0af75", "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/lobby%2FLobby_10001_1.webp?alt=media&token=97f5b368-2818-46f7-a957-6af54f9e3d33"
 ];
+const SPINE_BACKGROUNDS = {
+"龍族":"https://i.postimg.cc/FdJxQDZ7/Gacha-Pattern-Bg-Dragon.png",
+"精靈":"https://i.postimg.cc/xJbPStRN/Gacha-Pattern-Bg-Elf.png",
+"妖精":"https://i.postimg.cc/G8sj1qQ4/Gacha-Pattern-Bg-Fairy.png",
+"獸人":"https://i.postimg.cc/S2zGpDrz/Gacha-Pattern-Bg-Furry.png",
+"幽靈":"https://i.postimg.cc/ygSTzvP0/Gacha-Pattern-Bg-Ghost.png",
+"???":"https://i.postimg.cc/kR3vMK1D/Gacha-Pattern-Bg-Mystic.png",
+"魔靈":"https://i.postimg.cc/BP9BZHYb/Gacha-Pattern-Bg-Spirit.png",
+"魔女":"https://i.postimg.cc/zHZFDKtL/Gacha-Pattern-Bg-Witch.png"
+}; 
 const ICON_MAP = {
     "personality_天真": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/personality%2FPickUpPersonality_Naive.webp?alt=media&token=5439c0fb-4c8e-4097-a868-5534180db07f", "personality_活潑": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/personality%2FPickUpPersonality_Jolly.webp?alt=media&token=701ad789-557c-4de7-ac4d-fc42e6b82cfb", "personality_冷靜": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/personality%2FPickUpPersonality_Cool.webp?alt=media&token=d93be2cb-d36b-4923-badd-5c16557cb844", "personality_狂亂": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/personality%2FPickUpPersonality_Mad.webp?alt=media&token=47f62ae9-38a3-489d-92fc-f034b6249cbe", "personality_憂鬱": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/personality%2FPickUpPersonality_Gloomy.webp?alt=media&token=e22b91ef-4364-4055-986b-bad568c484c2",
     "race_精靈": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/race%2Fjing-ling.webp?alt=media&token=4d4e6dff-b29c-42ea-a99c-231dd74a8d2c", "race_龍族": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/race%2Flong-zu.webp?alt=media&token=9045bd8a-fd98-412c-a0ef-2fb57678776d", "race_妖精": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/race%2Fyao-jing.webp?alt=media&token=02063405-85bd-48d5-91c3-5581a9e331a2", "race_魔靈": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/race%2Fmo-ling.webp?alt=media&token=e7d63700-cfbe-4c98-8ea5-57ff4bdbe413", "race_獸人": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/race%2Fshou-ren.webp?alt=media&token=dc1ffcdc-3cc6-4e0c-802b-b84cf3880415", "race_幽靈": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/race%2Fyou-ling.webp?alt=media&token=5a07255e-9cc2-4a6e-9b66-9c828cba31c3", "race_魔女": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/race%2Fmo-nu.webp?alt=media&token=f35ec5cd-7f58-4c98-9057-198160095847", "race_???": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/race%2Funknown.webp?alt=media&token=ce9dc20a-eb6c-4030-aa4f-d685ce01b7ee",
@@ -585,6 +595,13 @@ const COSTUME_MAP = {
     "艾爾芬": ["Erpin", "ErpinSkin1", "ErpinSkin2", "ErpinSkin3", "ErpinSkin4"], "莉絲蒂": ["Risty", "RistySkin1", "RistySkin2"], "雷內瓦": ["RenewaAwaken", "RenewaAwakenSkin1", "RenewaAwakenSkin2"]
 };
 
+const SD_COSTUME = {
+    "劉美美": ["Yumimi"], "卡蓮": ["Carren"], "喬菲": ["Chopi"], "帕特拉": ["Patula"], "梅森": ["Maison"], "瑪麗": ["Marie"], "米雪": ["Mynx"], "茱蜜": ["Jubee"], "莎莉": ["Sari"], "貝魯": ["Veroo"], "路易": ["Cuee"], "阿萊特": ["Allet"], "雷吉": ["Lazy"], "泰達": ["Taida"],
+    "艾舒爾": ["Ashur", "AshurSkin1"], "貝麗塔": ["Belita", "BelitaSkin1"], "班尼": ["Beni", "BeniSkin1"], "大木頭": ["BigWood", "BigWoodSkin1"], "艾斯皮": ["Espi", "EspiSkin1"], "佩斯塔": ["Festa", "FestaSkin1"], "伊弗利特": ["Ifrit", "IfritSkin1"], "傑德": ["Jade", "JadeSkin1"], "莉茲": ["Leets", "LeetsSkin1"], "萊薇": ["Levi", "LeviSkin1"], "大師2號": ["MaestroMK2", "MaestroMK2Skin1"], "馬爾": ["Mago", "MagoSkin1"], "瑪約": ["Mayo", "MayoSkin1"], "梅露娜": ["Meluna", "MelunaSkin1"], "路德": ["Rude", "RudeSkin1"], "盧波": ["Rufo", "RufoSkin1"], "修帕": ["Shoupan", "ShoupanSkin1"], "希菲爾": ["Silphir", "SilphirSkin1"], "斯諾奇": ["Snorky", "SnorkySkin1"], "斯皮奇": ["Speaki", "SpeakiSkin1"], "佩佩": ["Velvet", "VelvetSkin1"],
+    "布蘭切": ["Blanchet", "BlanchetSkin1", "BlanchetSkin2"], "奶油": ["Butter", "ButterSkin1"], "康娜": ["Canna", "CannaSkin1", "CannaSkin2"], "伊德": ["Ed", "EdSkin1", "EdSkin2", "Edskin3"], "艾琳娜": ["Elena", "ElenaSkin1"], "艾皮卡": ["Epica", "EpicaSkin1", "EpicaSkin2", "EpicaSkin3"], "芙莉可": ["Fricle", "FricleSkin1"], "加薇雅": ["Gabia", "GabiaSkin1", "GabiaSkin2"], "海莉": ["Haley", "HaleySkin1", "HaleySkin2"], "希爾德": ["Hilde", "HildeSkin1"], "基狄恩": ["Kidian", "KidianSkin1"], "柯米": ["Kommy", "KommySkin1", "KommySkin2"], "卡洛特": ["Kyarot", "KyarotSkin1", "KyarotSkin2"], "奈雅": ["Naia", "NaiaSkin1"], "寧琉": ["Ner", "NerSkin1", "NerSkin2"], "皮可菈": ["Picora", "PicoraSkin1", "PicoraSkin3"], "珀榭": ["Posher", "PosherSkin1", "PosherSkin2", "PosherSkin3"], "琳": ["Rim", "RimSkin1", "RimSkin2"], "洛涅": ["Rohne", "RohneSkin1", "RohneSkin2"], "謝蒂": ["Shady", "ShadySkin1", "ShadySkin2"], "希瑟圖": ["Sist", "SistSkin1", "SistSkin2"], "希拉": ["Sylla", "SyllaSkin1", "SyllaSkin2"], "優米": ["Yomi", "YomiSkin1", "YomiSkin2"],
+    "愛麗絲": ["Alice", "AliceSkin1", "AliceSkin2"], "艾蜜莉雅": ["Amelia", "AmeliaSkin1", "AmeliaSkin2"], "綾": ["Aya", "AyaSkin1", "AyaSkin2", "AyaSkin3"], "庫洛艾": ["Chloe", "ChloeSkin1", "ChloeSkin2", "ChloeSkin3", "ChloeSkin4"], "蒂亞娜": ["Diana", "DianaSkin1", "DianaSkin2", "DianaSkin3"], "桃桃": ["Momo", "MomoSkin1", "MomoSkin3"], "瑟琳娜": ["Selline", "SellineSkin1", "SellineSkin2"], "羽伊": ["Ui", "UiSkin1", "UiSkin2", "UiSkin3", "UiSkin4"], "薇薇": ["Vivi", "ViviSkin1", "ViviSkin2", "ViviSkin3", "ViviSkin4"], "x乂錫安乂x": ["xXionx", "xXionxSkin1", "xXionxSkin2", "xXionxSkin3", "xXionxSkin4"],
+    "艾爾芬": ["Erpin", "ErpinSkin1", "ErpinSkin2", "ErpinSkin3"], "莉絲蒂": ["Risty", "RistySkin1", "RistySkin2"], "雷內瓦": ["RenewaAwaken", "RenewaAwakenSkin1", "RenewaAwakenSkin2"]
+};
 //迷你坨坨SPINE NAME
 const MINI_SPINE = {
     "洛涅": "Mini_Rohne", "薇薇": "Mini_Vivi", "艾爾芬": "Mini_Erpin", "x乂錫安乂x": "Mini_xXionx", "伊弗利特": "Mini_Ifrit", "伊德": "Mini_Ed", "佩佩": "Mini_Velvet", "佩斯塔": "Mini_Festa",
@@ -603,24 +620,18 @@ const MINI_SPINE = {
 // ------------------------------------------
 
 const PICKUP_SCHEDULE = [
-    {
-        start: "2026-06-04T17:00:00+09:00", // ISO 格式時間
-        end: "2026-06-18T10:59:59+09:00",
-        chars: ["莉絲蒂", "海莉", "盧波"],
-        note: "現在這一期"
-    },
-    {
-        start: "2026-06-18T17:00:00+09:00",
-        end: "2026-06-25T04:00:00+09:00",
-        chars: ["雷內瓦"],
-        note: "牛蛙"
-    },
 	    {
         start: "2026-06-25T04:00:00+09:00",
         end: "2026-07-02T10:59:59+09:00",
         chars: ["雷內瓦", "琳", "x乂錫安乂x"],
         note: "琳、錫安坨格"
-    }
+    },
+    {
+        start: "2026-07-02T17:00:00+09:00",
+        end: "2026-07-16T10:59:59+09:00",
+        chars: ["雷內瓦, 巴隆"],
+        note: "barong"
+    },
 ];
 
 // 🎪 遊戲內活動排程表
@@ -634,6 +645,11 @@ const EVENT_SCHEDULE = [
         start: "2026-06-18T17:00:00+09:00",
         end: "2026-07-16T10:59:59+09:00",
         eventId: "SelectPickPersonality" 
+    },
+	    {
+        start: "2026-07-02T17:00:00+09:00",
+        end: "2026-07-16T10:59:59+09:00",
+        eventId: "Theme020" 
     }
 ];
 
@@ -651,7 +667,7 @@ const CARD_SCHEDULE = [
         id: "Rune17",
         type: "Rune"
     },
-	{
+		{
         start: "2026-06-25T04:00:00+09:00",
         end: "2026-07-02T10:59:59+09:00",
         id: "Artifact90",
