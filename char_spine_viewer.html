@@ -412,7 +412,7 @@
             const anims = player.skeleton.data.animations.map(a => a.name).sort();
             anims.forEach(animName => {
                 const btn = document.createElement('button');
-                btn.className = "text-left px-3 py-2 sm:py-1.5 text-[10px] sm:text-xs hover:bg-amber-100 dark:hover:bg-slate-700 w-full truncate transition-colors text-gray-700 dark:text-gray-300";
+                btn.className = "text-left px-3 py-2.5 text-[11px] sm:text-xs hover:bg-amber-100 dark:hover:bg-slate-700 w-full truncate transition-colors text-gray-700 dark:text-gray-300 flex-shrink-0 border-b border-gray-50 dark:border-slate-700/50";
                 btn.innerText = animName;
                 btn.onclick = (e) => {
                     e.stopPropagation(); // 防止觸發外層點擊事件
