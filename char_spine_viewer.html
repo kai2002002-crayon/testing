@@ -337,7 +337,7 @@
             clearTimeout(globalIdleTimer);
             clearTimeout(tickleTimer);
             
-            const costumes = (typeof SD_COSTUME !== 'undefined' && SD_COSTUME[charName]) ? COSTUME_MAP[charName] : [spineName];
+            const costumes = (typeof SD_COSTUME !== 'undefined' && SD_COSTUME[charName]) ? SD_COSTUME[charName] : [spineName];
             
             const costumeSelect = document.getElementById('costumeSelect');
             costumeSelect.innerHTML = '';
