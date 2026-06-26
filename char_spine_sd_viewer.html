@@ -283,7 +283,7 @@
 
                 chars.forEach(c => {
                     const iconUrl = typeof IMAGE_MAP !== 'undefined' ? IMAGE_MAP[`avatar_${c.name}`] : '';
-                    const spineName = typeof SD_SPINE !== 'undefined' ? SD_SPINE[c.name] : c.name;
+                    const spineName = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[c.name] : c.name;
                     const displayName = getI18n(c.name);
 
                     const btn = document.createElement('button');
