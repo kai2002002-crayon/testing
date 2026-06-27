@@ -381,15 +381,32 @@
                     buildSlotsPanel(player);
                     setupComplexInteractions(player, container);
 
-                    // ✅ 修正：優先尋找 "Idle"，找不到才找其他
                     const anims = player.skeleton.data.animations.map(a => a.name);
-                    let animToPlay = anims.includes("Idle") ? "Idle" : (anims.includes("idle") ? "idle" : (anims[0] || ""));
+    
+                    // ⭐ 新增：優先尋找出場動作 (Spawn / Entrance / 등장 / 等等)
+                    // 請根據您 Spine 檔案中實際的出場動作名稱調整這組關鍵字
+                    const spawnKeywords = ["Spawn", "Entrance", "Enter", "Deploy", "Start"];
+                    const spawnAnim = anims.find(a => spawnKeywords.some(k => a.includes(k)));
+    
+                    const idleAnim = anims.includes("Idle") ? "Idle" : (anims.includes("idle") ? "idle" : (anims[0] || ""));
 
-                    if (animToPlay) {
-                        player.animationState.setAnimation(0, animToPlay, true);
-                        document.getElementById('animSelectText').innerText = animToPlay;
+                    if (spawnAnim) {
+                        // 先播一次出場，結束後自動銜接 Idle
+                        player.animationState.setAnimation(0, spawnAnim, false);
+                        player.animationState.addAnimation(0, idleAnim, true, 0);
+                        document.getElementById('animSelectText').innerText = spawnAnim;
+        
+                        // 為了讓 UI 選單能即時同步，可以在幾秒後將選單顯示變回 Idle
+                        setTimeout(() => {
+                            document.getElementById('animSelectText').innerText = idleAnim;
+                        }, 1500); 
+                    } else if (idleAnim) {
+                        // 沒有出場動作時，直接播 Idle
+                        player.animationState.setAnimation(0, idleAnim, true);
+                        document.getElementById('animSelectText').innerText = idleAnim;
                     }
                 },
+
                 error: function (player, reason) {
                     console.error("❌ Spine Load Error:", reason);
                     container.innerHTML = `<div class="text-red-500 font-bold text-sm text-center p-4">載入失敗：檔案不存在<br>${skelUrl}</div>`;
