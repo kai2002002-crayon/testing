@@ -506,8 +506,6 @@
                          setupComplexInteractions(player, container);
                          window.dispatchEvent(new Event('resize'));
                      }, 50);
-                    success: function (player) {
-                      // ... 前面原本的載入邏輯 ...
 
                       // 🌟 修復 WebGL 透明畫布下的 Multiply 挖洞問題
                       const shadowSlot = player.skeleton.findSlot("Sport_Face_Shadow");
