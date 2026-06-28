@@ -865,22 +865,18 @@
                     activeInteractBone.y = initialBoneY + localDy;
                 } 
                 else if (!hitZoneOnDown) {
-                    // 🌟 修正搬動視角的準確度
+                    // 🌟 修正搬動視角的準確度 (加入 Padding 補償)
                     const effView = getEffectiveViewport(rect, getBaseViewport());
-                    const scaleFactorX = effView.width / rect.width;
-                    const scaleFactorY = effView.height / rect.height;
                     
-                    const isLobby = getIsLobby();
-                    const oldZoomOffsetY = isLobby ? 600 * (1 - currentZoom) : 0;
+                    // Spine 引擎預設會在畫面四周加上 5% 的邊距 (總共 10%)
+                    // 實際攝影機範圍是設定值的 1 / 0.9 倍 (約 1.111 倍)
+                    const PAN_COMPENSATION = 1.111; 
                     
-                    let currentPanX = player.skeleton.x;
-                    let currentPanY = player.skeleton.y - oldZoomOffsetY;
-
-                    currentPanX += dx * scaleFactorX;
-                    currentPanY -= dy * scaleFactorY;
-
-                    player.skeleton.x = currentPanX;
-                    player.skeleton.y = currentPanY + oldZoomOffsetY;
+                    const scaleFactorX = (effView.width / rect.width) * PAN_COMPENSATION;
+                    const scaleFactorY = (effView.height / rect.height) * PAN_COMPENSATION;
+                    
+                    player.skeleton.x += dx * scaleFactorX;
+                    player.skeleton.y -= dy * scaleFactorY;
                 }
 
                 lastMouseX = e.clientX;
