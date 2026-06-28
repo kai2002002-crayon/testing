@@ -506,6 +506,26 @@
                          setupComplexInteractions(player, container);
                          window.dispatchEvent(new Event('resize'));
                      }, 50);
+                    success: function (player) {
+                      // ... 前面原本的載入邏輯 ...
+
+                      // 🌟 修復 WebGL 透明畫布下的 Multiply 挖洞問題
+                      const shadowSlot = player.skeleton.findSlot("Sport_Face_Shadow");
+                      if (shadowSlot) {
+                          // 方案 A：強制將混合模式改為 Normal (正常)。
+                          // 這會保留陰影，且絕對不會往下挖洞。(0 = Normal, 1 = Add, 2 = Multiply, 3 = Screen)
+                          shadowSlot.data.blendMode = 0; 
+        
+                          // 方案 B：如果您覺得改成 Normal 後陰影看起來黑得很突兀，
+                          // 可以直接用程式碼把它變成全透明隱藏，這樣最安全。
+                          // shadowSlot.color.a = 0; 
+                      }
+
+                      // 更新骨架狀態以套用修改
+                      player.skeleton.updateWorldTransform();
+
+                      // ... 後續的播放邏輯 ...
+                  }
                  },
                  error: function (player, reason) {
                      container.innerHTML = `<div class="text-red-500 font-bold text-sm text-center p-4">載入失敗：${mode === 'lobby' ? '大廳' : '戰鬥'}檔案可能不存在</div>`;
