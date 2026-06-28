@@ -239,10 +239,10 @@
                     this.playRandom('pat', variants, this.skinSuffix);
                 },
                 playSmash() { 
-                    const audio1 = this.play('smash', `Voice_${this.baseName}_DuctchRubEnd1`);
+                    const audio1 = this.play('smash', `Voice_${this.baseName}_dutchRubEnd1`);
                     if (audio1) {
                         audio1.onended = () => {
-                            this.play('smash', `Voice_${this.baseName}_DuctchRubEnd2${this.skinSuffix}`);
+                            this.play('smash', `Voice_${this.baseName}_dutchRubEnd2${this.skinSuffix}`);
                         };
                     }
                 }
