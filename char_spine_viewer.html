@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>角色動態展示 - 雙模式完全版</title>
+    <title>嘟嘟臉角色動態展示器</title>
     
     <script src="data_core.js"></script>
-    <script src="data_intro.js"></script>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link id="dynamicFavicon" rel="icon" href="https://i.postimg.cc/mkfSTq5k/Favicon.png" type="image/png">
@@ -25,7 +24,7 @@
 
     <style>
         body { font-family: 'Noto Sans TC', sans-serif; }
-        
+
         /* 隱藏原生選單，並強制畫布填滿容器避免塌陷 */
         .spine-player-controls { display: none !important; }
         #spineCanvasContainer canvas {
@@ -78,8 +77,8 @@
         
         <header class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-4 sm:p-5 rounded-2xl shadow-md border-4 border-amber-400 dark:border-slate-600 flex justify-between items-center relative z-10">
             <div>
-                <h1 class="text-xl sm:text-2xl font-black text-amber-950 dark:text-amber-400 mb-0.5">🎭 角色動態展示</h1>
-                <p class="text-xs sm:text-sm text-amber-800 dark:text-gray-400">大廳互動與戰鬥小人完美融合</p>
+                <h1 class="text-xl sm:text-2xl font-black text-amber-950 dark:text-amber-400 mb-0.5">
+                    <img src="https://i.postimg.cc/sDstHDN1/Aside-Skill-Rim-3.png" alt="RimIcon" class="h-[1.15em] w-auto object-contain drop-shadow-sm">嘟嘟臉角色動態展示器</h1>
             </div>
             <button onclick="window.close()" class="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm bg-amber-500 text-white font-bold rounded-xl shadow hover:bg-amber-600 transition shrink-0">
                 ⬅️ 返回
@@ -97,19 +96,25 @@
             </div>
         </section>
 
-        <section id="spineViewerSection" class="hidden bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-4 sm:p-5 rounded-2xl shadow-md border-4 border-amber-400 dark:border-slate-600 transition-all">
+        <section id="spineViewerSection" class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-4 sm:p-5 rounded-2xl shadow-md border-4 border-amber-400 dark:border-slate-600 transition-all">
             
-            <div class="flex items-center gap-3 mb-4 border-b border-amber-100 dark:border-slate-700 pb-3">
-                <img id="activeCharIcon" src="" class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg border-2 border-amber-400 shadow-sm object-cover bg-white dark:bg-slate-700 hidden">
-                <div>
-                    <h2 id="activeCharName" class="text-lg sm:text-xl font-black text-amber-900 dark:text-amber-300">請先選擇角色</h2>
+                        <div class="flex justify-between items-center mb-4 border-b border-amber-100 dark:border-slate-700 pb-3">
+                <div class="flex items-center gap-3">
+                    <img id="activeCharIcon" src="" class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg border-2 border-amber-400 shadow-sm object-cover bg-white dark:bg-slate-700 hidden">
+                    <div>
+                        <h2 id="activeCharName" class="text-lg sm:text-xl font-black text-amber-900 dark:text-amber-300">請先選擇角色</h2>
                     </div>
+                </div>
+                <button onclick="resetCamera()" class="px-3 py-1.5 bg-slate-600 hover:bg-slate-700 text-white text-[10px] sm:text-xs font-bold rounded-lg shadow transition-colors whitespace-nowrap shrink-0">
+                    🔄 鏡頭
+                </button>
             </div>
+
 
             <div class="flex flex-col gap-3 min-w-0 relative z-10 w-full lg:w-3/4 mx-auto">
                 
-                <div id="spineCanvasContainer" class="w-full h-[60vh] sm:h-[600px] rounded-xl border-2 border-dashed border-amber-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 relative overflow-hidden flex items-center justify-center cursor-move">
-                    <div class="text-gray-400 font-bold tracking-widest">等待載入...</div>
+                <div id="spineCanvasContainer" class="w-full h-[60vh] sm:h-[600px] rounded-xl border-2 border-dashed border-amber-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 relative overflow-hidden flex items-center justify-center cursor-move animated-bg" style="background-image: url('https://i.postimg.cc/x8wY5V8Q/Monster-Slot-Property-Tile.png');">
+                    <div class="text-gray-500 font-bold tracking-widest bg-white/80 dark:bg-slate-800/80 px-4 py-2 rounded-lg backdrop-blur-sm shadow-sm">等待載入...</div>
                 </div>
 
                 <div id="playerControls" class="bg-amber-50 dark:bg-slate-700/50 p-3 rounded-xl border border-amber-200 dark:border-slate-600 flex flex-col gap-3 opacity-50 pointer-events-none transition-opacity">
@@ -121,6 +126,7 @@
                                 <button onclick="setSpeed(0.5)" class="speed-btn px-2 py-1 text-[10px] sm:text-xs font-bold rounded hover:bg-amber-100 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300">0.5x</button>
                                 <button onclick="setSpeed(1)" class="speed-btn px-2 py-1 text-[10px] sm:text-xs font-bold rounded bg-amber-200 dark:bg-slate-600 text-amber-900 dark:text-white">1.0x</button>
                                 <button onclick="setSpeed(2)" class="speed-btn px-2 py-1 text-[10px] sm:text-xs font-bold rounded hover:bg-amber-100 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300">2.0x</button>
+                                <button onclick="setSpeed(3)" class="speed-btn px-2 py-1 text-[10px] sm:text-xs font-bold rounded hover:bg-amber-100 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300">3.0x</button>
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
@@ -133,22 +139,22 @@
                         </div>
                     </div>
 
-                    <div class="flex gap-2 w-full relative z-[100] items-center">
+                                        <div class="flex justify-between w-full relative z-[100] items-center gap-4">
                         
-                        <div class="relative flex-1" id="animDropdownWrapper">
+                        <div class="relative w-[48%]" id="animDropdownWrapper">
                             <button onclick="toggleCustomSelect('animList')" class="custom-select-btn w-full bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 text-[10px] sm:text-xs font-bold rounded-lg px-2 py-1.5 flex justify-between items-center text-left shadow-sm">
                                 <span id="animSelectText" class="truncate text-amber-900 dark:text-gray-200">選擇動作</span>
                                 <span class="ml-1 text-gray-400 shrink-0 text-[10px]">▼</span>
                             </button>
-                            <div id="animList" class="hidden absolute bottom-[calc(100%+6px)] left-0 w-full bg-white dark:bg-slate-800 border border-amber-300 dark:border-slate-600 rounded-lg shadow-2xl max-h-[160px] overflow-y-auto flex-col py-1 z-[110]"></div>
+                            <div id="animList" class="hidden absolute bottom-[calc(100%+6px)] left-0 w-full sm:w-[240px] bg-white dark:bg-slate-800 border border-amber-300 dark:border-slate-600 rounded-lg shadow-2xl max-h-[240px] sm:max-h-[360px] overflow-y-auto flex-col py-1 z-[110]"></div>
                         </div>
 
-                        <div class="relative flex-1" id="slotDropdownWrapper">
+                        <div class="relative w-[48%]" id="slotDropdownWrapper">
                             <button onclick="toggleCustomSelect('slotList')" class="custom-select-btn w-full bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 text-[10px] sm:text-xs font-bold rounded-lg px-2 py-1.5 flex justify-between items-center text-left shadow-sm">
                                 <span class="truncate text-amber-900 dark:text-gray-200">🧩 外觀插槽</span>
                                 <span class="ml-1 text-gray-400 shrink-0 text-[10px]">▼</span>
                             </button>
-                            <div id="slotList" class="hidden absolute bottom-[calc(100%+6px)] right-0 w-[150%] bg-white dark:bg-slate-800 border border-amber-300 dark:border-slate-600 rounded-lg shadow-2xl max-h-[160px] overflow-y-auto flex-col z-[110]">
+                            <div id="slotList" class="hidden absolute bottom-[calc(100%+6px)] right-0 w-full sm:w-[240px] bg-white dark:bg-slate-800 border border-amber-300 dark:border-slate-600 rounded-lg shadow-2xl max-h-[240px] sm:max-h-[360px] overflow-y-auto flex-col z-[110]">
                                 <div class="flex gap-1 p-1.5 border-b border-gray-100 dark:border-slate-700 sticky top-0 bg-gray-50 dark:bg-slate-800 z-20">
                                     <button onclick="toggleAllSlots(true, event)" class="flex-1 py-1 text-[10px] font-bold bg-white dark:bg-slate-700 hover:bg-amber-100 dark:hover:bg-slate-600 rounded border transition shadow-sm text-gray-700 dark:text-gray-200">全顯</button>
                                     <button onclick="toggleAllSlots(false, event)" class="flex-1 py-1 text-[10px] font-bold bg-white dark:bg-slate-700 hover:bg-amber-100 dark:hover:bg-slate-600 rounded border transition shadow-sm text-gray-700 dark:text-gray-200">全隱</button>
@@ -156,12 +162,8 @@
                                 <div id="slotsContainerInner" class="flex flex-col pb-1"></div>
                             </div>
                         </div>
-
-                        <button onclick="resetCamera()" class="px-3 py-1.5 bg-slate-600 hover:bg-slate-700 text-white text-[10px] sm:text-xs font-bold rounded-lg shadow transition-colors whitespace-nowrap shrink-0 h-full">
-                            🔄 鏡頭
-                        </button>
+                        
                     </div>
-                </div>
 
             </div>
         </section>
@@ -328,7 +330,7 @@
             });
         }
 
-        function applyRaceBackground(charName) {
+function applyRaceBackground(charName) {
             const container = document.getElementById('spineCanvasContainer');
             const char = INITIAL_DATA.find(c => c.name === charName);
             
@@ -336,8 +338,9 @@
                 container.style.backgroundImage = `url('${SPINE_BACKGROUNDS[char.race]}')`;
                 container.classList.add('animated-bg');
             } else {
-                container.style.backgroundImage = 'none';
-                container.classList.remove('animated-bg');
+                // 若無專屬種族背景，退回預設的連續圖案背景
+                container.style.backgroundImage = `url('https://i.postimg.cc/x8wY5V8Q/Monster-Slot-Property-Tile.png')`;
+                container.classList.add('animated-bg');
             }
         }
 
@@ -429,7 +432,7 @@
             document.getElementById('playerControls').classList.add('opacity-50', 'pointer-events-none');
             document.getElementById('slotsContainerInner').innerHTML = '<div class="p-3 text-center text-xs font-bold text-gray-400">讀取資料中...</div>';
 
-            currentZoom = mode === 'battle' ? 2.0 : 1.0; // 戰鬥版預設大2倍
+            currentZoom = mode === 'battle' ? 3.5 : 1.0; // 戰鬥版預設大2倍
             
             const skelUrl = mode === 'lobby' 
                 ? `./spine_assets/${baseFolderKey}/${costumeKey}.skel.bytes` 
@@ -441,7 +444,7 @@
 
             // 大廳使用 premultipliedAlpha: true，戰鬥(SD)用 false
             const isPma = mode === 'lobby';
-            const baseViewport = mode === 'lobby' ? { x: -400, y: 0, width: 800, height: 1000 } : { x: -500, y: -150, width: 1500, height: 3000 };
+            const baseViewport = mode === 'lobby' ? { x: -400, y: 0, width: 800, height: 1000 } : { x: -750, y: -150, width: 1500, height: 3000 };
 
             globalPlayer = new spine.SpinePlayer(container, {
                 skelUrl: skelUrl,
@@ -613,7 +616,7 @@
 
         function resetCamera() {
             if (!globalPlayer || !globalPlayer.skeleton) return;
-            currentZoom = currentMode === 'battle' ? 2.0 : 1.0;
+            currentZoom = currentMode === 'battle' ? 3.5 : 1.0;
             globalPlayer.skeleton.scaleX = currentZoom;
             globalPlayer.skeleton.scaleY = currentZoom;
             globalPlayer.skeleton.x = 0;
@@ -625,24 +628,23 @@
         }
 
         // --- 🌟 共用互動與拖曳邏輯 ---
-        function setupComplexInteractions(player, container) {
+                        function setupComplexInteractions(player, container) {
             const canvas = container.querySelector('canvas');
             if (!canvas) return;
             canvas.style.touchAction = 'none';
 
-            // 清除之前的監聽器防重複綁定 (SpinePlayer dispose 已清理大部分)
-            
+            let pointers = {}; // 🌟 多點觸控追蹤器
+            let initialPinchDistance = 0;
+
             canvas.addEventListener('wheel', (e) => {
                 e.preventDefault();
                 const zoomDelta = e.deltaY < 0 ? 0.1 : -0.1;
-                currentZoom = Math.min(Math.max(currentZoom + zoomDelta, 0.3), 4.0); 
+                currentZoom = Math.min(Math.max(currentZoom + zoomDelta, 0.3), 6.0); // 🌟 放寬最大倍率到 6.0
                 player.skeleton.scaleX = currentZoom;
                 player.skeleton.scaleY = currentZoom;
-                // 大廳縮放錨點微調，戰鬥不需要
                 if (currentMode === 'lobby') player.skeleton.y = 600 * (1 - currentZoom);
             }, { passive: false });
 
-            // 抓取大廳點擊區塊 (戰鬥模式無效)
             function getLobbyHitZone(mouseX, mouseY) {
                 if(currentMode !== 'lobby') return null;
                 const rect = canvas.getBoundingClientRect();
@@ -667,6 +669,17 @@
             }
 
             canvas.addEventListener('pointerdown', (e) => {
+                pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
+                const pointerKeys = Object.keys(pointers);
+
+                // 🌟 如果是雙指按下，切換為縮放模式
+                if (pointerKeys.length === 2) {
+                    isDragging = false;
+                    const p1 = pointers[pointerKeys[0]], p2 = pointers[pointerKeys[1]];
+                    initialPinchDistance = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+                    return; 
+                }
+
                 isDragging = true;
                 startX = lastMouseX = e.clientX;
                 startY = lastMouseY = e.clientY;
@@ -675,7 +688,6 @@
                 activeFaceBone = null;
                 canvas.setPointerCapture(e.pointerId);
 
-                // 只有大廳才處理臉部互動
                 if (currentMode === 'lobby') {
                     const rect = canvas.getBoundingClientRect();
                     hitZoneOnDown = getLobbyHitZone(e.clientX - rect.left, e.clientY - rect.top);
@@ -689,6 +701,27 @@
             });
 
             canvas.addEventListener('pointermove', (e) => {
+                if (pointers[e.pointerId]) {
+                    pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
+                }
+                const pointerKeys = Object.keys(pointers);
+
+                // 🌟 雙指縮放處理邏輯
+                if (pointerKeys.length === 2) {
+                    e.preventDefault();
+                    const p1 = pointers[pointerKeys[0]], p2 = pointers[pointerKeys[1]];
+                    const currentDistance = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+                    const zoomChange = currentDistance / initialPinchDistance;
+                    
+                    currentZoom = Math.min(Math.max(currentZoom * zoomChange, 0.3), 6.0);
+                    player.skeleton.scaleX = currentZoom;
+                    player.skeleton.scaleY = currentZoom;
+                    if (currentMode === 'lobby') player.skeleton.y = 600 * (1 - currentZoom);
+                    
+                    initialPinchDistance = currentDistance;
+                    return;
+                }
+
                 if (!isDragging || !player.skeleton) return;
                 const rect = canvas.getBoundingClientRect();
                 if (rect.width === 0) return;
@@ -697,7 +730,6 @@
                 const dy = e.clientY - lastMouseY;
                 dragDistance += Math.hypot(dx, dy);
 
-                // 處理臉部拉扯 (大廳模式)
                 if (currentMode === 'lobby' && hitZoneOnDown && hitZoneOnDown.name === "頭部" && activeFaceBone) {
                     const spineScaleX = player.viewport.width / rect.width / currentZoom;
                     const spineScaleY = player.viewport.height / rect.height / currentZoom;
@@ -722,7 +754,6 @@
                     activeFaceBone.x = initialBoneX + localDx;
                     activeFaceBone.y = initialBoneY + localDy;
                 } 
-                // 🌟 通用 1:1 鏡頭平移 (點擊空白處，或是戰鬥模式的所有拖曳)
                 else if (!hitZoneOnDown) {
                     const camW = player.viewport.cameraWidth || player.viewport.width;
                     const camH = player.viewport.cameraHeight || player.viewport.height;
@@ -738,10 +769,12 @@
             });
 
             const stopDrag = (e) => { 
+                delete pointers[e.pointerId];
+                if (Object.keys(pointers).length < 2) initialPinchDistance = 0;
+
                 if (!isDragging) return;
                 isDragging = false; 
 
-                // 臉部彈回動畫 (大廳模式)
                 if (currentMode === 'lobby' && activeFaceBone) {
                     let targetX = initialBoneX, targetY = initialBoneY;
                     let bouncingFaceBone = activeFaceBone;
@@ -760,7 +793,6 @@
                     applyBounce();
                 }
 
-                // 輕點播放動畫 (大廳模式，拖曳距離小於 10 才算點擊)
                 if (currentMode === 'lobby' && dragDistance < 10 && hitZoneOnDown) {
                     const animNames = player.skeleton.data.animations.map(a => a.name);
                     if (hitZoneOnDown.name === "頭部" && animNames.includes("Touch_Idle")) {
@@ -777,7 +809,9 @@
 
             canvas.addEventListener('pointerup', stopDrag);
             canvas.addEventListener('pointercancel', stopDrag);
+            canvas.addEventListener('pointerout', stopDrag);
         }
+
 
         window.onload = function() { initCharacterGrid(); };
     </script>
