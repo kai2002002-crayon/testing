@@ -849,7 +849,7 @@
                     let bouncingBone = activeInteractBone;
                     activeInteractBone = null; 
                     let velX = 0, velY = 0;
-                    const tension = 0.25, friction = 0.85;
+                    const tension = 0.20, friction = 0.95;
                     function applyBounce() {
                         let dx = targetX - bouncingBone.x; let dy = targetY - bouncingBone.y;
                         velX += dx * tension; velY += dy * tension;
