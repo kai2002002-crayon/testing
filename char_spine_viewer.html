@@ -697,45 +697,37 @@
             }, { passive: false });
 
             function getHitZone(mouseX, mouseY) {
-    const rect = canvas.getBoundingClientRect();
-    const effView = getEffectiveViewport(rect, baseViewport);
-    
-    // 🌟 獲取當前骨架的偏移與縮放 (這是修正跟隨的關鍵)
-    const skelX = player.skeleton.x;
-    const skelY = player.skeleton.y;
-    const zoom = currentZoom; 
-
-    let clickedPart = null;
-    let minDistance = Infinity;
-    
-    const hitZones = [
-        { name: "臉頰", bones: ["Character_Ball_Move", "S1_Ball_R_CT", "Ball_R_CT"], radius: 130 },
-        { name: "頭部", bones: ["Character_Pat", "S3_Head", "S1_Head", "Head"], radius: 140 }, 
-        { name: "身體", bones: ["Character_Tickle", "S3_Body_1", "S1_Body_1", "Body_1"], radius: 150 }
-    ];
-    
-    hitZones.forEach(zone => {
-        let targetBone = null;
-        for (let bName of zone.bones) { targetBone = player.skeleton.findBone(bName); if (targetBone) break; }
-        if (targetBone) {
-            // 🌟 將骨骼的世界座標減去骨架的位移偏移 (skelX/Y)
-            // 這樣計算出來的座標才會是「當前螢幕上」正確的相對座標
-            const boneCanvasX = (((targetBone.worldX - baseViewport.x) * zoom) + skelX) / (effView.width * zoom / baseViewport.width) * rect.width / rect.width; 
-            // 簡單有效的算法：直接透過螢幕座標映射
-            const screenX = ((targetBone.worldX * zoom + skelX - baseViewport.x * zoom) / (baseViewport.width * zoom)) * rect.width;
-            const screenY = rect.height - ((targetBone.worldY * zoom + skelY - baseViewport.y * zoom) / (baseViewport.height * zoom)) * rect.height;
-            
-            const distance = Math.hypot(mouseX - screenX, mouseY - screenY);
-            const scaledRadius = (zone.radius * zoom) * (rect.height / baseViewport.height);
-            
-            if (distance < scaledRadius && distance < minDistance) { 
-                minDistance = distance; 
-                clickedPart = { ...zone, bone: targetBone }; 
+                if (!getIsLobby()) return null;
+                const rect = canvas.getBoundingClientRect();
+                const effView = getEffectiveViewport(rect, getBaseViewport());
+                
+                let clickedPart = null;
+                let minDistance = Infinity;
+                
+                const hitZones = [
+                    { name: "臉頰", bones: ["Character_Ball_Move", "S1_Ball_R_CT", "Ball_R_CT"], radius: 130 },
+                    { name: "頭部", bones: ["Character_Pat", "S3_Head", "S1_Head", "Head"], radius: 140 }, 
+                    { name: "身體", bones: ["Character_Tickle", "S3_Body_1", "S1_Body_1", "Body_1"], radius: 150 }
+                ];
+                
+                hitZones.forEach(zone => {
+                    let targetBone = null;
+                    for (let bName of zone.bones) { targetBone = player.skeleton.findBone(bName); if (targetBone) break; }
+                    if (targetBone) {
+                        const boneCanvasX = ((targetBone.worldX - effView.x) / effView.width) * rect.width;
+                        const boneCanvasY = rect.height - ((targetBone.worldY - effView.y) / effView.height) * rect.height;
+                        const distance = Math.hypot(mouseX - boneCanvasX, mouseY - boneCanvasY);
+                        const scaledRadius = (zone.radius * currentZoom) * (rect.height / effView.height);
+                        
+                        if (distance < scaledRadius && distance < minDistance) { 
+                            minDistance = distance; 
+                            clickedPart = { ...zone, bone: targetBone }; 
+                        }
+                    }
+                });
+                return clickedPart;
             }
-        }
-    });
-    return clickedPart;
-}
+
             canvas.addEventListener('pointerdown', (e) => {
                 pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
                 const pointerKeys = Object.keys(pointers);
@@ -858,18 +850,23 @@
                 } 
                 else if (!hitZoneOnDown) {
                     // 🌟 修正搬動視角的準確度
-                // 直接使用 getEffectiveViewport 計算出的寬高比例是最準確的
-                const effView = getEffectiveViewport(rect, getBaseViewport());
-                const scaleFactorX = effView.width / rect.width;
-                const scaleFactorY = effView.height / rect.height;
+                    const effView = getEffectiveViewport(rect, getBaseViewport());
+                    const scaleFactorX = effView.width / rect.width;
+                    const scaleFactorY = effView.height / rect.height;
+                    
+                    const isLobby = getIsLobby();
+                    const oldZoomOffsetY = isLobby ? 600 * (1 - currentZoom) : 0;
+                    
+                    let currentPanX = player.skeleton.x;
+                    let currentPanY = player.skeleton.y - oldZoomOffsetY;
 
-                const isLobby = getIsLobby();
-                const oldZoomOffsetY = isLobby ? 600 * (1 - currentZoom) : 0;
-                
-                // 直接更新，不需要拆分成兩次運算
-                player.skeleton.x += dx * scaleFactorX;
-                player.skeleton.y -= dy * scaleFactorY;
+                    currentPanX += dx * scaleFactorX;
+                    currentPanY -= dy * scaleFactorY;
+
+                    player.skeleton.x = currentPanX;
+                    player.skeleton.y = currentPanY + oldZoomOffsetY;
                 }
+
                 lastMouseX = e.clientX;
                 lastMouseY = e.clientY;
             });
@@ -946,6 +943,7 @@
             canvas.addEventListener('pointercancel', stopDrag);
             canvas.addEventListener('pointerout', stopDrag);
         }
+
 
         window.onload = function() { initCharacterGrid(); };
     </script>
