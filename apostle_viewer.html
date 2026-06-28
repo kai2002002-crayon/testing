@@ -434,102 +434,94 @@
              if(!costumeKey || !activeCharData) return;
              loadSpine(activeCharData.spineName, costumeKey, currentMode);
          }
-         
+
          // 核心載入：根據模式設定路徑與參數
-         function loadSpine(baseFolderKey, costumeKey, mode) {
-             const container = document.getElementById('spineCanvasContainer');
-             
-             if (globalPlayer) { globalPlayer.dispose(); globalPlayer = null; }
-         
-             container.innerHTML = '<div class="spine-player-loading-custom"></div>';
-             document.getElementById('playerControls').classList.add('opacity-50', 'pointer-events-none');
-             document.getElementById('slotsContainerInner').innerHTML = '<div class="p-3 text-center text-xs font-bold text-gray-400">讀取資料中...</div>';
-         
-             currentZoom = mode === 'battle' ? 2.5 : 1.0; // 戰鬥版預設大2倍
-             
-             const skelUrl = mode === 'lobby' 
-                 ? `./spine_assets/${baseFolderKey}/${costumeKey}.skel.bytes` 
-                 : `./spine_sd_assets/${costumeKey}.skel.bytes`;
-                 
-             const atlasUrl = mode === 'lobby' 
-                 ? `./spine_assets/${baseFolderKey}/${costumeKey}.atlas.txt`
-                 : `./spine_sd_assets/${costumeKey}.atlas.txt`;
-             
-             const isPma = mode === 'lobby';
-             const baseViewport = mode === 'lobby' ? { x: -400, y: 0, width: 800, height: 1000 } : { x: -750, y: -150, width: 1500, height: 3000 };
-         
-             globalPlayer = new spine.SpinePlayer(container, {
-                 skelUrl: skelUrl,
-                 atlasUrl: atlasUrl,
-                 premultipliedAlpha: true,
-                 backgroundColor: "#00000000", 
-                 alpha: true,
-                 showControls: false,
-                 showLoading: false, 
-                 viewport: { ...baseViewport },
-         
-                 success: function (player) {
-                     const loader = container.querySelector('.spine-player-loading-custom');
-                     if (loader) loader.remove();
-         
-                     document.getElementById('playerControls').classList.remove('opacity-50', 'pointer-events-none');
-                     setSpeed(1);
-         
-                     const skins = player.skeleton.data.skins;
-                     if (skins && skins.length > 0) {
-                         const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default') || skins[0];
-                         if (targetSkin) {
-                             player.skeleton.setSkinByName(targetSkin.name);
-                         }
-                     }
-                     
-                     player.skeleton.scaleX = currentZoom;
-                     player.skeleton.scaleY = currentZoom;
-                     player.skeleton.setToSetupPose(); 
-                     player.skeleton.updateWorldTransform();
-         
-                     buildAnimationDropdown(player);
-                     buildSlotsPanel(player);
-         
-                     // 延遲喚醒
-                     setTimeout(() => {
-                         const anims = player.skeleton.data.animations.map(a => a.name);
-                         const fallbackAnim = mode === 'lobby' ? 'Idle_1' : 'Idle';
-                         let startAnim = anims.includes(fallbackAnim) ? fallbackAnim : (anims.includes('idle') ? 'idle' : anims[0]);
-                         
-                         if (startAnim) {
-                             player.animationState.setAnimation(0, startAnim, true);
-                             document.getElementById('animSelectText').innerText = startAnim;
-                             document.getElementById('btnPlayPause').innerText = '⏸️';
-                         }
-                         player.play();
-                         setupComplexInteractions(player, container);
-                         window.dispatchEvent(new Event('resize'));
-                     }, 50);
+        function loadSpine(baseFolderKey, costumeKey, mode) {
+            const container = document.getElementById('spineCanvasContainer');
+            
+            if (globalPlayer) { globalPlayer.dispose(); globalPlayer = null; }
 
-                      // 🌟 修復 WebGL 透明畫布下的 Multiply 挖洞問題
-                      const shadowSlot = player.skeleton.findSlot("Sport_Face_Shadow");
-                      if (shadowSlot) {
-                          // 方案 A：強制將混合模式改為 Normal (正常)。
-                          // 這會保留陰影，且絕對不會往下挖洞。(0 = Normal, 1 = Add, 2 = Multiply, 3 = Screen)
-                          shadowSlot.data.blendMode = 0; 
-        
-                          // 方案 B：如果您覺得改成 Normal 後陰影看起來黑得很突兀，
-                          // 可以直接用程式碼把它變成全透明隱藏，這樣最安全。
-                          // shadowSlot.color.a = 0; 
-                      }
+            container.innerHTML = '<div class="spine-player-loading-custom"></div>';
+            document.getElementById('playerControls').classList.add('opacity-50', 'pointer-events-none');
+            document.getElementById('slotsContainerInner').innerHTML = '<div class="p-3 text-center text-xs font-bold text-gray-400">讀取資料中...</div>';
 
-                      // 更新骨架狀態以套用修改
-                      player.skeleton.updateWorldTransform();
+            currentZoom = mode === 'battle' ? 2.5 : 1.0; // 戰鬥版預設大2倍
+            
+            const skelUrl = mode === 'lobby' 
+                ? `./spine_assets/${baseFolderKey}/${costumeKey}.skel.bytes` 
+                : `./spine_sd_assets/${costumeKey}.skel.bytes`;
+                
+            const atlasUrl = mode === 'lobby' 
+                ? `./spine_assets/${baseFolderKey}/${costumeKey}.atlas.txt`
+                : `./spine_sd_assets/${costumeKey}.atlas.txt`;
 
-                      // ... 後續的播放邏輯 ...
-                  }
-                 },
-                 error: function (player, reason) {
-                     container.innerHTML = `<div class="text-red-500 font-bold text-sm text-center p-4">載入失敗：${mode === 'lobby' ? '大廳' : '戰鬥'}檔案可能不存在</div>`;
-                 }
-             });
-         
+            // 全部使用 PMA 來解決線條問題
+            const isPma = true; 
+            const baseViewport = mode === 'lobby' ? { x: -400, y: 0, width: 800, height: 1000 } : { x: -750, y: -150, width: 1500, height: 3000 };
+
+            globalPlayer = new spine.SpinePlayer(container, {
+                skelUrl: skelUrl,
+                atlasUrl: atlasUrl,
+                premultipliedAlpha: isPma,
+                backgroundColor: "#00000000", 
+                alpha: true,
+                showControls: false,
+                showLoading: false, 
+                viewport: { ...baseViewport },
+
+                success: function (player) {
+                    const loader = container.querySelector('.spine-player-loading-custom');
+                    if (loader) loader.remove();
+
+                    document.getElementById('playerControls').classList.remove('opacity-50', 'pointer-events-none');
+                    setSpeed(1);
+
+                    const skins = player.skeleton.data.skins;
+                    if (skins && skins.length > 0) {
+                        const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default') || skins[0];
+                        if (targetSkin) {
+                            player.skeleton.setSkinByName(targetSkin.name);
+                        }
+                    }
+                    
+                    player.skeleton.scaleX = currentZoom;
+                    player.skeleton.scaleY = currentZoom;
+                    player.skeleton.setToSetupPose(); 
+
+                    // 🌟 修復 WebGL 透明畫布下的 Multiply 挖洞問題
+                    const shadowSlot = player.skeleton.findSlot("Sport_Face_Shadow");
+                    if (shadowSlot) {
+                        // 強制將混合模式改為 Normal (0)，保留陰影且不挖洞
+                        shadowSlot.data.blendMode = 0; 
+                    }
+
+                    // 更新骨架狀態以套用修改
+                    player.skeleton.updateWorldTransform();
+
+                    buildAnimationDropdown(player);
+                    buildSlotsPanel(player);
+
+                    // 延遲喚醒
+                    setTimeout(() => {
+                        const anims = player.skeleton.data.animations.map(a => a.name);
+                        const fallbackAnim = mode === 'lobby' ? 'Idle_1' : 'Idle';
+                        let startAnim = anims.includes(fallbackAnim) ? fallbackAnim : (anims.includes('idle') ? 'idle' : anims[0]);
+                        
+                        if (startAnim) {
+                            player.animationState.setAnimation(0, startAnim, true);
+                            document.getElementById('animSelectText').innerText = startAnim;
+                            document.getElementById('btnPlayPause').innerText = '⏸️';
+                        }
+                        player.play();
+                        setupComplexInteractions(player, container);
+                        window.dispatchEvent(new Event('resize'));
+                    }, 50);
+                },
+                error: function (player, reason) {
+                    container.innerHTML = `<div class="text-red-500 font-bold text-sm text-center p-4">載入失敗：${mode === 'lobby' ? '大廳' : '戰鬥'}檔案可能不存在</div>`;
+                }
+            });
+        }
          // --- 播放器控制與 UI 刷新 ---
          function togglePlay() {
              if (!globalPlayer) return;
