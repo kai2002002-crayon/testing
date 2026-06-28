@@ -700,7 +700,7 @@
                 if (!getIsLobby()) return null;
                 const rect = canvas.getBoundingClientRect();
                 
-                // 🌟 宣告並取得正確的 baseViewport
+                // 🌟 取得正確的 viewport 資訊
                 const baseViewport = getBaseViewport(); 
                 const effView = getEffectiveViewport(rect, baseViewport);
                 
@@ -722,12 +722,19 @@
                     let targetBone = null;
                     for (let bName of zone.bones) { targetBone = player.skeleton.findBone(bName); if (targetBone) break; }
                     if (targetBone) {
-                        // 計算螢幕上的正確座標
-                        const screenX = ((targetBone.worldX * zoom + skelX - baseViewport.x * zoom) / (baseViewport.width * zoom)) * rect.width;
-                        const screenY = rect.height - ((targetBone.worldY * zoom + skelY - baseViewport.y * zoom) / (baseViewport.height * zoom)) * rect.height;
+                        // 🌟 核心修正：精準計算骨骼在當前畫布上的絕對位置
+                        // 1. 先算出骨骼在 Spine 世界中「包含縮放與拖曳」後的真實座標
+                        const boneTrueX = (targetBone.worldX * zoom) + skelX;
+                        const boneTrueY = (targetBone.worldY * zoom) + skelY;
+                        
+                        // 2. 單純透過 effView 映射到 Canvas 螢幕座標
+                        const screenX = ((boneTrueX - effView.x) / effView.width) * rect.width;
+                        const screenY = rect.height - ((boneTrueY - effView.y) / effView.height) * rect.height;
                         
                         const distance = Math.hypot(mouseX - screenX, mouseY - screenY);
-                        const scaledRadius = (zone.radius * zoom) * (rect.height / baseViewport.height);
+                        
+                        // 判定半徑根據 zoom 與有效視窗高度做等比例縮放
+                        const scaledRadius = (zone.radius * zoom) * (rect.height / effView.height);
                         
                         if (distance < scaledRadius && distance < minDistance) { 
                             minDistance = distance; 
@@ -737,7 +744,6 @@
                 });
                 return clickedPart;
             }
-
             canvas.addEventListener('pointerdown', (e) => {
                 pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
                 const pointerKeys = Object.keys(pointers);
