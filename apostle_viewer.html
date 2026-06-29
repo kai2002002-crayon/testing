@@ -827,11 +827,11 @@
             let boneWorldY = bone.worldY;
             
             if (zone.name === "臉頰") {
-                boneWorldX -= 30; // 往左平移 30 像素
+                boneWorldX -= 60; // 往左平移 30 像素
                 boneWorldY += 60;
             }
             if (zone.name === "頭部") {
-                boneWorldY += 90;
+                boneWorldY += 120;
             }
             // 使用轉換後的 worldX/Y 比對骨骼位置
             const distance = Math.hypot(worldX - bone.worldX, worldY - bone.worldY);
