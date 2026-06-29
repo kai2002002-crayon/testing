@@ -377,7 +377,7 @@
                         const iconUrl = typeof IMAGE_MAP !== 'undefined' ? IMAGE_MAP[`avatar_${c.name}`] : '';
                         const spineName = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[c.name] : c.name;
                         const displayName = getI18n(c.name);
-                        const bgUrl = (typeof SPINE_BACKGROUNDS !== 'undefined' && SPINE_BACKGROUNDS[char.race]) ? SPINE_BACKGROUNDS[char.race] : "";
+                        const bgUrl = (typeof SPINE_BACKGROUNDS !== 'undefined' && SPINE_BACKGROUNDS[.race]) ? SPINE_BACKGROUNDS[c.race] : "";
                         const bgInlineStyle = bgUrl ? `background-image: url('${bgUrl}'); background-size: cover; background-position: center;` : "background-color: #fef3c7;";
             
                         const btn = document.createElement('button');
