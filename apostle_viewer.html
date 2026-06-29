@@ -806,9 +806,9 @@
     let minDistance = Infinity;
     
     const hitZones = [
-        { name: "臉頰", bones: ["Character_Ball_Move", "S1_Ball_R_CT", "Ball_R_CT"], radius: 60 },
-        { name: "頭部", bones: ["Character_Pat", "S3_Head", "S1_Head", "Head"], radius: 80 }, 
-        { name: "身體", bones: ["Character_Tickle", "S3_Body_1", "S1_Body_1", "Body_1"], radius: 120 }
+        { name: "臉頰", bones: ["Character_Ball_Move"], radius: 60 },
+        { name: "頭部", bones: ["Character_Pat"], radius: 80 }, 
+        { name: "身體", bones: ["Character_Tickle"], radius: 120 }
     ];
     
     // 🌟 修正重點：確保 targetBone 在迴圈內正確被尋找並指派
