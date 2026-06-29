@@ -988,12 +988,12 @@
             
                     if (hasTriggeredRub) {
                         if (hitZoneOnDown && hitZoneOnDown.name === "臉頰" && animNames.includes("Touch_End")) {
-                            // 1. 只設定結束動作，不強制排隊 Idle_1
+                            // 🌟 1. 改為 true，讓放開後的表情/動作保持循環（維持呼吸感）
                             player.animationState.setAnimation(0, "Touch_End", true);
                             updateUI("Touch_End");
                             
-                            // 2. 播放語音，並傳入「聲音結束後的 Callback 動作」
                             VoiceManager.playTouch(() => {
+                                // 🌟 2. 聲音播完後，啟動 500 毫秒的延遲計時器
                                 voiceRecoveryTimer = setTimeout(() => {
                                     player.animationState.setAnimation(0, "Idle_1", true);
                                     updateUI("Idle_1");
@@ -1002,10 +1002,13 @@
                             });
 
                         } else if (hitZoneOnDown && hitZoneOnDown.name === "頭部" && animNames.includes("Pat_End")) {
+                            // 🌟 1. 改為 true
                             player.animationState.setAnimation(0, "Pat_End", true);
                             updateUI("Pat_End");
                             
-                            voiceRecoveryTimer = setTimeout(() => {
+                            VoiceManager.playPat(() => {
+                                // 🌟 2. 延遲 500 毫秒
+                                voiceRecoveryTimer = setTimeout(() => {
                                     player.animationState.setAnimation(0, "Idle_1", true);
                                     updateUI("Idle_1");
                                     safeStartIdle();
@@ -1013,7 +1016,6 @@
                             });
 
                         } else if (hitZoneOnDown && hitZoneOnDown.name === "身體" && animNames.includes("Tickle_End")) {
-                            // 抓癢沒有結尾語音，維持原本的快速排隊切換
                             player.animationState.setAnimation(0, "Tickle_End", false);
                             player.animationState.addAnimation(0, "Idle_1", true, 0);
                             updateUI("Tickle_End");
@@ -1048,7 +1050,6 @@
                     } else {
                         safeStartIdle();
                     }
-                };
 
             
                 canvas.addEventListener('pointerup', stopDrag);
