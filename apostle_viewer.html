@@ -191,7 +191,7 @@
             let globalPlayer = null;
             let slotVisibilityMap = {};
             
-            // 🌟 語音管理器 (VoiceManager)
+                        // 🌟 語音管理器 (VoiceManager)
             const VoiceManager = {
                 currentAudio: null,
                 baseName: "",
@@ -203,48 +203,58 @@
                     this.skinSuffix = suffix ? `_${suffix}` : ""; 
                 },
 
-                play(folder, filename) {
+                // 加入 onEnded 參數
+                play(folder, filename, onEnded = null) {
                     if (this.currentAudio) {
                         this.currentAudio.pause();
                         this.currentAudio.currentTime = 0;
+                        this.currentAudio.onended = null; // 清除上一個回呼，避免衝突
                     }
                     const path = `./${folder}/${filename}.mp3`;
                     this.currentAudio = new Audio(path);
                     this.currentAudio.volume = 0.8; 
-                    // 使用 catch 避免瀏覽器自動播放限制報錯
-                    this.currentAudio.play().catch(e => console.log("語音無法播放或找不到檔案:", path));
+                    
+                    // 如果有傳入結束事件，綁定到音檔上
+                    if (onEnded) {
+                        this.currentAudio.onended = onEnded;
+                    }
+
+                    this.currentAudio.play().catch(e => {
+                        console.log("語音無法播放或找不到檔案:", path);
+                        // 防呆機制：如果檔案遺失，立刻執行 onEnded，確保角色不會永遠卡住
+                        if (onEnded) onEnded();
+                    });
                     return this.currentAudio;
                 },
 
-                playRandom(folder, variants, suffix = "") {
+                playRandom(folder, variants, suffix = "", onEnded = null) {
                     const pick = variants[Math.floor(Math.random() * variants.length)];
-                    return this.play(folder, `${pick}${suffix}`);
+                    return this.play(folder, `${pick}${suffix}`, onEnded);
                 },
 
-                playSpawn() {
+                playSpawn(onEnded = null) {
                     const variants = [`Voice_${this.baseName}_Spawn1`, `Voice_${this.baseName}_Spawn2`];
-                    this.playRandom('spawn', variants, ""); 
+                    this.playRandom('spawn', variants, "", onEnded); 
                 },
-                playTickleStart() { this.play('tickle', `Voice_${this.baseName}_TickleStart1`); },
-                playTickleDuring() { this.play('tickle', `Voice_${this.baseName}_TickleDuring1`); },
+                playTickleStart(onEnded = null) { this.play('tickle', `Voice_${this.baseName}_TickleStart1`, onEnded); },
+                playTickleDuring(onEnded = null) { this.play('tickle', `Voice_${this.baseName}_TickleDuring1`, onEnded); },
                 
-                playTouch() { 
+                playTouch(onEnded = null) { 
                     const variants = [`Voice_${this.baseName}_Touch1`, `Voice_${this.baseName}_Touch1_1`, `Voice_${this.baseName}_Touch1_2`];
-                    this.playRandom('touch', variants, this.skinSuffix);
+                    this.playRandom('touch', variants, this.skinSuffix, onEnded);
                 },
-                playPat() { 
+                playPat(onEnded = null) { 
                     const variants = [`Voice_${this.baseName}_Touch2`, `Voice_${this.baseName}_Touch2_1`, `Voice_${this.baseName}_Touch2_2`];
-                    this.playRandom('pat', variants, this.skinSuffix);
+                    this.playRandom('pat', variants, this.skinSuffix, onEnded);
                 },
-                playSmash() { 
-                    const audio1 = this.play('smash', `Voice_${this.baseName}_DutchRubEnd1`);
-                    if (audio1) {
-                        audio1.onended = () => {
-                            this.play('smash', `Voice_${this.baseName}_DutchRubEnd2${this.skinSuffix}`);
-                        };
-                    }
+                playSmash(onEnded = null) { 
+                    // 將 onEnded 綁定到最後一句對白，確保兩句都播完才切換
+                    this.play('smash', `Voice_${this.baseName}_DutchRubEnd1`, () => {
+                        this.play('smash', `Voice_${this.baseName}_DutchRubEnd2${this.skinSuffix}`, onEnded);
+                    });
                 }
             };
+
             // 核心狀態變數
             let activeCharData = null; 
             let currentMode = 'lobby'; // 'lobby' | 'battle'
@@ -941,7 +951,7 @@
                     lastMouseY = e.clientY;
                 });
             
-                const stopDrag = (e) => { 
+                                const stopDrag = (e) => { 
                     delete pointers[e.pointerId];
                     if (Object.keys(pointers).length < 2) initialPinchDistance = 0;
             
@@ -952,14 +962,12 @@
                     if (!getIsLobby()) return;
                     const animNames = player.skeleton.data.animations.map(a => a.name);
             
-                    // 🌟 麻糬果凍版 Q 彈物理 (大改版在這裡)
+                    // 🌟 麻糬果凍版 Q 彈物理 
                     if (activeInteractBone) {
                         let targetX = initialBoneX, targetY = initialBoneY;
                         let bouncingBone = activeInteractBone;
                         activeInteractBone = null; 
                         let velX = 0, velY = 0;
-                        
-                        // tension 變小(20)拉力較軟；friction 變大(85)阻力變小，彈超久！
                         const tension = 0.20, friction = 0.85; 
                         
                         function applyBounce() {
@@ -978,30 +986,38 @@
             
                     if (hasTriggeredRub) {
                         if (hitZoneOnDown && hitZoneOnDown.name === "臉頰" && animNames.includes("Touch_End")) {
+                            // 1. 只設定結束動作，不強制排隊 Idle_1
                             player.animationState.setAnimation(0, "Touch_End", false);
-                            player.animationState.addAnimation(0, "Idle_1", true, 0);
                             updateUI("Touch_End");
                             
-                            // 🌟 播放拉臉頰後對白
-                            VoiceManager.playTouch();
+                            // 2. 播放語音，並傳入「聲音結束後的 Callback 動作」
+                            VoiceManager.playTouch(() => {
+                                player.animationState.setAnimation(0, "Idle_1", true);
+                                updateUI("Idle_1");
+                                safeStartIdle();
+                            });
 
                         } else if (hitZoneOnDown && hitZoneOnDown.name === "頭部" && animNames.includes("Pat_End")) {
                             player.animationState.setAnimation(0, "Pat_End", false);
-                            player.animationState.addAnimation(0, "Idle_1", true, 0);
                             updateUI("Pat_End");
                             
-                            // 🌟 播放摸頭後對白
-                            VoiceManager.playPat();
+                            VoiceManager.playPat(() => {
+                                player.animationState.setAnimation(0, "Idle_1", true);
+                                updateUI("Idle_1");
+                                safeStartIdle();
+                            });
 
                         } else if (hitZoneOnDown && hitZoneOnDown.name === "身體" && animNames.includes("Tickle_End")) {
+                            // 抓癢沒有結尾語音，維持原本的快速排隊切換
                             player.animationState.setAnimation(0, "Tickle_End", false);
                             player.animationState.addAnimation(0, "Idle_1", true, 0);
                             updateUI("Tickle_End");
+                            safeStartIdle();
                         } else {
                             player.animationState.setAnimation(0, "Idle_1", true);
                             updateUI("Idle_1");
+                            safeStartIdle();
                         }
-                        safeStartIdle();
                     } else if (hitZoneOnDown && dragDistance < 10) {
                         // 點擊事件 (敲頭)
                         if ((hitZoneOnDown.name === "頭部" || hitZoneOnDown.name === "臉頰") && animNames.includes("Smash_End_1")) {
@@ -1009,17 +1025,22 @@
                             if (animNames.includes("Smash_End_2")) {
                                 player.animationState.addAnimation(0, "Smash_End_2", false, 0);
                             }
-                            player.animationState.addAnimation(0, "Idle_1", true, 0);
                             updateUI("Smash_End");
                             
-                            // 🌟 播放受驚叫聲，完畢後自動接對白
-                            VoiceManager.playSmash();
+                            // 敲打會連續播放兩段語音，播完後才切換
+                            VoiceManager.playSmash(() => {
+                                player.animationState.setAnimation(0, "Idle_1", true);
+                                updateUI("Idle_1");
+                                safeStartIdle();
+                            });
+                        } else {
+                            safeStartIdle();
                         }
-                        safeStartIdle();
                     } else {
                         safeStartIdle();
                     }
                 };
+
             
                 canvas.addEventListener('pointerup', stopDrag);
                 canvas.addEventListener('pointercancel', stopDrag);
