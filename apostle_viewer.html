@@ -789,20 +789,16 @@
     
     const rect = canvas.getBoundingClientRect();
     const cam = globalPlayer.sceneRenderer.camera;
-    
-    // 1. 取得畫布在螢幕上的真實比例
     const canvasWidth = rect.width;
     const canvasHeight = rect.height;
-    
-    // 2. 🌟 關鍵修正：計算相機的「縮放比例」與「中心偏移」
-    // 使用 cam.viewportWidth / canvasWidth 取得真正的比例因子
     const scaleX = cam.viewportWidth / canvasWidth;
     const scaleY = cam.viewportHeight / canvasHeight;
     
-    // 3. 將滑鼠座標轉換為相對於相機中心的偏移量
-    // (滑鼠位置 - 畫布中心) * 縮放比例 + 相機位置
     const worldX = (mouseX - canvasWidth / 2) * scaleX + cam.position.x;
     const worldY = -(mouseY - canvasHeight / 2) * scaleY + cam.position.y;
+
+    // 🌟 點擊時，在 Console 印出點擊資訊
+    console.log(`點擊座標 (螢幕): ${mouseX.toFixed(0)}, ${mouseY.toFixed(0)} | 轉換座標 (World): ${worldX.toFixed(0)}, ${worldY.toFixed(0)}`);
     
     let clickedPart = null;
     let minDistance = Infinity;
@@ -818,9 +814,10 @@
         for (let bName of zone.bones) { targetBone = player.skeleton.findBone(bName); if (targetBone) break; }
         
         if (targetBone) {
-            // 使用轉換後的 worldX/Y 比對骨骼位置
-            const distance = Math.hypot(worldX - targetBone.worldX, worldY - targetBone.worldY);
+            // 🌟 順便印出骨骼當前位置，讓我們對比偏移量
+            console.log(`骨骼 ${zone.name}: ${targetBone.worldX.toFixed(0)}, ${targetBone.worldY.toFixed(0)}`);
             
+            const distance = Math.hypot(worldX - targetBone.worldX, worldY - targetBone.worldY);
             if (distance < zone.radius && distance < minDistance) { 
                 minDistance = distance; 
                 clickedPart = { ...zone, bone: targetBone }; 
