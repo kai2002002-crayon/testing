@@ -733,7 +733,7 @@
                 let tickleTimer = null; 
                 let voiceRecoveryTimer = null;
             
-                // 🌟 安全獲取當前環境狀態 (兼容 spine_viewer 和 char_detail)
+                // 🌟 安全獲取當前環境狀態
                 const getIsLobby = () => typeof currentMode === 'undefined' || currentMode === 'lobby';
                 const getBaseViewport = () => {
                     if (typeof currentMode !== 'undefined') {
@@ -745,14 +745,28 @@
                 const safeClearIdle = () => { if (typeof globalIdleTimer !== 'undefined') clearTimeout(globalIdleTimer); };
                 const safeStartIdle = () => { if (typeof startRandomAnimationLoop === 'function') startRandomAnimationLoop(); };
             
-                // 🌟 核心修正：動態計算真實攝影機範圍，根絕點擊位置偏移問題
-                function getEffectiveViewport(canvasRect, baseViewport) {
-                    const scale = Math.min(canvasRect.width / baseViewport.width, canvasRect.height / baseViewport.height);
+                // 🌟 核心大修正：直接取用 Spine 內部真實 Camera 的投影數據，確保 100% 像素級對齊！
+                function getEffectiveViewport(canvasRect) {
+                    if (globalPlayer && globalPlayer.sceneRenderer && globalPlayer.sceneRenderer.camera) {
+                        const cam = globalPlayer.sceneRenderer.camera;
+                        return {
+                            x: cam.position.x - (cam.viewportWidth / 2),
+                            y: cam.position.y - (cam.viewportHeight / 2),
+                            width: cam.viewportWidth,
+                            height: cam.viewportHeight
+                        };
+                    }
+                    // 備用方案：如果抓不到相機，退回基礎比例計算
+                    const baseView = getBaseViewport();
+                    const scale = Math.min(canvasRect.width / baseView.width, canvasRect.height / baseView.height);
                     const effW = canvasRect.width / scale;
                     const effH = canvasRect.height / scale;
-                    const effX = baseViewport.x - (effW - baseViewport.width) / 2;
-                    const effY = baseViewport.y - (effH - baseViewport.height) / 2;
-                    return { x: effX, y: effY, width: effW, height: effH };
+                    return {
+                        x: baseView.x - (effW - baseView.width) / 2,
+                        y: baseView.y - (effH - baseView.height) / 2,
+                        width: effW,
+                        height: effH
+                    };
                 }
             
                 canvas.addEventListener('wheel', (e) => {
@@ -773,7 +787,7 @@
                 function getHitZone(mouseX, mouseY) {
                     if (!getIsLobby()) return null;
                     const rect = canvas.getBoundingClientRect();
-                    const effView = getEffectiveViewport(rect, getBaseViewport());
+                    const effView = getEffectiveViewport(rect);
                     
                     let clickedPart = null;
                     let minDistance = Infinity;
@@ -791,7 +805,9 @@
                             const boneCanvasX = ((targetBone.worldX - effView.x) / effView.width) * rect.width;
                             const boneCanvasY = rect.height - ((targetBone.worldY - effView.y) / effView.height) * rect.height;
                             const distance = Math.hypot(mouseX - boneCanvasX, mouseY - boneCanvasY);
-                            const scaledRadius = (zone.radius * currentZoom) * (rect.height / effView.height);
+                            
+                            // 修正縮放半徑計算
+                            const scaledRadius = (zone.radius * currentZoom) * (rect.width / effView.width);
                             
                             if (distance < scaledRadius && distance < minDistance) { 
                                 minDistance = distance; 
@@ -884,16 +900,12 @@
                         } else if (hitZoneOnDown.name === "身體" && animNames.includes("Tickle_Idle_1")) {
                             player.animationState.setAnimation(0, "Tickle_Idle_1", true);
                             updateUI("Tickle_Idle_1");
-                            
-                            // 🌟 播放抓癢開始笑聲
                             VoiceManager.playTickleStart();
 
                             tickleTimer = setTimeout(() => {
                                 if (animNames.includes("Tickle_Idle_2")) {
                                     player.animationState.setAnimation(0, "Tickle_Idle_2", true);
                                     updateUI("Tickle_Idle_2");
-                                    
-                                    // 🌟 播放持續抓癢大笑
                                     VoiceManager.playTickleDuring();
                                 }
                             }, 2000); 
@@ -901,7 +913,7 @@
                     }
             
                     if (hasTriggeredRub && hitZoneOnDown && activeInteractBone) {
-                        const effView = getEffectiveViewport(rect, getBaseViewport());
+                        const effView = getEffectiveViewport(rect);
                         const isCheek = hitZoneOnDown.name === "臉頰";
                         
                         const spineScaleX = effView.width / rect.width / currentZoom;
@@ -913,7 +925,16 @@
             
                         if (isCheek && worldDx > 0) worldDx = 0; 
                         
-                        let targetWorld = { x: activeInteractBone.worldX + worldDx, y: activeInteractBone.worldY + worldDy };
+                        // 🌟 修正：利用父骨骼反推初始真實坐標，徹底消滅指數拉扯飄移！
+                        let baseWorld = { x: initialBoneX, y: initialBoneY };
+                        if (activeInteractBone.parent) {
+                            activeInteractBone.parent.localToWorld(baseWorld);
+                        } else {
+                            baseWorld.x = player.skeleton.x + initialBoneX * player.skeleton.scaleX;
+                            baseWorld.y = player.skeleton.y + initialBoneY * player.skeleton.scaleY;
+                        }
+                        
+                        let targetWorld = { x: baseWorld.x + worldDx, y: baseWorld.y + worldDy };
                         if (activeInteractBone.parent) activeInteractBone.parent.worldToLocal(targetWorld);
                         
                         let localDx = targetWorld.x - initialBoneX;
@@ -931,8 +952,8 @@
                         activeInteractBone.y = initialBoneY + localDy;
                     } 
                     else if (!hitZoneOnDown) {
-                        // 🌟 修正搬動視角的準確度
-                        const effView = getEffectiveViewport(rect, getBaseViewport());
+                        // 🌟 修正搬動視角：透過真實攝影機寬高進行 1:1 推算
+                        const effView = getEffectiveViewport(rect);
                         const scaleFactorX = effView.width / rect.width;
                         const scaleFactorY = effView.height / rect.height;
                         
@@ -953,7 +974,7 @@
                     lastMouseY = e.clientY;
                 });
             
-                                const stopDrag = (e) => { 
+                const stopDrag = (e) => { 
                     delete pointers[e.pointerId];
                     if (Object.keys(pointers).length < 2) initialPinchDistance = 0;
             
@@ -964,7 +985,6 @@
                     if (!getIsLobby()) return;
                     const animNames = player.skeleton.data.animations.map(a => a.name);
             
-                    // 🌟 麻糬果凍版 Q 彈物理 
                     if (activeInteractBone) {
                         let targetX = initialBoneX, targetY = initialBoneY;
                         let bouncingBone = activeInteractBone;
@@ -988,12 +1008,10 @@
             
                     if (hasTriggeredRub) {
                         if (hitZoneOnDown && hitZoneOnDown.name === "臉頰" && animNames.includes("Touch_End")) {
-                            // 🌟 1. 改為 true，讓放開後的表情/動作保持循環（維持呼吸感）
                             player.animationState.setAnimation(0, "Touch_End", true);
                             updateUI("Touch_End");
                             
                             VoiceManager.playTouch(() => {
-                                // 🌟 2. 聲音播完後，啟動 500 毫秒的延遲計時器
                                 voiceRecoveryTimer = setTimeout(() => {
                                     player.animationState.setAnimation(0, "Idle_1", true);
                                     updateUI("Idle_1");
@@ -1002,12 +1020,10 @@
                             });
 
                         } else if (hitZoneOnDown && hitZoneOnDown.name === "頭部" && animNames.includes("Pat_End")) {
-                            // 🌟 1. 改為 true
                             player.animationState.setAnimation(0, "Pat_End", true);
                             updateUI("Pat_End");
                             
                             VoiceManager.playPat(() => {
-                                // 🌟 2. 延遲 500 毫秒
                                 voiceRecoveryTimer = setTimeout(() => {
                                     player.animationState.setAnimation(0, "Idle_1", true);
                                     updateUI("Idle_1");
@@ -1026,18 +1042,15 @@
                             safeStartIdle();
                         }
                     } else if (hitZoneOnDown && dragDistance < 10) {
-                        // 點擊事件 (敲頭)
                         if ((hitZoneOnDown.name === "頭部" || hitZoneOnDown.name === "臉頰") && animNames.includes("Smash_End_1")) {
                             
                             player.animationState.setAnimation(0, "Smash_End_1", false);
                             if (animNames.includes("Smash_End_2")) {
-                                // 🌟 Smash_End_2 (哭泣/暈眩表情) 改為 true 循環
                                 player.animationState.addAnimation(0, "Smash_End_2", true, 0);
                             }
                             updateUI("Smash_End");
                             
                             VoiceManager.playSmash(() => {
-                                // 🌟 延遲 500 毫秒
                                 voiceRecoveryTimer = setTimeout(() => {
                                     player.animationState.setAnimation(0, "Idle_1", true);
                                     updateUI("Idle_1");
@@ -1050,7 +1063,7 @@
                     } else {
                         safeStartIdle();
                     }
-
+                };
             
                 canvas.addEventListener('pointerup', stopDrag);
                 canvas.addEventListener('pointercancel', stopDrag);
