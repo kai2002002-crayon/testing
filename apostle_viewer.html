@@ -787,16 +787,22 @@
                 function getHitZone(mouseX, mouseY) {
     if (!getIsLobby()) return null;
     
-    // 1. 取得畫布矩陣
     const rect = canvas.getBoundingClientRect();
-    
-    // 2. 獲取相機參數 (這是最底層、最穩定的屬性)
     const cam = globalPlayer.sceneRenderer.camera;
     
-    // 3. 核心：將螢幕像素座標轉為世界座標 (World Space)
-    // 邏輯：(滑鼠位置在畫布的比例 - 0.5) * 視窗寬度 + 相機中心點
-    const worldX = (mouseX / rect.width - 0.5) * cam.viewportWidth + cam.position.x;
-    const worldY = -(mouseY / rect.height - 0.5) * cam.viewportHeight + cam.position.y;
+    // 1. 取得畫布在螢幕上的真實比例
+    const canvasWidth = rect.width;
+    const canvasHeight = rect.height;
+    
+    // 2. 🌟 關鍵修正：計算相機的「縮放比例」與「中心偏移」
+    // 使用 cam.viewportWidth / canvasWidth 取得真正的比例因子
+    const scaleX = cam.viewportWidth / canvasWidth;
+    const scaleY = cam.viewportHeight / canvasHeight;
+    
+    // 3. 將滑鼠座標轉換為相對於相機中心的偏移量
+    // (滑鼠位置 - 畫布中心) * 縮放比例 + 相機位置
+    const worldX = (mouseX - canvasWidth / 2) * scaleX + cam.position.x;
+    const worldY = -(mouseY - canvasHeight / 2) * scaleY + cam.position.y;
     
     let clickedPart = null;
     let minDistance = Infinity;
@@ -812,10 +818,9 @@
         for (let bName of zone.bones) { targetBone = player.skeleton.findBone(bName); if (targetBone) break; }
         
         if (targetBone) {
-            // 直接計算兩點之間的距離
+            // 使用轉換後的 worldX/Y 比對骨骼位置
             const distance = Math.hypot(worldX - targetBone.worldX, worldY - targetBone.worldY);
             
-            // 4. 比對距離
             if (distance < zone.radius && distance < minDistance) { 
                 minDistance = distance; 
                 clickedPart = { ...zone, bone: targetBone }; 
