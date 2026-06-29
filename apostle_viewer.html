@@ -988,6 +988,17 @@
                     lastMouseX = e.clientX;
                     lastMouseY = e.clientY;
                 });
+                // 🌟 新增：滑鼠移動時，檢查是否在互動區，自動切換游標
+                canvas.addEventListener('mousemove', (e) => {
+                    const rect = canvas.getBoundingClientRect();
+                    const hit = getHitZone(e.clientX - rect.left, e.clientY - rect.top);
+                    
+                    if (hit) {
+                        canvas.style.cursor = 'pointer'; // 變成手指
+                    } else {
+                        canvas.style.cursor = 'move';    // 回復原本的十字箭咀
+                    }
+                });
             
                 const stopDrag = (e) => { 
                     delete pointers[e.pointerId];
