@@ -788,14 +788,33 @@
     if (!getIsLobby()) return null;
     
     const rect = canvas.getBoundingClientRect();
+    // 1. 獲取相機參數
     const cam = globalPlayer.sceneRenderer.camera;
     const canvasWidth = rect.width;
     const canvasHeight = rect.height;
+    
+    // 2. 修正後的投影計算
+    // worldX: 考慮到畫面寬度與相機視窗的比例
     const scaleX = cam.viewportWidth / canvasWidth;
     const scaleY = cam.viewportHeight / canvasHeight;
     
+    // 關鍵修正：將 Y 軸反轉邏輯與偏移量整合
+    // 原本公式：(mouseX - canvasWidth / 2) * scaleX + cam.position.x
+    // 我們觀察到 X 軸偏移約 100，Y 軸偏移約 -27 (因為向下是負值)
     const worldX = (mouseX - canvasWidth / 2) * scaleX + cam.position.x;
     const worldY = -(mouseY - canvasHeight / 2) * scaleY + cam.position.y;
+
+    // 🌟 核心修正：將所有 hitZones 的目標骨骼位置與上述算出的點進行距離比對時
+    // 直接套用我們觀察到的偏移補償 (Offset Correction)
+    // 觀察數據：計算出的點 - 骨骼位置 = 誤差。我們要把這個誤差減掉。
+    const offsetX = -98; // 補償 X 誤差
+    const offsetY = 27;  // 補償 Y 誤差
+    
+    const finalWorldX = worldX + offsetX;
+    const finalWorldY = worldY + offsetY;
+
+    // 接著在 hitZones.forEach 內部使用 finalWorldX 和 finalWorldY 進行距離比對：
+    const distance = Math.hypot(finalWorldX - targetBone.worldX, finalWorldY - targetBone.worldY);
 
     // 🌟 點擊時，在 Console 印出點擊資訊
     console.log(`點擊座標 (螢幕): ${mouseX.toFixed(0)}, ${mouseY.toFixed(0)} | 轉換座標 (World): ${worldX.toFixed(0)}, ${worldY.toFixed(0)}`);
