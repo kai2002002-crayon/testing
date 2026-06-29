@@ -785,46 +785,54 @@
                 }, { passive: false });
             
                 function getHitZone(mouseX, mouseY) {
-                    if (!getIsLobby()) return null;
-                    
-                    // 1. 取得畫布矩陣
-                    const rect = canvas.getBoundingClientRect();
-                    
-                    // 2. 🌟 利用 Spine 內建轉換：直接把滑鼠的視窗座標(x,y)轉成 World 座標
-                    // 這是最精確的方法，完全不需要手算比例
-                    const worldPos = { x: 0, y: 0 };
-                    globalPlayer.sceneRenderer.camera.screenToWorld(
-                        { x: mouseX, y: mouseY }, 
-                        { x: 0, y: 0, width: rect.width, height: rect.height }, 
-                        worldPos
-                    );
-                    
-                    let clickedPart = null;
-                    let minDistance = Infinity;
-                    
-                    const hitZones = [
-                        { name: "臉頰", bones: ["Character_Ball_Move", "S1_Ball_R_CT", "Ball_R_CT"], radius: 130 },
-                        { name: "頭部", bones: ["Character_Pat", "S3_Head", "S1_Head", "Head"], radius: 140 }, 
-                        { name: "身體", bones: ["Character_Tickle", "S3_Body_1", "S1_Body_1", "Body_1"], radius: 150 }
-                    ];
-                    
-                    hitZones.forEach(zone => {
-                        let targetBone = null;
-                        for (let bName of zone.bones) { targetBone = player.skeleton.findBone(bName); if (targetBone) break; }
-                        
-                        if (targetBone) {
-                            // 3. 直接計算 World 距離，這就跟骨骼位置絕對對齊了
-                            const distance = Math.hypot(worldPos.x - targetBone.worldX, worldPos.y - targetBone.worldY);
-                            
-                            // 這裡 radius 不需要再除以縮放比例，因為我們是在 World Space 做計算
-                            if (distance < zone.radius && distance < minDistance) { 
-                                minDistance = distance; 
-                                clickedPart = { ...zone, bone: targetBone }; 
-                            }
-                        }
-                    });
-                    return clickedPart;
-                }
+    if (!getIsLobby()) return null;
+    
+    const rect = canvas.getBoundingClientRect();
+    const player = globalPlayer;
+
+    // 1. 取得畫布的寬高比例，將滑鼠座標正規化為 -1 到 1 的 NDC 座標
+    const x = ((mouseX / rect.width) * 2) - 1;
+    const y = -(((mouseY / rect.height) * 2) - 1); // Y 軸翻轉
+
+    // 2. 🌟 最穩定的轉換法：直接利用 Spine 內建相機矩陣投影
+    // 這樣轉換出來的 worldPos 就是角色所在的 World 座標空間
+    const camera = player.sceneRenderer.camera;
+    const worldPos = { x: 0, y: 0 };
+    
+    // 使用矩陣運算將 NDC 轉回 World
+    const invViewProj = new spine.Matrix4();
+    camera.getViewProjectionMatrix(invViewProj);
+    invViewProj.invert();
+    
+    const vec = new spine.Vector3(x, y, 0);
+    vec.project(invViewProj);
+    
+    worldPos.x = vec.x;
+    worldPos.y = vec.y;
+    
+    let clickedPart = null;
+    let minDistance = Infinity;
+    
+    const hitZones = [
+        { name: "臉頰", bones: ["Character_Ball_Move", "S1_Ball_R_CT", "Ball_R_CT"], radius: 130 },
+        { name: "頭部", bones: ["Character_Pat", "S3_Head", "S1_Head", "Head"], radius: 140 }, 
+        { name: "身體", bones: ["Character_Tickle", "S3_Body_1", "S1_Body_1", "Body_1"], radius: 150 }
+    ];
+    
+    hitZones.forEach(zone => {
+        let targetBone = null;
+        for (let bName of zone.bones) { targetBone = player.skeleton.findBone(bName); if (targetBone) break; }
+        
+        if (targetBone) {
+            const distance = Math.hypot(worldPos.x - targetBone.worldX, worldPos.y - targetBone.worldY);
+            if (distance < zone.radius && distance < minDistance) { 
+                minDistance = distance; 
+                clickedPart = { ...zone, bone: targetBone }; 
+            }
+        }
+    });
+    return clickedPart;
+}
             
                 canvas.addEventListener('pointerdown', (e) => {
                     pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
