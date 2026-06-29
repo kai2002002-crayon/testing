@@ -820,6 +820,16 @@
         }
         
         if (bone) {
+            // 🌟 這裡判斷如果是臉頰，就給它一個額外的偏移量
+            // 如果是正數，判定區域會往右；如果是負數，往左。
+            // 這裡設定 -30 像素，您可以根據需要修改數值
+            let boneWorldX = bone.worldX;
+            let boneWorldY = bone.worldY;
+            
+            if (zone.name === "臉頰") {
+                boneWorldX -= 30; // 往左平移 30 像素
+                boneWorldY -= 30;
+            }
             // 使用轉換後的 worldX/Y 比對骨骼位置
             const distance = Math.hypot(worldX - bone.worldX, worldY - bone.worldY);
             
