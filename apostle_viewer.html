@@ -731,6 +731,7 @@
             
                 let hasTriggeredRub = false; 
                 let tickleTimer = null; 
+                let voiceRecoveryTimer = null;
             
                 // 🌟 安全獲取當前環境狀態 (兼容 spine_viewer 和 char_detail)
                 const getIsLobby = () => typeof currentMode === 'undefined' || currentMode === 'lobby';
@@ -804,6 +805,7 @@
                 canvas.addEventListener('pointerdown', (e) => {
                     pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
                     const pointerKeys = Object.keys(pointers);
+                    clearTimeout(voiceRecoveryTimer);
             
                     if (pointerKeys.length === 2) {
                         isDragging = false;
@@ -987,24 +989,27 @@
                     if (hasTriggeredRub) {
                         if (hitZoneOnDown && hitZoneOnDown.name === "臉頰" && animNames.includes("Touch_End")) {
                             // 1. 只設定結束動作，不強制排隊 Idle_1
-                            player.animationState.setAnimation(0, "Touch_End", false);
+                            player.animationState.setAnimation(0, "Touch_End", true);
                             updateUI("Touch_End");
                             
                             // 2. 播放語音，並傳入「聲音結束後的 Callback 動作」
                             VoiceManager.playTouch(() => {
-                                player.animationState.setAnimation(0, "Idle_1", true);
-                                updateUI("Idle_1");
-                                safeStartIdle();
+                                voiceRecoveryTimer = setTimeout(() => {
+                                    player.animationState.setAnimation(0, "Idle_1", true);
+                                    updateUI("Idle_1");
+                                    safeStartIdle();
+                                }, 500);
                             });
 
                         } else if (hitZoneOnDown && hitZoneOnDown.name === "頭部" && animNames.includes("Pat_End")) {
-                            player.animationState.setAnimation(0, "Pat_End", false);
+                            player.animationState.setAnimation(0, "Pat_End", true);
                             updateUI("Pat_End");
                             
-                            VoiceManager.playPat(() => {
-                                player.animationState.setAnimation(0, "Idle_1", true);
-                                updateUI("Idle_1");
-                                safeStartIdle();
+                            voiceRecoveryTimer = setTimeout(() => {
+                                    player.animationState.setAnimation(0, "Idle_1", true);
+                                    updateUI("Idle_1");
+                                    safeStartIdle();
+                                }, 500);
                             });
 
                         } else if (hitZoneOnDown && hitZoneOnDown.name === "身體" && animNames.includes("Tickle_End")) {
@@ -1021,17 +1026,21 @@
                     } else if (hitZoneOnDown && dragDistance < 10) {
                         // 點擊事件 (敲頭)
                         if ((hitZoneOnDown.name === "頭部" || hitZoneOnDown.name === "臉頰") && animNames.includes("Smash_End_1")) {
+                            
                             player.animationState.setAnimation(0, "Smash_End_1", false);
                             if (animNames.includes("Smash_End_2")) {
-                                player.animationState.addAnimation(0, "Smash_End_2", false, 0);
+                                // 🌟 Smash_End_2 (哭泣/暈眩表情) 改為 true 循環
+                                player.animationState.addAnimation(0, "Smash_End_2", true, 0);
                             }
                             updateUI("Smash_End");
                             
-                            // 敲打會連續播放兩段語音，播完後才切換
                             VoiceManager.playSmash(() => {
-                                player.animationState.setAnimation(0, "Idle_1", true);
-                                updateUI("Idle_1");
-                                safeStartIdle();
+                                // 🌟 延遲 500 毫秒
+                                voiceRecoveryTimer = setTimeout(() => {
+                                    player.animationState.setAnimation(0, "Idle_1", true);
+                                    updateUI("Idle_1");
+                                    safeStartIdle();
+                                }, 500);
                             });
                         } else {
                             safeStartIdle();
