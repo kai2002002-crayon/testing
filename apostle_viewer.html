@@ -787,28 +787,16 @@
                 function getHitZone(mouseX, mouseY) {
     if (!getIsLobby()) return null;
     
+    // 1. 取得畫布矩陣
     const rect = canvas.getBoundingClientRect();
-    const player = globalPlayer;
-
-    // 1. 取得畫布的寬高比例，將滑鼠座標正規化為 -1 到 1 的 NDC 座標
-    const x = ((mouseX / rect.width) * 2) - 1;
-    const y = -(((mouseY / rect.height) * 2) - 1); // Y 軸翻轉
-
-    // 2. 🌟 最穩定的轉換法：直接利用 Spine 內建相機矩陣投影
-    // 這樣轉換出來的 worldPos 就是角色所在的 World 座標空間
-    const camera = player.sceneRenderer.camera;
-    const worldPos = { x: 0, y: 0 };
     
-    // 使用矩陣運算將 NDC 轉回 World
-    const invViewProj = new spine.Matrix4();
-    camera.getViewProjectionMatrix(invViewProj);
-    invViewProj.invert();
+    // 2. 獲取相機參數 (這是最底層、最穩定的屬性)
+    const cam = globalPlayer.sceneRenderer.camera;
     
-    const vec = new spine.Vector3(x, y, 0);
-    vec.project(invViewProj);
-    
-    worldPos.x = vec.x;
-    worldPos.y = vec.y;
+    // 3. 核心：將螢幕像素座標轉為世界座標 (World Space)
+    // 邏輯：(滑鼠位置在畫布的比例 - 0.5) * 視窗寬度 + 相機中心點
+    const worldX = (mouseX / rect.width - 0.5) * cam.viewportWidth + cam.position.x;
+    const worldY = -(mouseY / rect.height - 0.5) * cam.viewportHeight + cam.position.y;
     
     let clickedPart = null;
     let minDistance = Infinity;
@@ -824,13 +812,17 @@
         for (let bName of zone.bones) { targetBone = player.skeleton.findBone(bName); if (targetBone) break; }
         
         if (targetBone) {
-            const distance = Math.hypot(worldPos.x - targetBone.worldX, worldPos.y - targetBone.worldY);
+            // 直接計算兩點之間的距離
+            const distance = Math.hypot(worldX - targetBone.worldX, worldY - targetBone.worldY);
+            
+            // 4. 比對距離
             if (distance < zone.radius && distance < minDistance) { 
                 minDistance = distance; 
                 clickedPart = { ...zone, bone: targetBone }; 
             }
         }
     });
+    
     return clickedPart;
 }
             
