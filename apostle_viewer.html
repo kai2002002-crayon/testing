@@ -788,36 +788,19 @@
     if (!getIsLobby()) return null;
     
     const rect = canvas.getBoundingClientRect();
-    // 1. 獲取相機參數
     const cam = globalPlayer.sceneRenderer.camera;
     const canvasWidth = rect.width;
     const canvasHeight = rect.height;
-    
-    // 2. 修正後的投影計算
-    // worldX: 考慮到畫面寬度與相機視窗的比例
     const scaleX = cam.viewportWidth / canvasWidth;
     const scaleY = cam.viewportHeight / canvasHeight;
     
-    // 關鍵修正：將 Y 軸反轉邏輯與偏移量整合
-    // 原本公式：(mouseX - canvasWidth / 2) * scaleX + cam.position.x
-    // 我們觀察到 X 軸偏移約 100，Y 軸偏移約 -27 (因為向下是負值)
-    const worldX = (mouseX - canvasWidth / 2) * scaleX + cam.position.x;
-    const worldY = -(mouseY - canvasHeight / 2) * scaleY + cam.position.y;
-
-    // 🌟 核心修正：將所有 hitZones 的目標骨骼位置與上述算出的點進行距離比對時
-    // 直接套用我們觀察到的偏移補償 (Offset Correction)
-    // 觀察數據：計算出的點 - 骨骼位置 = 誤差。我們要把這個誤差減掉。
-    const offsetX = -98; // 補償 X 誤差
-    const offsetY = 27;  // 補償 Y 誤差
+    // 計算滑鼠對應的 World 座標 (加入偏移補償)
+    // 這裡的 offsetX 和 offsetY 就是您剛才觀察到的數據
+    const offsetX = -98; 
+    const offsetY = 27;
     
-    const finalWorldX = worldX + offsetX;
-    const finalWorldY = worldY + offsetY;
-
-    // 接著在 hitZones.forEach 內部使用 finalWorldX 和 finalWorldY 進行距離比對：
-    const distance = Math.hypot(finalWorldX - targetBone.worldX, finalWorldY - targetBone.worldY);
-
-    // 🌟 點擊時，在 Console 印出點擊資訊
-    console.log(`點擊座標 (螢幕): ${mouseX.toFixed(0)}, ${mouseY.toFixed(0)} | 轉換座標 (World): ${worldX.toFixed(0)}, ${worldY.toFixed(0)}`);
+    const worldX = (mouseX - canvasWidth / 2) * scaleX + cam.position.x + offsetX;
+    const worldY = -(mouseY - canvasHeight / 2) * scaleY + cam.position.y + offsetY;
     
     let clickedPart = null;
     let minDistance = Infinity;
@@ -828,18 +811,21 @@
         { name: "身體", bones: ["Character_Tickle", "S3_Body_1", "S1_Body_1", "Body_1"], radius: 150 }
     ];
     
+    // 🌟 修正重點：確保 targetBone 在迴圈內正確被尋找並指派
     hitZones.forEach(zone => {
-        let targetBone = null;
-        for (let bName of zone.bones) { targetBone = player.skeleton.findBone(bName); if (targetBone) break; }
+        let bone = null;
+        for (let bName of zone.bones) {
+            bone = globalPlayer.skeleton.findBone(bName); // 確保用 globalPlayer
+            if (bone) break;
+        }
         
-        if (targetBone) {
-            // 🌟 順便印出骨骼當前位置，讓我們對比偏移量
-            console.log(`骨骼 ${zone.name}: ${targetBone.worldX.toFixed(0)}, ${targetBone.worldY.toFixed(0)}`);
+        if (bone) {
+            // 使用轉換後的 worldX/Y 比對骨骼位置
+            const distance = Math.hypot(worldX - bone.worldX, worldY - bone.worldY);
             
-            const distance = Math.hypot(worldX - targetBone.worldX, worldY - targetBone.worldY);
             if (distance < zone.radius && distance < minDistance) { 
                 minDistance = distance; 
-                clickedPart = { ...zone, bone: targetBone }; 
+                clickedPart = { ...zone, bone: bone }; 
             }
         }
     });
