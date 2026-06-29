@@ -351,6 +351,8 @@
             
                     const borderTextClass = personalityColors[p] || "border-gray-400 text-gray-400";
                     const borderClass = borderTextClass.split(' ')[0];
+                    const bgUrl = (typeof CHAR_BACKGROUNDS !== 'undefined' && CHAR_BACKGROUNDS[char.race]) ? CHAR_BACKGROUNDS[char.race] : "";
+                    const bgInlineStyle = bgUrl ? `background-image: url('${bgUrl}'); background-size: cover; background-position: center;` : "background-color: #fef3c7;";
             
                     const groupId = `group_${index}`;
                     const btnId = `btn_${index}`;
