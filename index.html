@@ -1738,23 +1738,24 @@
                 try {
                     if (typeof INITIAL_DATA === 'undefined') throw new Error("找不到 INITIAL_DATA，請確認 data_core.js 是否載入成功！");
                     
-                    // 🌟 【極簡精準版】完全比照跑酷小人的直球抓取法
+                    // 🌟 【最終解決版】搜尋整個結構匹配 name 欄位
                     if (typeof characterSkills !== 'undefined') {
+                        // 如果 characterSkills 是一個陣列，或者是包了一層的物件
+                        const skillsArray = Array.isArray(characterSkills) ? characterSkills : Object.values(characterSkills);
+                        
                         INITIAL_DATA.forEach(char => {
-                            // 直接用 char.name 去抓，跟跑酷小人一模一樣！
-                            if (characterSkills[char.name]) {
-                                const skillData = characterSkills[char.name];
-                                const attr = skillData.attribute;
-                                
-                                // 判斷字眼：只要裡面有「魔」字就是魔法，否則就是物理
-                                if (attr && String(attr).includes("魔")) {
+                            // 找到那個 name 屬性與我們目標相符的資料項
+                            const skillData = skillsArray.find(item => item.name === char.name);
+                            
+                            if (skillData && skillData.attribute) {
+                                // 根據 attribute 內容判定
+                                if (String(skillData.attribute).includes("魔")) {
                                     char.type = "魔法";
                                 } else {
                                     char.type = "物理";
                                 }
                             } else {
-                                // 如果真的極少數漏掉了，才用物理防呆
-                                char.type = "物理";
+                                char.type = "物理"; // 找不到時的防呆
                             }
                         });
                     }
