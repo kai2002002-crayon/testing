@@ -1738,13 +1738,34 @@
                 try {
                     if (typeof INITIAL_DATA === 'undefined') throw new Error("找不到 INITIAL_DATA，請確認 data_core.js 是否載入成功！");
                     // 🌟 確保所有腳本載入後，才讀取資料庫裡的攻擊類型
+                    // 🌟 【精準抓取版】讀取攻擊類型 (專門針對 data_skills.js 使用中文名的情況)
                     if (typeof characterSkills !== 'undefined') {
                         INITIAL_DATA.forEach(char => {
-                            // 使用 .trim() 防止資料庫裡有不小心的空白字元導致判斷錯誤
-                            if (characterSkills[char.name] && characterSkills[char.name].attribute) {
-                                char.type = characterSkills[char.name].attribute.trim();
+                            let foundType = null;
+                            
+                            // 1. 強制取得角色的「繁體中文名稱」
+                            let zhName = char.name; 
+                            if (typeof LANG_DICT !== 'undefined' && LANG_DICT['zh-TW'] && LANG_DICT['zh-TW'][char.name]) {
+                                zhName = LANG_DICT['zh-TW'][char.name];
+                            }
+                            
+                            // 2. 用中文名去 characterSkills 裡找資料
+                            const skillData = characterSkills[zhName] || characterSkills[char.name] || characterSkills[t(char.name)];
+                            
+                            if (skillData) {
+                                foundType = skillData.attribute || skillData.Attribute;
                             } else {
-                                char.type = "物理"; // 防呆
+                                // 💡 如果抓不到，會在 F12 開發者工具顯示警告，方便你抓蟲
+                                console.warn(`⚠️ 找不到 [${char.name}] (中文名: ${zhName}) 的技能資料，請檢查 data_skills.js 的名稱是否完全一致！`);
+                            }
+
+                            // 3. 模糊比對：只要包含「魔」字就是魔法，包含「物」字就是物理
+                            if (foundType && String(foundType).includes("魔")) {
+                                char.type = "魔法";
+                            } else if (foundType && String(foundType).includes("物")) {
+                                char.type = "物理";
+                            } else {
+                                char.type = "物理"; // 預設防呆
                             }
                         });
                     }
