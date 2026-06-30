@@ -447,6 +447,10 @@
                         <span class="font-bold text-gray-500 dark:text-gray-400 shrink-0 pt-1 whitespace-nowrap" data-lang-key="stats_job">⚔️ 職業：</span>
                         <div id="filter_job" class="flex flex-wrap gap-1.5 flex-1"></div>
                     </div>
+                    <div class="flex items-start gap-2 w-full">
+                        <span class="font-bold text-gray-500 dark:text-gray-400 shrink-0 pt-1 whitespace-nowrap" data-lang-key="stats_type">💥 類型：</span>
+                        <div id="filter_type" class="flex flex-wrap gap-1.5 flex-1"></div>
+                    </div>
                     <div class="flex flex-col sm:flex-row items-start gap-2 border-t border-dashed border-gray-100 dark:border-gray-700 pt-2 w-full">
                         <span class="font-bold text-amber-800 dark:text-amber-500 shrink-0 pt-1 flex items-center gap-0.5 whitespace-nowrap" data-lang-key="stats_cell">🖍️ 金蠟筆格：</span>
                         <div class="flex flex-col gap-2 flex-1 w-full">
@@ -552,7 +556,18 @@
             let savedStates = {};
             try { savedStates = JSON.parse(localStorage.getItem(storageKey)) || {}; } catch(e) { savedStates = {}; }
             
-            let activeFilters = { personality: [], race: [], position: [], job: [], gridLayer: "all", gridType: [], search: "", displayMode: "all" };
+            let activeFilters = { personality: [], race: [], position: [], job: [], type: [], gridLayer: "all", gridType: [], search: "", displayMode: "all" };
+            
+            // 🌟 初始化讀取 data_skills.js 內的 attribute (攻擊類型)
+            if (typeof INITIAL_DATA !== 'undefined' && typeof characterSkills !== 'undefined') {
+                INITIAL_DATA.forEach(char => {
+                    if (characterSkills[char.name] && characterSkills[char.name].attribute) {
+                        char.type = characterSkills[char.name].attribute;
+                    } else {
+                        char.type = "物理"; // 預設防呆
+                    }
+                });
+            }
             let isFilterOpen = true;
             let isStatsOpen = window.innerWidth >= 768;
             
@@ -595,7 +610,15 @@
                 position_後排: "sprite-Position_Back",
 
                 // 職業
-                job_輸出: "sprite-Job_DPS", job_肉盾: "sprite-Job_Tank", job_輔助: "sprite-Job_Support"
+                job_輸出: "sprite-Job_DPS", job_肉盾: "sprite-Job_Tank", job_輔助: "sprite-Job_Support",
+
+                // 攻擊類型
+                type_物理: "sprite-Type_Physic", type_魔法: "sprite-Type_Magic",
+
+                // 金蠟筆屬性
+                boardon_攻擊: "sprite-boardon_ATK", boardon_防禦: "sprite-boardon_DEF",
+                boardon_血量: "sprite-boardon_HP", boardon_爆擊: "sprite-boardon_CRI",
+                boardon_爆抗: "sprite-boardon_RES"
             };
 
             const CHAR_SPRITE_MAP = {
@@ -1053,7 +1076,7 @@
             function setDisplayMode(mode) { activeFilters.displayMode = mode; ["all", "1", "2", "3"].forEach(m => { const btn = document.getElementById(`btn_disp_${m}`); if(btn) btn.className = (mode === m) ? btnDispActiveStyle : btnInactiveStyle; }); applyFilterUI(); }
             
             function buildFilterPanel() {
-                const keys = { personality: ["天真", "冷靜", "狂亂", "活潑", "憂鬱"], race: [], position: ["前排", "中排", "後排"], job: [] };
+                const keys = { personality: ["天真", "冷靜", "狂亂", "活潑", "憂鬱"], race: [], position: ["前排", "中排", "後排"], job: [], type: ["物理", "魔法"] };
                 INITIAL_DATA.forEach(c => { if (c.race && !keys.race.includes(c.race)) keys.race.push(c.race); if (c.job && !keys.job.includes(c.job)) keys.job.push(c.job); });
                 Object.keys(keys).forEach(category => {
                     const container = document.getElementById(`filter_${category}`); if(!container) return; container.innerHTML = "";
@@ -1083,7 +1106,16 @@
                 if(typeContainer){
                     typeContainer.innerHTML = ""; const types = ["攻擊", "防禦", "血量", "爆擊", "爆抗"];
                     const allTypeBtn = document.createElement("button"); allTypeBtn.innerText = t("全部"); allTypeBtn.id = `btn_filter_gridType_all`; allTypeBtn.className = btnActiveStyle; allTypeBtn.onclick = () => selectGridTypeFilter(""); typeContainer.appendChild(allTypeBtn);
-                    types.forEach(tp => { const btn = document.createElement("button"); btn.innerText = t(tp); btn.id = `btn_filter_gridType_${tp}`; btn.className = btnInactiveStyle; btn.onclick = () => selectGridTypeFilter(tp); typeContainer.appendChild(btn); });
+                    types.forEach(tp => { 
+                        const btn = document.createElement("button"); btn.id = `btn_filter_gridType_${tp}`; btn.className = btnInactiveStyle; btn.onclick = () => selectGridTypeFilter(tp); 
+                        const spriteClass = SPRITE_CLASS_MAP[`boardon_${tp}`];
+                        if (spriteClass) {
+                            btn.innerHTML = `<div class="w-3.5 h-3.5 flex items-center justify-center shrink-0"><div class="sprite-base sprite-common ${spriteClass} shrink-0 scale-[0.25] origin-center"></div></div><span>${t(tp)}</span>`;
+                        } else {
+                            btn.innerText = t(tp);
+                        }
+                        typeContainer.appendChild(btn); 
+                    });
                 }
             }
             
@@ -1109,7 +1141,7 @@
             }
             
             function resetFilters() {
-                selectFilter("personality", ""); selectFilter("race", ""); selectFilter("position", ""); selectFilter("job", ""); selectGridLayerFilter("all"); selectGridTypeFilter("");
+                selectFilter("personality", ""); selectFilter("race", ""); selectFilter("position", ""); selectFilter("job", ""); selectFilter("type", ""); selectGridLayerFilter("all"); selectGridTypeFilter("");
                 document.getElementById("searchInput").value = ""; activeFilters.search = ""; setDisplayMode('all');
             }
             
@@ -1119,6 +1151,7 @@
                     const matchR = activeFilters.race.length === 0 || activeFilters.race.includes(char.race);
                     const matchPos = activeFilters.position.length === 0 || activeFilters.position.includes(char.position);
                     const matchJ = activeFilters.job.length === 0 || activeFilters.job.includes(char.job);
+                    const matchT = activeFilters.type.length === 0 || activeFilters.type.includes(char.type);
                     let matchGrid = true;
                     if (activeFilters.gridType.length > 0) {
                         const layersToSearch = activeFilters.gridLayer === "all" ? [1,2,3] : [parseInt(activeFilters.gridLayer)];
@@ -1128,7 +1161,7 @@
             
                     const cardElement = document.getElementById(`char_card_${char.name}`);
                     if (cardElement) {
-                        if (matchP && matchR && matchPos && matchJ && matchGrid && matchSearch) cardElement.classList.remove("hidden"); else cardElement.classList.add("hidden");
+                        if (matchP && matchR && matchPos && matchJ && matchT && matchGrid && matchSearch) cardElement.classList.remove("hidden"); else cardElement.classList.add("hidden");
                         [1, 2, 3].forEach(l => {
                             const layerWrap = document.getElementById(`layer_wrap_${char.name}_${l}`);
                             if(layerWrap) { if(activeFilters.displayMode === 'all' || activeFilters.displayMode === String(l)) layerWrap.style.display = 'flex'; else layerWrap.style.display = 'none'; }
@@ -1178,6 +1211,7 @@
                         const rSprite = SPRITE_CLASS_MAP[`race_${raceIconName}`] || "";
                         const posSprite = SPRITE_CLASS_MAP[`position_${char.position}`] || "";
                         const jSprite = SPRITE_CLASS_MAP[`job_${char.job}`] || "";
+                        const tSprite = SPRITE_CLASS_MAP[`type_${char.type}`] || "";
                         const bgSprite = SPRITE_CLASS_MAP[`bg_${raceIconName}`] || "sprite-Bg_Unknown";
                         const borderColorClass = personalityBorderColors[char.personality] || "border-gray-300"; 
                         const isOwned = savedStates['owned_' + char.name]; 
@@ -1211,6 +1245,7 @@
                                 ${createTraitNode(rSprite, `fall_r_${char.name}`, t(char.race), `${t('stats_race')} ${t(char.race)}`)}
                                 ${createTraitNode(posSprite, `fall_pos_${char.name}`, t(char.position), `${t('stats_position')} ${t(char.position)}`)}
                                 ${createTraitNode(jSprite, `fall_j_${char.name}`, t(char.job), `${t('stats_job')} ${t(char.job)}`)}
+                                ${createTraitNode(tSprite, `fall_t_${char.name}`, t(char.type), `類型 ${t(char.type)}`)}
                             </div>`;
             
                         nameCol.innerHTML = `
@@ -1269,13 +1304,20 @@
                                     const originalIdx = char[`layer${l}`].indexOf(attr); const stateKey = `${char.name}_l${l}_${attr}_${originalIdx}`;
                                     const isOpened = savedStates[stateKey]; const btnId = `btn_${char.name}_l${l}_${attr}_${originalIdx}`;
                                     const btn = document.createElement('button'); btn.id = btnId;
-                                    const styleConfig = ATTR_STYLES[attr] || { unopened: "bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600", opened: "bg-gray-500 text-white font-bold" };
-                                    btn.className = `char-btn hover-scale px-1 py-1.5 sm:py-2 text-[11px] sm:text-xs text-center border rounded-lg cursor-pointer whitespace-nowrap ${isOpened ? styleConfig.opened : styleConfig.unopened}`;
-                                    btn.innerText = t(attr);
+                                    // 🌟 金蠟筆圖示按鈕樣式設定
+                                    const baseClass = "char-btn hover-scale flex items-center justify-center w-full h-8 sm:h-9 rounded-lg border transition-all duration-200 overflow-hidden cursor-pointer";
+                                    const openClass = "bg-amber-50 dark:bg-gray-600 border-amber-400 dark:border-amber-500 shadow-sm opacity-100 grayscale-0";
+                                    const closeClass = "bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 grayscale opacity-40";
+                                    
+                                    btn.className = `${baseClass} ${isOpened ? openClass : closeClass}`;
+                                    
+                                    const spriteClass = SPRITE_CLASS_MAP[`boardon_${attr}`] || "";
+                                    btn.innerHTML = `<div class="w-full h-full flex items-center justify-center"><div class="sprite-base sprite-common ${spriteClass} shrink-0 scale-[0.45] origin-center transition-all duration-200"></div></div>`;
+
                                     btn.onclick = () => {
                                         savedStates[stateKey] = !savedStates[stateKey];
                                         if(savedStates[stateKey] && !savedStates['owned_' + char.name]) { savedStates['owned_' + char.name] = true; updateOwnershipUI(char.name); }
-                                        btn.className = `char-btn hover-scale px-1 py-1.5 sm:py-2 text-[11px] sm:text-xs text-center border rounded-lg cursor-pointer whitespace-nowrap ${savedStates[stateKey] ? styleConfig.opened : styleConfig.unopened}`;
+                                        btn.className = `${baseClass} ${savedStates[stateKey] ? openClass : closeClass}`;
                                         calculateStats();
                                     };
                                     btnGroup.appendChild(btn);
