@@ -370,7 +370,7 @@
                     <div class="flex flex-row items-center justify-end gap-2 w-full lg:w-auto">
                         <button onclick="toggleAnimation()" class="hidden md:flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center bg-white/80 dark:bg-gray-800/80 border border-amber-300 dark:border-gray-600 rounded-xl shadow-sm transition hover:bg-gray-50 dark:hover:bg-gray-700 shrink-0 backdrop-blur-sm text-xs sm:text-sm" title="開關小坨坨動畫">
                             <div class="w-full h-full flex items-center justify-center overflow-hidden">
-                                <div id="rimAnimIcon" class="sprite-base sprite-common sprite-minirim scale-[0.45] origin-center transition-all duration-200"></div>
+                                <div id="rimAnimIcon" class="sprite-base sprite-common sprite-minirim shrink-0 scale-[0.45] origin-center transition-all duration-200"></div>
                             </div>
                         </button>
                         <a href="apostle_viewer.html" target="_blank" title="前往動態展示器" class="h-10 w-10 sm:h-11 sm:w-11 flex items-center justify-center bg-white/80 dark:bg-gray-800/80 border border-amber-300 dark:border-gray-600 rounded-xl shadow-sm transition hover:bg-amber-100 dark:hover:bg-gray-700 shrink-0 backdrop-blur-sm overflow-hidden group">
@@ -1190,7 +1190,7 @@
                         const displayClass = isUnreleased ? 'hidden' : 'flex';
                         detailBtn.className = `w-8 sm:w-10 shrink-0 ${displayClass} items-center justify-center bg-amber-500/10 hover:bg-amber-300 dark:bg-gray-700/50 dark:hover:bg-gray-600 border-r border-amber-200/50 dark:border-gray-600 transition-colors cursor-pointer group`;
                         detailBtn.title = (window.currentLang === 'en') ? `View details for ${t(char.name)}` : ((window.currentLang === 'ja') ? `${t(char.name)}の詳細データを見る` : `查看 ${t(char.name)} 的詳細資料`);
-                        detailBtn.innerHTML = `<div class="w-full h-full flex items-center justify-center"><div class="sprite-base sprite-common sprite-Album_Icon_Info scale-[0.35] sm:scale-[0.4] opacity-70 group-hover:opacity-100 group-hover:scale-[0.45] sm:group-hover:scale-[0.5] transition-all duration-200 origin-center"></div></div>`;
+                        detailBtn.innerHTML = `<div class="w-full h-full flex items-center justify-center"><div class="sprite-base sprite-common sprite-Album_Icon_Info shrink-0 scale-[0.35] sm:scale-[0.4] opacity-70 group-hover:opacity-100 group-hover:scale-[0.45] sm:group-hover:scale-[0.5] transition-all duration-200 origin-center"></div></div>`;
                         charCard.appendChild(detailBtn);
             
                         const cardInner = document.createElement('div'); cardInner.className = "flex-1 p-3 sm:p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-4 w-full overflow-hidden";
@@ -1219,11 +1219,11 @@
                                     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sprite-base sprite-common ${bgSprite} scale-[0.45] z-0 opacity-90"></div>
                                     <div class="absolute inset-0 bg-white/20 dark:bg-black/20 backdrop-blur-[1px] z-[5]"></div>
                                     <div class="absolute inset-0 flex items-center justify-center z-10 ${isUnreleased ? 'silhouette-mode' : ''}">
-                                        <div class="sprite-base ${charSpriteBase} ${charSpriteClass} scale-[0.75] origin-center"></div>
+                                        <div class="sprite-base ${charSpriteBase} ${charSpriteClass} shrink-0 scale-[0.75] origin-center"></div>
                                     </div>
                                     ${isUnreleased ? '' : `
                                     <div class="avatar-alt absolute inset-0 z-20 flex items-center justify-center bg-[#fcf8f2] dark:bg-gray-800 transition-opacity duration-300">
-                                        <div class="sprite-base ${ultSpriteBase} ${ultSpriteClass} scale-[0.75] origin-center"></div>
+                                        <div class="sprite-base ${ultSpriteBase} ${ultSpriteClass} shrink-0 scale-[0.75] origin-center"></div>
                                     </div>`}
                                 </div>
                                 <div id="fall_av_${char.name}" class="hidden char-avatar-container w-12 h-12 rounded-lg border-2 ${borderColorClass} shadow-sm flex items-center justify-center font-bold text-amber-900 text-lg ${avatarClass} ${isUnreleased ? 'silhouette-mode' : ''}">${isUnreleased ? '?' : t(char.name).charAt(0)}</div>
