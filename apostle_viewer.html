@@ -775,12 +775,12 @@
                     
                     if (!globalPlayer || !globalPlayer.sceneRenderer || !globalPlayer.sceneRenderer.camera) return null;
                     const cam = globalPlayer.sceneRenderer.camera;
-                    
-                    // 1. 將滑鼠坐標精確投影到 Spine 世界坐標系
-                    const worldX = cam.position.x + (mouseX / rect.width - 0.5) * cam.viewportWidth;
-                    const worldY = cam.position.y + ((rect.height - mouseY) / rect.height - 0.5) * cam.viewportHeight;
 
-                    // 2. 🔥 強制刷新世界矩陣，確保剛搬動完角色後，判定框立刻跟上！
+                     // Spine 的坐標系 y 軸是反向的，這裡做個處理
+                    const vec = new spine.Vector2(mouseX, rect.height - mouseY);
+                    cam.screenToWorld(vec, rect.width, rect.height);
+                    
+                    // 刷新世界矩陣 (確保剛移動完後坐標是最新的)
                     player.skeleton.updateWorldTransform();
                  
                     let clickedPart = null;
@@ -796,9 +796,10 @@
                         let targetBone = null;
                         for (let bName of zone.bones) { targetBone = player.skeleton.findBone(bName); if (targetBone) break; }
                         if (targetBone) {
-                            // 直接計算世界坐標距離
-                            const distance = Math.hypot(worldX - targetBone.worldX, worldY - targetBone.worldY);
-                            const scaledRadius = zone.radius * currentZoom;
+                            // 直接比較世界坐標
+                            const distance = Math.hypot(vec.x - targetBone.worldX, vec.y - targetBone.worldY);
+                            // 修正：觸發半徑不需要再除以 zoom，因為 bone.worldX 已經在世界坐標系了
+                            const scaledRadius = zone.radius; 
                             
                             if (distance < scaledRadius && distance < minDistance) { 
                                 minDistance = distance; 
@@ -906,18 +907,19 @@
                     if (hasTriggeredRub && hitZoneOnDown && activeInteractBone) {
                         const isCheek = hitZoneOnDown.name === "臉頰";
                         
-                        // 🌟 修正：利用真實相機比例推算，並移除錯誤的「二次 currentZoom 除算」
+                        // 1. 取得精準的相機比例
                         const cam = globalPlayer.sceneRenderer.camera;
-                        const spineScaleX = cam.viewportWidth / rect.width;
-                        const spineScaleY = cam.viewportHeight / rect.height;
+                        const scaleX = cam.viewportWidth / rect.width;
+                        const scaleY = cam.viewportHeight / rect.height;
                         
-                        const stretchIntensity = isCheek ? 1.2 : 0.4; 
-                        let worldDx = (e.clientX - startX) * spineScaleX * stretchIntensity;
-                        let worldDy = -(e.clientY - startY) * spineScaleY * stretchIntensity;
+                        // 2. 計算總拖曳距離 (這裡要用 e.clientX - startX，而不是單幀的 dx)
+                        const stretchIntensity = isCheek ? 0.8 : 0.5; 
+                        let worldDx = (e.clientX - startX) * scaleX * stretchIntensity;
+                        let worldDy = -(e.clientY - startY) * scaleY * stretchIntensity;
             
                         if (isCheek && worldDx > 0) worldDx = 0; 
                         
-                        // 利用父骨骼反推初始真實坐標
+                        // 3. 【必須保留】利用父骨骼反推初始真實坐標
                         let baseWorld = { x: initialBoneX, y: initialBoneY };
                         if (activeInteractBone.parent) {
                             activeInteractBone.parent.localToWorld(baseWorld);
@@ -926,10 +928,13 @@
                             baseWorld.y = player.skeleton.y + initialBoneY * player.skeleton.scaleY;
                         }
                         
+                        // 4. 加上滑鼠的移動量，得到目標世界坐標
                         let targetWorld = { x: baseWorld.x + worldDx, y: baseWorld.y + worldDy };
-                        // Spine 內建 API 會自動處理縮放與旋轉，不需再手動處理
+                        
+                        // 5. 轉換回骨骼的局部坐標系 (Local)
                         if (activeInteractBone.parent) activeInteractBone.parent.worldToLocal(targetWorld);
                         
+                        // 6. 【彈性限制】計算與初始位置的距離，越拉越吃力
                         let localDx = targetWorld.x - initialBoneX;
                         let localDy = targetWorld.y - initialBoneY;
                         let rawDistance = Math.hypot(localDx, localDy);
@@ -941,9 +946,12 @@
                             localDx = (localDx / rawDistance) * elasticDist;
                             localDy = (localDy / rawDistance) * elasticDist;
                         }
+                        
+                        // 7. 套用最終坐標並強制更新矩陣
                         activeInteractBone.x = initialBoneX + localDx;
                         activeInteractBone.y = initialBoneY + localDy;
-                    } 
+                        player.skeleton.updateWorldTransform();
+                    }
                     else if (!hitZoneOnDown) {
                         // 🌟 修正搬動視角：透過真實攝影機推算 1:1 的平移距離
                         const cam = globalPlayer.sceneRenderer.camera;
