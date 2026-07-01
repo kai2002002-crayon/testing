@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>嘟嘟臉角色動態展示器</title>
         <script src="data_core.js"></script>
+        <link rel="stylesheet" href="sprites.css">
         <script src="https://cdn.tailwindcss.com"></script>
         <link id="dynamicFavicon" rel="icon" href="https://i.postimg.cc/mkfSTq5k/Favicon.png" type="image/png">
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -93,8 +94,8 @@
         <header class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-4 sm:p-5 rounded-2xl shadow-md border-4 border-amber-400 dark:border-slate-600 flex justify-between items-center relative z-10">
             <div>
                 <h1 class="text-xl sm:text-2xl font-black text-amber-950 dark:text-amber-400 mb-0.5 flex items-center gap-2">
-                    <img src="https://i.postimg.cc/sDstHDN1/Aside-Skill-Rim-3.png" class="h-6 sm:h-7 w-auto object-contain drop-shadow-sm" alt="Rim Icon">
-                    角色動態展示器
+                    <div class="sprite-base sprite-common sprite-Title_Rim shrink-0 scale-[0.45] origin-left -ml-1"></div>
+                    <span class="-ml-2">角色動態展示器</span>
                 </h1>
             </div>
             <button onclick="window.close()" class="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm bg-amber-500 text-white font-bold rounded-xl shadow hover:bg-amber-600 transition shrink-0">
@@ -114,7 +115,7 @@
         <section id="spineViewerSection" class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-4 sm:p-5 rounded-2xl shadow-md border-4 border-amber-400 dark:border-slate-600 transition-all">
             <div class="flex justify-between items-center mb-4 border-b border-amber-100 dark:border-slate-700 pb-3">
                 <div class="flex items-center gap-3">
-                    <img id="activeCharIcon" src="" class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg border-2 border-amber-400 shadow-sm object-cover bg-white dark:bg-slate-700 hidden">
+                    <div id="activeCharIconContainer" class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg border-2 border-amber-400 shadow-sm overflow-hidden bg-white dark:bg-slate-700 hidden relative items-center justify-center shrink-0"></div>
                     <div>
                         <h2 id="activeCharName" class="text-lg sm:text-xl font-black text-amber-900 dark:text-amber-300">請先選擇坨坨</h2>
                     </div>
@@ -187,7 +188,18 @@
                 "活潑": "border-yellow-400 text-yellow-400", 
                 "憂鬱": "border-purple-400 text-purple-400" 
             };
-            
+            // 🌟 雪碧圖類別對應表
+            const SPRITE_CLASS_MAP = {
+                // 種族背景 (Bg_ 系列)
+                race_龍族: "sprite-Bg_Dragon", race_精靈: "sprite-Bg_Elemental", race_妖精: "sprite-Bg_Elf",
+                race_幽靈: "sprite-Bg_Phantom", race_小人族: "sprite-Bg_Sprite", race_不明: "sprite-Bg_Unknown",
+                race_獸人: "sprite-Bg_Werebeast", race_魔女: "sprite-Bg_Witch",
+                
+                // 性格 (Personality_ 系列)
+                p_天真: "sprite-Personality_Innocence", p_冷靜: "sprite-Personality_Composed",
+                p_狂亂: "sprite-Personality_Madness", p_活潑: "sprite-Personality_Vivacious",
+                p_憂鬱: "sprite-Personality_Depressed"
+            };
             let globalPlayer = null;
             let slotVisibilityMap = {};
             
@@ -361,8 +373,12 @@
                     const header = document.createElement('div');
                     header.className = "flex justify-between items-center cursor-pointer hover:bg-amber-100/50 dark:hover:bg-slate-700/50 p-1.5 rounded-lg transition";
                     header.onclick = () => togglePersonalityGroup(groupId, btnId);
+                    const pSprite = SPRITE_CLASS_MAP[`p_${p}`] || "";
                     header.innerHTML = `
-                        <h3 class="text-xs sm:text-sm font-black text-amber-700 dark:text-amber-500 border-l-4 ${borderClass} pl-2">🎭 性格: ${p}</h3>
+                        <div class="flex items-center gap-1">
+                            <div class="sprite-base sprite-common ${pSprite} shrink-0 scale-[0.35] origin-left -ml-2"></div>
+                            <h3 class="text-xs sm:text-sm font-black text-amber-700 dark:text-amber-500 border-l-4 ${borderClass} pl-1 -ml-3">性格: ${p}</h3>
+                        </div>
                         <span id="${btnId}" class="text-xs text-gray-400">🔼</span>
                     `;
                     
@@ -386,11 +402,18 @@
                         btn.className = "group flex flex-col items-center gap-0.5 transition-transform hover:scale-110 active:scale-95 w-12 sm:w-14";
                         btn.onclick = () => selectCharacter(c, spineName, iconUrl);
             
+                        // 🌟 使用雪碧圖取代原本的 img 與 url
+                        const charSpriteBase = (typeof SPRITE_MAP !== 'undefined' && SPRITE_MAP[c.name]) ? SPRITE_MAP[c.name].base : 'sprite-char';
+                        const charSpriteClass = (typeof SPRITE_MAP !== 'undefined' && SPRITE_MAP[c.name]) ? SPRITE_MAP[c.name].class : `sprite-${c.name}`;
+                        const raceSprite = SPRITE_CLASS_MAP[`race_${c.race}`] || "sprite-Bg_Unknown";
+            
                         btn.innerHTML = `
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl border-2 ${borderClass} overflow-hidden shadow-sm group-hover:shadow-md transition-all relative" 
-                                 style="background-image: url('${raceBg}'); background-size: cover; background-position: center;">
-                                <div class="w-full h-full bg-white/20 dark:bg-black/20 backdrop-blur-[1px]"></div>
-                                ${iconUrl ? `<img src="${iconUrl}" class="w-full h-full object-cover absolute top-0 left-0">` : `<span class="flex h-full items-center justify-center font-bold text-xs absolute top-0 left-0 w-full">${c.name.charAt(0)}</span>`}
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl border-2 ${borderClass} overflow-hidden shadow-sm group-hover:shadow-md transition-all relative flex items-center justify-center">
+                                <div class="absolute inset-0 flex items-center justify-center opacity-80">
+                                    <div class="sprite-base sprite-common ${raceSprite} shrink-0 scale-[0.45]"></div>
+                                </div>
+                                <div class="w-full h-full bg-white/20 dark:bg-black/20 backdrop-blur-[1px] absolute inset-0"></div>
+                                <div class="sprite-base ${charSpriteBase} ${charSpriteClass} shrink-0 scale-[0.65] relative z-10"></div>
                             </div>
                             <span class="text-[9px] sm:text-[10px] font-bold text-gray-600 dark:text-gray-300 group-hover:text-amber-600 dark:group-hover:text-amber-400 text-center w-full truncate leading-tight">${displayName}</span>
                         `;
@@ -452,9 +475,20 @@
                 const textClass = pColors.split(' ')[1];   // 取出 text 顏色
                 
                 // 🌟 2. 替換 Icon 的圖片與外框顏色 (並自動顯示)
-                const iconEl = document.getElementById('activeCharIcon');
-                iconEl.src = iconUrl;
-                iconEl.className = `w-10 h-10 sm:w-12 sm:h-12 rounded-lg border-2 ${borderClass} shadow-sm object-cover bg-white dark:bg-slate-700`;
+                // 🌟 2. 替換 Icon 為雪碧圖組合
+                const iconEl = document.getElementById('activeCharIconContainer');
+                const charSpriteBase = (typeof SPRITE_MAP !== 'undefined' && SPRITE_MAP[charObj.name]) ? SPRITE_MAP[charObj.name].base : 'sprite-char';
+                const charSpriteClass = (typeof SPRITE_MAP !== 'undefined' && SPRITE_MAP[charObj.name]) ? SPRITE_MAP[charObj.name].class : `sprite-${charObj.name}`;
+                const raceSprite = SPRITE_CLASS_MAP[`race_${charObj.race}`] || "sprite-Bg_Unknown";
+                
+                iconEl.innerHTML = `
+                    <div class="absolute inset-0 flex items-center justify-center opacity-80">
+                        <div class="sprite-base sprite-common ${raceSprite} shrink-0 scale-[0.45]"></div>
+                    </div>
+                    <div class="w-full h-full bg-white/20 dark:bg-black/20 backdrop-blur-[1px] absolute inset-0"></div>
+                    <div class="sprite-base ${charSpriteBase} ${charSpriteClass} shrink-0 scale-[0.65] relative z-10"></div>
+                `;
+                iconEl.className = `w-10 h-10 sm:w-12 sm:h-12 rounded-lg border-2 ${borderClass} shadow-sm overflow-hidden bg-white dark:bg-slate-700 flex items-center justify-center shrink-0 relative`;
                 
                 // 🌟 3. 替換名稱與文字顏色
                 const nameEl = document.getElementById('activeCharName');
