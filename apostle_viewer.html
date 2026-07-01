@@ -724,7 +724,33 @@
                 const canvas = container.querySelector('canvas');
                 if (!canvas) return;
                 canvas.style.touchAction = 'none';
-            
+                // 🌟 無敵坐標轉換器：強行將滑鼠坐標轉為 100% 精準的 Spine 世界坐標
+                function screenToWorldCoords(cam, screenX, screenY, rect) {
+                    let vec;
+                    // 尋找 Spine 內建的 Vector3
+                    if (typeof spine !== 'undefined' && spine.webgl && spine.webgl.Vector3) {
+                        vec = new spine.webgl.Vector3(screenX, rect.height - screenY, 0);
+                    } else if (typeof spine !== 'undefined' && spine.Vector3) {
+                        vec = new spine.Vector3(screenX, rect.height - screenY, 0);
+                    } else {
+                        // 如果找不到，就用原生 JS 模擬一個具備 project 功能的假 Vector3
+                        vec = {
+                            x: screenX, y: rect.height - screenY, z: 0,
+                            set: function(x, y, z) { this.x = x; this.y = y; this.z = z; return this; },
+                            project: function(matrix) {
+                                let m = matrix.values; 
+                                let x = this.x, y = this.y, z = this.z;
+                                let invW = 1.0 / (x * m[3] + y * m[7] + z * m[11] + m[15]);
+                                this.x = (x * m[0] + y * m[4] + z * m[8] + m[12]) * invW;
+                                this.y = (x * m[1] + y * m[5] + z * m[9] + m[13]) * invW;
+                                this.z = (x * m[2] + y * m[6] + z * m[10] + m[14]) * invW;
+                                return this;
+                            }
+                        };
+                    }
+                    cam.screenToWorld(vec, rect.width, rect.height);
+                    return { x: vec.x, y: vec.y };
+                }
                 let pointers = {}; 
                 let initialPinchDistance = 0;
                 let isDragging = false;
@@ -772,15 +798,11 @@
                 function getHitZone(mouseX, mouseY) {
                     if (!getIsLobby()) return null;
                     const rect = canvas.getBoundingClientRect();
-                    
                     if (!globalPlayer || !globalPlayer.sceneRenderer || !globalPlayer.sceneRenderer.camera) return null;
                     const cam = globalPlayer.sceneRenderer.camera;
-
-                     // Spine 的坐標系 y 軸是反向的，這裡做個處理
-                    const vec = new spine.Vector2(mouseX, rect.height - mouseY);
-                    cam.screenToWorld(vec, rect.width, rect.height);
                     
-                    // 刷新世界矩陣 (確保剛移動完後坐標是最新的)
+                    // 🌟 直接呼叫無敵轉換器，取得完美的判定坐標
+                    const worldPos = screenToWorldCoords(cam, mouseX, mouseY, rect);
                     player.skeleton.updateWorldTransform();
                  
                     let clickedPart = null;
@@ -796,12 +818,9 @@
                         let targetBone = null;
                         for (let bName of zone.bones) { targetBone = player.skeleton.findBone(bName); if (targetBone) break; }
                         if (targetBone) {
-                            // 直接比較世界坐標
-                            const distance = Math.hypot(vec.x - targetBone.worldX, vec.y - targetBone.worldY);
-                            // 修正：觸發半徑不需要再除以 zoom，因為 bone.worldX 已經在世界坐標系了
-                            const scaledRadius = zone.radius; 
-                            
-                            if (distance < scaledRadius && distance < minDistance) { 
+                            // 坐標已在同一個世界，直接相減計算距離！
+                            const distance = Math.hypot(worldPos.x - targetBone.worldX, worldPos.y - targetBone.worldY);
+                            if (distance < zone.radius && distance < minDistance) { 
                                 minDistance = distance; 
                                 clickedPart = { ...zone, bone: targetBone }; 
                             }
@@ -906,16 +925,16 @@
             
                     if (hasTriggeredRub && hitZoneOnDown && activeInteractBone) {
                         const isCheek = hitZoneOnDown.name === "臉頰";
-                        
-                        // 1. 取得精準的相機比例
                         const cam = globalPlayer.sceneRenderer.camera;
-                        const scaleX = cam.viewportWidth / rect.width;
-                        const scaleY = cam.viewportHeight / rect.height;
                         
-                        // 2. 計算總拖曳距離 (這裡要用 e.clientX - startX，而不是單幀的 dx)
+                        // 1. 把起點與現在的滑鼠位置，精準轉換為世界坐標
+                        const startWorld = screenToWorldCoords(cam, startX - rect.left, startY - rect.top, rect);
+                        const currentWorld = screenToWorldCoords(cam, e.clientX - rect.left, e.clientY - rect.top, rect);
+                        
+                        // 2. 兩者的差距，就是 100% 精準的世界拖曳距離！不會跑太遠也不會太短
                         const stretchIntensity = isCheek ? 0.8 : 0.5; 
-                        let worldDx = (e.clientX - startX) * scaleX * stretchIntensity;
-                        let worldDy = -(e.clientY - startY) * scaleY * stretchIntensity;
+                        let worldDx = (currentWorld.x - startWorld.x) * stretchIntensity;
+                        let worldDy = (currentWorld.y - startWorld.y) * stretchIntensity;
             
                         if (isCheek && worldDx > 0) worldDx = 0; 
                         
@@ -928,13 +947,9 @@
                             baseWorld.y = player.skeleton.y + initialBoneY * player.skeleton.scaleY;
                         }
                         
-                        // 4. 加上滑鼠的移動量，得到目標世界坐標
                         let targetWorld = { x: baseWorld.x + worldDx, y: baseWorld.y + worldDy };
-                        
-                        // 5. 轉換回骨骼的局部坐標系 (Local)
                         if (activeInteractBone.parent) activeInteractBone.parent.worldToLocal(targetWorld);
                         
-                        // 6. 【彈性限制】計算與初始位置的距離，越拉越吃力
                         let localDx = targetWorld.x - initialBoneX;
                         let localDy = targetWorld.y - initialBoneY;
                         let rawDistance = Math.hypot(localDx, localDy);
@@ -946,17 +961,16 @@
                             localDx = (localDx / rawDistance) * elasticDist;
                             localDy = (localDy / rawDistance) * elasticDist;
                         }
-                        
-                        // 7. 套用最終坐標並強制更新矩陣
                         activeInteractBone.x = initialBoneX + localDx;
                         activeInteractBone.y = initialBoneY + localDy;
                         player.skeleton.updateWorldTransform();
-                    }
+                    } 
                     else if (!hitZoneOnDown) {
-                        // 🌟 修正搬動視角：透過真實攝影機推算 1:1 的平移距離
                         const cam = globalPlayer.sceneRenderer.camera;
-                        const scaleFactorX = cam.viewportWidth / rect.width;
-                        const scaleFactorY = cam.viewportHeight / rect.height;
+                        
+                        // 🌟 精準計算前一次與現在滑鼠移動的「世界坐標差」
+                        const currentWorld = screenToWorldCoords(cam, e.clientX - rect.left, e.clientY - rect.top, rect);
+                        const prevWorld = screenToWorldCoords(cam, lastMouseX - rect.left, lastMouseY - rect.top, rect);
                         
                         const isLobby = getIsLobby();
                         const oldZoomOffsetY = isLobby ? 600 * (1 - currentZoom) : 0;
@@ -964,13 +978,12 @@
                         let currentPanX = player.skeleton.x;
                         let currentPanY = player.skeleton.y - oldZoomOffsetY;
             
-                        currentPanX += dx * scaleFactorX;
-                        currentPanY -= dy * scaleFactorY;
+                        // 直接加上精準的世界差異 (1:1對齊，絕對不飄)
+                        currentPanX += (currentWorld.x - prevWorld.x);
+                        currentPanY += (currentWorld.y - prevWorld.y);
             
                         player.skeleton.x = currentPanX;
                         player.skeleton.y = currentPanY + oldZoomOffsetY;
-                        
-                        // 🔥 確保拖曳平移時，骨架的世界坐標也立刻被更新，避免下一幀點擊出現偏差
                         player.skeleton.updateWorldTransform();
                     }
             
