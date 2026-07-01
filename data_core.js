@@ -9,8 +9,8 @@
 const LANG_DICT = {
     "zh-TW": {
         app_title: "嘟嘟臉金蠟筆記事本", app_subtitle: "祝各位教主日日出金蠟筆", stats_title: "📊 統計與加成資訊",
-        stats_stat: "統計", stats_character: "坨坨", stats_attack: "攻", stats_defence: "防", stats_hp: "血",
-        stats_critical: "爆", stats_resist: "抗", stats_personality: "🔮 性格：", stats_race: "🧬 種族：",
+        stats_stat: "統計", stats_character: "坨坨", stats_attack: "攻擊", stats_defence: "防禦", stats_hp: "血量",
+        stats_critical: "爆擊", stats_resist: "爆抗", stats_personality: "🔮 性格：", stats_race: "🧬 種族：",
         stats_position: "🗺️ 站位：", stats_job: "⚔️ 職業：", stats_cell: "🖍️ 金蠟筆格：", stats_crayon: "金蠟筆",
         stats_level: "指定層數:", cell_kind: "格子種類:", level_1st: "第一層", level_2nd: "第二層", level_3rd: "第三層",
         total_owned: "已擁有坨坨", crayon_used: "蠟筆消耗量", crayon_needed: "蠟筆需求量",
