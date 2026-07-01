@@ -1282,11 +1282,15 @@
                         } else {
                             [1, 2, 3].forEach(l => {
                                 const layerBox = document.createElement('div'); layerBox.id = `layer_wrap_${char.name}_${l}`;
-                                let bgStyle = "bg-amber-50/40 border-amber-100/60 dark:border-amber-900/40", badgeText = `🥇 ${t("level_1st")}`, gridCols = "grid-cols-2";
-                                if (l === 2) { bgStyle = "bg-orange-50/40 border-orange-100/60 dark:border-orange-900/40"; badgeText = `🥈 ${t("level_2nd")}`; gridCols = "grid-cols-3"; }
-                                else if (l === 3) { bgStyle = "bg-red-50/40 border-red-100/60 dark:border-red-900/40"; badgeText = `🥉 ${t("level_3rd")}`; gridCols = "grid-cols-4"; }
-            
-                                layerBox.className = `${bgStyle} flex-1 p-2 rounded-xl border flex-col justify-between backdrop-blur-sm`; layerBox.innerHTML = `<span class="text-[10px] font-bold mb-1 block opacity-70 whitespace-nowrap">${badgeText}</span>`;
+                                // 🌟 改成這樣：加入 flexWeight 變數
+                                let bgStyle = "bg-amber-50/40 border-amber-100/60 dark:border-amber-900/40", badgeText = `🥇 ${t("level_1st")}`, gridCols = "grid-cols-2", flexWeight = "2";
+                                if (l === 2) { bgStyle = "bg-orange-50/40 border-orange-100/60 dark:border-orange-900/40"; badgeText = `🥈 ${t("level_2nd")}`; gridCols = "grid-cols-3"; flexWeight = "3"; }
+                                else if (l === 3) { bgStyle = "bg-red-50/40 border-red-100/60 dark:border-red-900/40"; badgeText = `🥉 ${t("level_3rd")}`; gridCols = "grid-cols-4"; flexWeight = "4"; }
+                                
+                                // 🌟 移除原本的 flex-1，改用 style.flex 來按照 2:3:4 比例分配寬度
+                                layerBox.className = `${bgStyle} p-2 rounded-xl border flex-col justify-between backdrop-blur-sm`;
+                                layerBox.style.flex = flexWeight; 
+                                layerBox.innerHTML = `<span class="text-[10px] font-bold mb-1 block opacity-70 whitespace-nowrap">${badgeText}</span>`;
                                 const btnGroup = document.createElement('div'); btnGroup.className = `grid ${gridCols} gap-1.5 h-full content-start`;
                                 const sortedAttrs = char[`layer${l}`].slice().sort((a, b) => ATTR_PRIORITY.indexOf(a) - ATTR_PRIORITY.indexOf(b));
             
@@ -1295,14 +1299,28 @@
                                     const isOpened = savedStates[stateKey]; const btnId = `btn_${char.name}_l${l}_${attr}_${originalIdx}`;
                                     const btn = document.createElement('button'); btn.id = btnId;
                                     // 🌟 金蠟筆圖示按鈕樣式設定
-                                    const baseClass = "char-btn hover-scale flex items-center justify-center w-full h-8 sm:h-9 rounded-lg border transition-all duration-200 overflow-hidden cursor-pointer";
-                                    const openClass = "bg-amber-50 dark:bg-gray-600 border-amber-400 dark:border-amber-500 shadow-sm opacity-100 grayscale-0";
-                                    const closeClass = "bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 grayscale opacity-40";
-                                    
+                                    const attrTextColors = {
+                                        "攻擊": "text-orange-600 dark:text-orange-400",
+                                        "防禦": "text-blue-600 dark:text-blue-400",
+                                        "血量": "text-green-600 dark:text-green-400",
+                                        "爆擊": "text-red-600 dark:text-red-400",
+                                        "爆抗": "text-purple-600 dark:text-purple-400"
+                                    };
+                                    // 🌟 修改：baseClass 將高度稍微拉高一點，讓圖文排版更舒服
+                                    const baseClass = "char-btn hover-scale flex items-center justify-center w-full h-[45px] sm:h-[50px] rounded-lg border transition-all duration-200 overflow-hidden cursor-pointer";
+                                    const openClass = `bg-amber-50 dark:bg-gray-700 border-amber-400 dark:border-amber-500 shadow-sm opacity-100`;
+                                    const closeClass = "bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 opacity-60";
                                     btn.className = `${baseClass} ${isOpened ? openClass : closeClass}`;
                                     
                                     const spriteClass = SPRITE_CLASS_MAP[`boardon_${attr}`] || "";
-                                    btn.innerHTML = `<div class="w-full h-full flex items-center justify-center"><div class="sprite-base sprite-common ${spriteClass} shrink-0 scale-[0.45] origin-center transition-all duration-200"></div></div>`;
+                                    const textColor = isOpened ? (attrTextColors[attr] || 'text-gray-700') : 'text-gray-400';
+
+                                    btn.innerHTML = `
+                                        <div class="w-full h-full flex flex-col items-center justify-center gap-0.5">
+                                            <div class="sprite-base sprite-common ${spriteClass} shrink-0 scale-[0.35] origin-center transition-all duration-200"></div>
+                                            <span class="text-[9px] font-bold ${textColor} transition-all duration-200 scale-90">${t(attr)}</span>
+                                        </div>
+                                    `;
 
                                     btn.onclick = () => {
                                         savedStates[stateKey] = !savedStates[stateKey];
