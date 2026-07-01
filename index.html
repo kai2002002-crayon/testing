@@ -1308,9 +1308,13 @@
                                     };
                                     // 🌟 修改：baseClass 將高度稍微拉高一點，讓圖文排版更舒服
                                     const baseClass = "char-btn hover-scale flex items-center justify-center w-full h-[45px] sm:h-[50px] rounded-lg border transition-all duration-200 overflow-hidden cursor-pointer";
-                                    const openClass = `bg-amber-50 dark:bg-gray-700 border-amber-400 dark:border-amber-500 shadow-sm opacity-100`;
-                                    const closeClass = "bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 opacity-60";
-                                    btn.className = `${baseClass} ${isOpened ? openClass : closeClass}`;
+
+                                   // 🌟 修改：openClass 確保圖示清晰且文字顯眼
+                                   const openClass = `bg-amber-50 dark:bg-gray-700 border-amber-400 dark:border-amber-500 shadow-sm opacity-100`;
+                                   // 🌟 修改：closeClass 讓未點亮狀態的圖片與文字都呈現低調灰色
+                                   const closeClass = "bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 opacity-60";
+
+                                   btn.className = `${baseClass} ${isOpened ? openClass : closeClass}`;
                                                                         
                                     const spriteClass = SPRITE_CLASS_MAP[`boardon_${attr}`] || "";
                                     const textColor = isOpened ? (attrTextColors[attr] || 'text-gray-700') : 'text-gray-400';
