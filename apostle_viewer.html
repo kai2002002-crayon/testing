@@ -549,7 +549,13 @@
             
                        document.getElementById('playerControls').classList.remove('opacity-50', 'pointer-events-none');
                        setSpeed(1);
-            
+                       // 🌟 開啟骨架 Debug 顯示模式
+                       if (player.sceneRenderer) {
+                           player.sceneRenderer.debugRendering = true; // 總開關
+                           player.sceneRenderer.debugBones = true;     // 顯示骨骼線條與節點 (通常是綠色/紅色/紫色)
+                           player.sceneRenderer.debugRegions = false;  // 隱藏圖片外框 (關閉以避免畫面太亂)
+                           player.sceneRenderer.debugMeshes = false;   // 隱藏網格 (關閉以避免畫面太亂)
+                       }
                        const skins = player.skeleton.data.skins;
                        if (skins && skins.length > 0) {
                            const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default') || skins[0];
