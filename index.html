@@ -1311,8 +1311,7 @@
                                     const openClass = `bg-amber-50 dark:bg-gray-700 border-amber-400 dark:border-amber-500 shadow-sm opacity-100`;
                                     const closeClass = "bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 opacity-60";
                                     btn.className = `${baseClass} ${isOpened ? openClass : closeClass}`;
-                                    btn.innerHTML = `<div class="w-full h-full flex items-center justify-center"><span class="text-[11px] sm:text-xs font-bold transition-all duration-200">${t(attr)}</span></div>`;
-                                    
+                                                                        
                                     const spriteClass = SPRITE_CLASS_MAP[`boardon_${attr}`] || "";
                                     const textColor = isOpened ? (attrTextColors[attr] || 'text-gray-700') : 'text-gray-400';
 
