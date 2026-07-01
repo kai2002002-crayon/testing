@@ -751,31 +751,8 @@
                 const updateUI = (text) => { const el = document.getElementById('animSelectText'); if (el) el.innerText = text; };
                 const safeClearIdle = () => { if (typeof globalIdleTimer !== 'undefined') clearTimeout(globalIdleTimer); };
                 const safeStartIdle = () => { if (typeof startRandomAnimationLoop === 'function') startRandomAnimationLoop(); };
-            
-                // 🌟 核心大修正：直接取用 Spine 內部真實 Camera 的投影數據，確保 100% 像素級對齊！
-                function getEffectiveViewport(canvasRect) {
-                    if (globalPlayer && globalPlayer.sceneRenderer && globalPlayer.sceneRenderer.camera) {
-                        const cam = globalPlayer.sceneRenderer.camera;
-                        return {
-                            x: cam.position.x - (cam.viewportWidth / 2),
-                            y: cam.position.y - (cam.viewportHeight / 2),
-                            width: cam.viewportWidth,
-                            height: cam.viewportHeight
-                        };
-                    }
-                    // 備用方案：如果抓不到相機，退回基礎比例計算
-                    const baseView = getBaseViewport();
-                    const scale = Math.min(canvasRect.width / baseView.width, canvasRect.height / baseView.height);
-                    const effW = canvasRect.width / scale;
-                    const effH = canvasRect.height / scale;
-                    return {
-                        x: baseView.x - (effW - baseView.width) / 2,
-                        y: baseView.y - (effH - baseView.height) / 2,
-                        width: effW,
-                        height: effH
-                    };
-                }
-            
+                
+// 滾輪縮放保留不動
                 canvas.addEventListener('wheel', (e) => {
                     e.preventDefault();
                     if (!player.skeleton) return;
@@ -791,37 +768,46 @@
                     player.skeleton.y = currentPanY + (isLobby ? 600 * (1 - currentZoom) : 0);
                 }, { passive: false });
             
+                // 🌟 終極坐標對齊版：直接依賴 Spine 相機矩陣
                 function getHitZone(mouseX, mouseY) {
-                 if (!getIsLobby()) return null;
-                 const rect = canvas.getBoundingClientRect();
-                 const effView = getEffectiveViewport(rect, getBaseViewport());
+                    if (!getIsLobby()) return null;
+                    const rect = canvas.getBoundingClientRect();
+                    
+                    if (!globalPlayer || !globalPlayer.sceneRenderer || !globalPlayer.sceneRenderer.camera) return null;
+                    const cam = globalPlayer.sceneRenderer.camera;
+                    
+                    // 1. 將滑鼠坐標精確投影到 Spine 世界坐標系
+                    const worldX = cam.position.x + (mouseX / rect.width - 0.5) * cam.viewportWidth;
+                    const worldY = cam.position.y + ((rect.height - mouseY) / rect.height - 0.5) * cam.viewportHeight;
+
+                    // 2. 🔥 強制刷新世界矩陣，確保剛搬動完角色後，判定框立刻跟上！
+                    player.skeleton.updateWorldTransform();
                  
-                 let clickedPart = null;
-                 let minDistance = Infinity;
+                    let clickedPart = null;
+                    let minDistance = Infinity;
                  
-                 const hitZones = [
-                     { name: "臉頰", bones: ["Character_Ball_Move"], radius: 50 },
-                     { name: "頭部", bones: ["Character_Pat"], radius: 50 }, 
-                     { name: "身體", bones: ["Character_Tickle"], radius: 60 }
-                 ];
+                    const hitZones = [
+                        { name: "臉頰", bones: ["Character_Ball_Move"], radius: 60 },
+                        { name: "頭部", bones: ["Character_Pat"], radius: 60 }, 
+                        { name: "身體", bones: ["Character_Tickle"], radius: 70 }
+                    ];
                  
-                 hitZones.forEach(zone => {
-                     let targetBone = null;
-                     for (let bName of zone.bones) { targetBone = player.skeleton.findBone(bName); if (targetBone) break; }
-                     if (targetBone) {
-                         const boneCanvasX = ((targetBone.worldX - effView.x) / effView.width) * rect.width;
-                         const boneCanvasY = rect.height - ((targetBone.worldY - effView.y) / effView.height) * rect.height;
-                         const distance = Math.hypot(mouseX - boneCanvasX, mouseY - boneCanvasY);
-                         const scaledRadius = (zone.radius * currentZoom) * (rect.height / effView.height);
-                         
-                         if (distance < scaledRadius && distance < minDistance) { 
-                             minDistance = distance; 
-                             clickedPart = { ...zone, bone: targetBone }; 
-                         }
-                     }
-                 });
-                 return clickedPart;
-             }
+                    hitZones.forEach(zone => {
+                        let targetBone = null;
+                        for (let bName of zone.bones) { targetBone = player.skeleton.findBone(bName); if (targetBone) break; }
+                        if (targetBone) {
+                            // 直接計算世界坐標距離
+                            const distance = Math.hypot(worldX - targetBone.worldX, worldY - targetBone.worldY);
+                            const scaledRadius = zone.radius * currentZoom;
+                            
+                            if (distance < scaledRadius && distance < minDistance) { 
+                                minDistance = distance; 
+                                clickedPart = { ...zone, bone: targetBone }; 
+                            }
+                        }
+                    });
+                    return clickedPart;
+                }
             
                 canvas.addEventListener('pointerdown', (e) => {
                     pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
@@ -918,19 +904,20 @@
                     }
             
                     if (hasTriggeredRub && hitZoneOnDown && activeInteractBone) {
-                        const effView = getEffectiveViewport(rect);
                         const isCheek = hitZoneOnDown.name === "臉頰";
                         
-                        const spineScaleX = effView.width / rect.width / currentZoom;
-                        const spineScaleY = effView.height / rect.height / currentZoom;
+                        // 🌟 修正：利用真實相機比例推算，並移除錯誤的「二次 currentZoom 除算」
+                        const cam = globalPlayer.sceneRenderer.camera;
+                        const spineScaleX = cam.viewportWidth / rect.width;
+                        const spineScaleY = cam.viewportHeight / rect.height;
                         
-                        const stretchIntensity = isCheek ? 1.3 : 0.3; 
+                        const stretchIntensity = isCheek ? 1.2 : 0.4; 
                         let worldDx = (e.clientX - startX) * spineScaleX * stretchIntensity;
                         let worldDy = -(e.clientY - startY) * spineScaleY * stretchIntensity;
             
                         if (isCheek && worldDx > 0) worldDx = 0; 
                         
-                        // 🌟 修正：利用父骨骼反推初始真實坐標，徹底消滅指數拉扯飄移！
+                        // 利用父骨骼反推初始真實坐標
                         let baseWorld = { x: initialBoneX, y: initialBoneY };
                         if (activeInteractBone.parent) {
                             activeInteractBone.parent.localToWorld(baseWorld);
@@ -940,6 +927,7 @@
                         }
                         
                         let targetWorld = { x: baseWorld.x + worldDx, y: baseWorld.y + worldDy };
+                        // Spine 內建 API 會自動處理縮放與旋轉，不需再手動處理
                         if (activeInteractBone.parent) activeInteractBone.parent.worldToLocal(targetWorld);
                         
                         let localDx = targetWorld.x - initialBoneX;
@@ -957,10 +945,10 @@
                         activeInteractBone.y = initialBoneY + localDy;
                     } 
                     else if (!hitZoneOnDown) {
-                        // 🌟 修正搬動視角：透過真實攝影機寬高進行 1:1 推算
-                        const effView = getEffectiveViewport(rect);
-                        const scaleFactorX = effView.width / rect.width;
-                        const scaleFactorY = effView.height / rect.height;
+                        // 🌟 修正搬動視角：透過真實攝影機推算 1:1 的平移距離
+                        const cam = globalPlayer.sceneRenderer.camera;
+                        const scaleFactorX = cam.viewportWidth / rect.width;
+                        const scaleFactorY = cam.viewportHeight / rect.height;
                         
                         const isLobby = getIsLobby();
                         const oldZoomOffsetY = isLobby ? 600 * (1 - currentZoom) : 0;
@@ -973,6 +961,9 @@
             
                         player.skeleton.x = currentPanX;
                         player.skeleton.y = currentPanY + oldZoomOffsetY;
+                        
+                        // 🔥 確保拖曳平移時，骨架的世界坐標也立刻被更新，避免下一幀點擊出現偏差
+                        player.skeleton.updateWorldTransform();
                     }
             
                     lastMouseX = e.clientX;
