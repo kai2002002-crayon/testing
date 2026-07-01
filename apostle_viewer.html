@@ -190,15 +190,13 @@
             };
             // 🌟 雪碧圖類別對應表
             const SPRITE_CLASS_MAP = {
-                // 種族背景 (Bg_ 系列)
-                race_龍族: "sprite-Bg_Dragon", race_精靈: "sprite-Bg_Elemental", race_妖精: "sprite-Bg_Elf",
-                race_幽靈: "sprite-Bg_Phantom", race_小人族: "sprite-Bg_Sprite", race_不明: "sprite-Bg_Unknown",
-                race_獸人: "sprite-Bg_Werebeast", race_魔女: "sprite-Bg_Witch",
-                
-                // 性格 (Personality_ 系列)
-                p_天真: "sprite-Personality_Innocence", p_冷靜: "sprite-Personality_Composed",
-                p_狂亂: "sprite-Personality_Madness", p_活潑: "sprite-Personality_Vivacious",
-                p_憂鬱: "sprite-Personality_Depressed"
+                race_龍族: "sprite-Bg_Dragon", race_精靈: "sprite-Bg_Elf", race_妖精: "sprite-Bg_Sprite",
+                race_幽靈: "sprite-Bg_Phantom", race_魔靈: "sprite-Bg_Elemental", race_不明: "sprite-Bg_Unknown",
+                race_獸人: "sprite-Bg_Werebeast", race_魔女: "sprite-Bg_Witch", race_unknown: "sprite-Bg_Unknown"
+            };
+            const CHAR_SPRITE_MAP = {
+                "冷靜": "sprite-char-composed", "憂鬱": "sprite-char-depressed",
+                "天真": "sprite-char-innocence", "狂亂": "sprite-char-madness", "活潑": "sprite-char-vivacious"
             };
             let globalPlayer = null;
             let slotVisibilityMap = {};
@@ -403,9 +401,12 @@
                         btn.onclick = () => selectCharacter(c, spineName, iconUrl);
             
                         // 🌟 使用雪碧圖取代原本的 img 與 url
-                        const charSpriteBase = (typeof SPRITE_MAP !== 'undefined' && SPRITE_MAP[c.name]) ? SPRITE_MAP[c.name].base : 'sprite-char';
-                        const charSpriteClass = (typeof SPRITE_MAP !== 'undefined' && SPRITE_MAP[c.name]) ? SPRITE_MAP[c.name].class : `sprite-${c.name}`;
-                        const raceSprite = SPRITE_CLASS_MAP[`race_${c.race}`] || "sprite-Bg_Unknown";
+                        // 🌟 修正：利用 SpineName (英文) 去抓對應的 class，並補上性格 base
+                        const charSpriteBase = CHAR_SPRITE_MAP[c.personality] || "sprite-char-innocence";
+                        const charSpriteClass = `sprite-${spineName}`;
+                        
+                        let raceKey = c.race; if (raceKey === "???") raceKey = "unknown";
+                        const raceSprite = SPRITE_CLASS_MAP[`race_${raceKey}`] || "sprite-Bg_Unknown";
             
                         btn.innerHTML = `
                             <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl border-2 ${borderClass} overflow-hidden shadow-sm group-hover:shadow-md transition-all relative flex items-center justify-center">
@@ -476,10 +477,13 @@
                 
                 // 🌟 2. 替換 Icon 的圖片與外框顏色 (並自動顯示)
                 // 🌟 2. 替換 Icon 為雪碧圖組合
+                // 🌟 2. 替換 Icon 為雪碧圖組合
                 const iconEl = document.getElementById('activeCharIconContainer');
-                const charSpriteBase = (typeof SPRITE_MAP !== 'undefined' && SPRITE_MAP[charObj.name]) ? SPRITE_MAP[charObj.name].base : 'sprite-char';
-                const charSpriteClass = (typeof SPRITE_MAP !== 'undefined' && SPRITE_MAP[charObj.name]) ? SPRITE_MAP[charObj.name].class : `sprite-${charObj.name}`;
-                const raceSprite = SPRITE_CLASS_MAP[`race_${charObj.race}`] || "sprite-Bg_Unknown";
+                const charSpriteBase = CHAR_SPRITE_MAP[charObj.personality] || "sprite-char-innocence";
+                const charSpriteClass = `sprite-${spineName}`;
+                
+                let raceKey = charObj.race; if (raceKey === "???") raceKey = "unknown";
+                const raceSprite = SPRITE_CLASS_MAP[`race_${raceKey}`] || "sprite-Bg_Unknown";
                 
                 iconEl.innerHTML = `
                     <div class="absolute inset-0 flex items-center justify-center opacity-80">
