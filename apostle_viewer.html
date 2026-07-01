@@ -541,6 +541,7 @@
                    alpha: true,
                    showControls: false,
                    showLoading: false, 
+                   debugRendering: true
                    viewport: { ...baseViewport },
             
                    success: function (player) {
@@ -731,17 +732,17 @@
                 if (!canvas) return;
                 canvas.style.touchAction = 'none';
                 // 🌟 無敵坐標轉換器：強行將滑鼠坐標轉為 100% 精準的 Spine 世界坐標
+                // 🌟 無敵坐標轉換器：強行將滑鼠坐標轉為 100% 精準的 Spine 世界坐標
                 function screenToWorldCoords(cam, screenX, screenY, rect) {
                     let vec;
-                    // 尋找 Spine 內建的 Vector3
+                    // 🌟 核心修正：移除 rect.height - screenY！Spine 的 API 會自己處理 Y 軸翻轉
                     if (typeof spine !== 'undefined' && spine.webgl && spine.webgl.Vector3) {
-                        vec = new spine.webgl.Vector3(screenX, rect.height - screenY, 0);
+                        vec = new spine.webgl.Vector3(screenX, screenY, 0);
                     } else if (typeof spine !== 'undefined' && spine.Vector3) {
-                        vec = new spine.Vector3(screenX, rect.height - screenY, 0);
+                        vec = new spine.Vector3(screenX, screenY, 0);
                     } else {
-                        // 如果找不到，就用原生 JS 模擬一個具備 project 功能的假 Vector3
                         vec = {
-                            x: screenX, y: rect.height - screenY, z: 0,
+                            x: screenX, y: screenY, z: 0,
                             set: function(x, y, z) { this.x = x; this.y = y; this.z = z; return this; },
                             project: function(matrix) {
                                 let m = matrix.values; 
