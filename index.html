@@ -1113,13 +1113,19 @@
                 }
                 // 👇 新增這段來產生「已開啟/未開啟」按鈕
                 const statusContainer = document.getElementById("filter_gridStatus");
-                if(statusContainer){
-                    statusContainer.innerHTML = ""; 
-                    const statuses = [ {v:"all", n: t("全部")}, {v:"opened", n: t("已開啟")}, {v:"unopened", n: t("未開啟")} ];
-                    statuses.forEach(st => { 
-                        const btn = document.createElement("button"); 
-                        btn.innerText = st.n; 
-                        btn.id = `btn_filter_gridStatus_${st.v}`; 
+if(statusContainer){
+    statusContainer.innerHTML = ""; 
+    // 確保使用 t() 函數包覆文字，這樣就會自動對應到你的翻譯檔
+    const statuses = [ 
+        {v:"all", n: t("全部")}, 
+        {v:"opened", n: t("已開啟")}, 
+        {v:"unopened", n: t("未開啟")} 
+    ];
+    
+    statuses.forEach(st => { 
+        const btn = document.createElement("button"); 
+        btn.innerText = st.n; // 這裡已經使用了 t() 後的內容
+        btn.id = `btn_filter_gridStatus_${st.v}`;
                         btn.className = st.v === "all" ? btnActiveStyle : btnInactiveStyle; 
                         btn.onclick = () => selectGridStatusFilter(st.v); 
                         statusContainer.appendChild(btn); 
