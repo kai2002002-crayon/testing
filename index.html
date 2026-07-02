@@ -1398,7 +1398,10 @@
                                                                         
                                     // 由於原本只有 boardon，我們依賴圖示，所以維持 boardon 圖片即可
                                     const spriteClass = SPRITE_CLASS_MAP[`boardon_${attr}`] || "";
-                                    const textColor = isOpened ? attrTextColors[attr].on : attrTextColors[attr].off;
+                                    // 加入 ?. 安全讀取與備用顏色
+                                    const textColor = isOpened 
+                                        ? (attrTextColors[attr]?.on || "text-white drop-shadow-sm") 
+                                        : (attrTextColors[attr]?.off || "text-gray-500 dark:text-gray-400");
                                     
                                     // 點亮時給圖片加上一點陰影，讓它在實心深色背景上不至於被吃掉
                                     const spriteShadow = isOpened ? "drop-shadow-sm" : "";
@@ -1418,7 +1421,10 @@
                                         btn.className = `${baseClass} ${savedStates[stateKey] ? openClass : closeClass}`;
                                         
                                         // 🌟 確保點擊時，文字顏色與圖片的陰影特效跟著切換
-                                        const newTextColor = savedStates[stateKey] ? attrTextColors[attr].on : attrTextColors[attr].off;
+                                        // 同樣加入 ?. 安全讀取
+                                        const newTextColor = savedStates[stateKey] 
+                                            ? (attrTextColors[attr]?.on || "text-white drop-shadow-sm") 
+                                            : (attrTextColors[attr]?.off || "text-gray-500 dark:text-gray-400");
                                         const newSpriteShadow = savedStates[stateKey] ? "drop-shadow-sm" : "";
                                         
                                         btn.innerHTML = `
