@@ -127,21 +127,20 @@
                 </div>
             </section>
             <section class="flex flex-wrap justify-center gap-4 py-4">
-                <!-- 1次招募按鈕 -->
-                <button onclick="performGacha(1)" class="btn-gacha px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-xl shadow-lg border-b-4 border-blue-700 flex items-center gap-2">
-                    <!-- 外層容器：強制固定大小，且設定 overflow-hidden 防止撐開按鈕 -->
-                    <div class="w-6 h-6 flex items-center justify-center overflow-visible">
+                <!-- 1次招募 -->
+                <button onclick="performGacha(1)" class="btn-gacha px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-xl shadow-lg border-b-4 border-blue-700 flex items-center gap-2 relative h-[50px]">
+                    <!-- 絕對定位，不佔用空間，不會撐開按鈕 -->
+                    <div class="absolute left-4 flex items-center justify-center pointer-events-none">
                         <span id="iconGacha1" class="sprite-base sprite-common sprite-Icon_GachaTicketHero scale-[0.4] origin-center"></span>
                     </div>
-                    1次招募
+                    <span class="ml-8">1次招募</span>
                 </button>
-                <!-- 10次招募按鈕 -->
-                <button onclick="performGacha(10)" class="btn-gacha px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-lg border-b-4 border-amber-700 flex items-center gap-2">
-                    <!-- 外層容器 -->
-                    <div class="w-7 h-7 flex items-center justify-center overflow-visible">
+                <!-- 10次招募 -->
+                <button onclick="performGacha(10)" class="btn-gacha px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-lg border-b-4 border-amber-700 flex items-center gap-2 relative h-[50px]">
+                    <div class="absolute left-4 flex items-center justify-center pointer-events-none">
                         <span id="iconGacha10" class="sprite-base sprite-common sprite-Icon_GachaTicketHero_10 scale-[0.4] origin-center"></span>
                     </div>
-                    10次招募
+                    <span class="ml-8">10次招募</span>
                 </button>
             </section>
             <section id="resultArea" class="bg-gradient-to-b from-white/95 to-amber-50/95 dark:from-gray-800/95 dark:to-gray-900/95 backdrop-blur-md rounded-2xl p-6 shadow-xl border-4 border-amber-300 dark:border-gray-600 min-h-[250px] flex flex-col items-center justify-center">
