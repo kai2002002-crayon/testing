@@ -212,28 +212,40 @@
                     let suffix = costumeKey.replace(baseName, "");
                     this.skinSuffix = suffix ? `_${suffix}` : ""; 
                 },
-
-                // 加入 onEnded 參數
-                play(folder, filename, onEnded = null) {
+                // 🌟 新增：統一停止語音的方法
+                stop(fadeDuration = 0.5) {
+                    if (this.currentAudio) {
+                        const audio = this.currentAudio;
+                        audio.loop = false; // 確保停止循環
+                        // 簡單的淡出處理
+                        let fadeOut = setInterval(() => {
+                            if (audio.volume > 0.1) {
+                                audio.volume -= 0.1;
+                            } else {
+                                audio.pause();
+                                audio.currentTime = 0;
+                                audio.volume = 0.8;
+                                clearInterval(fadeOut);
+                            }
+                        }, (fadeDuration * 1000) / 10);
+                        this.currentAudio = null;
+                    }
+                },
+                play(folder, filename, onEnded = null, loop = false) {
                     if (this.currentAudio) {
                         this.currentAudio.pause();
                         this.currentAudio.currentTime = 0;
-                        this.currentAudio.onended = null; // 清除上一個回呼，避免衝突
                     }
                     const path = `./${folder}/${filename}.mp3`;
                     this.currentAudio = new Audio(path);
-                    this.currentAudio.volume = 0.8; 
+                    this.currentAudio.volume = 0.8;
+                    this.currentAudio.loop = loop; // 🌟 支援循環
                     
-                    // 如果有傳入結束事件，綁定到音檔上
-                    if (onEnded) {
+                    if (onEnded && !loop) {
                         this.currentAudio.onended = onEnded;
                     }
-
-                    this.currentAudio.play().catch(e => {
-                        console.log("語音無法播放或找不到檔案:", path);
-                        // 防呆機制：如果檔案遺失，立刻執行 onEnded，確保角色不會永遠卡住
-                        if (onEnded) onEnded();
-                    });
+                    
+                    this.currentAudio.play().catch(e => console.log("語音無法播放:", path));
                     return this.currentAudio;
                 },
 
@@ -247,7 +259,8 @@
                     this.playRandom('spawn', variants, "", onEnded); 
                 },
                 playTickleStart(onEnded = null) { this.play('tickle', `Voice_${this.baseName}_TickleStart1`, onEnded); },
-                playTickleDuring(onEnded = null) { this.play('tickle', `Voice_${this.baseName}_TickleDuring1`, onEnded); },
+                // 🌟 修改：將 loop 設為 true
+                playTickleDuring() { this.play('tickle', `Voice_${this.baseName}_TickleDuring1`, null, true); },
                 
                 playTouch(onEnded = null) { 
                     const variants = [`Voice_${this.baseName}_Touch1`, `Voice_${this.baseName}_Touch1_1`, `Voice_${this.baseName}_Touch1_2`];
@@ -965,6 +978,10 @@
                             player.animationState.setAnimation(0, "Tickle_Idle_1", true);
                             updateUI("Tickle_Idle_1");
                             VoiceManager.playTickleStart();
+                            if (isDragging) {
+                                VoiceManager.playTickleDuring();
+                            }
+                        });
 
                             tickleTimer = setTimeout(() => {
                                 if (animNames.includes("Tickle_Idle_2")) {
@@ -1062,6 +1079,8 @@
                     if (!isDragging) return;
                     isDragging = false; 
                     clearTimeout(tickleTimer);
+
+                    VoiceManager.stop(0.5);
             
                     if (!getIsLobby()) return;
                     const animNames = player.skeleton.data.animations.map(a => a.name);
