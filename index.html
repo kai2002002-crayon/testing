@@ -1435,16 +1435,16 @@
             
             btnGroup.appendChild(btn);
             }); // 這是關閉 sortedAttrs.forEach 的大括號
-        } // 👈 🌟 必須補上這個大括號！用來關閉 else { ... } 區塊
-
-        // 確保無論有沒有資料，最後都會把 btnGroup 放進 layerBox，再放進畫面裡
-        layerBox.appendChild(btnGroup); 
-        layersContainer.appendChild(layerBox);
-    }); // 這是關閉 [1, 2, 3].forEach 的大括號
-}
-cardInner.appendChild(layersContainer); 
-charCard.appendChild(cardInner); 
-charListContainer.appendChild(charCard);
+            } // 👈 🌟 必須補上這個大括號！用來關閉 else { ... } 區塊
+            
+            // 確保無論有沒有資料，最後都會把 btnGroup 放進 layerBox，再放進畫面裡
+            layerBox.appendChild(btnGroup); 
+            layersContainer.appendChild(layerBox);
+            }); // 這是關閉 [1, 2, 3].forEach 的大括號
+            }
+            cardInner.appendChild(layersContainer); 
+            charCard.appendChild(cardInner); 
+            charListContainer.appendChild(charCard);
                     });
                     pSection.appendChild(charListContainer); container.appendChild(pSection);
                 });
