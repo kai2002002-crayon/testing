@@ -127,13 +127,17 @@
                 </div>
             </section>
             <section class="flex flex-wrap justify-center gap-4 py-4">
-                <button onclick="performGacha(1)" class="btn-gacha px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-xl shadow-lg border-b-4 border-blue-700 flex items-center gap-2">
-    <div id="iconGacha1" class="sprite-base sprite-common sprite-Icon_GachaTicketHero shrink-0 w-[26px] h-[26px] scale-[0.4] origin-center"></div>
+                <!-- 1次招募按鈕 -->
+<button onclick="performGacha(1)" class="btn-gacha px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-xl shadow-lg border-b-4 border-blue-700 flex items-center gap-2">
+    <!-- 改用 span，並移除 w-h 限制，只留 scale -->
+    <span id="iconGacha1" class="sprite-base sprite-common sprite-Icon_GachaTicketHero scale-[0.4] origin-center"></span>
     1次招募
 </button>
 
+<!-- 10次招募按鈕 -->
 <button onclick="performGacha(10)" class="btn-gacha px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-lg border-b-4 border-amber-700 flex items-center gap-2">
-    <div id="iconGacha10" class="sprite-base sprite-common sprite-Icon_GachaTicketHero_10 shrink-0 w-[29px] h-[29px] scale-[0.4] origin-center"></div>
+    <!-- 改用 span，並移除 w-h 限制，只留 scale -->
+    <span id="iconGacha10" class="sprite-base sprite-common sprite-Icon_GachaTicketHero_10 scale-[0.4] origin-center"></span>
     10次招募
 </button>
             </section>
@@ -280,13 +284,11 @@
     
     if (icon1 && icon10) {
         if (type === 'personality') {
-            // 性格招募圖示
-            icon1.className = `${commonClasses} sprite-Icon_GachaPersonality w-[26px] h-[26px] scale-[0.4]`;
-            icon10.className = `${commonClasses} sprite-Icon_GachaPersonality_10 w-[29px] h-[29px] scale-[0.4]`;
+            icon1.className = "sprite-base sprite-common sprite-Icon_GachaPersonality scale-[0.4] origin-center";
+            icon10.className = "sprite-base sprite-common sprite-Icon_GachaPersonality_10 scale-[0.4] origin-center";
         } else {
-            // 普通/特選招募圖示
-            icon1.className = `${commonClasses} sprite-Icon_GachaTicketHero w-[26px] h-[26px] scale-[0.4]`;
-            icon10.className = `${commonClasses} sprite-Icon_GachaTicketHero_10 w-[29px] h-[29px] scale-[0.4]`;
+            icon1.className = "sprite-base sprite-common sprite-Icon_GachaTicketHero scale-[0.4] origin-center";
+            icon10.className = "sprite-base sprite-common sprite-Icon_GachaTicketHero_10 scale-[0.4] origin-center";
         }
     }
 }
