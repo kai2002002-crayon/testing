@@ -128,18 +128,17 @@
             </section>
             <section class="flex flex-wrap justify-center gap-4 py-4">
                 <!-- 1次招募按鈕 -->
-<button onclick="performGacha(1)" class="btn-gacha px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-xl shadow-lg border-b-4 border-blue-700 flex items-center gap-2">
-    <!-- 改用 span，並移除 w-h 限制，只留 scale -->
-    <span id="iconGacha1" class="sprite-base sprite-common sprite-Icon_GachaTicketHero scale-[0.4] origin-center"></span>
-    1次招募
-</button>
-
-<!-- 10次招募按鈕 -->
-<button onclick="performGacha(10)" class="btn-gacha px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-lg border-b-4 border-amber-700 flex items-center gap-2">
-    <!-- 改用 span，並移除 w-h 限制，只留 scale -->
-    <span id="iconGacha10" class="sprite-base sprite-common sprite-Icon_GachaTicketHero_10 scale-[0.4] origin-center"></span>
-    10次招募
-</button>
+                <button onclick="performGacha(1)" class="btn-gacha px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-xl shadow-lg border-b-4 border-blue-700 flex items-center gap-2">
+                    <!-- 改用 span，並移除 w-h 限制，只留 scale -->
+                    <span id="iconGacha1" class="sprite-base sprite-common sprite-Icon_GachaTicketHero scale-[0.4] origin-center"></span>
+                    1次招募
+                </button>
+                <!-- 10次招募按鈕 -->
+                <button onclick="performGacha(10)" class="btn-gacha px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-lg border-b-4 border-amber-700 flex items-center gap-2">
+                    <!-- 改用 span，並移除 w-h 限制，只留 scale -->
+                    <span id="iconGacha10" class="sprite-base sprite-common sprite-Icon_GachaTicketHero_10 scale-[0.4] origin-center"></span>
+                    10次招募
+                </button>
             </section>
             <section id="resultArea" class="bg-gradient-to-b from-white/95 to-amber-50/95 dark:from-gray-800/95 dark:to-gray-900/95 backdrop-blur-md rounded-2xl p-6 shadow-xl border-4 border-amber-300 dark:border-gray-600 min-h-[250px] flex flex-col items-center justify-center">
                 <p class="text-gray-400 dark:text-gray-500 font-bold mb-2">等待招募中...</p>
@@ -277,21 +276,21 @@
                 if (type !== 'personality') document.getElementById('personalitySubMenu').classList.add('hidden');
             
                 const icon1 = document.getElementById('iconGacha1');
-    const icon10 = document.getElementById('iconGacha10');
-    
-    // 設定基礎樣式，將 scale 與尺寸分開設定
-    const commonClasses = "sprite-base sprite-common shrink-0 origin-center transition-all";
-    
-    if (icon1 && icon10) {
-        if (type === 'personality') {
+            const icon10 = document.getElementById('iconGacha10');
+            
+            // 設定基礎樣式，將 scale 與尺寸分開設定
+            const commonClasses = "sprite-base sprite-common shrink-0 origin-center transition-all";
+            
+            if (icon1 && icon10) {
+            if (type === 'personality') {
             icon1.className = "sprite-base sprite-common sprite-Icon_GachaPersonality scale-[0.4] origin-center";
             icon10.className = "sprite-base sprite-common sprite-Icon_GachaPersonality_10 scale-[0.4] origin-center";
-        } else {
+            } else {
             icon1.className = "sprite-base sprite-common sprite-Icon_GachaTicketHero scale-[0.4] origin-center";
             icon10.className = "sprite-base sprite-common sprite-Icon_GachaTicketHero_10 scale-[0.4] origin-center";
-        }
-    }
-}
+            }
+            }
+            }
             
             function updatePersonalityBtns(selectedP) {
                 document.querySelectorAll('.p-sub-btn').forEach(b => {
@@ -427,7 +426,7 @@
                 "冷靜": "sprite-char-composed", "憂鬱": "sprite-char-depressed",
                 "天真": "sprite-char-innocence", "狂亂": "sprite-char-madness", "活潑": "sprite-char-vivacious"
             };
-
+            
             function createAvatarDOM(resultObj, index = 0, isHistory = false) {
                 const char = resultObj.char;
                 const isRateUp = resultObj.isRateUp;
