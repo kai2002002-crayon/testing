@@ -128,14 +128,13 @@
             </section>
             <section class="flex flex-wrap justify-center gap-4 py-4">
                 <button onclick="performGacha(1)" class="btn-gacha px-6 sm:px-8 py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-xl shadow-lg border-b-4 border-blue-700 text-base sm:text-lg flex items-center gap-2">
-                <!-- 🌟 替換為招募券雪碧圖 -->
-                <div id="iconGacha1" class="sprite-base sprite-common sprite-Icon_GachaTicketHero shrink-0 scale-[0.4] w-6 h-6 sm:w-7 sm:h-7 origin-center"></div>
-                1次招募
+                    <div id="iconGacha1" class="sprite-base sprite-common sprite-Icon_GachaTicketHero shrink-0 scale-[0.5] w-8 h-8 sm:w-10 sm:h-10 origin-center"></div>
+                    1次招募
                 </button>
+
                 <button onclick="performGacha(10)" class="btn-gacha px-6 sm:px-8 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-lg border-b-4 border-amber-700 text-base sm:text-lg flex items-center gap-2">
-                <!-- 🌟 替換為十連招募券雪碧圖 -->
-                <div id="iconGacha10" class="sprite-base sprite-common sprite-Icon_GachaTicketHero_10 shrink-0 scale-[0.4] w-6 h-6 sm:w-7 sm:h-7 origin-center"></div>
-                10次招募
+                    <div id="iconGacha10" class="sprite-base sprite-common sprite-Icon_GachaTicketHero_10 shrink-0 scale-[0.5] w-8 h-8 sm:w-10 sm:h-10 origin-center"></div>
+                    10次招募
                 </button>
             </section>
             <section id="resultArea" class="bg-gradient-to-b from-white/95 to-amber-50/95 dark:from-gray-800/95 dark:to-gray-900/95 backdrop-blur-md rounded-2xl p-6 shadow-xl border-4 border-amber-300 dark:border-gray-600 min-h-[250px] flex flex-col items-center justify-center">
@@ -276,7 +275,8 @@
                 // 🌟 更新招募按鈕的 Icon (使用雪碧圖 class 切換)
                 const icon1 = document.getElementById('iconGacha1');
                 const icon10 = document.getElementById('iconGacha10');
-                const baseClasses = "sprite-base sprite-common shrink-0 scale-[0.4] sm:scale-[0.45] w-6 h-6 sm:w-7 sm:h-7 origin-center transition-all";
+                // 將 scale 統一為 0.5，並將容器尺寸放大為 w-8 h-8
+                const baseClasses = "sprite-base sprite-common shrink-0 scale-[0.5] w-8 h-8 origin-center transition-all";
                 if (icon1 && icon10) {
                     if (type === 'personality') {
                         icon1.className = `${baseClasses} sprite-Icon_GachaPersonality`;
