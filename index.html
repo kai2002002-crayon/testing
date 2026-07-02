@@ -1298,40 +1298,58 @@
                                     const originalIdx = char[`layer${l}`].indexOf(attr); const stateKey = `${char.name}_l${l}_${attr}_${originalIdx}`;
                                     const isOpened = savedStates[stateKey]; const btnId = `btn_${char.name}_l${l}_${attr}_${originalIdx}`;
                                     const btn = document.createElement('button'); btn.id = btnId;
-                                    // 🌟 金蠟筆圖示按鈕樣式設定
-                                    // 🌟 金蠟筆圖示按鈕樣式設定 (文字顏色)
-                                    const attrTextColors = {
-                                        "攻擊": "text-orange-600 dark:text-orange-400",
-                                        "防禦": "text-blue-600 dark:text-blue-400",
-                                        "血量": "text-green-600 dark:text-green-400",
-                                        "爆擊": "text-red-600 dark:text-red-400",
-                                        "爆抗": "text-purple-600 dark:text-purple-400"
+                                    // 🌟 點亮與未點亮的背景/邊框樣式設定
+                                    const attrClasses = {
+                                        "攻擊": {
+                                            off: "bg-orange-50 dark:bg-gray-700 border-orange-400 dark:border-orange-500 opacity-60 hover:opacity-80 shadow-sm",
+                                            on:  "bg-orange-500 dark:bg-orange-600 border-orange-600 dark:border-orange-500 shadow-md opacity-100"
+                                        },
+                                        "防禦": {
+                                            off: "bg-blue-50 dark:bg-gray-700 border-blue-400 dark:border-blue-500 opacity-60 hover:opacity-80 shadow-sm",
+                                            on:  "bg-blue-500 dark:bg-blue-600 border-blue-600 dark:border-blue-500 shadow-md opacity-100"
+                                        },
+                                        "血量": {
+                                            off: "bg-green-50 dark:bg-gray-700 border-green-400 dark:border-green-500 opacity-60 hover:opacity-80 shadow-sm",
+                                            on:  "bg-green-500 dark:bg-green-600 border-green-600 dark:border-green-500 shadow-md opacity-100"
+                                        },
+                                        "爆擊": {
+                                            off: "bg-red-50 dark:bg-gray-700 border-red-400 dark:border-red-500 opacity-60 hover:opacity-80 shadow-sm",
+                                            on:  "bg-red-500 dark:bg-red-600 border-red-600 dark:border-red-500 shadow-md opacity-100"
+                                        },
+                                        "爆抗": {
+                                            off: "bg-purple-50 dark:bg-gray-700 border-purple-400 dark:border-purple-500 opacity-60 hover:opacity-80 shadow-sm",
+                                            on:  "bg-purple-500 dark:bg-purple-600 border-purple-600 dark:border-purple-500 shadow-md opacity-100"
+                                        }
                                     };
-                                    
-                                    // 🌟 新增：針對不同屬性設定對應的點亮狀態(背景與邊框顏色)
-                                    const attrOpenClasses = {
-                                        "攻擊": "bg-orange-50 dark:bg-gray-700 border-orange-400 dark:border-orange-500 shadow-sm opacity-100",
-                                        "防禦": "bg-blue-50 dark:bg-gray-700 border-blue-400 dark:border-blue-500 shadow-sm opacity-100",
-                                        "血量": "bg-green-50 dark:bg-gray-700 border-green-400 dark:border-green-500 shadow-sm opacity-100",
-                                        "爆擊": "bg-red-50 dark:bg-gray-700 border-red-400 dark:border-red-500 shadow-sm opacity-100",
-                                        "爆抗": "bg-purple-50 dark:bg-gray-700 border-purple-400 dark:border-purple-500 shadow-sm opacity-100"
+
+                                    // 🌟 點亮與未點亮的文字樣式設定 (淡底配實色字，實底配粗體白字)
+                                    const attrTextColors = {
+                                        "攻擊": { off: "text-orange-600 dark:text-orange-400", on: "text-white drop-shadow-sm" },
+                                        "防禦": { off: "text-blue-600 dark:text-blue-400",   on: "text-white drop-shadow-sm" },
+                                        "血量": { off: "text-green-600 dark:text-green-400",  on: "text-white drop-shadow-sm" },
+                                        "爆擊": { off: "text-red-600 dark:text-red-400",     on: "text-white drop-shadow-sm" },
+                                        "爆抗": { off: "text-purple-600 dark:text-purple-400", on: "text-white drop-shadow-sm" }
                                     };
 
                                     const baseClass = "char-btn hover-scale flex items-center justify-center w-full h-[45px] sm:h-[50px] rounded-lg border transition-all duration-200 overflow-hidden cursor-pointer";
 
-                                    // 動態獲取該屬性對應的開啟樣式
-                                    const openClass = attrOpenClasses[attr] || `bg-amber-50 dark:bg-gray-700 border-amber-400 shadow-sm opacity-100`;
-                                    const closeClass = "bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 opacity-60";
+                                    // 動態獲取該屬性對應的開啟/關閉樣式
+                                    const openClass = attrClasses[attr]?.on || "bg-amber-500 opacity-100 text-white";
+                                    const closeClass = attrClasses[attr]?.off || "bg-gray-100 opacity-50";
 
                                     btn.className = `${baseClass} ${isOpened ? openClass : closeClass}`;
                                                                         
+                                    // 由於原本只有 boardon，我們依賴圖示，所以維持 boardon 圖片即可
                                     const spriteClass = SPRITE_CLASS_MAP[`boardon_${attr}`] || "";
-                                    const textColor = isOpened ? (attrTextColors[attr] || 'text-gray-700') : 'text-gray-400';
+                                    const textColor = isOpened ? attrTextColors[attr].on : attrTextColors[attr].off;
+                                    
+                                    // 點亮時給圖片加上一點陰影，讓它在實心深色背景上不至於被吃掉
+                                    const spriteShadow = isOpened ? "drop-shadow-sm" : "";
 
                                     btn.innerHTML = `
                                         <div class="w-full h-full flex flex-col items-center justify-center gap-0.5">
                                             <div class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center shrink-0">
-                                                <div class="sprite-base sprite-common ${spriteClass} shrink-0 scale-[0.35] origin-center transition-all duration-200"></div>
+                                                <div class="sprite-base sprite-common ${spriteClass} shrink-0 scale-[0.35] origin-center transition-all duration-200 ${spriteShadow}"></div>
                                             </div>
                                             <span class="text-[9px] sm:text-[10px] font-bold ${textColor} transition-all duration-200 leading-none">${t(attr)}</span>
                                         </div>
@@ -1342,12 +1360,14 @@
                                         if(savedStates[stateKey] && !savedStates['owned_' + char.name]) { savedStates['owned_' + char.name] = true; updateOwnershipUI(char.name); }
                                         btn.className = `${baseClass} ${savedStates[stateKey] ? openClass : closeClass}`;
                                         
-                                        // 🌟 確保點擊時，文字的顏色也會跟著切換！
-                                        const newTextColor = savedStates[stateKey] ? (attrTextColors[attr] || 'text-gray-700') : 'text-gray-400';
+                                        // 🌟 確保點擊時，文字顏色與圖片的陰影特效跟著切換
+                                        const newTextColor = savedStates[stateKey] ? attrTextColors[attr].on : attrTextColors[attr].off;
+                                        const newSpriteShadow = savedStates[stateKey] ? "drop-shadow-sm" : "";
+                                        
                                         btn.innerHTML = `
                                             <div class="w-full h-full flex flex-col items-center justify-center gap-0.5">
                                                 <div class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center shrink-0">
-                                                    <div class="sprite-base sprite-common ${spriteClass} shrink-0 scale-[0.35] origin-center transition-all duration-200"></div>
+                                                    <div class="sprite-base sprite-common ${spriteClass} shrink-0 scale-[0.35] origin-center transition-all duration-200 ${newSpriteShadow}"></div>
                                                 </div>
                                                 <span class="text-[9px] sm:text-[10px] font-bold ${newTextColor} transition-all duration-200 leading-none">${t(attr)}</span>
                                             </div>
