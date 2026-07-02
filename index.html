@@ -1386,7 +1386,10 @@
                                     };
 
                                     const baseClass = "char-btn hover-scale flex items-center justify-center w-full h-[45px] sm:h-[50px] rounded-lg border transition-all duration-200 overflow-hidden cursor-pointer";
-
+                                    const attrClass = attrClasses[attr] || {
+                                    off: "bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 opacity-60",
+                                    on:  "bg-amber-100 dark:bg-amber-900 border-amber-400 opacity-100"
+                                    };
                                     // 動態獲取該屬性對應的開啟/關閉樣式
                                     const openClass = attrClasses[attr]?.on || "bg-amber-500 opacity-100 text-white";
                                     const closeClass = attrClasses[attr]?.off || "bg-gray-100 opacity-50";
