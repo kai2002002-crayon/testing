@@ -9,8 +9,8 @@
 const LANG_DICT = {
     "zh-TW": {
         app_title: "嘟嘟臉金蠟筆記事本", app_subtitle: "祝各位教主日日出金蠟筆", stats_title: "📊 統計與加成資訊",
-        stats_stat: "統計", stats_character: "坨坨", stats_attack: "攻擊", stats_defence: "防禦", stats_hp: "血量",
-        stats_critical: "爆擊", stats_resist: "爆抗", stats_personality: "🔮 性格：", stats_race: "🧬 種族：",
+        stats_stat: "統計", stats_character: "坨坨", stats_attack: "攻", stats_defence: "防", stats_hp: "血",
+        stats_critical: "爆", stats_resist: "抗", stats_personality: "🔮 性格：", stats_race: "🧬 種族：",
         stats_position: "🗺️ 站位：", stats_job: "⚔️ 職業：", stats_cell: "🖍️ 金蠟筆格：", stats_crayon: "金蠟筆",
         stats_level: "指定層數:", cell_kind: "格子種類:", level_1st: "第一層", level_2nd: "第二層", level_3rd: "第三層",
         total_owned: "已擁有坨坨", crayon_used: "蠟筆消耗量", crayon_needed: "蠟筆需求量",
@@ -19,7 +19,7 @@ const LANG_DICT = {
         race_witch: "魔女", race_beast: "獸人", race_dragon: "龍族", race_spirit: "魔靈", race_fairy: "妖精", race_elf: "精靈", race_ghost: "幽靈", race_unknown: "???",
         position_front: "前排", position_middle: "中排", position_back: "後排", job_attacker: "輸出", job_defender: "肉盾", job_supporter: "輔助",
         visit_count_prefix: "累計利用回數", maintenance_msg: "🔧 維護更新中...", event_title: "🎪 今期活動",
-        auth_offline_title: "當前狀態：單機模式", auth_offline_desc: "紀錄保存在此裝置", auth_online_title: "🟢已連線", auth_logout: "登出",
+        auth_offline_title: "當前狀態：單機模式", auth_offline_desc: "紀錄保存在此裝置", auth_online_title: "🟢 ", auth_logout: "登出",
         filter_title: "🔍 篩選器", filter_search_placeholder: "搜尋坨坨...", filter_reset: "重置全部篩選", filter_display_mode: "👁️ 版面顯示：",
         filter_btn_all: "全部", filter_btn_show_all: "顯示全部", filter_btn_show_1: "僅第一層", filter_btn_show_2: "僅第二層", filter_btn_show_3: "僅第三層",
 		grid_status: "格子狀態", filter_btn_opened: "已開啟", filter_btn_unopened: "未開啟",
@@ -42,7 +42,6 @@ const LANG_DICT = {
         "艾斯皮": "艾斯皮", "艾琳娜": "艾琳娜", "艾皮卡": "艾皮卡", "艾舒爾": "艾舒爾", "艾蜜莉雅": "艾蜜莉雅", "芙莉可": "芙莉可", "茱蜜": "茱蜜", "莉茲": "莉茲",
         "莎莉": "莎莉", "萊薇": "萊薇", "蒂亞娜": "蒂亞娜", "謝蒂": "謝蒂", "貝魯": "貝魯", "貝麗塔": "貝麗塔", "路德": "路德", "路易": "路易",
         "阿萊特": "阿萊特", "雷吉": "雷吉", "馬爾": "馬爾", "泰達": "泰達", "寧琉": "寧琉", "莉絲蒂": "莉絲蒂", "雷內瓦": "雷內瓦", "芭瓏": "芭瓏",
-		"R41雷內瓦": "R41雷內瓦", "蠟筆勇士-天真": "蠟筆勇士-天真", "蠟筆勇士-冷靜": "蠟筆勇士-冷靜", "蠟筆勇士-狂亂": "蠟筆勇士-狂亂", "蠟筆勇士-活潑": "蠟筆勇士-活潑", "蠟筆勇士-憂鬱": "蠟筆勇士-憂鬱", "莉1莉": "莉1莉", "克魯布魯斯": "克魯布魯斯",
         page_title_char_detail: "角色詳細資料", btn_close_page: "⬅️ 關閉此頁", loading: "載入中...",
         crayon_detail_title: "🖍️ 金蠟筆分佈詳情", layer_1_stats: "🥇 第一層屬性", layer_2_stats: "🥈 第二層屬性", layer_3_stats: "🥉 第三層屬性",
         present_title: "🎁 坨坨珍藏品", present_loading: "寶箱開啟中...", btn_letter: "坨坨情信", btn_thought: "教主感想",
@@ -71,7 +70,7 @@ const LANG_DICT = {
         race_witch: "魔女", race_beast: "獣人", race_dragon: "竜族", race_spirit: "精霊", race_fairy: "妖精", race_elf: "エルフ", race_ghost: "幽霊", race_unknown: "???",
         position_front: "前列", position_middle: "中列", position_back: "後列", job_attacker: "攻撃", job_defender: "守備", job_supporter: "支援",
         visit_count_prefix: "総閲覧数", maintenance_msg: "🔧 メンテナンス中...", event_title: "🎪 開催中のイベント",
-        auth_offline_title: "現在の状態：オフラインモード", auth_offline_desc: "データはこの端末に保存されます", auth_online_title: "🟢接続中", auth_logout: "ログアウト",
+        auth_offline_title: "現在の状態：オフラインモード", auth_offline_desc: "データはこの端末に保存されます", auth_online_title: "🟢 ", auth_logout: "ログアウト",
         filter_title: "🔍 フィルター", filter_search_placeholder: "使徒を検索...", filter_reset: "すべてのフィルターをリセット", filter_display_mode: "👁️ ボード表示：",
         filter_btn_all: "すべて", filter_btn_show_all: "すべて表示", filter_btn_show_1: "1段階目のみ", filter_btn_show_2: "2段階目のみ", filter_btn_show_3: "3段階目のみ",
 		grid_status: "状態", filter_btn_opened: "解放済み",filter_btn_unopened: "未解放",
@@ -94,7 +93,6 @@ const LANG_DICT = {
         "艾斯皮": "エスピー", "艾琳娜": "エレナ", "艾皮卡": "エピカ", "艾舒爾": "エシュール", "艾蜜莉雅": "アメリア", "芙莉可": "フリックル", "茱蜜": "ジュビー", "莉茲": "リッツ",
         "莎莉": "サリー", "萊薇": "レヴィ", "蒂亞娜": "ディアナ", "謝蒂": "シェイディ", "貝魯": "ベル", "貝麗塔": "ベリータ", "路德": "ルード", "路易": "キュウイ",
         "阿萊特": "アレット", "雷吉": "レイジー", "馬爾": "マーゴ", "泰達": "タイダー", "寧琉": "ネル", "莉絲蒂": "リスティ", "雷內瓦": "リニュア", "芭瓏": "バロン",
-		"R41雷內瓦": "R41リニュア", "イサムレヨン-天真": "イサムレヨン-純粋", "イサムレヨン-冷靜": "イサムレヨン-冷静", "蠟筆勇士-狂亂": "イサムレヨン-狂気", "イサムレヨン-活潑": "イサムレヨン-活発", "イサムレヨン-憂鬱": "イサムレヨン-憂鬱", "莉1莉": "リリ一", "克魯布魯斯": "ケルベロス",
         page_title_char_detail: "使徒詳細データ", btn_close_page: "⬅️ 閉じる", loading: "読み込み中...",
         crayon_detail_title: "🖍️ 特級クレヨン分布詳細", layer_1_stats: "🥇 1段階目ステータス", layer_2_stats: "🥈 2段階目ステータス", layer_3_stats: "🥉 3段階目ステータス",
         present_title: "🎁 使徒の愛用品", present_loading: "宝箱を開封中...", btn_letter: "使徒からの手紙", btn_thought: "教主の感想",
@@ -123,7 +121,7 @@ const LANG_DICT = {
         race_witch: "Witch", race_beast: "Beast", race_dragon: "Dragon", race_spirit: "Spirit", race_fairy: "Fairy", race_elf: "Elf", race_ghost: "Ghost", race_unknown: "???",
         position_front: "Front", position_middle: "Mid", position_back: "Back", job_attacker: "Attacker", job_defender: "Tank", job_supporter: "Support",
         visit_count_prefix: "Total Visits", maintenance_msg: "🔧 Under Maintenance...", event_title: "🎪 Current Event",
-        auth_offline_title: "Status: Offline Mode", auth_offline_desc: "Data saved locally", auth_online_title: "🟢Connected", auth_logout: "Logout",
+        auth_offline_title: "Status: Offline Mode", auth_offline_desc: "Data saved locally", auth_online_title: "🟢 ", auth_logout: "Logout",
         filter_title: "🔍 Filter", filter_search_placeholder: "Search Apostle...", filter_reset: "Reset All", filter_display_mode: "👁️ View Mode:",
         filter_btn_all: "All", filter_btn_show_all: "Show All", filter_btn_show_1: "Board 1 Only", filter_btn_show_2: "Board 2 Only", filter_btn_show_3: "Board 3 Only",
 		grid_status: "Status", filter_btn_opened: "Opened", filter_btn_unopened: "Unopened",
@@ -146,7 +144,6 @@ const LANG_DICT = {
         "艾斯皮": "Espi", "艾琳娜": "Elena", "艾皮卡": "Epica", "艾舒爾": "Ashur", "艾蜜莉雅": "Amelia", "芙莉可": "Fricle", "茱蜜": "Jubee", "莉茲": "Leets",
         "莎莉": "Sari", "萊薇": "Levi", "蒂亞娜": "Diana", "謝蒂": "Shaydi", "貝魯": "Veroo", "貝麗塔": "Belita", "路德": "Rudd", "路易": "Kyuri",
         "阿萊特": "Allet", "雷吉": "Layze", "馬爾": "Mago", "泰達": "Taida", "寧琉": "Ner", "莉絲蒂": "Risty", "雷內瓦": "Renewa", "芭瓏": "Barong",
-		"R41雷內瓦": "R41_Renewa", "蠟筆勇士-天真": "CrayonKnight-Innocence", "蠟筆勇士-冷靜": "CrayonKnight-Composed", "蠟筆勇士-狂亂": "CrayonKnight-Madness", "蠟筆勇士-活潑": "CrayonKnight-Vivacious", "蠟筆勇士-憂鬱": "CrayonKnight-Depressed", "莉1莉": "Lil1li", "克魯布魯斯": "Curburus",
         page_title_char_detail: "Apostle Details", btn_close_page: "⬅️ Close", loading: "Loading...",
         crayon_detail_title: "🖍️ Ultra Crayon Details", layer_1_stats: "🥇 Board 1 Stats", layer_2_stats: "🥈 Board 2 Stats", layer_3_stats: "🥉 Board 3 Stats",
         present_title: "🎁 Apostle's Cherished Items", present_loading: "Opening chest...", btn_letter: "Apostle's Letter", btn_thought: "Master's Thoughts",
@@ -453,7 +450,7 @@ const IMAGE_MAP = {
     "race_精靈": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/race%2Fjing-ling.webp?alt=media&token=4d4e6dff-b29c-42ea-a99c-231dd74a8d2c", "race_龍族": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/race%2Flong-zu.webp?alt=media&token=9045bd8a-fd98-412c-a0ef-2fb57678776d", "race_妖精": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/race%2Fyao-jing.webp?alt=media&token=02063405-85bd-48d5-91c3-5581a9e331a2", "race_魔靈": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/race%2Fmo-ling.webp?alt=media&token=e7d63700-cfbe-4c98-8ea5-57ff4bdbe413", "race_獸人": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/race%2Fshou-ren.webp?alt=media&token=dc1ffcdc-3cc6-4e0c-802b-b84cf3880415", "race_幽靈": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/race%2Fyou-ling.webp?alt=media&token=5a07255e-9cc2-4a6e-9b66-9c828cba31c3", "race_魔女": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/race%2Fmo-nu.webp?alt=media&token=f35ec5cd-7f58-4c98-9057-198160095847", "race_unknown": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/race%2Funknown.webp?alt=media&token=ce9dc20a-eb6c-4030-aa4f-d685ce01b7ee",
     "position_前排": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/position%2Fqian-pai.webp?alt=media&token=2d783ffa-a9d0-439a-ad9b-6312dd5b7917", "position_中排": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/position%2Fzhong-pai.webp?alt=media&token=80552f69-ee52-48d7-a6b4-9c46e01f545d", "position_後排": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/position%2Fhou-pai.webp?alt=media&token=8a03dca6-bc7f-443d-a0f1-1a193c91e7da",
     "job_肉盾": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/job%2Frou-dun.webp?alt=media&token=168d2a45-3f81-4deb-a47b-f750404d2428", "job_輔助": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/job%2Ffu-zhu.webp?alt=media&token=8076d16b-716f-4216-bcd4-c1f9930dc1d3", "job_輸出": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/job%2Fshu-chu.webp?alt=media&token=d7bcfc6c-c908-4e6c-86e4-967cc5ba92fe",
-    "hover_avatar_伊弗利特": "https://i.postimg.cc/zVmkt7qp/yi-fu-li-te2.png", "hover_avatar_伊德": "https://i.postimg.cc/6yshjcB0/yi-de2.png", "hover_avatar_佩佩": "https://i.postimg.cc/jLz4Gf5V/pei-pei2.png", "hover_avatar_佩斯塔": "https://i.postimg.cc/HVQ9fMLf/pei-si-ta2.png", "hover_avatar_修帕": "https://i.postimg.cc/XpwkT5JV/xiu-pa2.png", "hover_avatar_傑德": "https://i.postimg.cc/qN4x07h8/jie-de2.png", "hover_avatar_優米": "https://i.postimg.cc/fVCjbhY4/you-mi2.png", "hover_avatar_劉美美": "https://i.postimg.cc/G4KJp1Gf/liu-mei-mei2.png", "hover_avatar_加薇雅": "https://i.postimg.cc/7fvNs9q5/jia-wei-ya2.png", "hover_avatar_卡洛特": "https://i.postimg.cc/w7Kkf29t/ka-luo-te2.png", "hover_avatar_卡蓮": "https://i.postimg.cc/JGwQ6xRZ/ka-lian2.png", "hover_avatar_喬菲": "https://i.postimg.cc/5XbS1tYB/qiao-fei2.png", "hover_avatar_基狄恩": "https://i.postimg.cc/WdTwj4F3/ji-di-en2.png", "hover_avatar_大師2號": "https://i.postimg.cc/hfF0ysKz/da-shi2hao2.png", "hover_avatar_大木頭": "https://i.postimg.cc/svFJ6m3G/da-mu-tou2.png", "hover_avatar_奈雅": "https://i.postimg.cc/hf91HmGk/nai-ya2.png", "hover_avatar_奶油": "https://i.postimg.cc/XpMgHLnK/nai-you2.png", "hover_avatar_寧琉": "https://i.postimg.cc/hXsbGqT2/ning-liu2.png", "hover_avatar_布蘭切": "https://i.postimg.cc/QHLq4mjc/bu-lan-qie2.png", "hover_avatar_希拉": "https://i.postimg.cc/VdjW3tND/xi-la2.png", "hover_avatar_希爾德": "https://i.postimg.cc/tYhNL6gm/xi-er-de2.png", "hover_avatar_希瑟圖": "https://i.postimg.cc/PPmQBDqV/xi-se-tu2.png", "hover_avatar_希菲爾": "https://i.postimg.cc/svp4tW26/xi-fei-er2.png", "hover_avatar_帕特拉": "https://i.postimg.cc/56wSZz0J/pa-te-la2.png", "hover_avatar_庫洛艾": "https://i.postimg.cc/RW4L906z/ku-luo-ai2.png", "hover_avatar_康娜": "https://i.postimg.cc/87NmDCJj/kang-na2.png", "hover_avatar_愛麗絲": "https://i.postimg.cc/Snd7KpC6/ai-li-si2.png", "hover_avatar_班尼": "https://i.postimg.cc/jDcQjrPw/ban-ni2.png", "hover_avatar_斯皮奇": "https://i.postimg.cc/zy7Sf1KR/si-pi-qi2.png", "hover_avatar_斯諾奇": "https://i.postimg.cc/RWdQ0zKJ/si-nuo-qi2.png", "hover_avatar_柯米": "https://i.postimg.cc/N51kWXMQ/ke-mi2.png", "hover_avatar_桃桃": "https://i.postimg.cc/cv0BZJgS/tao-tao2.png", "hover_avatar_梅森": "https://i.postimg.cc/QFhJsM9F/mei-sen2.png", "hover_avatar_梅露娜": "https://i.postimg.cc/LJ23RsY1/mei-lu-na2.png", "hover_avatar_泰達": "https://i.postimg.cc/18srPznP/tai-da2.png", "hover_avatar_洛涅": "https://i.postimg.cc/N51kWXMj/lu-nie2.png", "hover_avatar_海莉": "https://i.postimg.cc/MnqmxGMz/hai-li2.png", "hover_avatar_珀榭": "https://i.postimg.cc/TprJZbwP/po-xie2.png", "hover_avatar_琳": "https://i.postimg.cc/xX5ydSMH/lin2.png", "hover_avatar_瑟琳娜": "https://i.postimg.cc/hXsbGqT8/se-lin-na2.png", "hover_avatar_瑪約": "https://i.postimg.cc/w12cBdL4/ma-yue2.png", "hover_avatar_瑪麗": "https://i.postimg.cc/pmCYdtz7/ma-li2.png", "hover_avatar_皮可菈": "https://i.postimg.cc/tY0zSk9N/pi-ke-la2.png", "hover_avatar_盧波": "https://i.postimg.cc/zy7Sf1K9/lu-bo2.png", "hover_avatar_米雪": "https://i.postimg.cc/zVmkt7qd/mi-xue2.png", "hover_avatar_綾": "https://i.postimg.cc/68cLQNn1/ling2.png", "hover_avatar_羽伊": "https://i.postimg.cc/Czy4P7wP/yu-yi2.png", "hover_avatar_艾斯皮": "https://i.postimg.cc/nC81R2nw/ai-si-pi2.png", "hover_avatar_艾爾芬": "https://i.postimg.cc/rKSNv4pN/ai-er-fen2.png", "hover_avatar_艾琳娜": "https://i.postimg.cc/BXWCYpJV/ai-lin-na2.png", "hover_avatar_艾皮卡": "https://i.postimg.cc/rK69njqZ/ai-pi-ka2.png", "hover_avatar_艾舒爾": "https://i.postimg.cc/SJWfw9KG/ai-shu-er2.png", "hover_avatar_艾蜜莉雅": "https://i.postimg.cc/ZCrx1Nqw/ai-mi-li-ya2.png", "hover_avatar_芙莉可": "https://i.postimg.cc/crQBV3HS/fu-li-ke2.png", "hover_avatar_茱蜜": "https://i.postimg.cc/nXpGZLjH/zhu-mi2.png", "hover_avatar_莉茲": "https://i.postimg.cc/yDsyBNgg/li-zi2.png", "hover_avatar_莎莉": "https://i.postimg.cc/v4btMmg9/sha-li2.png", "hover_avatar_萊薇": "https://i.postimg.cc/K1frYyBB/lai-wei2.png", "hover_avatar_蒂亞娜": "https://i.postimg.cc/21GF5fhF/di-ya-na2.png", "hover_avatar_薇薇": "https://i.postimg.cc/w12cBdD8/wei-wei2.png", "hover_avatar_謝蒂": "https://i.postimg.cc/McG0Mrm9/xie-di2.png", "hover_avatar_貝魯": "https://i.postimg.cc/3dgFPGwc/bei-lu2.png", "hover_avatar_貝麗塔": "https://i.postimg.cc/QHpJR7Mv/bei-li-ta2.png", "hover_avatar_路德": "https://i.postimg.cc/hXsbGqTr/lu-de2.png", "hover_avatar_路易": "https://i.postimg.cc/TK0qPXgc/lu-yi2.png", "hover_avatar_x乂錫安乂x": "https://i.postimg.cc/sMm92R7k/xi-an2.png", "hover_avatar_阿萊特": "https://i.postimg.cc/crQBV3HZ/a-lai-te2.png", "hover_avatar_雷吉": "https://i.postimg.cc/Wd864PgS/lei-ji2.png", "hover_avatar_馬爾": "https://i.postimg.cc/pmRJxdhd/ma-er2.png", "hover_avatar_莉絲蒂": "https://i.postimg.cc/hhmFm0T6/li-si-di2.png", "hover_avatar_雷內瓦": "https://i.postimg.cc/kVcs6SpW/lei-nei-wa2.png",
+    "hover_avatar_伊弗利特": "https://i.postimg.cc/zVmkt7qp/yi-fu-li-te2.png", "hover_avatar_伊德": "https://i.postimg.cc/6yshjcB0/yi-de2.png", "hover_avatar_佩佩": "https://i.postimg.cc/jLz4Gf5V/pei-pei2.png", "hover_avatar_佩斯塔": "https://i.postimg.cc/HVQ9fMLf/pei-si-ta2.png", "hover_avatar_修帕": "https://i.postimg.cc/XpwkT5JV/xiu-pa2.png", "hover_avatar_傑德": "https://i.postimg.cc/qN4x07h8/jie-de2.png", "hover_avatar_優米": "https://i.postimg.cc/fVCjbhY4/you-mi2.png", "hover_avatar_劉美美": "https://i.postimg.cc/G4KJp1Gf/liu-mei-mei2.png", "hover_avatar_加薇雅": "https://i.postimg.cc/7fvNs9q5/jia-wei-ya2.png", "hover_avatar_卡洛特": "https://i.postimg.cc/w7Kkf29t/ka-luo-te2.png", "hover_avatar_卡蓮": "https://i.postimg.cc/JGwQ6xRZ/ka-lian2.png", "hover_avatar_喬菲": "https://i.postimg.cc/5XbS1tYB/qiao-fei2.png", "hover_avatar_基狄恩": "https://i.postimg.cc/WdTwj4F3/ji-di-en2.png", "hover_avatar_大師2號": "https://i.postimg.cc/hfF0ysKz/da-shi2hao2.png", "hover_avatar_大木頭": "https://i.postimg.cc/svFJ6m3G/da-mu-tou2.png", "hover_avatar_奈雅": "https://i.postimg.cc/hf91HmGk/nai-ya2.png", "hover_avatar_奶油": "https://i.postimg.cc/XpMgHLnK/nai-you2.png", "hover_avatar_寧琉": "https://i.postimg.cc/hXsbGqT2/ning-liu2.png", "hover_avatar_布蘭切": "https://i.postimg.cc/QHLq4mjc/bu-lan-qie2.png", "hover_avatar_希拉": "https://i.postimg.cc/VdjW3tND/xi-la2.png", "hover_avatar_希爾德": "https://i.postimg.cc/tYhNL6gm/xi-er-de2.png", "hover_avatar_希瑟圖": "https://i.postimg.cc/PPmQBDqV/xi-se-tu2.png", "hover_avatar_希菲爾": "https://i.postimg.cc/svp4tW26/xi-fei-er2.png", "hover_avatar_帕特拉": "https://i.postimg.cc/56wSZz0J/pa-te-la2.png", "hover_avatar_庫洛艾": "https://i.postimg.cc/RW4L906z/ku-luo-ai2.png", "hover_avatar_康娜": "https://i.postimg.cc/87NmDCJj/kang-na2.png", "hover_avatar_愛麗絲": "https://i.postimg.cc/Snd7KpC6/ai-li-si2.png", "hover_avatar_班尼": "https://i.postimg.cc/jDcQjrPw/ban-ni2.png", "hover_avatar_斯皮奇": "https://i.postimg.cc/zy7Sf1KR/si-pi-qi2.png", "hover_avatar_斯諾奇": "https://i.postimg.cc/RWdQ0zKJ/si-nuo-qi2.png", "hover_avatar_柯米": "https://i.postimg.cc/N51kWXMQ/ke-mi2.png", "hover_avatar_桃桃": "https://i.postimg.cc/cv0BZJgS/tao-tao2.png", "hover_avatar_梅森": "https://i.postimg.cc/QFhJsM9F/mei-sen2.png", "hover_avatar_梅露娜": "https://i.postimg.cc/LJ23RsY1/mei-lu-na2.png", "hover_avatar_泰達": "https://i.postimg.cc/18srPznP/tai-da2.png", "hover_avatar_洛涅": "https://i.postimg.cc/N51kWXMj/lu-nie2.png", "hover_avatar_海莉": "https://i.postimg.cc/MnqmxGMz/hai-li2.png", "hover_avatar_珀榭": "https://i.postimg.cc/TprJZbwP/po-xie2.png", "hover_avatar_琳": "https://i.postimg.cc/xX5ydSMH/lin2.png", "hover_avatar_瑟琳娜": "https://i.postimg.cc/hXsbGqT8/se-lin-na2.png", "hover_avatar_瑪約": "https://i.postimg.cc/w12cBdL4/ma-yue2.png", "hover_avatar_瑪麗": "https://i.postimg.cc/pmCYdtz7/ma-li2.png", "hover_avatar_皮可菈": "https://i.postimg.cc/tY0zSk9N/pi-ke-la2.png", "hover_avatar_盧波": "https://i.postimg.cc/zy7Sf1K9/lu-bo2.png", "hover_avatar_米雪": "https://i.postimg.cc/zVmkt7qd/mi-xue2.png", "hover_avatar_綾": "https://i.postimg.cc/68cLQNn1/ling2.png", "hover_avatar_羽伊": "https://i.postimg.cc/Czy4P7wP/yu-yi2.png", "hover_avatar_艾斯皮": "https://i.postimg.cc/nC81R2nw/ai-si-pi2.png", "hover_avatar_艾爾芬": "https://i.postimg.cc/rKSNv4pN/ai-er-fen2.png", "hover_avatar_艾琳娜": "https://i.postimg.cc/BXWCYpJV/ai-lin-na2.png", "hover_avatar_艾皮卡": "https://i.postimg.cc/rK69njqZ/ai-pi-ka2.png", "hover_avatar_艾舒爾": "https://i.postimg.cc/SJWfw9KG/ai-shu-er2.png", "hover_avatar_艾蜜莉雅": "https://i.postimg.cc/ZCrx1Nqw/ai-mi-li-ya2.png", "hover_avatar_芙莉可": "https://i.postimg.cc/crQBV3HS/fu-li-ke2.png", "hover_avatar_茱蜜": "https://i.postimg.cc/nXpGZLjH/zhu-mi2.png", "hover_avatar_莉茲": "https://i.postimg.cc/yDsyBNgg/li-zi2.png", "hover_avatar_莎莉": "https://i.postimg.cc/v4btMmg9/sha-li2.png", "hover_avatar_萊薇": "https://i.postimg.cc/K1frYyBB/lai-wei2.png", "hover_avatar_蒂亞娜": "https://i.postimg.cc/21GF5fhF/di-ya-na2.png", "hover_avatar_薇薇": "https://i.postimg.cc/w12cBdD8/wei-wei2.png", "hover_avatar_謝蒂": "https://i.postimg.cc/McG0Mrm9/xie-di2.png", "hover_avatar_貝魯": "https://i.postimg.cc/3dgFPGwc/bei-lu2.png", "hover_avatar_貝麗塔": "https://i.postimg.cc/QHpJR7Mv/bei-li-ta2.png", "hover_avatar_路德": "https://i.postimg.cc/hXsbGqTr/lu-de2.png", "hover_avatar_路易": "https://i.postimg.cc/TK0qPXgc/lu-yi2.png", "hover_avatar_x乂錫安乂x": "https://i.postimg.cc/sMm92R7k/xi-an2.png", "hover_avatar_阿萊特": "https://i.postimg.cc/crQBV3HZ/a-lai-te2.png", "hover_avatar_雷吉": "https://i.postimg.cc/Wd864PgS/lei-ji2.png", "hover_avatar_馬爾": "https://i.postimg.cc/pmRJxdhd/ma-er2.png", "hover_avatar_莉絲蒂": "https://i.postimg.cc/hhmFm0T6/li-si-di2.png", "hover_avatar_雷內瓦": "https://i.postimg.cc/kVcs6SpW/lei-nei-wa2.png", "hover_avatar_芭瓏": "https://i.postimg.cc/jnW376SS/ba-long2.png",
     "avatar_洛涅": "https://i.postimg.cc/sBrr9pK0/Rohne.png", 
     "avatar_薇薇": "https://i.postimg.cc/BLZfR4r6/Vivi.png", 
     "avatar_艾爾芬": "https://i.postimg.cc/hzCRBNgS/Erpin.png", 
@@ -666,7 +663,7 @@ const SPINE_MAP = {
     "瑟琳娜": "Selline", "瑪約": "Mayo", "瑪麗": "Marie", "皮可菈": "Picora", "盧波": "Rufo", "米雪": "Mynx", "綾": "Aya", "羽伊": "Ui",
     "艾斯皮": "Espi", "艾琳娜": "Elena", "艾皮卡": "Epica", "艾舒爾": "Ashur", "艾蜜莉雅": "Amelia", "芙莉可": "Fricle", "茱蜜": "Jubee", "莉茲": "Leets",
     "莎莉": "Sari", "萊薇": "Levi", "蒂亞娜": "Diana", "謝蒂": "Shady", "貝魯": "Veroo", "貝麗塔": "Belita", "路德": "Rude", "路易": "Cuee",
-    "阿萊特": "Allet", "雷吉": "Lazy", "馬爾": "Mago", "泰達": "Taida", "寧琉": "Ner", "莉絲蒂": "Risty", "R41雷內瓦": "R41_Renewa", "雷內瓦": "RenewaAwaken", "芭瓏": "Barong", "蠟筆勇士-天真": "CrayonKnightNaive", "蠟筆勇士-冷靜": "CrayonKnightCool", "蠟筆勇士-狂亂": "CrayonKnightMad", "蠟筆勇士-活潑": "CrayonKnightJolly", "蠟筆勇士-憂鬱": "CrayonKnightGloomy", "莉1莉": "Lil1li", "克魯布魯斯": "Curburus"
+    "阿萊特": "Allet", "雷吉": "Lazy", "馬爾": "Mago", "泰達": "Taida", "寧琉": "Ner", "莉絲蒂": "Risty", "R41雷內瓦": "R41_Renewa", "雷內瓦": "RenewaAwaken", "芭瓏": "Barong"
 };
 
 const COSTUME_MAP = {
@@ -674,17 +671,17 @@ const COSTUME_MAP = {
     "艾舒爾": ["Ashur", "AshurSkin1"], "貝麗塔": ["Belita", "BelitaSkin1"], "班尼": ["Beni", "BeniSkin1"], "大木頭": ["BigWood", "BigWoodSkin1"], "艾斯皮": ["Espi", "EspiSkin1"], "佩斯塔": ["Festa", "FestaSkin1"], "伊弗利特": ["Ifrit", "IfritSkin1"], "傑德": ["Jade", "JadeSkin1"], "莉茲": ["Leets", "LeetsSkin1"], "萊薇": ["Levi", "LeviSkin1"], "大師2號": ["MaestroMK2", "MaestroMK2Skin1"], "馬爾": ["Mago", "MagoSkin1"], "瑪約": ["Mayo", "MayoSkin1"], "梅露娜": ["Meluna", "MelunaSkin1"], "路德": ["Rude", "RudeSkin1"], "盧波": ["Rufo", "RufoSkin1"], "修帕": ["Shoupan", "ShoupanSkin1"], "希菲爾": ["Silphir", "SilphirSkin1"], "斯諾奇": ["Snorky", "SnorkySkin1"], "斯皮奇": ["Speaki", "SpeakiSkin1"], "佩佩": ["Velvet", "VelvetSkin1"],
     "布蘭切": ["Blanchet", "BlanchetSkin1", "BlanchetSkin2"], "奶油": ["Butter", "ButterSkin1", "ButterSkin2"], "康娜": ["Canna", "CannaSkin1", "CannaSkin2"], "伊德": ["Ed", "EdSkin1", "EdSkin2"], "艾琳娜": ["Elena", "ElenaSkin1", "ElenaSkin2"], "艾皮卡": ["Epica", "EpicaSkin1", "EpicaSkin2"], "芙莉可": ["Fricle", "FricleSkin1", "FricleSkin2"], "加薇雅": ["Gabia", "GabiaSkin1", "GabiaSkin2"], "海莉": ["Haley", "HaleySkin1", "HaleySkin2"], "希爾德": ["Hilde", "HildeSkin1", "HildeSkin2"], "基狄恩": ["Kidian", "KidianSkin1", "KidianSkin2"], "柯米": ["Kommy", "KommySkin1", "KommySkin2"], "卡洛特": ["Kyarot", "KyarotSkin1", "KyarotSkin2"], "奈雅": ["Naia", "NaiaSkin1", "NaiaSkin2"], "寧琉": ["Ner", "NerSkin1", "NerSkin2"], "皮可菈": ["Picora", "PicoraSkin1", "PicoraSkin2"], "珀榭": ["Posher", "PosherSkin1", "PosherSkin2", "PosherSkin3"], "琳": ["Rim", "RimSkin1", "RimSkin2"], "洛涅": ["Rohne", "RohneSkin1", "RohneSkin2"], "謝蒂": ["Shady", "ShadySkin1", "ShadySkin2"], "希瑟圖": ["Sist", "SistSkin1", "SistSkin2"], "希拉": ["Sylla", "SyllaSkin1", "SyllaSkin2"], "優米": ["Yomi", "YomiSkin1", "YomiSkin2"],
     "愛麗絲": ["Alice", "AliceSkin1", "AliceSkin2", "AliceSkin3"], "艾蜜莉雅": ["Amelia", "AmeliaSkin1", "AmeliaSkin2", "AmeliaSkin3"], "綾": ["Aya", "AyaSkin1", "AyaSkin2", "AyaSkin3"], "庫洛艾": ["Chloe", "ChloeSkin1", "ChloeSkin2", "ChloeSkin3"], "蒂亞娜": ["Diana", "DianaSkin1", "DianaSkin2", "DianaSkin3"], "桃桃": ["Momo", "MomoSkin1", "MomoSkin2", "MomoSkin3"], "瑟琳娜": ["Selline", "SellineSkin1", "SellineSkin2", "SellineSkin3"], "羽伊": ["Ui", "UiSkin1", "UiSkin2", "UiSkin3"], "薇薇": ["Vivi", "ViviSkin1", "ViviSkin2", "ViviSkin3"], "x乂錫安乂x": ["xXionx", "xXionxSkin1", "xXionxSkin2", "xXionxSkin3"],
-    "艾爾芬": ["Erpin", "ErpinSkin1", "ErpinSkin2", "ErpinSkin3", "ErpinSkin4"], "莉絲蒂": ["Risty", "RistySkin1", "RistySkin2"], "雷內瓦": ["RenewaAwaken", "RenewaAwakenSkin1", "RenewaAwakenSkin2"]
-	//"芭瓏": ["Barong"]
+    "艾爾芬": ["Erpin", "ErpinSkin1", "ErpinSkin2", "ErpinSkin3", "ErpinSkin4"], "莉絲蒂": ["Risty", "RistySkin1", "RistySkin2"], "雷內瓦": ["RenewaAwaken", "RenewaAwakenSkin1", "RenewaAwakenSkin2"],
+	"芭瓏": ["Barong", "BarongSkin1", "BarongSkin2", "BarongSkin3"]
 };
 
 const SD_COSTUME = {
     "劉美美": ["Yumimi"], "卡蓮": ["Carren"], "喬菲": ["Chopi"], "帕特拉": ["Patula"], "梅森": ["Maison"], "瑪麗": ["Marie"], "米雪": ["Mynx"], "茱蜜": ["Jubee"], "莎莉": ["Sari"], "貝魯": ["Veroo"], "路易": ["Cuee"], "阿萊特": ["Allet"], "雷吉": ["Lazy"], "泰達": ["Taida"],
     "艾舒爾": ["Ashur", "AshurSkin1"], "貝麗塔": ["Belita", "BelitaSkin1"], "班尼": ["Beni", "BeniSkin1"], "大木頭": ["BigWood", "BigWoodSkin1"], "艾斯皮": ["Espi", "EspiSkin1"], "佩斯塔": ["Festa", "FestaSkin1"], "伊弗利特": ["Ifrit", "IfritSkin1"], "傑德": ["Jade", "JadeSkin1"], "莉茲": ["Leets", "LeetsSkin1"], "萊薇": ["Levi", "LeviSkin1"], "大師2號": ["MaestroMK2", "MaestroMK2Skin1"], "馬爾": ["Mago", "MagoSkin1"], "瑪約": ["Mayo", "MayoSkin1"], "梅露娜": ["Meluna", "MelunaSkin1"], "路德": ["Rude", "RudeSkin1"], "盧波": ["Rufo", "RufoSkin1"], "修帕": ["Shoupan", "ShoupanSkin1"], "希菲爾": ["Silphir", "SilphirSkin1"], "斯諾奇": ["Snorky", "SnorkySkin1"], "斯皮奇": ["Speaki", "SpeakiSkin1"], "佩佩": ["Velvet", "VelvetSkin1"],
-    "布蘭切": ["Blanchet", "BlanchetSkin1", "BlanchetSkin2"], "奶油": ["Butter", "ButterSkin1"], "康娜": ["Canna", "CannaSkin1", "CannaSkin2"], "伊德": ["Ed", "EdSkin1", "EdSkin2", "Edskin3"], "艾琳娜": ["Elena", "ElenaSkin1"], "艾皮卡": ["Epica", "EpicaSkin1", "EpicaSkin2", "EpicaSkin3"], "芙莉可": ["Fricle", "FricleSkin1"], "加薇雅": ["Gabia", "GabiaSkin1", "GabiaSkin2"], "海莉": ["Haley", "HaleySkin1", "HaleySkin2"], "希爾德": ["Hilde", "HildeSkin1"], "基狄恩": ["Kidian", "KidianSkin1"], "柯米": ["Kommy", "KommySkin1", "KommySkin2"], "卡洛特": ["Kyarot", "KyarotSkin1", "KyarotSkin2"], "奈雅": ["Naia", "NaiaSkin1"], "寧琉": ["Ner", "NerSkin1", "NerSkin2"], "皮可菈": ["Picora", "PicoraSkin1", "PicoraSkin3"], "珀榭": ["Posher", "PosherSkin1", "PosherSkin2", "PosherSkin3"], "琳": ["Rim", "RimSkin1", "RimSkin2"], "洛涅": ["Rohne", "RohneSkin1", "RohneSkin2"], "謝蒂": ["Shady", "ShadySkin1", "ShadySkin2"], "希瑟圖": ["Sist", "SistSkin1", "SistSkin2"], "希拉": ["Sylla", "SyllaSkin1", "SyllaSkin2"], "優米": ["Yomi", "YomiSkin1", "YomiSkin2"],
+    "布蘭切": ["Blanchet", "BlanchetSkin1", "BlanchetSkin2"], "奶油": ["Butter", "ButterSkin1"], "康娜": ["Canna", "CannaSkin1", "CannaSkin2"], "伊德": ["Ed", "EdSkin1", "EdSkin2"], "艾琳娜": ["Elena", "ElenaSkin1"], "艾皮卡": ["Epica", "EpicaSkin1", "EpicaSkin2", "EpicaSkin3"], "芙莉可": ["Fricle", "FricleSkin1"], "加薇雅": ["Gabia", "GabiaSkin1", "GabiaSkin2"], "海莉": ["Haley", "HaleySkin1", "HaleySkin2"], "希爾德": ["Hilde", "HildeSkin1"], "基狄恩": ["Kidian", "KidianSkin1"], "柯米": ["Kommy", "KommySkin1", "KommySkin2"], "卡洛特": ["Kyarot", "KyarotSkin1", "KyarotSkin2"], "奈雅": ["Naia", "NaiaSkin1"], "寧琉": ["Ner", "NerSkin1", "NerSkin2"], "皮可菈": ["Picora", "PicoraSkin1", "PicoraSkin3"], "珀榭": ["Posher", "PosherSkin1", "PosherSkin2", "PosherSkin3"], "琳": ["Rim", "RimSkin1", "RimSkin2"], "洛涅": ["Rohne", "RohneSkin2"], "謝蒂": ["Shady", "ShadySkin1", "ShadySkin2"], "希瑟圖": ["Sist", "SistSkin1", "SistSkin2"], "希拉": ["Sylla", "SyllaSkin1", "SyllaSkin2"], "優米": ["Yomi", "YomiSkin1", "YomiSkin2"],
     "愛麗絲": ["Alice", "AliceSkin1", "AliceSkin2"], "艾蜜莉雅": ["Amelia", "AmeliaSkin1", "AmeliaSkin2"], "綾": ["Aya", "AyaSkin1", "AyaSkin2", "AyaSkin3"], "庫洛艾": ["Chloe", "ChloeSkin1", "ChloeSkin2", "ChloeSkin3", "ChloeSkin4"], "蒂亞娜": ["Diana", "DianaSkin1", "DianaSkin2", "DianaSkin3"], "桃桃": ["Momo", "MomoSkin1", "MomoSkin3"], "瑟琳娜": ["Selline", "SellineSkin1", "SellineSkin2"], "羽伊": ["Ui", "UiSkin1", "UiSkin2", "UiSkin3", "UiSkin4"], "薇薇": ["Vivi", "ViviSkin1", "ViviSkin2", "ViviSkin3", "ViviSkin4"], "x乂錫安乂x": ["xXionx", "xXionxSkin1", "xXionxSkin2", "xXionxSkin3", "xXionxSkin4"],
-    "艾爾芬": ["Erpin", "ErpinSkin1", "ErpinSkin2", "ErpinSkin3"], "莉絲蒂": ["Risty", "RistySkin1", "RistySkin2"], "雷內瓦": ["RenewaAwaken", "RenewaAwakenSkin1", "RenewaAwakenSkin2"], "R41雷內瓦": ["R41_Renewa"], "蠟筆勇士-天真": ["CrayonKnightNaive"], "蠟筆勇士-冷靜": "CrayonKnightCool", "蠟筆勇士-狂亂": ["CrayonKnightMad"], "蠟筆勇士-活潑": ["CrayonKnightJolly"], "蠟筆勇士-憂鬱": ["CrayonKnightGloomy"], "莉1莉": ["Lil1li"], "克魯布魯斯": ["Curburus"]
-	//"芭瓏": ["Barong"]
+    "艾爾芬": ["Erpin", "ErpinSkin1", "ErpinSkin2", "ErpinSkin3"], "莉絲蒂": ["Risty", "RistySkin1"], "雷內瓦": ["RenewaAwaken", "RenewaAwakenSkin1", "RenewaAwakenSkin2"],
+	"芭瓏": ["Barong", "BarongSkin1", "BarongSkin2", "BarongSkin3"]
 };
 //迷你坨坨SPINE NAME
 const MINI_SPINE = {
@@ -696,8 +693,7 @@ const MINI_SPINE = {
     "瑟琳娜": "Mini_Selline", "瑪約": "Mini_Mayo", "瑪麗": "Mini_Marie", "皮可菈": "Mini_Picora", "盧波": "Mini_Rufo", "米雪": "Mini_Mynx", "綾": "Mini_Aya", "羽伊": "Mini_Ui",
     "艾斯皮": "Mini_Espi", "艾琳娜": "Mini_Elena", "艾皮卡": "Mini_Epica", "艾舒爾": "Mini_Ashur", "艾蜜莉雅": "Mini_Amelia", "芙莉可": "Mini_Fricle", "茱蜜": "Mini_Jubee", "莉茲": "Mini_Leets",
     "莎莉": "Mini_Sari", "萊薇": "Mini_Levi", "蒂亞娜": "Mini_Diana", "謝蒂": "Mini_Shady", "貝魯": "Mini_Veroo", "貝麗塔": "Mini_Belita", "路德": "Mini_Rude", "路易": "Mini_Cuee",
-    "阿萊特": "Mini_Allet", "雷吉": "Mini_Lazy", "馬爾": "Mini_Mago", "泰達": "Mini_Taida", "寧琉": "Mini_Ner", "莉絲蒂": "Mini_Risty",  "雷內瓦": "Mini_RenewaAwaken"
-	//"芭瓏": ["Barong"]
+    "阿萊特": "Mini_Allet", "雷吉": "Mini_Lazy", "馬爾": "Mini_Mago", "泰達": "Mini_Taida", "寧琉": "Mini_Ner", "莉絲蒂": "Mini_Risty",  "雷內瓦": "Mini_RenewaAwaken", "芭瓏": "Mini_Barong"
 };
 
 // ------------------------------------------
@@ -705,12 +701,6 @@ const MINI_SPINE = {
 // ------------------------------------------
 
 const PICKUP_SCHEDULE = [
-	    {
-        start: "2026-06-25T04:00:00+09:00",
-        end: "2026-07-02T10:59:59+09:00",
-        chars: ["雷內瓦", "琳", "x乂錫安乂x"],
-        note: "琳、錫安坨格"
-    },
     {
         start: "2026-07-02T17:00:00+09:00",
         end: "2026-07-16T10:59:59+09:00",
@@ -721,11 +711,6 @@ const PICKUP_SCHEDULE = [
 
 // 🎪 遊戲內活動排程表
 const EVENT_SCHEDULE = [
-    {
-        start: "2026-06-18T17:00:00+09:00",
-        end: "2026-07-02T10:59:59+09:00",
-        eventId: "Theme017" 
-    },
     {
         start: "2026-06-18T17:00:00+09:00",
         end: "2026-07-16T10:59:59+09:00",
@@ -746,10 +731,10 @@ const CARD_SCHEDULE = [
         id: "Rune17",
         type: "Rune"
     },
-		{
-        start: "2026-06-25T04:00:00+09:00",
-        end: "2026-07-02T10:59:59+09:00",
-        id: "Artifact90",
+	{
+        start: "2026-07-02T17:00:00+09:00",
+        end: "2026-07-16T10:59:59+09:00",
+        id: "Artifact20",
         type: "Artifact"
     }
 ];
