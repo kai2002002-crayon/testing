@@ -127,13 +127,13 @@
                 </div>
             </section>
             <section class="flex flex-wrap justify-center gap-4 py-4">
-                <button onclick="performGacha(1)" class="btn-gacha px-6 sm:px-8 py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-xl shadow-lg border-b-4 border-blue-700 text-base sm:text-lg flex items-center gap-2">
-                    <div id="iconGacha1" class="sprite-base sprite-common sprite-Icon_GachaTicketHero shrink-0 scale-[0.5] w-8 h-8 sm:w-10 sm:h-10 origin-center"></div>
+                <button onclick="performGacha(1)" class="btn-gacha px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-xl shadow-lg border-b-4 border-blue-700 flex items-center gap-2">
+                    <div id="iconGacha1" class="sprite-base sprite-common sprite-Icon_GachaTicketHero shrink-0 w-[26px] h-[26px] scale-[0.4] origin-center"></div>
                     1次招募
                 </button>
 
-                <button onclick="performGacha(10)" class="btn-gacha px-6 sm:px-8 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-lg border-b-4 border-amber-700 text-base sm:text-lg flex items-center gap-2">
-                    <div id="iconGacha10" class="sprite-base sprite-common sprite-Icon_GachaTicketHero_10 shrink-0 scale-[0.5] w-8 h-8 sm:w-10 sm:h-10 origin-center"></div>
+                <button onclick="performGacha(10)" class="btn-gacha px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-lg border-b-4 border-amber-700 flex items-center gap-2">
+                    <div id="iconGacha10" class="sprite-base sprite-common sprite-Icon_GachaTicketHero_10 shrink-0 w-[29px] h-[29px] scale-[0.4] origin-center"></div>
                     10次招募
                 </button>
             </section>
@@ -272,21 +272,24 @@
                 if (activeElement) activeElement.classList.add('active');
                 if (type !== 'personality') document.getElementById('personalitySubMenu').classList.add('hidden');
             
-                // 🌟 更新招募按鈕的 Icon (使用雪碧圖 class 切換)
                 const icon1 = document.getElementById('iconGacha1');
                 const icon10 = document.getElementById('iconGacha10');
-                // 將 scale 統一為 0.5，並將容器尺寸放大為 w-8 h-8
-                const baseClasses = "sprite-base sprite-common shrink-0 scale-[0.5] w-8 h-8 origin-center transition-all";
-                if (icon1 && icon10) {
-                    if (type === 'personality') {
-                        icon1.className = `${baseClasses} sprite-Icon_GachaPersonality`;
-                        icon10.className = `${baseClasses} sprite-Icon_GachaPersonality_10`;
-                    } else {
-                        icon1.className = `${baseClasses} sprite-Icon_GachaTicketHero`;
-                        icon10.className = `${baseClasses} sprite-Icon_GachaTicketHero_10`;
-                    }
-                }
-            }
+    
+               // 設定基礎樣式，將 scale 與尺寸分開設定
+               const commonClasses = "sprite-base sprite-common shrink-0 origin-center transition-all";
+    
+               if (icon1 && icon10) {
+                   if (type === 'personality') {
+                       // 性格招募圖示
+                       icon1.className = `${commonClasses} sprite-Icon_GachaPersonality w-[26px] h-[26px] scale-[0.4]`;
+                       icon10.className = `${commonClasses} sprite-Icon_GachaPersonality_10 w-[29px] h-[29px] scale-[0.4]`;
+                   } else {
+                       // 普通/特選招募圖示
+                       icon1.className = `${commonClasses} sprite-Icon_GachaTicketHero w-[26px] h-[26px] scale-[0.4]`;
+                       icon10.className = `${commonClasses} sprite-Icon_GachaTicketHero_10 w-[29px] h-[29px] scale-[0.4]`;
+                   }
+               }
+           }
             
             function updatePersonalityBtns(selectedP) {
                 document.querySelectorAll('.p-sub-btn').forEach(b => {
