@@ -974,23 +974,24 @@
                         } else if (hitZoneOnDown.name === "頭部" && animNames.includes("Pat_Idle")) {
                             player.animationState.setAnimation(0, "Pat_Idle", true);
                             updateUI("Pat_Idle");
-                        } else if (hitZoneOnDown.name === "身體" && animNames.includes("Tickle_Idle_1")) {
-                            player.animationState.setAnimation(0, "Tickle_Idle_1", true);
-                            updateUI("Tickle_Idle_1");
-                            VoiceManager.playTickleStart();
-                            if (isDragging) {
-                                VoiceManager.playTickleDuring();
-                            }
-                        });
+                       } else if (hitZoneOnDown.name === "身體" && animNames.includes("Tickle_Idle_1")) {
+    player.animationState.setAnimation(0, "Tickle_Idle_1", true);
+    updateUI("Tickle_Idle_1");
+    VoiceManager.playTickleStart(() => {
+        // 只有在 TickleStart 播完後，才開始循環播放 During
+        // 並且要檢查是否還在按著 (isDragging)
+        if (isDragging) {
+            VoiceManager.playTickleDuring();
+        }
+    });
 
-                            tickleTimer = setTimeout(() => {
-                                if (animNames.includes("Tickle_Idle_2")) {
-                                    player.animationState.setAnimation(0, "Tickle_Idle_2", true);
-                                    updateUI("Tickle_Idle_2");
-                                    VoiceManager.playTickleDuring();
-                                }
-                            }, 2000); 
-                        }
+    tickleTimer = setTimeout(() => {
+        if (isDragging && animNames.includes("Tickle_Idle_2")) {
+            player.animationState.setAnimation(0, "Tickle_Idle_2", true);
+            updateUI("Tickle_Idle_2");
+        }
+    }, 2000); 
+}
                     }
             
                     if (hasTriggeredRub && hitZoneOnDown && activeInteractBone) {
