@@ -1221,6 +1221,7 @@
             }
             
             function renderMatrix() {
+                console.log("正在繪製角色:", char.name, "性格:", char.personality, "屬性:", layerbox);
                 const container = document.getElementById('matrixContainer'); if(!container) return; container.innerHTML = '';
                 const personalities = ["天真", "冷靜", "狂亂", "活潑", "憂鬱"];
                 const personalityBorderColors = { "天真": "border-green-500", "冷靜": "border-blue-500", "狂亂": "border-red-500", "活潑": "border-yellow-400", "憂鬱": "border-purple-500" };
