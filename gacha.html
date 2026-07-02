@@ -129,14 +129,18 @@
             <section class="flex flex-wrap justify-center gap-4 py-4">
                 <!-- 1次招募按鈕 -->
                 <button onclick="performGacha(1)" class="btn-gacha px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-xl shadow-lg border-b-4 border-blue-700 flex items-center gap-2">
-                    <!-- 改用 span，並移除 w-h 限制，只留 scale -->
-                    <span id="iconGacha1" class="sprite-base sprite-common sprite-Icon_GachaTicketHero scale-[0.4] origin-center"></span>
+                    <!-- 外層容器：強制固定大小，且設定 overflow-hidden 防止撐開按鈕 -->
+                    <div class="w-6 h-6 flex items-center justify-center overflow-visible">
+                        <span id="iconGacha1" class="sprite-base sprite-common sprite-Icon_GachaTicketHero scale-[0.4] origin-center"></span>
+                    </div>
                     1次招募
                 </button>
                 <!-- 10次招募按鈕 -->
                 <button onclick="performGacha(10)" class="btn-gacha px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-lg border-b-4 border-amber-700 flex items-center gap-2">
-                    <!-- 改用 span，並移除 w-h 限制，只留 scale -->
-                    <span id="iconGacha10" class="sprite-base sprite-common sprite-Icon_GachaTicketHero_10 scale-[0.4] origin-center"></span>
+                    <!-- 外層容器 -->
+                    <div class="w-7 h-7 flex items-center justify-center overflow-visible">
+                        <span id="iconGacha10" class="sprite-base sprite-common sprite-Icon_GachaTicketHero_10 scale-[0.4] origin-center"></span>
+                    </div>
                     10次招募
                 </button>
             </section>
