@@ -1299,6 +1299,7 @@
                                     const isOpened = savedStates[stateKey]; const btnId = `btn_${char.name}_l${l}_${attr}_${originalIdx}`;
                                     const btn = document.createElement('button'); btn.id = btnId;
                                     // 🌟 金蠟筆圖示按鈕樣式設定
+                                    // 🌟 金蠟筆圖示按鈕樣式設定 (文字顏色)
                                     const attrTextColors = {
                                         "攻擊": "text-orange-600 dark:text-orange-400",
                                         "防禦": "text-blue-600 dark:text-blue-400",
@@ -1306,27 +1307,53 @@
                                         "爆擊": "text-red-600 dark:text-red-400",
                                         "爆抗": "text-purple-600 dark:text-purple-400"
                                     };
-                                    // 🌟 修改：baseClass 將高度稍微拉高一點，讓圖文排版更舒服
+                                    
+                                    // 🌟 新增：針對不同屬性設定對應的點亮狀態(背景與邊框顏色)
+                                    const attrOpenClasses = {
+                                        "攻擊": "bg-orange-50 dark:bg-gray-700 border-orange-400 dark:border-orange-500 shadow-sm opacity-100",
+                                        "防禦": "bg-blue-50 dark:bg-gray-700 border-blue-400 dark:border-blue-500 shadow-sm opacity-100",
+                                        "血量": "bg-green-50 dark:bg-gray-700 border-green-400 dark:border-green-500 shadow-sm opacity-100",
+                                        "爆擊": "bg-red-50 dark:bg-gray-700 border-red-400 dark:border-red-500 shadow-sm opacity-100",
+                                        "爆抗": "bg-purple-50 dark:bg-gray-700 border-purple-400 dark:border-purple-500 shadow-sm opacity-100"
+                                    };
+
                                     const baseClass = "char-btn hover-scale flex items-center justify-center w-full h-[45px] sm:h-[50px] rounded-lg border transition-all duration-200 overflow-hidden cursor-pointer";
 
-                                   // 🌟 修改：openClass 確保圖示清晰且文字顯眼
-                                   const openClass = `bg-amber-50 dark:bg-gray-700 border-amber-400 dark:border-amber-500 shadow-sm opacity-100`;
-                                   // 🌟 修改：closeClass 讓未點亮狀態的圖片與文字都呈現低調灰色
-                                   const closeClass = "bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 opacity-60";
+                                    // 動態獲取該屬性對應的開啟樣式
+                                    const openClass = attrOpenClasses[attr] || `bg-amber-50 dark:bg-gray-700 border-amber-400 shadow-sm opacity-100`;
+                                    const closeClass = "bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 opacity-60";
 
-                                   btn.className = `${baseClass} ${isOpened ? openClass : closeClass}`;
+                                    btn.className = `${baseClass} ${isOpened ? openClass : closeClass}`;
                                                                         
                                     const spriteClass = SPRITE_CLASS_MAP[`boardon_${attr}`] || "";
                                     const textColor = isOpened ? (attrTextColors[attr] || 'text-gray-700') : 'text-gray-400';
 
                                     btn.innerHTML = `
-    <div class="w-full h-full flex flex-col items-center justify-center gap-0.5">
-        <div class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center shrink-0">
-            <div class="sprite-base sprite-common ${spriteClass} shrink-0 scale-[0.35] origin-center transition-all duration-200"></div>
-        </div>
-        <span class="text-[9px] sm:text-[10px] font-bold ${textColor} transition-all duration-200 leading-none">${t(attr)}</span>
-    </div>
-`;
+                                        <div class="w-full h-full flex flex-col items-center justify-center gap-0.5">
+                                            <div class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center shrink-0">
+                                                <div class="sprite-base sprite-common ${spriteClass} shrink-0 scale-[0.35] origin-center transition-all duration-200"></div>
+                                            </div>
+                                            <span class="text-[9px] sm:text-[10px] font-bold ${textColor} transition-all duration-200 leading-none">${t(attr)}</span>
+                                        </div>
+                                    `;
+
+                                    btn.onclick = () => {
+                                        savedStates[stateKey] = !savedStates[stateKey];
+                                        if(savedStates[stateKey] && !savedStates['owned_' + char.name]) { savedStates['owned_' + char.name] = true; updateOwnershipUI(char.name); }
+                                        btn.className = `${baseClass} ${savedStates[stateKey] ? openClass : closeClass}`;
+                                        
+                                        // 🌟 確保點擊時，文字的顏色也會跟著切換！
+                                        const newTextColor = savedStates[stateKey] ? (attrTextColors[attr] || 'text-gray-700') : 'text-gray-400';
+                                        btn.innerHTML = `
+                                            <div class="w-full h-full flex flex-col items-center justify-center gap-0.5">
+                                                <div class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center shrink-0">
+                                                    <div class="sprite-base sprite-common ${spriteClass} shrink-0 scale-[0.35] origin-center transition-all duration-200"></div>
+                                                </div>
+                                                <span class="text-[9px] sm:text-[10px] font-bold ${newTextColor} transition-all duration-200 leading-none">${t(attr)}</span>
+                                            </div>
+                                        `;
+                                        calculateStats();
+                                    };
 
 
                                     btn.onclick = () => {
