@@ -1113,20 +1113,21 @@
                 }
                 // 👇 新增這段來產生「已開啟/未開啟」按鈕
                 const statusContainer = document.getElementById("filter_gridStatus");
-if(statusContainer){
-    statusContainer.innerHTML = ""; 
-    // 確保使用 t() 函數包覆文字，這樣就會自動對應到你的翻譯檔
-    const statuses = [ 
-        {v:"all", n: t("全部")}, 
-        {v:"opened", n: t("已開啟")}, 
-        {v:"unopened", n: t("未開啟")} 
-    ];
+                if(statusContainer){
+                    statusContainer.innerHTML = ""; 
+                    // 使用翻譯鍵值陣列
+                    const statuses = [ 
+                        {v:"all", n: t("filter_btn_all")}, 
+                        {v:"opened", n: t("filter_btn_opened")}, 
+                        {v:"unopened", n: t("filter_btn_unopened")} 
+                    ];
     
-    statuses.forEach(st => { 
-        const btn = document.createElement("button"); 
-        btn.innerText = st.n; // 這裡已經使用了 t() 後的內容
-        btn.id = `btn_filter_gridStatus_${st.v}`;
-                        btn.className = st.v === "all" ? btnActiveStyle : btnInactiveStyle; 
+                    statuses.forEach(st => { 
+                        const btn = document.createElement("button"); 
+                        btn.innerText = st.n; 
+                        btn.id = `btn_filter_gridStatus_${st.v}`; 
+                        // 這裡確保 active/inactive 的樣式邏輯與你原本的篩選器一致
+                        btn.className = (activeFilters.gridStatus === st.v) ? btnActiveStyle : btnInactiveStyle; 
                         btn.onclick = () => selectGridStatusFilter(st.v); 
                         statusContainer.appendChild(btn); 
                     });
