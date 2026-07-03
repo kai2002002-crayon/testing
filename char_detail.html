@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>角色詳細資料</title>
+        <title>坨坨詳細資料</title>
         <script src="data_core.js"></script>
         <script src="data_skills.js"></script>
         <script src="data_collectibles.js"></script>
@@ -14,7 +14,7 @@
         <link rel="preconnect" href="https://firebasestorage.googleapis.com">
         <!-- 通用雪碧圖 -->
         <link rel="stylesheet" href="sprites.css">
-        <!-- 角色專屬雪碧圖 -->
+        <!-- 坨坨專屬雪碧圖 -->
         <link rel="stylesheet" href="char_sprites/char_sprites.css">
         <link rel="preconnect" href="https://i.postimg.cc">
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -111,7 +111,7 @@
             0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.5)); }
             50% { transform: translateY(-10px) scale(1.05); filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.9)); }
             }
-            /* 🌟 角色展示框的動態縮放背景 (LOBBY_BACKGROUNDS) */
+            /* 🌟 坨坨展示框的動態縮放背景 (LOBBY_BACKGROUNDS) */
             .animated-bg {
             position: relative;
             z-index: 1; 
@@ -385,7 +385,7 @@
                 `;
             }
             
-                        // 🌟 將角色星星修改為 Sprite 排版並完美縮放對齊
+                        // 🌟 將坨坨星星修改為 Sprite 排版並完美縮放對齊
             function renderStars(charName) {
                 const starsContainer = document.getElementById('charStars');
                 if (!starsContainer) return;
@@ -553,7 +553,7 @@
                         cgContainer.innerHTML = '';
                         cgContainer.classList.add('hidden');
                     } else {
-                        // 檢查 WORK_URL 中是否有該角色的專屬連結
+                        // 檢查 WORK_URL 中是否有該坨坨的專屬連結
                         let youtubeUrl = null;
                         if (typeof WORK_URL !== 'undefined' && WORK_URL[spineName]) {
                             youtubeUrl = WORK_URL[spineName];
@@ -1057,7 +1057,7 @@
                 const charBaseData = characterSkills.find(s => s.name.trim() === charName);
             
                 if (!charBaseData) {
-                    skillsContainer.innerHTML = "找不到此角色的技能資料 (名稱可能不符)";
+                    skillsContainer.innerHTML = "找不到此坨坨的技能資料 (名稱可能不符)";
                     return;
                 }
                 
@@ -1233,7 +1233,7 @@
                         setTimeout(() => loadSkillSpines(charName), 100);
             
                     } else {
-                        skillsContainer.innerHTML = `<div class="p-4 bg-gray-50 dark:bg-slate-700 text-gray-500 dark:text-gray-400 font-bold border border-gray-200 dark:border-slate-600 rounded-xl text-center">⚠️ ${getI18n('error_char_skill_not_found') || "找不到此角色的技能資料"}</div>`;
+                        skillsContainer.innerHTML = `<div class="p-4 bg-gray-50 dark:bg-slate-700 text-gray-500 dark:text-gray-400 font-bold border border-gray-200 dark:border-slate-600 rounded-xl text-center">⚠️ ${getI18n('error_char_skill_not_found') || "找不到此坨坨的技能資料"}</div>`;
                     }
                 }
             }
@@ -1271,9 +1271,9 @@
                 
                 if (isUpcoming && now < releaseTime) {
                     const upcomingMsg = {
-                        zh: "此角色的願像系統將於 2026/07/09 04:00 (JST) 實裝解鎖",
-                        ja: "このキャラクターのアサイドシステムは 2026/07/09 04:00 (JST) に実装されます",
-                        en: "This character's Yearning system will be unlocked on 2026/07/09 04:00 (JST)"
+                        zh: "此坨坨的願像系統將於 2026/07/09 04:00 (JST) 實裝解鎖",
+                        ja: "この使徒のアサイドシステムは 2026/07/09 04:00 (JST) に実装されます",
+                        en: "This Apostle's Yearning system will be unlocked on 2026/07/09 04:00 (JST)"
                     };
                     
                     asideContainer.innerHTML = `
@@ -1641,11 +1641,11 @@
                 const urlParams = new URLSearchParams(window.location.search);
                 currentTargetName = urlParams.get('char')?.trim();
             
-                if (!currentTargetName) { renderError(getI18n('error_no_char') || "❌ 未指定角色，請從主頁點擊角色按鈕進入。"); return; }
+                if (!currentTargetName) { renderError(getI18n('error_no_char') || "❌ 未指定坨坨，請從主頁點擊坨坨按鈕進入。"); return; }
                 if (typeof INITIAL_DATA === 'undefined') { renderError(getI18n('error_no_data') || "❌ 載入失敗：找不到 INITIAL_DATA。"); return; }
             
                 currentCharData = INITIAL_DATA.find(c => c.name.trim() === currentTargetName);
-                if (!currentCharData) { renderError(`${getI18n('error_char_not_found') || "❌ 找不到角色資料: "}${currentTargetName}`); return; }
+                if (!currentCharData) { renderError(`${getI18n('error_char_not_found') || "❌ 找不到坨坨資料: "}${currentTargetName}`); return; }
             
                 const avatarBox = document.getElementById('charAvatar');
                 if (typeof LOBBY_BACKGROUNDS !== 'undefined' && LOBBY_BACKGROUNDS.length > 0) {
