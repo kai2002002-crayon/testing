@@ -780,34 +780,37 @@
                                 });
             
                                 function getHitZone(mouseX, mouseY) {
-                                    const rect = canvas.getBoundingClientRect();
-                                    const effView = getEffectiveViewport(rect, baseViewport);
-                                    let clickedPart = null;
-                                    let minDistance = Infinity;
-                                    
-                                    const hitZones = [
-                                        { name: "臉頰", bones: ["Character_Ball_Move"], radius: 50 },
-                                        { name: "頭部", bones: ["Character_Pat"], radius: 50 },
-                                        { name: "身體", bones: ["Character_Tickle"], radius: 60 }
-                                    ];
-                                    
-                                    hitZones.forEach(zone => {
-                                        let targetBone = null;
-                                        for (let bName of zone.bones) { targetBone = player.skeleton.findBone(bName); if (targetBone) break; }
-                                        if (targetBone) {
-                                            const boneCanvasX = ((targetBone.worldX - effView.x) / effView.width) * rect.width;
-                                            const boneCanvasY = rect.height - ((targetBone.worldY - effView.y) / effView.height) * rect.height;
-                                            const distance = Math.hypot(mouseX - boneCanvasX, mouseY - boneCanvasY);
-                                            const scaledRadius = (zone.radius * currentZoom) * (rect.width / effView.width);
-                                            
-                                            if (distance < scaledRadius && distance < minDistance) { 
-                                                minDistance = distance; 
-                                                clickedPart = { ...zone, bone: targetBone }; 
-                                            }
-                                        }
-                                    });
-                                    return clickedPart;
-                                }
+    const rect = canvas.getBoundingClientRect();
+    // 🌟 修正 1：使用 effView 來確保判斷不會受到畫布長寬比影響
+    const effView = getEffectiveViewport(rect, baseViewport);
+    let clickedPart = null;
+    let minDistance = Infinity;
+    
+    const hitZones = [
+        { name: "臉頰", bones: ["Character_Ball_Move"], radius: 50 },
+        { name: "頭部", bones: ["Character_Pat"], radius: 50 },
+        { name: "身體", bones: ["Character_Tickle"], radius: 60 }
+    ];
+    
+    hitZones.forEach(zone => {
+        let targetBone = null;
+        for (let bName of zone.bones) { targetBone = player.skeleton.findBone(bName); if (targetBone) break; }
+        if (targetBone) {
+            // 🌟 修正 2：將 baseViewport 改為 effView，確保骨骼映射正確
+            const boneCanvasX = ((targetBone.worldX - effView.x) / effView.width) * rect.width;
+            const boneCanvasY = rect.height - ((targetBone.worldY - effView.y) / effView.height) * rect.height;
+            const distance = Math.hypot(mouseX - boneCanvasX, mouseY - boneCanvasY);
+            // 根據當前縮放比例動態調整判定半徑
+            const scaledRadius = (zone.radius * currentZoom) * (rect.width / effView.width);
+            
+            if (distance < scaledRadius && distance < minDistance) { 
+                minDistance = distance; 
+                clickedPart = { ...zone, bone: targetBone }; 
+            }
+        }
+    });
+    return clickedPart;
+}
             
                                 canvas.addEventListener('pointerdown', (e) => {
                                     pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
@@ -911,10 +914,11 @@
                                         activeInteractBone.x = initialBoneX + localDx;
                                         activeInteractBone.y = initialBoneY + localDy;
                                     } else if (!hitZoneOnDown) {
-                                        const effView = getEffectiveViewport(rect, baseViewport);
-                                        player.skeleton.x += dx * (effView.width / rect.width) / currentZoom;
-                                        player.skeleton.y -= dy * (effView.height / rect.height) / currentZoom;
-                                    }
+    // 🌟 修正 3：視角拖動時，必須除以 currentZoom，否則放大後拖曳速度會暴走並導致滑鼠與小人錯位
+    const effView = getEffectiveViewport(rect, baseViewport);
+    player.skeleton.x += dx * (effView.width / rect.width) / currentZoom;
+    player.skeleton.y -= dy * (effView.height / rect.height) / currentZoom;
+}
                                     
                                     lastMouseX = e.clientX;
                                     lastMouseY = e.clientY;
