@@ -1712,34 +1712,36 @@
             
                 const displayName = getI18n(currentCharData.name);
                 
-                // 🌟 普通/艾爾丁身份圖示修改為：完美適配行內的絕對置中雪碧圖
-                const isEldain = (typeof ELDAIN_LIST !== 'undefined') ? ELDAIN_LIST.includes(currentCharData.name) : false;
-                const identityClass = isEldain ? 'sprite-PickPerconalityIcon_EldainHero' : 'sprite-PickPerconalityIcon_NormalHero';
-                const identityHtml = `<div class="inline-block align-middle ml-1.5 relative w-7 h-7 overflow-hidden shrink-0 bg-transparent">
-                    <div class="sprite-base sprite-common ${identityClass} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 origin-center scale-[0.38]" style="width: 73px; height: 71px;"></div>
-                </div>`;
-                document.getElementById('charName').innerHTML = `${displayName} ${identityHtml}`;
-            
-                let pLabel = getI18n('stats_personality'); if(pLabel === 'stats_personality') pLabel = '性格';
-                let rLabel = getI18n('stats_race'); if(rLabel === 'stats_race') rLabel = '種族';
-                let posLabel = getI18n('stats_position'); if(posLabel === 'stats_position') posLabel = '站位';
-                let jLabel = getI18n('stats_job'); if(jLabel === 'stats_job') jLabel = '職業';
-                let aLabel = getI18n('stats_attribute'); if(aLabel === 'stats_attribute') aLabel = '攻擊類型';
-            
-                // 從 data_skills.js 取得類型 (物理/魔法)
-                let currentAttribute = "未知";
-                if (typeof characterSkills !== 'undefined') {
-                    const skillData = characterSkills.find(s => s.name.trim() === currentCharData.name);
-                    if (skillData && skillData.attribute) {
-                        currentAttribute = skillData.attribute;
-                    }
-                }
-            
-                updateTag('charPersonality', pLabel, currentCharData.personality, 'personality');
-                updateTag('charRace', rLabel, currentCharData.race, 'race');
-                updateTag('charPosition', posLabel, currentCharData.position, 'position');
-                updateTag('charJob', jLabel, currentCharData.job, 'job');
-                updateTag('charAttribute', aLabel, currentAttribute, 'attribute');
+                // 1. 名字恢復為純文字
+document.getElementById('charName').innerHTML = displayName;
+
+let pLabel = getI18n('stats_personality'); if(pLabel === 'stats_personality') pLabel = '性格';
+let rLabel = getI18n('stats_race'); if(rLabel === 'stats_race') rLabel = '種族';
+let posLabel = getI18n('stats_position'); if(posLabel === 'stats_position') posLabel = '站位';
+let jLabel = getI18n('stats_job'); if(jLabel === 'stats_job') jLabel = '職業';
+let aLabel = getI18n('stats_attribute'); if(aLabel === 'stats_attribute') aLabel = '攻擊類型';
+
+// 2. 準備身份資料
+let idLabel = getI18n('stats_identity'); if(idLabel === 'stats_identity') idLabel = '身份';
+const isEldain = (typeof ELDAIN_LIST !== 'undefined') ? ELDAIN_LIST.includes(currentCharData.name) : false;
+const identityValue = isEldain ? '艾爾丁' : '普通';
+
+// 從 data_skills.js 取得類型 (物理/魔法)
+let currentAttribute = "未知";
+if (typeof characterSkills !== 'undefined') {
+    const skillData = characterSkills.find(s => s.name.trim() === currentCharData.name);
+    if (skillData && skillData.attribute) {
+        currentAttribute = skillData.attribute;
+    }
+}
+
+// 3. 呼叫 updateTag 渲染所有的屬性與身份
+updateTag('charIdentity', idLabel, identityValue, 'identity'); // 🌟 新增身份標籤
+updateTag('charPersonality', pLabel, currentCharData.personality, 'personality');
+updateTag('charRace', rLabel, currentCharData.race, 'race');
+updateTag('charPosition', posLabel, currentCharData.position, 'position');
+updateTag('charJob', jLabel, currentCharData.job, 'job');
+updateTag('charAttribute', aLabel, currentAttribute, 'attribute');
                 updateRaceBackground(currentCharData.race);
                 
                 renderStars(currentTargetName);
