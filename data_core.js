@@ -26,9 +26,9 @@ const LANG_DICT = {
         stats_toggle_hint: "點擊展開 / 收起", stats_layer_1_title: "🥇 第一層統計", stats_layer_2_title: "🥈 第二層統計", stats_layer_3_title: "🥉 第三層統計",
         stats_layer_1_rule: "(每格+3%, 蠟筆×2)", stats_layer_2_rule: "(每格+4%, 蠟筆×4)", stats_layer_3_rule: "(每格+5%, 蠟筆×6)",
         stats_global_bonus: "📊 全體屬性加成", stats_need_more_prefix: "尚要 ", stats_need_more_suffix: " 根蠟筆",
-        x_label: "台港澳服官方X", official_x_url: "https://x.com/trickcal_TW",
 		info_job_reward: "💰 打工獎勵", info_food: "🍲 喜好料理", aside_title: "願像", aside_loading: "願像資料載入中...",
 		stats_attribute: "攻擊類型", 物理: "物理", 魔法: "魔法",
+		x_label: "台港澳服官方X", official_x_url: "https://x.com/trickcal_TW",
         footer_author: "📝 記事本製作者: 冷笑話幽靈", footer_copyright: "© 遊戲版權: EpidGames & Bilibili", footer_lastupdate: "最後更新日期：18/06/2026",
         "天真": "天真", "冷靜": "冷靜", "狂亂": "狂亂", "活潑": "活潑", "憂鬱": "憂鬱",
         "魔女": "魔女", "獸人": "獸人", "龍族": "龍族", "魔靈": "魔靈", "妖精": "妖精", "精靈": "精靈", "幽靈": "幽靈", "???": "???",
@@ -45,7 +45,7 @@ const LANG_DICT = {
         "阿萊特": "阿萊特", "雷吉": "雷吉", "馬爾": "馬爾", "泰達": "泰達", "寧琉": "寧琉", "莉絲蒂": "莉絲蒂", "雷內瓦": "雷內瓦", "芭瓏": "芭瓏",
         page_title_char_detail: "角色詳細資料", btn_close_page: "⬅️ 關閉此頁", loading: "載入中...",
         crayon_detail_title: "🖍️ 金蠟筆分佈詳情", layer_1_stats: "🥇 第一層屬性", layer_2_stats: "🥈 第二層屬性", layer_3_stats: "🥉 第三層屬性",
-        present_title: "🎁 坨坨珍藏品", present_loading: "寶箱開啟中...", btn_letter: "坨坨情信", btn_thought: "教主感想",
+        present_title: "坨坨珍藏品", present_loading: "寶箱開啟中...", btn_letter: "坨坨情信", btn_thought: "教主感想",
         present_select_hint: "請選擇顯示內容...", no_letter_hint: "（這隻坨坨好像還沒寫信給你呢...）", no_thought_hint: "（教主目前還沒寫下對這個珍藏品的感想呢...）",
         present_delivering: "珍藏品正在送遞中...", present_suffix: "的珍藏品", present_error: "⚠️ 珍藏品載入錯誤",
         skill_detail_title: "⚔️ 技能詳細資料", skill_loading: "技能載入中...", skill_normal_attack: "普通攻擊",
@@ -78,9 +78,9 @@ const LANG_DICT = {
         stats_toggle_hint: "クリックで展開 / 折りたたみ", stats_layer_1_title: "🥇 1段階目の統計", stats_layer_2_title: "🥈 2段階目の統計", stats_layer_3_title: "🥉 3段階目の統計",
         stats_layer_1_rule: "(各マス+3%, クレヨン×2)", stats_layer_2_rule: "(各マス+4%, クレヨン×4)", stats_layer_3_rule: "(各マス+5%, クレヨン×6)",
         stats_global_bonus: "📊 全体ステータスバフ", stats_need_more_prefix: "必要クレヨン数: ", stats_need_more_suffix: " 本",
-        x_label: "公式 X", official_x_url: "https://x.com/trickcal_jp",
 		info_job_reward: "💰 獲得報酬", info_food: "🍲 食べ物の好み", aside_title: "アサイド", aside_loading: "アサイドデータ読み込み中...",
 		stats_attribute: "攻撃タイプ", 物理: "物理", 魔法: "魔法",
+        x_label: "公式 X", official_x_url: "https://x.com/trickcal_jp",
         footer_author: "📝 ノート作成者: 冷笑話幽靈", footer_copyright: "© ゲーム著作権: EpidGames & Bilibili", footer_lastupdate: "最終更新日：18/06/2026",
         "天真": "純粋", "冷靜": "冷静", "狂亂": "狂気", "活潑": "活発", "憂鬱": "憂鬱",
         "魔女": "魔女", "獸人": "獣人", "龍族": "竜族", "魔靈": "精霊", "妖精": "妖精", "精靈": "エルフ", "幽靈": "幽霊", "???": "???",
@@ -97,7 +97,7 @@ const LANG_DICT = {
         "阿萊特": "アレット", "雷吉": "レイジー", "馬爾": "マーゴ", "泰達": "タイダー", "寧琉": "ネル", "莉絲蒂": "リスティ", "雷內瓦": "リニュア", "芭瓏": "バロン",
         page_title_char_detail: "使徒詳細データ", btn_close_page: "⬅️ 閉じる", loading: "読み込み中...",
         crayon_detail_title: "🖍️ 特級クレヨン分布詳細", layer_1_stats: "🥇 1段階目ステータス", layer_2_stats: "🥈 2段階目ステータス", layer_3_stats: "🥉 3段階目ステータス",
-        present_title: "🎁 使徒の愛用品", present_loading: "宝箱を開封中...", btn_letter: "使徒からの手紙", btn_thought: "教主の感想",
+        present_title: "使徒の愛用品", present_loading: "宝箱を開封中...", btn_letter: "使徒からの手紙", btn_thought: "教主の感想",
         present_select_hint: "表示内容を選択してください...", no_letter_hint: "（この使徒はまだ手紙を書いていないようです...）", no_thought_hint: "（教主はまだこの愛用品に対する感想を書いていないようです...）",
         present_delivering: "愛用品を配達中...", present_suffix: "の愛用品", present_error: "⚠️ 愛用品読み込みエラー",
         skill_detail_title: "⚔️ スキル詳細", skill_loading: "スキル読み込み中...", skill_normal_attack: "普通攻撃",
@@ -130,9 +130,9 @@ const LANG_DICT = {
         stats_toggle_hint: "Click to Expand / Collapse", stats_layer_1_title: "🥇 Board 1 Stats", stats_layer_2_title: "🥈 Board 2 Stats", stats_layer_3_title: "🥉 Board 3 Stats",
         stats_layer_1_rule: "(Node+3%, Crayon×2)", stats_layer_2_rule: "(Node+4%, Crayon×4)", stats_layer_3_rule: "(Node+5%, Crayon×6)",
         stats_global_bonus: "📊 Global Stat Bonus", stats_need_more_prefix: "Need ", stats_need_more_suffix: " Crayons",
-        x_label: "Official Global X", official_x_url: "https://x.com/trickcal_en",
 		info_job_reward: "💰 Acquired Rewards", info_food: "🍲 Favorite Food", aside_title: "Aside", aside_loading: "Loading Aside data...",
 		stats_attribute: "Attack Type", 物理: "Physical", 魔法: "Magical",
+        x_label: "Official Global X", official_x_url: "https://x.com/trickcal_en",
         footer_author: "📝 Author: 冷笑話幽靈", footer_copyright: "© Copyright: EpidGames & Bilibili", footer_lastupdate: "last updated on: 18/06/2026",
         "天真": "Innocence", "冷靜": "Composed", "狂亂": "Madness", "活潑": "Vivacious", "憂鬱": "Depressed",
         "魔女": "Witch", "獸人": "Werebeast", "龍族": "Dragon", "魔靈": "Elemental", "妖精": "Sprite", "精靈": "Elf", "幽靈": "Phantom", "???": "???",
@@ -149,7 +149,7 @@ const LANG_DICT = {
         "阿萊特": "Allet", "雷吉": "Layze", "馬爾": "Mago", "泰達": "Taida", "寧琉": "Ner", "莉絲蒂": "Risty", "雷內瓦": "Renewa", "芭瓏": "Barong",
         page_title_char_detail: "Apostle Details", btn_close_page: "⬅️ Close", loading: "Loading...",
         crayon_detail_title: "🖍️ Ultra Crayon Details", layer_1_stats: "🥇 Board 1 Stats", layer_2_stats: "🥈 Board 2 Stats", layer_3_stats: "🥉 Board 3 Stats",
-        present_title: "🎁 Apostle's Cherished Items", present_loading: "Opening chest...", btn_letter: "Apostle's Letter", btn_thought: "Master's Thoughts",
+        present_title: "Apostle's Cherished Items", present_loading: "Opening chest...", btn_letter: "Apostle's Letter", btn_thought: "Master's Thoughts",
         present_select_hint: "Please select content to display...", no_letter_hint: "(This Apostle hasn't written a letter to you yet...)", no_thought_hint: "(The Master hasn't shared their thoughts on this item yet...)",
         present_delivering: "Cherished item is being delivered...", present_suffix: "'s Cherished Item", present_error: "⚠️ Cherished Item Load Error",
         skill_detail_title: "⚔️ Skill Details", skill_loading: "Loading skills...", skill_normal_attack: "Normal ATK",
@@ -242,7 +242,7 @@ const INITIAL_DATA = [
     { name: "喬菲", personality: "憂鬱", race: "獸人", position: "中排", job: "輸出", layer1: ["防禦", "爆抗"], layer2: ["攻擊", "血量", "爆擊"], layer3: ["攻擊", "防禦", "血量", "爆抗"] },
     { name: "寧琉", personality: "狂亂", race: "妖精", position: "前排", job: "輔助", layer1: ["攻擊", "防禦"], layer2: ["攻擊", "防禦", "血量"], layer3: ["攻擊", "血量", "爆擊", "爆抗"] },
     { name: "莉絲蒂", personality: "憂鬱", race: "精靈", position: "後排", job: "輸出", layer1: ["攻擊", "防禦"], layer2: ["攻擊", "防禦", "血量"], layer3: ["攻擊", "血量", "爆擊", "爆抗"] },
-    { name: "雷內瓦", personality: "狂亂", race: "精靈", position: "中排", job: "輸出", layer1: ["攻擊", "防禦"], layer2: ["攻擊", "防禦", "血量"], layer3: ["攻擊", "血量", "爆擊", "爆抗"]},
+    { name: "雷內瓦", personality: "狂亂", race: "精靈", position: "中排", job: "輸出", layer1: ["攻擊", "防禦"], layer2: ["攻擊", "防禦", "血量"], layer3: ["攻擊", "血量", "爆擊", "爆抗"], releaseDate: "2026-06-18T17:00:00+09:00" },
 	{ name: "芭瓏", personality: "冷靜", race: "幽靈", position: "前排", job: "輸出", layer1: ["防禦", "爆抗"], layer2: ["攻擊", "血量", "爆擊"], layer3: ["攻擊", "防禦", "血量", "爆抗"], releaseDate: "2026-07-02T17:00:00+09:00" }
 ];
 
@@ -355,7 +355,7 @@ const REWARD_MAP = {
     "Amelia": ["眨眼墨水", "可彎曲金屬", "濕潤的紙漿"],
     "Ashur": ["魚", "巧克力", "槭樹樹液"],
     "Aya": ["水果", "魚", "樹葉"],
-	"Barong": [],
+	"Barong": ["樹葉", "堅硬的黑色果實", "寶石碎片"],
     "Belita": ["起司", "寶石碎片", "麵粉"],
     "Beni": ["閃亮的玻璃", "寶石碎片", "魚"],
     "BigWood": ["眨眼墨水", "米", "濕潤的紙漿"],
@@ -569,7 +569,7 @@ const FOOD_ICON = {
     "薄荷巧克力冰淇淋": { ja: "チョコミントアイス", url: "https://i.postimg.cc/mc9JCXx0/Icon-Food-27.png" },
     "UFC炸胡蘿蔔": { ja: "UFC ニンジンフライ", url: "https://i.postimg.cc/7Czd0svj/Icon-Food-28.png" },
     "棉花糖馬卡龍": { ja: "マシュマロマカロン", url: "https://i.postimg.cc/d7CprHPc/Icon-Food-29.png" },
-    "一碗米飯": { ja: "ご飯", url: "https://i.postimg.cc/hJm6TyWB/Icon-Food-30.pn" },
+    "一碗米飯": { ja: "ご飯", url: "https://i.postimg.cc/hJm6TyWB/Icon-Food-30.png" },
     "美味維他命C": { ja: "もぐもぐビタミンC", url: "https://i.postimg.cc/hJm6TyWg/Icon-Food-31.png" },
     "松糕": { ja: "笹団子", url: "https://i.postimg.cc/Z9N2p7th/Icon-Food-32.png" },
     "酸甜維他命F": { ja: "スパビタF", url: "https://i.postimg.cc/SX93CTFk/Icon-Food-33.png" },
@@ -704,6 +704,12 @@ const MINI_SPINE = {
 // ------------------------------------------
 
 const PICKUP_SCHEDULE = [
+	    {
+        start: "2026-06-25T04:00:00+09:00",
+        end: "2026-07-02T10:59:59+09:00",
+        chars: ["雷內瓦", "琳", "x乂錫安乂x"],
+        note: "琳、錫安坨格"
+    },
     {
         start: "2026-07-02T17:00:00+09:00",
         end: "2026-07-16T10:59:59+09:00",
@@ -714,6 +720,11 @@ const PICKUP_SCHEDULE = [
 
 // 🎪 遊戲內活動排程表
 const EVENT_SCHEDULE = [
+    {
+        start: "2026-06-18T17:00:00+09:00",
+        end: "2026-07-02T10:59:59+09:00",
+        eventId: "Theme017" 
+    },
     {
         start: "2026-06-18T17:00:00+09:00",
         end: "2026-07-16T10:59:59+09:00",
@@ -733,6 +744,12 @@ const CARD_SCHEDULE = [
         end: "2026-07-02T10:59:59+09:00",
         id: "Rune17",
         type: "Rune"
+    },
+		{
+        start: "2026-06-25T04:00:00+09:00",
+        end: "2026-07-02T10:59:59+09:00",
+        id: "Artifact90",
+        type: "Artifact"
     },
 	{
         start: "2026-07-02T17:00:00+09:00",
