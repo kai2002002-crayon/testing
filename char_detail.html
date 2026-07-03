@@ -35,7 +35,7 @@
         <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
         <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
         <style>
-            /* 🌟 預設空珍藏品：情信 (若 sprites.css 中已有，這裡作為安全備用) */
+            /* 🌟 預設空珍藏品：情信 (確保即使載入順序問題也能正確顯示) */
             .sprite-letter {
                 width: 71px;
                 height: 71px;
@@ -225,7 +225,8 @@
                 </div>
                 <div id="presentWrapper" class="flex flex-col md:flex-row gap-6 items-center md:items-start rounded-xl bg-white/60 dark:bg-gray-900/50 border border-rose-100 dark:border-gray-800 p-5">
                     <div id="presentLeft" class="w-full md:w-1/3 flex flex-col items-center gap-3 transition-all duration-300">
-                        <div id="presentContainer" class="w-full flex justify-center items-center overflow-hidden min-h-[120px]">
+                        <!-- ⚠️ 移除 overflow-hidden 防止裁切，增加相對定位和安全高度 -->
+                        <div id="presentContainer" class="w-full flex justify-center items-center relative min-h-[160px]">
                             <p data-i18n="present_loading" class="text-orange-400 dark:text-gray-500 text-sm animate-pulse">寶箱開啟中...</p>
                         </div>
                         <div id="presentName" class="hidden text-center font-bold text-rose-900 dark:text-rose-200 bg-rose-100/50 dark:bg-rose-900/30 px-3 py-1 rounded-lg border border-rose-200 dark:border-rose-800 text-sm"></div>
@@ -728,7 +729,6 @@
             
                                 function getHitZone(mouseX, mouseY) {
             const rect = canvas.getBoundingClientRect();
-            // 🌟 修正 1：使用 effView 來確保判斷不會受到畫布長寬比影響
             const effView = getEffectiveViewport(rect, baseViewport);
             let clickedPart = null;
             let minDistance = Infinity;
@@ -743,11 +743,9 @@
             let targetBone = null;
             for (let bName of zone.bones) { targetBone = player.skeleton.findBone(bName); if (targetBone) break; }
             if (targetBone) {
-            // 🌟 修正 2：將 baseViewport 改為 effView，確保骨骼映射正確
             const boneCanvasX = ((targetBone.worldX - effView.x) / effView.width) * rect.width;
             const boneCanvasY = rect.height - ((targetBone.worldY - effView.y) / effView.height) * rect.height;
             const distance = Math.hypot(mouseX - boneCanvasX, mouseY - boneCanvasY);
-            // 根據當前縮放比例動態調整判定半徑
             const scaledRadius = (zone.radius * currentZoom) * (rect.width / effView.width);
             
             if (distance < scaledRadius && distance < minDistance) { 
@@ -806,7 +804,6 @@
             if (player.skeleton) {
                 player.skeleton.scaleX = currentZoom;
                 player.skeleton.scaleY = currentZoom;
-                // 這裡保留您原本的偏移邏輯
                 player.skeleton.y = ZOOM_ANCHOR_Y * (1 - currentZoom);
                 player.skeleton.x = 0;
             }
@@ -822,7 +819,6 @@
             const dy = e.clientY - lastMouseY;
             dragDistance += Math.hypot(dx, dy);
             
-            // 🌟 判斷觸發互動
             if (dragDistance > 10 && hitZoneOnDown && !hasTriggeredRub) {
             hasTriggeredRub = true;
             clearTimeout(tickleTimer);
@@ -836,9 +832,8 @@
             }
             }
             
-            // 🌟 臉頰/摸頭 物理運算
             if (hasTriggeredRub && hitZoneOnDown && activeInteractBone) {
-            const effView = getEffectiveViewport(rect, baseViewport); // 使用新計算函數
+            const effView = getEffectiveViewport(rect, baseViewport); 
             const isCheek = hitZoneOnDown.name === "臉頰";
             const spineScaleX = effView.width / rect.width / currentZoom;
             const spineScaleY = effView.height / rect.height / currentZoom;
@@ -864,7 +859,6 @@
             activeInteractBone.x = initialBoneX + localDx;
             activeInteractBone.y = initialBoneY + localDy;
             } else if (!hitZoneOnDown) {
-            // 🌟 修正 3：視角拖動時，必須除以 currentZoom，否則放大後拖曳速度會暴走並導致滑鼠與小人錯位
             const effView = getEffectiveViewport(rect, baseViewport);
             player.skeleton.x += dx * (effView.width / rect.width) / currentZoom;
             player.skeleton.y -= dy * (effView.height / rect.height) / currentZoom;
@@ -885,7 +879,6 @@
             
                                     const animNames = player.skeleton.data.animations.map(a => a.name);
             
-                                    // 🌟 回彈物理
                                     if (activeInteractBone) {
                                         let targetX = initialBoneX, targetY = initialBoneY;
                                         let bouncingBone = activeInteractBone;
@@ -906,7 +899,6 @@
                                         applyBounce();
                                     }
             
-                                    // 🌟 鬆開後的動畫串接與重啟隨機 Idle
                                     if (hasTriggeredRub) {
                                         if (hitZoneOnDown && hitZoneOnDown.name === "臉頰" && animNames.includes("Touch_End")) {
                                             player.animationState.setAnimation(0, "Touch_End", false);
@@ -922,7 +914,6 @@
                                         }
                                         startRandomAnimationLoop();
                                     } else if (hitZoneOnDown && dragDistance < 10) {
-                                        // 單純點擊敲打
                                         if ((hitZoneOnDown.name === "頭部" || hitZoneOnDown.name === "臉頰") && animNames.includes("Smash_End_1")) {
                                             player.animationState.setAnimation(0, "Smash_End_1", false);
                                             if (animNames.includes("Smash_End_2")) {
@@ -932,7 +923,6 @@
                                         }
                                         startRandomAnimationLoop();
                                     } else {
-                                        // 沒點到熱區，直接恢復隨機迴圈
                                         startRandomAnimationLoop();
                                     }
                                 };
@@ -987,18 +977,14 @@
             
             function renderCollectibles(charName) {
                 const lang = window.currentLang || 'zh-TW';
-                // 🌟 1. 取得對應的英文鍵值 (例如將 "愛麗絲" 轉為 "Alice")
                 const spineKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
             
-                // 🌟 2. 安全更新珍藏品名稱
                 if (typeof PRESENT_MAP !== 'undefined' && PRESENT_MAP[spineKey]) {
                     const presentData = PRESENT_MAP[spineKey];
-                    // 👉 修正 HTML 的正確 ID: presentName
                     const presentNameBox = document.getElementById('presentName');
             
                     if (presentNameBox) {
                         if (typeof presentData.name === 'object') {
-                            // 依照語系切換，若找不到則退回中文
                             presentNameBox.innerText = presentData.name[lang] || presentData.name['zh-TW'] || presentData.name['zh'] || "未知珍藏品";
                         } else {
                             presentNameBox.innerText = presentData.name;
@@ -1007,7 +993,6 @@
                 }
             }
             
-            // 🌟 建立一個全域陣列，用來儲存技能區塊的 Spine 播放器，方便切換語言時銷毀舊的
             window.skillSpinePlayers = [];
             
             function renderSkills(charName) {
@@ -1035,14 +1020,12 @@
             
                             statsArray.forEach(stat => {
                                 if (typeof stat === 'string') {
-                                    // 【修改重點】直接推入字串並去除頭尾空白，不要再用 split 切割了！
                                     processedStats.push(stat.trim());
                                 } else {
                                     processedStats.push(stat);
                                 }
                             });
             
-                            // 過濾掉可能是空字串的元素
                             processedStats = processedStats.filter(Boolean);
             
                             if (processedStats.length === 0) return '';
@@ -1078,16 +1061,34 @@
                             if (iconSrc.startsWith('http') || iconSrc.startsWith('./')) {
                                 return `<img src="${iconSrc}" class="w-8 h-8 rounded-lg shadow-sm border ${borderClasses}">`;
                             } else {
-                                return `<div class="w-8 h-8 flex items-center justify-center rounded-lg shadow-sm border ${borderClasses} overflow-hidden bg-white dark:bg-slate-700"><div class="${iconSrc} origin-center scale-[0.45]"></div></div>`;
+                                // 加入 shrink-0 確保圖標容器不會被壓縮
+                                return `<div class="w-8 h-8 flex items-center justify-center rounded-lg shadow-sm border ${borderClasses} overflow-hidden bg-white dark:bg-slate-700 shrink-0"><div class="${iconSrc} origin-center scale-[0.45]"></div></div>`;
                             }
                         };
 
-                        // 🌟 透過 Spine 名稱轉換並採用雪碧圖 Class
                         const spineKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
-                        const normalAttackIcon = charBaseData.attribute === "物理" ? "sprite-Icon_NormalAttack_Physical" : "sprite-Icon_NormalAttack_Magical";
-                        const normalSkillIcon = `sprite-${spineKey}_skill_normal`;
-                        const ultSkillIcon = `sprite-Icon_UltimateSkill_${spineKey}`;
-                        const passiveSkillIcon = `sprite-${spineKey}_skill_passive`;
+                        
+                        // 🌟 修正：套用 sprite-base 與 sprite-common 確保能抓到圖檔，並處理各種技能類別對應的 Class
+                        const normalAttackIcon = charBaseData.attribute === "物理" ? "sprite-base sprite-common sprite-attack_physical" : "sprite-base sprite-common sprite-attack_magical";
+                        const normalSkillIcon = `sprite-Icon_NormalSkill_${spineKey}`;
+                        const passiveSkillIcon = `sprite-Icon_PassiveSkill_${spineKey}`;
+
+                        // 🌟 處理大絕的性格背景：透過分析 currentCharData.personality 並加入到對應 Class 組合中
+                        const pKey = currentCharData.personality || "冷靜";
+                        const personalityMap = {
+                            "冷靜": "sprite-ult-composed",
+                            "憂鬱": "sprite-ult-depressed",
+                            "純真": "sprite-ult-innocence",
+                            "瘋狂": "sprite-ult-madness",
+                            "活潑": "sprite-ult-vivacious",
+                            "Composed": "sprite-ult-composed",
+                            "Depressed": "sprite-ult-depressed",
+                            "Innocence": "sprite-ult-innocence",
+                            "Madness": "sprite-ult-madness",
+                            "Vivacious": "sprite-ult-vivacious"
+                        };
+                        const ultBase = personalityMap[pKey] || "sprite-ult-composed";
+                        const ultSkillIcon = `sprite-base ${ultBase} sprite-Icon_UltimateSkill_${spineKey}`;
             
                         const enhancedData = charSkillData.normalAttack.enhanced;
                         const hasEnhanced = enhancedData && enhancedData !== "無" && (typeof enhancedData === 'string' ? true : enhancedData.desc !== "無");
@@ -1130,7 +1131,6 @@
                             </div>
                         `;
             
-                        // 被動技能不放置 Spine，維持原本設計
                         html += `
                             <div class="relative bg-amber-50/70 dark:bg-amber-900/20 border-2 border-amber-300 dark:border-amber-700 rounded-xl p-4 shadow-sm overflow-hidden">
                                 <div class="flex justify-between items-center border-b border-amber-200 dark:border-amber-800 pb-2 mb-3 relative z-10">
@@ -1171,7 +1171,6 @@
                         
                         skillsContainer.innerHTML = html;
             
-                        // 🌟 呼叫加載戰鬥小人
                         setTimeout(() => loadSkillSpines(charName), 100);
             
                     } else {
@@ -1203,7 +1202,6 @@
             const releaseTime = new Date('2026-07-09T04:00:00+09:00').getTime(); 
             const now = new Date().getTime();
             
-            // 🌟 修正：如果沒有資料，而且「不是即將實裝的角色」，才強制隱藏並返回
             if (!data && !isUpcoming) {
             asideSection.classList.add('hidden');
             return;
@@ -1211,7 +1209,6 @@
             
             asideSection.classList.remove('hidden');
             
-            // 🌟 檢查並渲染即將實裝的提示
             if (isUpcoming && now < releaseTime) {
             const upcomingMsg = {
             zh: "此角色的願像系統將於 2026/07/09 04:00 (JST) 實裝解鎖",
@@ -1226,13 +1223,10 @@
             return;
             }
             
-            // 🌟 雙重保險：如果時間已過但還是沒有 data，才隱藏該區塊
             if (!data) {
             asideSection.classList.add('hidden');
             return;
             }
-            
-            // ...下面原本的 makeEffectChips 和 html 組裝邏輯保持不變 ...
             
                 const makeEffectChips = (effectsObj) => {
                     const effects = getLocArray(effectsObj);
@@ -1304,14 +1298,12 @@
                 html += `</div>`;
                 asideContainer.innerHTML = html;
             }
-            // 🌟 跨平台自適應終極版：完美修正螢幕旋轉飄移問題
             function loadSkillSpines(charName) {
                 if (window.skillSpinePlayers && window.skillSpinePlayers.length > 0) {
                     window.skillSpinePlayers.forEach(p => p.dispose());
                     window.skillSpinePlayers = [];
                 }
             
-                // 儲存目前的角色名稱，供旋轉時重新載入使用
                 window.currentActiveCharName = charName;
             
                 const baseFolderKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
@@ -1326,31 +1318,25 @@
                     const container = document.getElementById(target.id);
                     if (!container) return;
             
-                    // 📱 動態偵測是否為手機螢幕 (寬度小於等於 768px)
                     const isMobile = window.innerWidth <= 768;
             
-                    // 🌟 【絕對錨定】強制拉到最頂層
                     container.style.position = "absolute"; 
                     container.style.zIndex = "999";        
                     container.style.pointerEvents = "none"; 
-                    container.style.transform = "none"; // 清除位移干擾
+                    container.style.transform = "none"; 
             
-                    // 🔀 雙平台獨立排版
                     if (isMobile) {
-                        // 🌟 核心修正：將 minWidth/minHeight 改為絕對的 width/height
                         container.style.width = "150px";    
                         container.style.height = "150px";
                         container.style.bottom = "10px";  
                         container.style.right = "-60px";   
                     } else {
-                        // 🌟 電腦版也同樣鎖死絕對寬高
                         container.style.width = "240px";    
                         container.style.height = "240px";
                         container.style.bottom = "10px";  
                         container.style.right = "-40px";    
                     }
             
-                    // 📸 雙平台獨立鏡頭設定
                     const desktopViewport = { 
                         x: -500, y: -150, width: 1500, height: 3000, 
                         padLeft: "0%", padRight: "0%", padTop: "0%", padBottom: "0%", transitionTime: 0 
@@ -1376,7 +1362,6 @@
                         success: function (player) {
                             window.skillSpinePlayers.push(player);
             
-                            // 強制畫布寬高與層級
                             const canvas = container.querySelector('canvas');
                             if (canvas) {
                                 canvas.style.width = '100%';
@@ -1385,7 +1370,6 @@
                                 canvas.style.zIndex = '999'; 
                             }
             
-                            // 套用皮膚
                             const skins = player.skeleton.data.skins;
                             if (skins && skins.length > 0) {
                                 const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name === 'default') || skins[0];
@@ -1395,7 +1379,6 @@
                                 }
                             }
             
-                            // 取得動作與智慧連招邏輯 (維持不變)
                             const allAnims = player.skeleton.data.animations.map(a => a.name);
                             const hasIdle = allAnims.includes("Idle") ? "Idle" : null;
                             
@@ -1460,7 +1443,6 @@
                 const container = document.getElementById('topMiniSpineContainer');
                 if (!container) return;
             
-                // 🌟 調整點 1：將尺寸從 120px 改為 90px (原本的 75%)
                 container.style.pointerEvents = "none";
                 container.style.display = 'block';
                 container.style.height = '90px'; 
@@ -1514,10 +1496,7 @@
                             }
                         }
             
-                        // 🌟 調整點 2：修改動畫播放時間軸的速度為 0.5 倍 (慢動作)
-                        // 如果未來想加快，設為 1.5 或 2.0 即可
                         player.animationState.timeScale = 0.5;
-            
                         player.play();
                     },
                     error: (player, reason) => {
@@ -1525,25 +1504,19 @@
                     }
                 });
             }
-            // 🌟 【核心修正】加入全域監聽器：當螢幕尺寸改變或旋轉時，自動重繪 Spine
             let resizeTimeout;
-            // 紀錄目前的螢幕寬度
             let lastWindowWidth = window.innerWidth;
             
             window.addEventListener('resize', () => {
-                // 🚫 防誤觸機制：如果螢幕「寬度」沒變，代表只是手機滑動導致網址列縮放，直接忽略！
                 if (window.innerWidth === lastWindowWidth) {
                     return; 
                 }
             
-                // 更新最新的螢幕寬度
                 lastWindowWidth = window.innerWidth;
             
-                // 使用 debounce 避免短時間內重複觸發，優化手機效能
                 clearTimeout(resizeTimeout);
                 resizeTimeout = setTimeout(() => {
                     if (window.currentActiveCharName) {
-                        // 只有在真正旋轉螢幕（寬度改變）時，才重新載入小人
                         loadSkillSpines(window.currentActiveCharName);
                     }
                 }, 300); 
@@ -1612,7 +1585,6 @@
                 currentCharData = INITIAL_DATA.find(c => c.name.trim() === currentTargetName);
                 if (!currentCharData) { renderError(`${getI18n('error_char_not_found') || "❌ 找不到角色資料: "}${currentTargetName}`); return; }
             
-                // 🌟 新增：在此處隨機抽取 LOBBY_BACKGROUNDS 並套用至 #charAvatar 
                 const avatarBox = document.getElementById('charAvatar');
                 if (typeof LOBBY_BACKGROUNDS !== 'undefined' && LOBBY_BACKGROUNDS.length > 0) {
                     const randomIndex = Math.floor(Math.random() * LOBBY_BACKGROUNDS.length);
@@ -1646,22 +1618,17 @@
             
                 const spineKey = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[currentCharData.name] : currentCharData.name;
             
-                // 🌟 動態替換專屬 Favicon
-                // 🌟 動態替換專屬 Favicon (含防呆機制)
                 const faviconEl = document.getElementById('dynamicFavicon');
                 const defaultFaviconUrl = 'https://i.postimg.cc/mkfSTq5k/Favicon.png';
                 
                 if (faviconEl && spineKey) {
                     const testImg = new Image();
                     testImg.onload = function() {
-                        // ✅ 測試成功：確實有這張圖，正式替換 Favicon
                         faviconEl.href = this.src;
                     };
                     testImg.onerror = function() {
-                        // ❌ 測試失敗：找不到該角色的圖，退回預設金蠟筆
                         faviconEl.href = defaultFaviconUrl;
                     };
-                    // 啟動測試載入
                     testImg.src = `./favicon/${spineKey}.png`;
                 }
             
@@ -1671,7 +1638,8 @@
                     const presentContainer = document.getElementById('presentContainer');
                     const presentNameBox = document.getElementById('presentName');
             
-                    const DEFAULT_NO_PRESENT = "sprite-letter";
+                    // 🌟 修正預設無珍藏品的 Class (加入 sprite-base sprite-common 確保抓到背景)
+                    const DEFAULT_NO_PRESENT = "sprite-base sprite-common sprite-letter";
             
                     let finalImgUrl = DEFAULT_NO_PRESENT;
                     let presentDisplayName = getI18n('present_delivering'); 
@@ -1680,7 +1648,8 @@
                     let isHasPresent = false;
             
                     if (typeof PRESENT_MAP !== 'undefined' && PRESENT_MAP[spineKey]) {
-                        finalImgUrl = PRESENT_MAP[spineKey].sprite || PRESENT_MAP[spineKey].url || `sprite-${spineKey}_present`;
+                        // 🌟 套用符合 char_sprites.css 的珍藏品 Class
+                        finalImgUrl = PRESENT_MAP[spineKey].sprite || PRESENT_MAP[spineKey].url || `sprite-PresentList_${spineKey}`;
                         isHasPresent = true;
             
                         const pNameData = PRESENT_MAP[spineKey].name;
@@ -1730,12 +1699,14 @@
                                      onerror="if(this.src != 'https://i.postimg.cc/qtwD6bsq/Icon-Present.png') this.src='https://i.postimg.cc/qtwD6bsq/Icon-Present.png'; else this.parentElement.innerHTML='<p class=\\'text-gray-500 text-sm\\'>⚠️ Image Error</p>'">
                             `;
                         } else {
-                            // 支援雪碧圖的渲染方式
-                            const animClass = isHasPresent ? 'transition-transform duration-300 hover:scale-110 drop-shadow-md' : 'opacity-70 drop-shadow-sm';
-                            const scaleClass = isHasPresent ? 'scale-[1.5]' : 'scale-[1.0]';
+                            // 🌟 修正：利用 transform: scale() 取代 Tailwind scale 防止裁切，並確保放大特效維持
+                            const animClass = isHasPresent ? 'transition-transform duration-300 drop-shadow-md' : 'opacity-70 drop-shadow-sm transition-transform duration-300';
+                            const baseScale = isHasPresent ? 'scale(0.65)' : 'scale(1.2)';
+                            const hoverWrapperClass = isHasPresent ? 'hover:scale-110 transition-transform duration-300' : '';
+                            
                             presentContainer.innerHTML = `
-                                <div class="flex items-center justify-center w-32 h-32 md:w-40 md:h-40">
-                                    <div class="${finalImgUrl} ${animClass} origin-center ${scaleClass}" title="${altText}"></div>
+                                <div class="flex items-center justify-center w-full h-full ${hoverWrapperClass}">
+                                    <div class="${finalImgUrl} ${animClass} origin-center" style="transform: ${baseScale};" title="${altText}"></div>
                                 </div>
                             `;
                         }
@@ -1782,8 +1753,7 @@
                 
                 loadComments(currentTargetName);
                 switchPresentTab('thought'); 
-                // 👇 在這裡補上這行，觸發小人載入！
-                    loadTopMiniSpine(currentTargetName);
+                loadTopMiniSpine(currentTargetName);
              };
             
             function getAnonymousId() {
@@ -1888,7 +1858,6 @@
                     btn.classList.replace('dark:bg-gray-500', 'dark:bg-amber-600');
                 });
             }
-            // 偵測捲動距離以顯示/隱藏按鈕
             window.onscroll = function() {
             const btn = document.getElementById("backToTop");
             if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
@@ -1898,7 +1867,6 @@
             }
             };
             
-            // 執行平滑滾動至頂部
             function scrollToTop() {
             window.scrollTo({
             top: 0,
