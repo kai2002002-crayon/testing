@@ -1628,6 +1628,13 @@
                 if (!currentCharData) return;
                 
                 applyI18n();
+
+                document.querySelectorAll('.costume-btn').forEach((btn, idx) => {
+                    let displayName = idx === 0 ? t("costume_default") : `${t("costume_prefix")}${idx}`;
+                    if (displayName === "costume_default") displayName = "預設";
+                    if (displayName.includes("costume_prefix")) displayName = `服裝${idx}`;
+                    btn.innerText = displayName;
+                });
                 
                 const displayName = getI18n(currentCharData.name);
                 
