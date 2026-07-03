@@ -1051,8 +1051,8 @@
                             if (iconSrc.startsWith('http') || iconSrc.startsWith('./')) {
                                 return `<img src="${iconSrc}" class="w-10 h-10 rounded-lg shadow-sm border ${borderClasses}">`;
                             } else {
-                                // 若沒有額外設定，預設套用 scale(0.45)
-                                const styleAttr = extraStyle ? extraStyle : 'transform: translate(-50%, -50%) scale(0.45);';
+                                // 原本 64x64px 的技能圖標，縮放 0.625 倍後剛好為 40x40px，完美塞滿外框
+                                const styleAttr = extraStyle ? extraStyle : 'transform: translate(-50%, -50%) scale(0.625);';
                                 return `<div class="w-10 h-10 flex items-center justify-center rounded-lg shadow-sm border ${borderClasses} overflow-hidden bg-white dark:bg-slate-700 shrink-0 relative">
                                             <div class="${iconSrc} absolute top-1/2 left-1/2" style="${styleAttr}"></div>
                                         </div>`;
