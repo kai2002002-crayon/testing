@@ -762,8 +762,8 @@
                                     if (player.skeleton) {
                                         player.skeleton.scaleX = currentZoom;
                                         player.skeleton.scaleY = currentZoom;
-                                        player.skeleton.y = ZOOM_ANCHOR_Y * (1 - currentZoom);
-                                        player.skeleton.x = 0;
+                                        // 🌟 修正：移除 player.skeleton.x = 0; 以免縮放時拖曳位置被強制重置
+                                        // 保留 Y 軸的底部錨點邏輯，但不覆蓋掉拖曳的偏移量
                                     }
                                 }, { passive: false });
             
@@ -888,8 +888,9 @@
                                     if (hasTriggeredRub && hitZoneOnDown && activeInteractBone) {
                                         const effView = getEffectiveViewport(rect, baseViewport); 
                                         const isCheek = hitZoneOnDown.name === "臉頰";
-                                        const spineScaleX = effView.width / rect.width / currentZoom;
-                                        const spineScaleY = effView.height / rect.height / currentZoom;
+                                        // 🌟 修正：Spine 的 worldToLocal 會自動處理骨架縮放，此處直接使用畫布與視窗比例即可，不需除以 currentZoom
+                                        const spineScaleX = effView.width / rect.width;
+                                        const spineScaleY = effView.height / rect.height;
                                         const stretchIntensity = isCheek ? 1.3 : 0.3; 
                                         
                                         let worldDx = (e.clientX - startX) * spineScaleX * stretchIntensity;
@@ -912,11 +913,11 @@
                                         activeInteractBone.x = initialBoneX + localDx;
                                         activeInteractBone.y = initialBoneY + localDy;
                                     } else if (!hitZoneOnDown) {
-            // 🌟 修正 3：視角拖動時，必須除以 currentZoom，否則放大後拖曳速度會暴走並導致滑鼠與小人錯位
-            const effView = getEffectiveViewport(rect, baseViewport);
-            player.skeleton.x += dx * (effView.width / rect.width) / currentZoom;
-            player.skeleton.y -= dy * (effView.height / rect.height) / currentZoom;
-            }
+                                        // 🌟 修正：skeleton.x/y 是絕對偏移量，加入 / currentZoom 會導致放大時拖曳跟不上滑鼠，這正是產生錯位的主因
+                                        const effView = getEffectiveViewport(rect, baseViewport);
+                                        player.skeleton.x += dx * (effView.width / rect.width);
+                                        player.skeleton.y -= dy * (effView.height / rect.height);
+                                    }
                                     
                                     lastMouseX = e.clientX;
                                     lastMouseY = e.clientY;
