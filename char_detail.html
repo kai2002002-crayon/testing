@@ -1045,13 +1045,16 @@
                         };
             
                         // 🌟 修改：利用 absolute center 完全避免 overflow-hidden 因 scale 所導致的裁切
-                        const getSkillIconHtml = (iconSrc, borderClasses, fallbackIcon) => {
+                       // 🌟 修改：利用 absolute center 完全避免 overflow-hidden 因 scale 所導致的裁切，並支援傳入額外 style (處理 64x64 雪碧圖)
+                        const getSkillIconHtml = (iconSrc, borderClasses, fallbackIcon, extraStyle = "") => {
                             if (!iconSrc) return `<span>${fallbackIcon}</span>`;
                             if (iconSrc.startsWith('http') || iconSrc.startsWith('./')) {
                                 return `<img src="${iconSrc}" class="w-10 h-10 rounded-lg shadow-sm border ${borderClasses}">`;
                             } else {
+                                // 若沒有額外設定，預設套用 scale(0.45)
+                                const styleAttr = extraStyle ? extraStyle : 'transform: translate(-50%, -50%) scale(0.45);';
                                 return `<div class="w-10 h-10 flex items-center justify-center rounded-lg shadow-sm border ${borderClasses} overflow-hidden bg-white dark:bg-slate-700 shrink-0 relative">
-                                            <div class="${iconSrc} absolute top-1/2 left-1/2" style="transform: translate(-50%, -50%) scale(0.45);"></div>
+                                            <div class="${iconSrc} absolute top-1/2 left-1/2" style="${styleAttr}"></div>
                                         </div>`;
                             }
                         };
@@ -1063,20 +1066,25 @@
                         const passiveSkillIcon = `sprite-Icon_PassiveSkill_${spineKey}`;
 
                         const pKey = currentCharData.personality || "冷靜";
+                        // 對應各性格實體的雪碧圖檔案名稱
                         const personalityMap = {
-                            "冷靜": "sprite-ult-composed",
-                            "憂鬱": "sprite-ult-depressed",
-                            "純真": "sprite-ult-innocence",
-                            "瘋狂": "sprite-ult-madness",
-                            "活潑": "sprite-ult-vivacious",
-                            "Composed": "sprite-ult-composed",
-                            "Depressed": "sprite-ult-depressed",
-                            "Innocence": "sprite-ult-innocence",
-                            "Madness": "sprite-ult-madness",
-                            "Vivacious": "sprite-ult-vivacious"
+                            "冷靜": "ultimate_composed",
+                            "憂鬱": "ultimate_depressed",
+                            "純真": "ultimate_innocence",
+                            "瘋狂": "ultimate_madness",
+                            "活潑": "ultimate_vivacious",
+                            "Composed": "ultimate_composed",
+                            "Depressed": "ultimate_depressed",
+                            "Innocence": "ultimate_innocence",
+                            "Madness": "ultimate_madness",
+                            "Vivacious": "ultimate_vivacious"
                         };
-                        const ultBase = personalityMap[pKey] || "sprite-ult-composed";
-                        const ultSkillIcon = `sprite-base ${ultBase} sprite-Icon_UltimateSkill_${spineKey}`;
+                        const ultFileName = personalityMap[pKey] || "ultimate_composed";
+
+                        // 僅保留 css 內的 position class
+                        const ultSkillIcon = `sprite-Icon_UltimateSkill_${spineKey}`;
+                        // 強制綁定背景圖片與長寬 (64x64)，並將 scale 設為 0.625，完美等比縮放進 40px 的外框中
+                        const ultStyle = `width: 64px; height: 64px; background-image: url('${ultFileName}.png'); background-size: auto; transform: translate(-50%, -50%) scale(0.625);`;
             
                         const enhancedData = charSkillData.normalAttack.enhanced;
                         const hasEnhanced = enhancedData && enhancedData !== "無" && (typeof enhancedData === 'string' ? true : enhancedData.desc !== "無");
@@ -1106,7 +1114,7 @@
                             <div class="relative bg-violet-50/80 dark:bg-violet-900/20 border-2 border-violet-300 dark:border-violet-700 rounded-xl p-4 shadow-sm overflow-visible">
                                 <div class="flex justify-between items-center border-b border-violet-200 dark:border-violet-800 pb-2 mb-3 relative z-10">
                                     <div class="flex items-center gap-2">
-                                        ${getSkillIconHtml(ultSkillIcon, "border-violet-300 dark:border-violet-700", "🔥")}
+                                        ${getSkillIconHtml(ultSkillIcon, "border-violet-300 dark:border-violet-700", "🔥", ultStyle)}
                                         <span class="font-extrabold text-violet-800 dark:text-violet-300 text-base">${charSkillData.ultimateSkill.name}</span>
                                     </div>
                                     <span class="px-2 py-0.5 bg-violet-600 dark:bg-violet-500 text-white font-black text-[10px] rounded-md shadow-sm">CD: ${charSkillData.ultimateSkill.cooldown || "N/A"}</span>
