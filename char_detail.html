@@ -35,6 +35,14 @@
         <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
         <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
         <style>
+            /* 🌟 預設空珍藏品：情信 (若 sprites.css 中已有，這裡作為安全備用) */
+            .sprite-letter {
+                width: 71px;
+                height: 71px;
+                background-position: -813px -700px;
+                background-image: url('common_icon.png');
+            }
+
             /* 🌟 種族專屬背景的平鋪與移動動畫 (全域背景) */
             #raceBackground {
             position: fixed;
@@ -217,7 +225,7 @@
                 </div>
                 <div id="presentWrapper" class="flex flex-col md:flex-row gap-6 items-center md:items-start rounded-xl bg-white/60 dark:bg-gray-900/50 border border-rose-100 dark:border-gray-800 p-5">
                     <div id="presentLeft" class="w-full md:w-1/3 flex flex-col items-center gap-3 transition-all duration-300">
-                        <div id="presentContainer" class="w-full flex justify-center items-center overflow-hidden">
+                        <div id="presentContainer" class="w-full flex justify-center items-center overflow-hidden min-h-[120px]">
                             <p data-i18n="present_loading" class="text-orange-400 dark:text-gray-500 text-sm animate-pulse">寶箱開啟中...</p>
                         </div>
                         <div id="presentName" class="hidden text-center font-bold text-rose-900 dark:text-rose-200 bg-rose-100/50 dark:bg-rose-900/30 px-3 py-1 rounded-lg border border-rose-200 dark:border-rose-800 text-sm"></div>
@@ -1019,7 +1027,7 @@
                 
                 if (charBaseData) {
                     const charSkillData = charBaseData.skills[window.currentLang] || charBaseData.skills["zh-TW"];
-                
+            
                     if (charSkillData) {
                         const makeStatChips = (statsArray) => {
                             if (!statsArray || statsArray.length === 0) return '';
@@ -1070,14 +1078,16 @@
                             if (iconSrc.startsWith('http') || iconSrc.startsWith('./')) {
                                 return `<img src="${iconSrc}" class="w-8 h-8 rounded-lg shadow-sm border ${borderClasses}">`;
                             } else {
-                                return `<div class="w-8 h-8 flex items-center justify-center rounded-lg shadow-sm border ${borderClasses} overflow-hidden"><div class="${iconSrc} origin-center scale-[0.45]"></div></div>`;
+                                return `<div class="w-8 h-8 flex items-center justify-center rounded-lg shadow-sm border ${borderClasses} overflow-hidden bg-white dark:bg-slate-700"><div class="${iconSrc} origin-center scale-[0.45]"></div></div>`;
                             }
                         };
 
-                        const normalAttackIcon = typeof SKILL_ICONS !== 'undefined' ? (charBaseData.attribute === "物理" ? SKILL_ICONS["attack_物理"] : SKILL_ICONS["attack_魔法"]) : "";
-                        const normalSkillIcon = typeof SKILL_ICONS !== 'undefined' ? (SKILL_ICONS[`skill_normal_${charName}`] || "") : "";
-                        const ultSkillIcon = typeof SKILL_ICONS !== 'undefined' ? (SKILL_ICONS[`hover_avatar_${charName}`] || "") : "";
-                        const passiveSkillIcon = typeof SKILL_ICONS !== 'undefined' ? (SKILL_ICONS[`skill_passive_${charName}`] || "") : "";
+                        // 🌟 透過 Spine 名稱轉換並採用雪碧圖 Class
+                        const spineKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
+                        const normalAttackIcon = charBaseData.attribute === "物理" ? "sprite-Icon_NormalAttack_Physical" : "sprite-Icon_NormalAttack_Magical";
+                        const normalSkillIcon = `sprite-${spineKey}_skill_normal`;
+                        const ultSkillIcon = `sprite-Icon_UltimateSkill_${spineKey}`;
+                        const passiveSkillIcon = `sprite-${spineKey}_skill_passive`;
             
                         const enhancedData = charSkillData.normalAttack.enhanced;
                         const hasEnhanced = enhancedData && enhancedData !== "無" && (typeof enhancedData === 'string' ? true : enhancedData.desc !== "無");
@@ -1670,7 +1680,7 @@
                     let isHasPresent = false;
             
                     if (typeof PRESENT_MAP !== 'undefined' && PRESENT_MAP[spineKey]) {
-                        finalImgUrl = PRESENT_MAP[spineKey].url || PRESENT_MAP[spineKey].sprite || PRESENT_MAP[spineKey];
+                        finalImgUrl = PRESENT_MAP[spineKey].sprite || PRESENT_MAP[spineKey].url || `sprite-${spineKey}_present`;
                         isHasPresent = true;
             
                         const pNameData = PRESENT_MAP[spineKey].name;
@@ -1721,10 +1731,11 @@
                             `;
                         } else {
                             // 支援雪碧圖的渲染方式
-                            const animClass = isHasPresent ? 'transition-transform duration-300 hover:scale-110 drop-shadow-md' : 'opacity-70 animate-pulse';
+                            const animClass = isHasPresent ? 'transition-transform duration-300 hover:scale-110 drop-shadow-md' : 'opacity-70 drop-shadow-sm';
+                            const scaleClass = isHasPresent ? 'scale-[1.5]' : 'scale-[1.0]';
                             presentContainer.innerHTML = `
                                 <div class="flex items-center justify-center w-32 h-32 md:w-40 md:h-40">
-                                    <div class="${finalImgUrl} ${animClass} origin-center scale-[1.5]" title="${altText}"></div>
+                                    <div class="${finalImgUrl} ${animClass} origin-center ${scaleClass}" title="${altText}"></div>
                                 </div>
                             `;
                         }
