@@ -1606,7 +1606,7 @@
             let rLabel = getI18n('stats_race'); if(rLabel === 'stats_race') rLabel = '種族';
             let posLabel = getI18n('stats_position'); if(posLabel === 'stats_position') posLabel = '站位';
             let jLabel = getI18n('stats_job'); if(jLabel === 'stats_job') jLabel = '職業';
-            let aLabel = getI18n('stats_attribute'); if(aLabel === 'stats_attribute') aLabel = '攻擊類型';
+            let aLabel = getI18n('stats_attribute'); if(aLabel === 'stats_attribute') aLabel = '類型';
 
             // 確保 ICON_MAP 有對應的物理/魔法圖示，使其相容 updateTag 函式
             if (typeof ICON_MAP === 'undefined') window.ICON_MAP = {};
@@ -1691,7 +1691,7 @@
                 ICON_MAP['attribute_物理'] = 'sprite-base sprite-common sprite-Type_Physic';
                 ICON_MAP['attribute_魔法'] = 'sprite-base sprite-common sprite-Type_Magic';
 
-                // 從 data_skills.js 取得攻擊類型 (物理/魔法)
+                // 從 data_skills.js 取得類型 (物理/魔法)
                 let currentAttribute = "未知";
                 if (typeof characterSkills !== 'undefined') {
                     const skillData = characterSkills.find(s => s.name.trim() === currentCharData.name);
