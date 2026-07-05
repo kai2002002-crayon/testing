@@ -479,6 +479,16 @@
                const atlasUrl = mode === 'lobby' ? `./spine_assets/${baseFolderKey}/${costumeKey}.atlas.txt` : `./spine_sd_assets/${costumeKey}.atlas.txt`;
                const baseViewport = mode === 'lobby' ? { x: -400, y: 0, width: 800, height: 1000 } : { x: -750, y: -150, width: 1500, height: 3000 };
             
+               // 🌟 核心修復：攔截畫布建立，強制 WebGL 保留像素，解決拍照沒有角色的問題
+               const originalGetContext = HTMLCanvasElement.prototype.getContext;
+               HTMLCanvasElement.prototype.getContext = function(type, options) {
+                   if (type === 'webgl' || type === 'experimental-webgl') {
+                       options = options || {};
+                       options.preserveDrawingBuffer = true; // 強制保留緩衝區！
+                   }
+                   return originalGetContext.call(this, type, options);
+               };
+
                globalPlayer = new spine.SpinePlayer(container, {
                    skelUrl: skelUrl, atlasUrl: atlasUrl, premultipliedAlpha: true,
                    backgroundColor: "#00000000", alpha: true, showControls: false,
@@ -533,8 +543,10 @@
                        container.innerHTML = `<div class="text-red-500 font-bold text-sm text-center p-4">載入失敗：${mode === 'lobby' ? '大廳' : '戰鬥'}檔案可能不存在</div>`;
                    }
                });
-            }
 
+               // 建立完成後立刻恢復原狀，避免影響網頁上的其他功能
+               HTMLCanvasElement.prototype.getContext = originalGetContext;
+            }
             // ==========================================
             // 🌟 AR 攝影機模式 (WebRTC)
             // ==========================================
