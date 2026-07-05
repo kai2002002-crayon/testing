@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>嘟嘟臉角色動態展示器</title>
+        <title>嘟嘟臉坨坨動態展示器</title>
         <script src="data_core.js"></script>
         <link rel="stylesheet" href="sprites.css">
         <script src="https://cdn.tailwindcss.com"></script>
@@ -11,24 +11,12 @@
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@esotericsoftware/spine-player@4.1.23/dist/spine-player.min.css">
         <script src="https://cdn.jsdelivr.net/npm/@esotericsoftware/spine-player@4.1.23/dist/iife/spine-player.min.js"></script>
-        <!-- 🌟 GIF 錄製函式庫 -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
         <script>
             tailwind.config = { darkMode: 'class', }
             const isDarkMode = localStorage.getItem('theme') === 'dark' || 
                                (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
             if (isDarkMode) { document.documentElement.classList.add('dark'); }
             window.currentLang = localStorage.getItem('user_lang') || "zh-TW";
-
-            // 🌟 【無敵外掛】強制讓所有 Canvas 支援影像擷取 (解決 WebGL 錄製黑畫面問題)
-            const originalGetContext = HTMLCanvasElement.prototype.getContext;
-            HTMLCanvasElement.prototype.getContext = function(type, options) {
-                if (type === 'webgl' || type === 'webgl2') {
-                    options = options || {};
-                    options.preserveDrawingBuffer = true;
-                }
-                return originalGetContext.call(this, type, options);
-            };
         </script>
         <style>
             body { font-family: 'Noto Sans TC', sans-serif; }
@@ -72,33 +60,14 @@
             .dark .animated-bg { opacity: 0.8; }
             .custom-select-btn { -webkit-tap-highlight-color: transparent; }
             #backToTop {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 9999;
-            display: none;
-            /* 調整大小為 20px */
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background-color: #fbbf24;
-            color: white;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* 陰影也跟著稍微縮小 */
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            z-index: 9999; display: none; width: 20px; height: 20px;
+            border-radius: 50%; background-color: #fbbf24; color: white;
+            border: none; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             transition: transform 0.2s, background-color 0.3s;
-            /* 調整字體大小以適應小按鈕 */
-            font-size: 10px; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-size: 10px; display: flex; align-items: center; justify-content: center;
             }
-            #backToTop:hover { 
-            background-color: #d97706; 
-            /* 保持置中並微微上浮 */
-            transform: translateX(-50%) translateY(-5px); 
-            }
+            #backToTop:hover { background-color: #d97706; transform: translateX(-50%) translateY(-5px); }
         </style>
     </head>
     <body class="p-2 sm:p-6 bg-[#fcf8f2] dark:bg-slate-900 text-gray-800 dark:text-gray-200 min-h-screen transition-colors duration-300">
@@ -106,8 +75,8 @@
         <header class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-4 sm:p-5 rounded-2xl shadow-md border-4 border-amber-400 dark:border-slate-600 flex justify-between items-center relative z-10">
             <div>
                 <h1 class="text-xl sm:text-2xl font-black text-amber-950 dark:text-amber-400 mb-0.5 flex items-center gap-2">
-                    <div class="sprite-base sprite-common sprite-Title_Rim shrink-0 -[0.6] origin-left -ml-1"></div>
-                    <span class="-ml-2">角色動態展示器</span>
+                    <div class="sprite-base sprite-common sprite-Title_Rim scale-[0.6] sm:scale-[0.6] origin-center shrink-0"></div>
+                    <span class="-ml-2">坨坨動態展示器</span>
                 </h1>
             </div>
             <button onclick="window.close()" class="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm bg-amber-500 text-white font-bold rounded-xl shadow hover:bg-amber-600 transition shrink-0">
@@ -121,8 +90,7 @@
                 顯示全部 🔽
                 </button>
             </div>
-            <div id="charGridContainer" class="space-y-3 collapsible-content collapsed" style="max-height: 0px; opacity: 0;">
-            </div>
+            <div id="charGridContainer" class="space-y-3 collapsible-content collapsed" style="max-height: 0px; opacity: 0;"></div>
         </section>
         <section id="spineViewerSection" class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-4 sm:p-5 rounded-2xl shadow-md border-4 border-amber-400 dark:border-slate-600 transition-all">
             <div class="flex justify-between items-center mb-4 border-b border-amber-100 dark:border-slate-700 pb-3">
@@ -138,14 +106,11 @@
             </div>
             <div class="flex flex-col gap-3 min-w-0 relative z-10 w-full lg:w-3/4 mx-auto">
                 <div id="spineCanvasContainer" class="w-full h-[60vh] sm:h-[600px] rounded-xl border-2 border-dashed border-amber-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 relative overflow-hidden flex items-center justify-center cursor-move animated-bg" style="background-image: url('https://i.postimg.cc/x8wY5V8Q/Monster-Slot-Property-Tile.png');">
-                    <!-- 🌟 就是這一行！請確保它存在，並且 id 完全是 arVideoBg -->
+                    <!-- 🌟 AR 攝影機畫面 -->
                     <video id="arVideoBg" class="absolute inset-0 w-full h-full object-cover hidden pointer-events-none z-0" autoplay playsinline muted></video>
-                    <!-- 背景切換按鈕 (原本的程式碼) -->
-                    <button id="bgPrevBtn" onclick="cycleBg(-1)" class="hidden absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 text-white text-xs rounded-full flex items-center justify-center z-[60] hover:bg-black/70 transition-all">◀</button>
-                    <button id="bgNextBtn" onclick="cycleBg(1)" class="hidden absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 text-white text-xs rounded-full flex items-center justify-center z-[60] hover:bg-black/70 transition-all">▶</button>
+                    
                     <div class="text-gray-500 font-bold tracking-widest bg-white/80 dark:bg-slate-800/80 px-4 py-2 rounded-lg backdrop-blur-sm shadow-sm">等待載入...</div>
                 </div>
-                
                 <div id="playerControls" class="bg-amber-50 dark:bg-slate-700/50 p-3 rounded-xl border border-amber-200 dark:border-slate-600 flex flex-col gap-3 opacity-50 pointer-events-none transition-opacity">
                     <div class="flex items-center justify-between gap-2 flex-wrap">
                         <div class="flex items-center gap-2">
@@ -158,17 +123,13 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
-                            <div class="flex items-center gap-2">
-                                <button id="btnModeSwitch" onclick="toggleViewerMode()" class="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-xs sm:text-sm font-bold rounded-lg shadow transition-colors whitespace-nowrap">
-                                    🔄 模式: 大廳
-                                </button>
-                                <button id="btnEditMode" onclick="toggleEditMode()" class="px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white text-xs sm:text-sm font-bold rounded-lg shadow transition-colors whitespace-nowrap">
-                                    ✏️ 編輯
-                                </button>
-                                <!-- 🌟 AR 模式按鈕加在這裡 -->
-                                <button id="btnARMode" onclick="toggleARMode()" class="px-3 py-1.5 bg-purple-500 hover:bg-purple-600 text-white text-xs sm:text-sm font-bold rounded-lg shadow transition-colors whitespace-nowrap">
-                                    📷 AR 模式
-                                </button>
+                            <button id="btnModeSwitch" onclick="toggleViewerMode()" class="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-xs sm:text-sm font-bold rounded-lg shadow transition-colors whitespace-nowrap">
+                            🔄 模式: 大廳
+                            </button>
+                            <!-- 🌟 AR 模式按鈕 -->
+                            <button id="btnARMode" onclick="toggleARMode()" class="px-3 py-1.5 bg-purple-500 hover:bg-purple-600 text-white text-[10px] sm:text-sm font-bold rounded-lg shadow transition-colors whitespace-nowrap">
+                            📷 AR 模式
+                            </button>
                             <select id="costumeSelect" onchange="changeSpineCostume(this.value)" class="bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 text-xs sm:text-sm font-bold rounded-lg px-2 py-1.5 outline-none focus:ring-2 focus:ring-amber-500 min-w-[100px]">
                                 <option value="">服裝</option>
                             </select>
@@ -197,59 +158,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- 🌟 動態編輯播放條 -->
-                <div id="editTimelinePanel" class="hidden flex-col gap-3 mt-3 bg-white/90 dark:bg-slate-800/90 p-4 rounded-xl border-2 border-green-400 dark:border-green-500 shadow-inner z-20 transition-all">
-                    <div class="flex justify-between items-center border-b border-gray-200 dark:border-slate-600 pb-2">
-                        <h3 class="font-black text-sm text-green-700 dark:text-green-400">🎬 動作編輯器 (循環預覽中)</h3>
-                        <div class="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                            GIF尺寸: 
-                            <span class="text-[10px] text-gray-500">寬</span>
-                            <input type="number" id="gifWidthInput" value="500" class="w-12 px-1 py-0.5 border border-gray-300 dark:border-slate-500 rounded bg-white dark:bg-slate-700 text-center outline-none">
-                            <span class="text-[10px] text-gray-500">高</span>
-                            <input type="number" id="gifHeightInput" value="500" class="w-12 px-1 py-0.5 border border-gray-300 dark:border-slate-500 rounded bg-white dark:bg-slate-700 text-center outline-none">
-                        </div>
-                    </div>
-                    
-                    <div class="text-[10px] text-gray-500 font-bold mb-1">
-                        💡 提示：預覽時直接點擊/撫摸角色，可將互動記錄至「互動軌道」。
-                    </div>
-
-                    <!-- 🌟 視覺化時間軸軌道 (雙軌) -->
-                    <div class="overflow-x-auto w-full bg-slate-100 dark:bg-slate-900 rounded-lg border border-gray-300 dark:border-slate-600 p-2 shadow-inner mb-2 custom-scrollbar relative">
-                        <!-- 播放進度指示線 -->
-                        <div id="playhead" class="absolute top-0 bottom-0 w-0.5 bg-red-500 z-50 pointer-events-none hidden shadow-[0_0_5px_rgba(239,68,68,0.8)]"></div>
-                        
-                        <!-- 主軌道 (Main Track) -->
-                        <div class="flex flex-col gap-1 min-w-max relative">
-                            <div class="flex items-center gap-2">
-                                <span class="text-[9px] font-black text-gray-400 w-8 text-right shrink-0">MAIN</span>
-                                <div id="timelineTrack" class="flex h-12 relative gap-1 items-center px-1 border-l-2 border-gray-300 dark:border-slate-600">
-                                    <!-- 主動作方塊 -->
-                                </div>
-                            </div>
-                            
-                            <!-- 互動軌道 (Interaction Track) -->
-                            <div class="flex items-center gap-2">
-                                <span class="text-[9px] font-black text-blue-400 w-8 text-right shrink-0">CLICK</span>
-                                <div id="interactionTrack" class="flex h-8 relative items-center px-1 border-l-2 border-gray-300 dark:border-slate-600 w-full bg-blue-50/50 dark:bg-blue-900/20 rounded-r">
-                                    <!-- 互動標記將由 JS 絕對定位 -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 🌟 選中片段的編輯器 -->
-                    <div id="activeClipEditor" class="hidden items-center gap-2 bg-amber-50 dark:bg-slate-700/50 p-2 rounded-lg border border-amber-200 dark:border-slate-600 transition-all">
-                        <span class="text-xs font-bold text-amber-800 dark:text-amber-400 whitespace-nowrap">✏️ 主軌道:</span>
-                        <select id="clipAnimSelect" onchange="updateSelectedClip('anim', this.value)" class="flex-1 text-xs px-2 py-1.5 rounded bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-500 outline-none text-gray-700 dark:text-gray-200"></select>
-                        <input id="clipDurationInput" type="number" onchange="updateSelectedClip('duration', this.value)" step="100" class="w-16 text-xs px-2 py-1.5 rounded bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-500 outline-none text-gray-700 dark:text-gray-200">
-                        <span class="text-[10px] font-bold text-gray-500 whitespace-nowrap">ms</span>
-                    </div>
-
-                    <button onclick="addSequenceStep()" class="w-full py-2 bg-green-50 dark:bg-slate-700 text-green-700 dark:text-green-400 border border-dashed border-green-300 dark:border-green-600 rounded-lg text-xs font-bold hover:bg-green-100 dark:hover:bg-slate-600 transition">
-                        ➕ 新增主動作片段
-                    </button>
-                </div>
         </section>
         </div>
         <script>
@@ -267,7 +175,6 @@
                 "活潑": "border-yellow-400 text-yellow-400", 
                 "憂鬱": "border-purple-400 text-purple-400" 
             };
-            // 🌟 雪碧圖類別對應表
             const SPRITE_CLASS_MAP = {
                 race_龍族: "sprite-Bg_Dragon", race_精靈: "sprite-Bg_Elf", race_妖精: "sprite-Bg_Sprite",
                 race_幽靈: "sprite-Bg_Phantom", race_魔靈: "sprite-Bg_Elemental", race_不明: "sprite-Bg_Unknown",
@@ -280,127 +187,63 @@
             let globalPlayer = null;
             let slotVisibilityMap = {};
             
-            // 🌟 語音管理器 (VoiceManager) - 手機記憶體優化版
             const VoiceManager = {
-            currentAudio: null, // 只保留一個 Audio 實體
-            fadeInterval: null, // 用來控制淡出的計時器
-            baseName: "",
-            skinSuffix: "",
-            
-            init(baseName, costumeKey) {
-            this.baseName = baseName;
-            let suffix = costumeKey.replace(baseName, "");
-            this.skinSuffix = suffix ? `_${suffix}` : ""; 
-            
-            // 💡 針對手機版：初始化時就建立唯一的一個 Audio 實體
-            if (!this.currentAudio) {
-            this.currentAudio = new Audio();
-            this.currentAudio.setAttribute('playsinline', 'true'); // iOS 必須
-            this.currentAudio.setAttribute('preload', 'auto');
-            }
-            },
-            
-            stop(fadeDuration = 0.5) {
-            if (this.fadeInterval) {
-            clearInterval(this.fadeInterval);
-            this.fadeInterval = null;
-            }
-            
-            if (this.currentAudio && !this.currentAudio.paused) {
-            const audio = this.currentAudio;
-            audio.loop = false; // 確保停止循環
-            
-            // 簡單的淡出處理
-            this.fadeInterval = setInterval(() => {
-                if (audio.volume > 0.1) {
-                    audio.volume -= 0.1;
-                } else {
-                    audio.pause();
-                    audio.currentTime = 0;
-                    audio.volume = 0.8;
-                    clearInterval(this.fadeInterval);
-                }
-            }, (fadeDuration * 1000) / 10);
-            }
-            },
-            
-            play(folder, filename, onEnded = null, loop = false) {
-            // 如果正在淡出，立刻中斷並強制停止舊聲音
-            if (this.fadeInterval) {
-            clearInterval(this.fadeInterval);
-            this.fadeInterval = null;
-            }
-            
-            // 防呆保護
-            if (!this.currentAudio) {
-            this.currentAudio = new Audio();
-            this.currentAudio.setAttribute('playsinline', 'true');
-            }
-            
-            const audio = this.currentAudio;
-            audio.pause();
-            audio.onended = null; // 清除上一個回呼，避免衝突
-            
-            const path = `./${folder}/${filename}.mp3`;
-            
-            // 💡 針對手機版：重複利用同一個 Audio，只替換 src，並呼叫 load()
-            audio.src = path;
-            audio.volume = 0.8;
-            audio.loop = loop;
-            audio.currentTime = 0;
-            audio.load(); // 強制讀取，解開手機快取限制
-            
-            if (onEnded && !loop) {
-            audio.onended = onEnded;
-            }
-            
-            const playPromise = audio.play();
-            if (playPromise !== undefined) {
-            playPromise.catch(e => {
-                console.log("語音無法播放或被手機阻擋:", path, e);
-                // 防呆機制：如果檔案遺失，立刻執行 onEnded，確保角色不會永遠卡住
-                if (onEnded) onEnded();
-            });
-            }
-            
-            return audio;
-            },
-            
-            playRandom(folder, variants, suffix = "", onEnded = null) {
-            const pick = variants[Math.floor(Math.random() * variants.length)];
-            return this.play(folder, `${pick}${suffix}`, onEnded);
-            },
-            
-            playSpawn(onEnded = null) {
-            const variants = [`Voice_${this.baseName}_Spawn1`, `Voice_${this.baseName}_Spawn2`];
-            this.playRandom('spawn', variants, "", onEnded); 
-            },
-            playTickleStart(onEnded = null) { this.play('tickle', `Voice_${this.baseName}_TickleStart1`, onEnded); },
-            playTickleDuring() { this.play('tickle', `Voice_${this.baseName}_TickleDuring1`, null, true); },
-            
-            playTouch(onEnded = null) { 
-            const variants = [`Voice_${this.baseName}_Touch1`, `Voice_${this.baseName}_Touch1_1`, `Voice_${this.baseName}_Touch1_2`];
-            this.playRandom('touch', variants, this.skinSuffix, onEnded);
-            },
-            playPat(onEnded = null) { 
-            const variants = [`Voice_${this.baseName}_Touch2`, `Voice_${this.baseName}_Touch2_1`, `Voice_${this.baseName}_Touch2_2`];
-            this.playRandom('pat', variants, this.skinSuffix, onEnded);
-            },
-            playSmash(onEnded = null) { 
-            this.play('smash', `Voice_${this.baseName}_DutchRubEnd1`, () => {
-            this.play('smash', `Voice_${this.baseName}_DutchRubEnd2${this.skinSuffix}`, onEnded);
-            });
-            }
+                currentAudio: null, fadeInterval: null, baseName: "", skinSuffix: "",
+                init(baseName, costumeKey) {
+                    this.baseName = baseName;
+                    let suffix = costumeKey.replace(baseName, "");
+                    this.skinSuffix = suffix ? `_${suffix}` : ""; 
+                    if (!this.currentAudio) {
+                        this.currentAudio = new Audio();
+                        this.currentAudio.setAttribute('playsinline', 'true');
+                        this.currentAudio.setAttribute('preload', 'auto');
+                    }
+                },
+                stop(fadeDuration = 0.5) {
+                    if (this.fadeInterval) { clearInterval(this.fadeInterval); this.fadeInterval = null; }
+                    if (this.currentAudio && !this.currentAudio.paused) {
+                        const audio = this.currentAudio;
+                        audio.loop = false;
+                        this.fadeInterval = setInterval(() => {
+                            if (audio.volume > 0.1) { audio.volume -= 0.1; } 
+                            else { audio.pause(); audio.currentTime = 0; audio.volume = 0.8; clearInterval(this.fadeInterval); }
+                        }, (fadeDuration * 1000) / 10);
+                    }
+                },
+                play(folder, filename, onEnded = null, loop = false) {
+                    if (this.fadeInterval) { clearInterval(this.fadeInterval); this.fadeInterval = null; }
+                    if (!this.currentAudio) { this.currentAudio = new Audio(); this.currentAudio.setAttribute('playsinline', 'true'); }
+                    const audio = this.currentAudio;
+                    audio.pause(); audio.onended = null;
+                    const path = `./${folder}/${filename}.mp3`;
+                    audio.src = path; audio.volume = 0.8; audio.loop = loop; audio.currentTime = 0; audio.load();
+                    if (onEnded && !loop) { audio.onended = onEnded; }
+                    const playPromise = audio.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(e => {
+                            console.log("語音無法播放:", path, e);
+                            if (onEnded) onEnded();
+                        });
+                    }
+                    return audio;
+                },
+                playRandom(folder, variants, suffix = "", onEnded = null) {
+                    const pick = variants[Math.floor(Math.random() * variants.length)];
+                    return this.play(folder, `${pick}${suffix}`, onEnded);
+                },
+                playSpawn(onEnded = null) { this.playRandom('spawn', [`Voice_${this.baseName}_Spawn1`, `Voice_${this.baseName}_Spawn2`], "", onEnded); },
+                playTickleStart(onEnded = null) { this.play('tickle', `Voice_${this.baseName}_TickleStart1`, onEnded); },
+                playTickleDuring() { this.play('tickle', `Voice_${this.baseName}_TickleDuring1`, null, true); },
+                playTouch(onEnded = null) { this.playRandom('touch', [`Voice_${this.baseName}_Touch1`, `Voice_${this.baseName}_Touch1_1`, `Voice_${this.baseName}_Touch1_2`], this.skinSuffix, onEnded); },
+                playPat(onEnded = null) { this.playRandom('pat', [`Voice_${this.baseName}_Touch2`, `Voice_${this.baseName}_Touch2_1`, `Voice_${this.baseName}_Touch2_2`], this.skinSuffix, onEnded); },
+                playSmash(onEnded = null) { this.play('smash', `Voice_${this.baseName}_DutchRubEnd1`, () => { this.play('smash', `Voice_${this.baseName}_DutchRubEnd2${this.skinSuffix}`, onEnded); }); }
             };
             
-            // 核心狀態變數
             let activeCharData = null; 
-            let currentMode = 'lobby'; // 'lobby' | 'battle'
+            let currentMode = 'lobby'; 
             let currentZoom = 1.0;
             let isDragging = false;
             let lastMouseX = 0, lastMouseY = 0;
-            
-            // 互動拉扯專用變數 (僅大廳生效)
             let hitZoneOnDown = null;
             let activeFaceBone = null; 
             let initialBoneX = 0, initialBoneY = 0;
@@ -422,11 +265,9 @@
                 const list = document.getElementById(listId);
                 if (list.classList.contains('hidden')) {
                     if (listId === 'animList') {
-                        document.getElementById('slotList').classList.add('hidden');
-                        document.getElementById('slotList').classList.remove('flex');
+                        document.getElementById('slotList').classList.add('hidden'); document.getElementById('slotList').classList.remove('flex');
                     } else {
-                        document.getElementById('animList').classList.add('hidden');
-                        document.getElementById('animList').classList.remove('flex');
+                        document.getElementById('animList').classList.add('hidden'); document.getElementById('animList').classList.remove('flex');
                     }
                     list.classList.remove('hidden'); list.classList.add('flex');
                 } else {
@@ -438,15 +279,9 @@
                 const container = document.getElementById('charGridContainer');
                 const btn = document.getElementById('toggleAllCharBtn');
                 if (container.classList.contains('collapsed')) {
-                    container.classList.remove('collapsed');
-                    container.style.maxHeight = '2000px';
-                    container.style.opacity = '1';
-                    btn.innerHTML = '隱藏全部 🔼';
+                    container.classList.remove('collapsed'); container.style.maxHeight = '2000px'; container.style.opacity = '1'; btn.innerHTML = '隱藏全部 🔼';
                 } else {
-                    container.classList.add('collapsed');
-                    container.style.maxHeight = '0px';
-                    container.style.opacity = '0';
-                    btn.innerHTML = '顯示全部 🔽';
+                    container.classList.add('collapsed'); container.style.maxHeight = '0px'; container.style.opacity = '0'; btn.innerHTML = '顯示全部 🔽';
                 }
             }
             
@@ -454,19 +289,12 @@
                 const group = document.getElementById(id);
                 const btn = document.getElementById(btnId);
                 if (group.classList.contains('collapsed')) {
-                    group.classList.remove('collapsed');
-                    group.style.maxHeight = '1000px';
-                    group.style.opacity = '1';
-                    btn.innerHTML = btn.innerHTML.replace('🔽', '🔼');
+                    group.classList.remove('collapsed'); group.style.maxHeight = '1000px'; group.style.opacity = '1'; btn.innerHTML = btn.innerHTML.replace('🔽', '🔼');
                 } else {
-                    group.classList.add('collapsed');
-                    group.style.maxHeight = '0px';
-                    group.style.opacity = '0';
-                    btn.innerHTML = btn.innerHTML.replace('🔼', '🔽');
+                    group.classList.add('collapsed'); group.style.maxHeight = '0px'; group.style.opacity = '0'; btn.innerHTML = btn.innerHTML.replace('🔼', '🔽');
                 }
             }
             
-            // 預載圖片以加快後續顯示
             function preloadIcons() {
                 if (typeof INITIAL_DATA === 'undefined') return;
                 INITIAL_DATA.forEach(c => {
@@ -476,20 +304,16 @@
             }
             
             function initCharacterGrid() {
-                preloadIcons(); // 背景預載
-            
+                preloadIcons();
                 const container = document.getElementById('charGridContainer');
                 if (typeof INITIAL_DATA === 'undefined' || !INITIAL_DATA) return;
-            
                 const personalities = ["天真", "冷靜", "狂亂", "活潑", "憂鬱"];
                 
                 personalities.forEach((p, index) => {
                     const chars = INITIAL_DATA.filter(c => c.personality === p);
                     if (chars.length === 0) return;
-            
                     const borderTextClass = personalityColors[p] || "border-gray-400 text-gray-400";
                     const borderClass = borderTextClass.split(' ')[0];
-                                
                     const groupId = `group_${index}`;
                     const btnId = `btn_${index}`;
             
@@ -509,30 +333,20 @@
                     `;
                     
                     const iconContainer = document.createElement('div');
-                    iconContainer.id = groupId;
-                    iconContainer.className = "flex flex-wrap gap-1.5 pt-2 pl-1 collapsible-content";
-                    iconContainer.style.maxHeight = "1000px";
-                    iconContainer.style.opacity = "1";
+                    iconContainer.id = groupId; iconContainer.className = "flex flex-wrap gap-1.5 pt-2 pl-1 collapsible-content";
+                    iconContainer.style.maxHeight = "1000px"; iconContainer.style.opacity = "1";
             
                     chars.forEach(c => {
                         const iconUrl = typeof IMAGE_MAP !== 'undefined' ? IMAGE_MAP[`avatar_${c.name}`] : '';
                         const spineName = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[c.name] : c.name;
                         const displayName = getI18n(c.name);
                         
-                        // 🌟 獲取種族背景圖 (如果找不到對應種族，給一個預設值或透明)
-                        const raceBg = (typeof SPINE_BACKGROUNDS !== 'undefined' && SPINE_BACKGROUNDS[c.race]) 
-                                       ? SPINE_BACKGROUNDS[c.race] 
-                                       : 'https://i.postimg.cc/x8wY5V8Q/Monster-Slot-Property-Tile.png';
-            
                         const btn = document.createElement('button');
                         btn.className = "group flex flex-col items-center gap-0.5 transition-transform hover:scale-110 active:scale-95 w-12 sm:w-14";
                         btn.onclick = () => selectCharacter(c, spineName, iconUrl);
             
-                        // 🌟 使用雪碧圖取代原本的 img 與 url
-                        // 🌟 修正：利用 SpineName (英文) 去抓對應的 class，並補上性格 base
                         const charSpriteBase = CHAR_SPRITE_MAP[c.personality] || "sprite-char-innocence";
                         const charSpriteClass = `sprite-${spineName}`;
-                        
                         let raceKey = c.race; if (raceKey === "???") raceKey = "unknown";
                         const raceSprite = SPRITE_CLASS_MAP[`race_${raceKey}`] || "sprite-Bg_Unknown";
             
@@ -549,32 +363,26 @@
                         iconContainer.appendChild(btn);
                     });
             
-                    row.appendChild(header);
-                    row.appendChild(iconContainer);
-                    container.appendChild(row);
+                    row.appendChild(header); row.appendChild(iconContainer); container.appendChild(row);
                 });
             }
             
             function applyRaceBackground(charName) {
                 const container = document.getElementById('spineCanvasContainer');
                 const char = INITIAL_DATA.find(c => c.name === charName);
-                
                 if (char && typeof SPINE_BACKGROUNDS !== 'undefined' && SPINE_BACKGROUNDS[char.race]) {
                     container.style.backgroundImage = `url('${SPINE_BACKGROUNDS[char.race]}')`;
                     container.classList.add('animated-bg');
                 } else {
-                    // 若無專屬種族背景，退回預設的連續圖案背景
                     container.style.backgroundImage = `url('https://i.postimg.cc/x8wY5V8Q/Monster-Slot-Property-Tile.png')`;
                     container.classList.add('animated-bg');
                 }
             }
             
-            // 取得對應模式的服裝清單
             function getCostumeList(charName, mode) {
                 if (mode === 'lobby') {
                     return (typeof COSTUME_MAP !== 'undefined' && COSTUME_MAP[charName]) ? COSTUME_MAP[charName] : [];
                 } else {
-                    // SD 戰鬥版的資料來源 (若無 SD_COSTUME，就試著用標準的)
                     return (typeof SD_COSTUME !== 'undefined' && SD_COSTUME[charName]) ? SD_COSTUME[charName] : 
                            ((typeof COSTUME_MAP !== 'undefined' && COSTUME_MAP[charName]) ? COSTUME_MAP[charName] : []);
                 }
@@ -583,33 +391,24 @@
             function toggleViewerMode() {
                 if (!activeCharData) return;
                 currentMode = currentMode === 'lobby' ? 'battle' : 'lobby';
-                
                 const btn = document.getElementById('btnModeSwitch');
                 btn.innerHTML = currentMode === 'lobby' ? '🔄 模式: 大廳' : '⚔️ 模式: 戰鬥';
                 btn.className = currentMode === 'lobby' 
                     ? "px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-xs sm:text-sm font-bold rounded-lg shadow transition-colors whitespace-nowrap"
                     : "px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-xs sm:text-sm font-bold rounded-lg shadow transition-colors whitespace-nowrap";
-            
-                // 重新整理服裝選單並載入 (會自動 Fallback)
                 refreshCostumeDropdownAndLoad();
             }
             
-                    function selectCharacter(charObj, spineName, iconUrl) {
+            function selectCharacter(charObj, spineName, iconUrl) {
                 activeCharData = { ...charObj, spineName: spineName };
                 document.getElementById('spineViewerSection').classList.remove('hidden');
                 
-                // 🌟 1. 抓取該性格對應的顏色 (若無則預設為黃色)
                 const pColors = personalityColors[charObj.personality] || "border-amber-400 text-amber-900";
-                const borderClass = pColors.split(' ')[0]; // 取出 border 顏色
-                const textClass = pColors.split(' ')[1];   // 取出 text 顏色
+                const borderClass = pColors.split(' ')[0]; const textClass = pColors.split(' ')[1];  
                 
-                // 🌟 2. 替換 Icon 的圖片與外框顏色 (並自動顯示)
-                // 🌟 2. 替換 Icon 為雪碧圖組合
-                // 🌟 2. 替換 Icon 為雪碧圖組合
                 const iconEl = document.getElementById('activeCharIconContainer');
                 const charSpriteBase = CHAR_SPRITE_MAP[charObj.personality] || "sprite-char-innocence";
                 const charSpriteClass = `sprite-${spineName}`;
-                
                 let raceKey = charObj.race; if (raceKey === "???") raceKey = "unknown";
                 const raceSprite = SPRITE_CLASS_MAP[`race_${raceKey}`] || "sprite-Bg_Unknown";
                 
@@ -618,32 +417,24 @@
                         <div class="sprite-base sprite-common ${raceSprite} shrink-0 scale-[0.45]"></div>
                     </div>
                     <div class="w-full h-full bg-white/20 dark:bg-black/20 backdrop-blur-[1px] absolute inset-0"></div>
-                    <div class="sprite-base ${charSpriteBase} ${charSpriteClass} shrink-0 scale-[0.36] sm:scale-[0.72]relative z-10"></div>
+                    <div class="sprite-base ${charSpriteBase} ${charSpriteClass} shrink-0 scale-[0.36] sm:scale-[0.72] relative z-10"></div>
                 `;
                 iconEl.className = `w-10 h-10 sm:w-12 sm:h-12 rounded-lg border-2 ${borderClass} shadow-sm overflow-hidden bg-white dark:bg-slate-700 flex items-center justify-center shrink-0 relative`;
                 
-                // 🌟 3. 替換名稱與文字顏色
                 const nameEl = document.getElementById('activeCharName');
-                nameEl.innerText = getI18n(charObj.name);
-                nameEl.className = `text-lg sm:text-xl font-black ${textClass}`;
+                nameEl.innerText = getI18n(charObj.name); nameEl.className = `text-lg sm:text-xl font-black ${textClass}`;
             
-                // 重置狀態
-                document.getElementById('animList').classList.add('hidden');
-                document.getElementById('slotList').classList.add('hidden');
+                document.getElementById('animList').classList.add('hidden'); document.getElementById('slotList').classList.add('hidden');
                 slotVisibilityMap = {};
                 
                 applyRaceBackground(charObj.name);
                 document.getElementById('spineViewerSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
-            
                 refreshCostumeDropdownAndLoad();
             }
-            
             
             function refreshCostumeDropdownAndLoad() {
                 const costumes = getCostumeList(activeCharData.name, currentMode);
                 const fallbackKey = costumes.length > 0 ? costumes[0] : activeCharData.spineName;
-                
-                // 嘗試保留當前選擇的服裝，如果新模式找不到，就用 fallbackKey
                 const selectEl = document.getElementById('costumeSelect');
                 const currentSelection = selectEl.value;
                 let targetCostume = costumes.includes(currentSelection) ? currentSelection : fallbackKey;
@@ -652,18 +443,13 @@
                 if (costumes.length > 0) {
                     costumes.forEach((costume, idx) => {
                         const opt = document.createElement('option');
-                        opt.value = costume;
-                        opt.text = idx === 0 ? "預設服裝" : `服裝 ${idx}`;
+                        opt.value = costume; opt.text = idx === 0 ? "預設服裝" : `服裝 ${idx}`;
                         if (costume === targetCostume) opt.selected = true;
                         selectEl.appendChild(opt);
                     });
                 } else {
-                    const opt = document.createElement('option');
-                    opt.value = targetCostume;
-                    opt.text = "預設模型";
-                    selectEl.appendChild(opt);
+                    const opt = document.createElement('option'); opt.value = targetCostume; opt.text = "預設模型"; selectEl.appendChild(opt);
                 }
-            
                 loadSpine(activeCharData.spineName, targetCostume, currentMode);
             }
             
@@ -672,62 +458,41 @@
                 loadSpine(activeCharData.spineName, costumeKey, currentMode);
             }
             
-            // 核心載入：根據模式設定路徑與參數
-            // 核心載入：根據模式設定路徑與參數
             function loadSpine(baseFolderKey, costumeKey, mode) {
                const container = document.getElementById('spineCanvasContainer');
-               
-               // 🌟 初始化語音管理器
                VoiceManager.init(baseFolderKey, costumeKey);
-               
                if (globalPlayer) { globalPlayer.dispose(); globalPlayer = null; }
             
+               // 保留 AR Video 標籤，只修改內部其他元素
+               const existingVideo = document.getElementById('arVideoBg');
                container.innerHTML = '<div class="spine-player-loading-custom"></div>';
+               if (existingVideo) container.appendChild(existingVideo);
+               
                document.getElementById('playerControls').classList.add('opacity-50', 'pointer-events-none');
                document.getElementById('slotsContainerInner').innerHTML = '<div class="p-3 text-center text-xs font-bold text-gray-400">讀取資料中...</div>';
             
                currentZoom = mode === 'battle' ? 2.5 : 1.0; 
-               
-               const skelUrl = mode === 'lobby' 
-                   ? `./spine_assets/${baseFolderKey}/${costumeKey}.skel.bytes` 
-                   : `./spine_sd_assets/${costumeKey}.skel.bytes`;
-                   
-               const atlasUrl = mode === 'lobby' 
-                   ? `./spine_assets/${baseFolderKey}/${costumeKey}.atlas.txt`
-                   : `./spine_sd_assets/${costumeKey}.atlas.txt`;
-            
-               const isPma = true; 
+               const skelUrl = mode === 'lobby' ? `./spine_assets/${baseFolderKey}/${costumeKey}.skel.bytes` : `./spine_sd_assets/${costumeKey}.skel.bytes`;
+               const atlasUrl = mode === 'lobby' ? `./spine_assets/${baseFolderKey}/${costumeKey}.atlas.txt` : `./spine_sd_assets/${costumeKey}.atlas.txt`;
                const baseViewport = mode === 'lobby' ? { x: -400, y: 0, width: 800, height: 1000 } : { x: -750, y: -150, width: 1500, height: 3000 };
             
                globalPlayer = new spine.SpinePlayer(container, {
-                   skelUrl: skelUrl,
-                   atlasUrl: atlasUrl,
-                   premultipliedAlpha: isPma,
-                   backgroundColor: "#00000000", 
-                   alpha: true,
-                   showControls: false,
-                   showLoading: false, 
-                   debugRendering: true,
-                   viewport: { ...baseViewport },
+                   skelUrl: skelUrl, atlasUrl: atlasUrl, premultipliedAlpha: true,
+                   backgroundColor: "#00000000", alpha: true, showControls: false,
+                   showLoading: false, debugRendering: true, viewport: { ...baseViewport },
             
                    success: function (player) {
                        const loader = container.querySelector('.spine-player-loading-custom');
                        if (loader) loader.remove();
-            
                        document.getElementById('playerControls').classList.remove('opacity-50', 'pointer-events-none');
                        setSpeed(1);
-                                             // 🌟 開啟骨架 Debug 顯示模式 (加上 200ms 延遲強制注入)
                        setTimeout(() => {
                            if (player.sceneRenderer) {
-                               player.sceneRenderer.debugRendering = true; // 總開關
-                               player.sceneRenderer.debugBones = true;     // 顯示骨骼線條與節點
-                               player.sceneRenderer.debugRegions = false;  // 隱藏圖片外框
-                               player.sceneRenderer.debugMeshes = false;   // 隱藏網格
-                               
-                               // 💡 強制重繪一幀，讓骨架射線立刻衝出來
+                               player.sceneRenderer.debugRendering = true;
+                               player.sceneRenderer.debugBones = true;     
+                               player.sceneRenderer.debugRegions = false;  
+                               player.sceneRenderer.debugMeshes = false;   
                                player.skeleton.updateWorldTransform();
-                           } else {
-                               console.log("提示：200ms 後依然抓不到 sceneRenderer");
                            }
                        }, 200);
             
@@ -737,44 +502,36 @@
                            if (targetSkin) { player.skeleton.setSkinByName(targetSkin.name); }
                        }
                        
-                       player.skeleton.scaleX = currentZoom;
-                       player.skeleton.scaleY = currentZoom;
+                       player.skeleton.scaleX = currentZoom; player.skeleton.scaleY = currentZoom;
                        player.skeleton.setToSetupPose(); 
             
                        const shadowSlot = player.skeleton.findSlot("Sport_Face_Shadow");
-                       if (shadowSlot) {
-                           shadowSlot.data.blendMode = 0;
-                           shadowSlot.color.a = 0.6;
-                       }
+                       if (shadowSlot) { shadowSlot.data.blendMode = 0; shadowSlot.color.a = 0.6; }
             
                        player.skeleton.updateWorldTransform();
-                       buildAnimationDropdown(player);
-                       buildSlotsPanel(player);
+                       buildAnimationDropdown(player); buildSlotsPanel(player);
             
                        setTimeout(() => {
                            const anims = player.skeleton.data.animations.map(a => a.name);
                            const fallbackAnim = mode === 'lobby' ? 'Idle_1' : 'Idle';
                            let startAnim = anims.includes(fallbackAnim) ? fallbackAnim : (anims.includes('idle') ? 'idle' : anims[0]);
-                           
                            if (startAnim) {
                                player.animationState.setAnimation(0, startAnim, true);
                                document.getElementById('animSelectText').innerText = startAnim;
                                document.getElementById('btnPlayPause').innerText = '⏸️';
                            }
                            player.play();
-                           
-                           // 🌟 如果是大廳模式，播放出場/換裝語音
                            if (mode === 'lobby') VoiceManager.playSpawn();
-            
                            setupComplexInteractions(player, container);
                            window.dispatchEvent(new Event('resize'));
                        }, 50);
                    },
-                   error: function (player, reason) {
+                   error: function () {
                        container.innerHTML = `<div class="text-red-500 font-bold text-sm text-center p-4">載入失敗：${mode === 'lobby' ? '大廳' : '戰鬥'}檔案可能不存在</div>`;
                    }
                });
             }
+
             // ==========================================
             // 🌟 AR 攝影機模式 (WebRTC)
             // ==========================================
@@ -791,44 +548,35 @@
                     arStream = null;
                     video.classList.add('hidden');
                     
-                    // 恢復按鈕樣式
                     btn.innerHTML = '📷 AR 模式';
                     btn.classList.replace('bg-red-500', 'bg-purple-500');
                     btn.classList.replace('hover:bg-red-600', 'hover:bg-purple-600');
                     
-                    // 恢復原本的角色背景
-                    if (activeCharData) {
-                        applyRaceBackground(activeCharData.name);
-                    }
+                    if (activeCharData) applyRaceBackground(activeCharData.name);
                 } else {
                     // 開啟 AR 模式
                     try {
-                        // 🌟 修正：把強制要求改為 "ideal" (理想狀態)，這樣 Safari 如果挑剔，至少會給一個能用的鏡頭而不會直接報錯
                         arStream = await navigator.mediaDevices.getUserMedia({ 
                             video: { facingMode: { ideal: "environment" } } 
                         });
                         video.srcObject = arStream;
                         video.classList.remove('hidden');
                         
-                        // 隱藏原本的背景圖案與動畫，讓相機畫面透出來
                         container.style.backgroundImage = "none";
                         container.classList.remove('animated-bg');
                         
-                        // 變更按鈕樣式
                         btn.innerHTML = '❌ 關閉 AR';
                         btn.classList.replace('bg-purple-500', 'bg-red-500');
                         btn.classList.replace('hover:bg-purple-600', 'hover:bg-red-600');
                         
-                        // 若不在正中央，稍微幫角色置中一下
                         resetCamera();
                     } catch (err) {
                         console.error("相機開啟失敗:", err);
-                        // 🌟 修正：把 Safari 報的真實錯誤名稱印在警告視窗上！
                         alert(`相機開啟失敗 😢\n\n錯誤類型：${err.name}\n錯誤訊息：${err.message}\n\n(如果是 NotAllowedError，代表依然被瀏覽器權限阻擋)`);
                     }
                 }
             }
-            // --- 播放器控制與 UI 刷新 ---
+
             function togglePlay() {
                 if (!globalPlayer) return;
                 if (globalPlayer.paused) {
@@ -840,7 +588,7 @@
             
             function setSpeed(speed) {
                 if (!globalPlayer) return;
-                globalPlayer.speed = speed; // 統一使用 speed 屬性
+                globalPlayer.speed = speed;
                 document.querySelectorAll('.speed-btn').forEach(btn => {
                     if (btn.innerText.includes(speed.toFixed(1))) {
                         btn.className = "speed-btn px-2 py-1 text-[10px] sm:text-xs font-bold rounded bg-amber-200 dark:bg-slate-600 text-amber-900 dark:text-white";
@@ -851,10 +599,8 @@
             }
             
             function buildAnimationDropdown(player) {
-                const animList = document.getElementById('animList');
-                animList.innerHTML = '';
+                const animList = document.getElementById('animList'); animList.innerHTML = '';
                 const anims = player.skeleton.data.animations.map(a => a.name).sort();
-                
                 anims.forEach(animName => {
                     const btn = document.createElement('button');
                     btn.className = "text-left px-3 py-2.5 text-[11px] sm:text-xs hover:bg-amber-100 dark:hover:bg-slate-700 w-full truncate transition-colors text-gray-700 dark:text-gray-300 flex-shrink-0 border-b border-gray-50 dark:border-slate-700/50";
@@ -872,23 +618,19 @@
             }
             
             function buildSlotsPanel(player) {
-                const container = document.getElementById('slotsContainerInner');
-                container.innerHTML = '';
+                const container = document.getElementById('slotsContainerInner'); container.innerHTML = '';
                 slotVisibilityMap = {};
-                
                 const slots = player.skeleton.slots.filter(s => s.attachment != null);
             
                 slots.forEach((slot) => {
-                    const slotName = slot.data.name;
-                    slotVisibilityMap[slotName] = true;
+                    const slotName = slot.data.name; slotVisibilityMap[slotName] = true;
                     const originalColor = { r: slot.color.r, g: slot.color.g, b: slot.color.b };
             
                     const item = document.createElement('label');
                     item.className = "flex items-center gap-2 px-3 py-2 lg:py-1.5 hover:bg-red-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-gray-50 dark:border-slate-700/50 group";
                     
                     const checkbox = document.createElement('input');
-                    checkbox.type = "checkbox";
-                    checkbox.checked = true;
+                    checkbox.type = "checkbox"; checkbox.checked = true;
                     checkbox.className = "w-3.5 h-3.5 text-amber-500 rounded focus:ring-amber-500 border-gray-300";
                     checkbox.onchange = (e) => { toggleSlot(slotName, e.target.checked); };
             
@@ -900,9 +642,7 @@
                     item.onmouseenter = () => { slot.color.r = 1; slot.color.g = 0; slot.color.b = 0; };
                     item.onmouseleave = () => { slot.color.r = originalColor.r; slot.color.g = originalColor.g; slot.color.b = originalColor.b; };
             
-                    item.appendChild(checkbox);
-                    item.appendChild(span);
-                    container.appendChild(item);
+                    item.appendChild(checkbox); item.appendChild(span); container.appendChild(item);
                 });
             
                 if(!globalPlayer.config.injectedUpdate) {
@@ -948,7 +688,6 @@
                 globalPlayer.skeleton.scaleY = currentZoom;
                 globalPlayer.skeleton.x = 0;
                 globalPlayer.skeleton.y = 0;
-                // 恢復大廳特定的 y 軸錨點偏移
                 if(currentMode === 'lobby') {
                     globalPlayer.skeleton.y = 600 * (1 - currentZoom);
                 }
@@ -958,11 +697,8 @@
                 const canvas = container.querySelector('canvas');
                 if (!canvas) return;
                 canvas.style.touchAction = 'none';
-                // 🌟 無敵坐標轉換器：強行將滑鼠坐標轉為 100% 精準的 Spine 世界坐標
-                // 🌟 無敵坐標轉換器：強行將滑鼠坐標轉為 100% 精準的 Spine 世界坐標
                 function screenToWorldCoords(cam, screenX, screenY, rect) {
                     let vec;
-                    // 🌟 核心修正：移除 rect.height - screenY！Spine 的 API 會自己處理 Y 軸翻轉
                     if (typeof spine !== 'undefined' && spine.webgl && spine.webgl.Vector3) {
                         vec = new spine.webgl.Vector3(screenX, screenY, 0);
                     } else if (typeof spine !== 'undefined' && spine.Vector3) {
@@ -1000,19 +736,11 @@
                 let tickleTimer = null; 
                 let voiceRecoveryTimer = null;
             
-                // 🌟 安全獲取當前環境狀態
                 const getIsLobby = () => typeof currentMode === 'undefined' || currentMode === 'lobby';
-                const getBaseViewport = () => {
-                    if (typeof currentMode !== 'undefined') {
-                        return currentMode === 'lobby' ? { x: -400, y: 0, width: 800, height: 1000 } : { x: -750, y: -150, width: 1500, height: 3000 };
-                    }
-                    return { x: -400, y: 0, width: 800, height: 1000 };
-                };
                 const updateUI = (text) => { const el = document.getElementById('animSelectText'); if (el) el.innerText = text; };
                 const safeClearIdle = () => { if (typeof globalIdleTimer !== 'undefined') clearTimeout(globalIdleTimer); };
                 const safeStartIdle = () => { if (typeof startRandomAnimationLoop === 'function') startRandomAnimationLoop(); };
                 
-            // 滾輪縮放保留不動
                 canvas.addEventListener('wheel', (e) => {
                     e.preventDefault();
                     if (!player.skeleton) return;
@@ -1028,14 +756,12 @@
                     player.skeleton.y = currentPanY + (isLobby ? 600 * (1 - currentZoom) : 0);
                 }, { passive: false });
             
-                // 🌟 終極坐標對齊版：直接依賴 Spine 相機矩陣
                 function getHitZone(mouseX, mouseY) {
                     if (!getIsLobby()) return null;
                     const rect = canvas.getBoundingClientRect();
                     if (!globalPlayer || !globalPlayer.sceneRenderer || !globalPlayer.sceneRenderer.camera) return null;
                     const cam = globalPlayer.sceneRenderer.camera;
                     
-                    // 🌟 直接呼叫無敵轉換器，取得完美的判定坐標
                     const worldPos = screenToWorldCoords(cam, mouseX, mouseY, rect);
                     player.skeleton.updateWorldTransform();
                  
@@ -1052,7 +778,6 @@
                         let targetBone = null;
                         for (let bName of zone.bones) { targetBone = player.skeleton.findBone(bName); if (targetBone) break; }
                         if (targetBone) {
-                            // 坐標已在同一個世界，直接相減計算距離！
                             const distance = Math.hypot(worldPos.x - targetBone.worldX, worldPos.y - targetBone.worldY);
                             if (distance < zone.radius && distance < minDistance) { 
                                 minDistance = distance; 
@@ -1092,25 +817,11 @@
                         activeInteractBone = hitZoneOnDown.bone; 
                         initialBoneX = activeInteractBone.x; 
                         initialBoneY = activeInteractBone.y;
-
-                        // 🔴 開始錄製互動
-                        if (isEditMode) {
-                            isRecordingInteraction = true;
-                            currentRecordingInteraction = {
-                                startTime: Date.now() - currentLoopStartTime,
-                                duration: 0,
-                                bone: activeInteractBone.data.name,
-                                anim: hitZoneOnDown.name === "臉頰" ? "Touch_Idle" : "Pat_Idle",
-                                path: []
-                            };
-                        }
                     }
                 });
             
                 canvas.addEventListener('pointermove', (e) => {
-                    if (pointers[e.pointerId]) {
-                        pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
-                    }
+                    if (pointers[e.pointerId]) { pointers[e.pointerId] = { x: e.clientX, y: e.clientY }; }
                     const pointerKeys = Object.keys(pointers);
             
                     if (pointerKeys.length === 2) {
@@ -1149,47 +860,34 @@
                         const animNames = player.skeleton.data.animations.map(a => a.name);
             
                         if (hitZoneOnDown.name === "臉頰" && animNames.includes("Touch_Idle")) {
-                            player.animationState.setAnimation(0, "Touch_Idle", true);
-                            updateUI("Touch_Idle");
+                            player.animationState.setAnimation(0, "Touch_Idle", true); updateUI("Touch_Idle");
                         } else if (hitZoneOnDown.name === "頭部" && animNames.includes("Pat_Idle")) {
-                            player.animationState.setAnimation(0, "Pat_Idle", true);
-                            updateUI("Pat_Idle");
+                            player.animationState.setAnimation(0, "Pat_Idle", true); updateUI("Pat_Idle");
                        } else if (hitZoneOnDown.name === "身體" && animNames.includes("Tickle_Idle_1")) {
-            player.animationState.setAnimation(0, "Tickle_Idle_1", true);
-            updateUI("Tickle_Idle_1");
-            
-            // 讓語音決定什麼時候切換動作
-            VoiceManager.playTickleStart(() => {
-            // 當 TickleStart1 說完時，先檢查玩家是否「還在按著 (isDragging)」
-            if (isDragging) {
-            // 切換成笑的動作
-            if (animNames.includes("Tickle_Idle_2")) {
-                player.animationState.setAnimation(0, "Tickle_Idle_2", true);
-                updateUI("Tickle_Idle_2");
-            }
-            // 開始無限循環笑聲
-            VoiceManager.playTickleDuring();
-            }
-            });
-            }
+                            player.animationState.setAnimation(0, "Tickle_Idle_1", true); updateUI("Tickle_Idle_1");
+                            VoiceManager.playTickleStart(() => {
+                                if (isDragging) {
+                                    if (animNames.includes("Tickle_Idle_2")) {
+                                        player.animationState.setAnimation(0, "Tickle_Idle_2", true); updateUI("Tickle_Idle_2");
+                                    }
+                                    VoiceManager.playTickleDuring();
+                                }
+                            });
+                        }
                     }
             
                     if (hasTriggeredRub && hitZoneOnDown && activeInteractBone) {
                         const isCheek = hitZoneOnDown.name === "臉頰";
                         const cam = globalPlayer.sceneRenderer.camera;
-                        
-                        // 1. 把起點與現在的滑鼠位置，精準轉換為世界坐標
                         const startWorld = screenToWorldCoords(cam, startX - rect.left, startY - rect.top, rect);
                         const currentWorld = screenToWorldCoords(cam, e.clientX - rect.left, e.clientY - rect.top, rect);
                         
-                        // 2. 兩者的差距，就是 100% 精準的世界拖曳距離！不會跑太遠也不會太短
                         const stretchIntensity = isCheek ? 0.8 : 0.5; 
                         let worldDx = (currentWorld.x - startWorld.x) * stretchIntensity;
                         let worldDy = (currentWorld.y - startWorld.y) * stretchIntensity;
             
                         if (isCheek && worldDx > 0) worldDx = 0; 
                         
-                        // 3. 【必須保留】利用父骨骼反推初始真實坐標
                         let baseWorld = { x: initialBoneX, y: initialBoneY };
                         if (activeInteractBone.parent) {
                             activeInteractBone.parent.localToWorld(baseWorld);
@@ -1215,19 +913,9 @@
                         activeInteractBone.x = initialBoneX + localDx;
                         activeInteractBone.y = initialBoneY + localDy;
                         player.skeleton.updateWorldTransform();
-
-                        // 🔴 記錄骨架位移軌跡
-                        if (isEditMode && isRecordingInteraction && currentRecordingInteraction) {
-                            currentRecordingInteraction.path.push({
-                                time: Date.now() - currentLoopStartTime - currentRecordingInteraction.startTime,
-                                x: activeInteractBone.x,
-                                y: activeInteractBone.y
-                            });
-                        }
-                    } else if (!hitZoneOnDown) {
+                    } 
+                    else if (!hitZoneOnDown) {
                         const cam = globalPlayer.sceneRenderer.camera;
-                        
-                        // 🌟 精準計算前一次與現在滑鼠移動的「世界坐標差」
                         const currentWorld = screenToWorldCoords(cam, e.clientX - rect.left, e.clientY - rect.top, rect);
                         const prevWorld = screenToWorldCoords(cam, lastMouseX - rect.left, lastMouseY - rect.top, rect);
                         
@@ -1237,7 +925,6 @@
                         let currentPanX = player.skeleton.x;
                         let currentPanY = player.skeleton.y - oldZoomOffsetY;
             
-                        // 直接加上精準的世界差異 (1:1對齊，絕對不飄)
                         currentPanX += (currentWorld.x - prevWorld.x);
                         currentPanY += (currentWorld.y - prevWorld.y);
             
@@ -1246,31 +933,16 @@
                         player.skeleton.updateWorldTransform();
                     }
             
-                    lastMouseX = e.clientX;
-                    lastMouseY = e.clientY;
+                    lastMouseX = e.clientX; lastMouseY = e.clientY;
                 });
-                // 🌟 新增：滑鼠移動時，檢查是否在互動區，自動切換游標
+
                 canvas.addEventListener('mousemove', (e) => {
                     const rect = canvas.getBoundingClientRect();
                     const hit = getHitZone(e.clientX - rect.left, e.clientY - rect.top);
-                    
-                    if (hit) {
-                        canvas.style.cursor = 'pointer'; // 變成手指
-                    } else {
-                        canvas.style.cursor = 'move';    // 回復原本的十字箭咀
-                    }
+                    if (hit) { canvas.style.cursor = 'pointer'; } else { canvas.style.cursor = 'move'; }
                 });
             
                 const stopDrag = (e) => { 
-                    // 🔴 結束錄製並計算總時長
-                    if (isEditMode && isRecordingInteraction && currentRecordingInteraction) {
-                        currentRecordingInteraction.duration = (Date.now() - currentLoopStartTime) - currentRecordingInteraction.startTime;
-                        interactionSequence.push(currentRecordingInteraction);
-                        isRecordingInteraction = false;
-                        currentRecordingInteraction = null;
-                        renderInteractionTrack(); // 刷新為長條方塊
-                    }
-                    
                     delete pointers[e.pointerId];
                     if (Object.keys(pointers).length < 2) initialPinchDistance = 0;
             
@@ -1306,666 +978,50 @@
             
                     if (hasTriggeredRub) {
                         if (hitZoneOnDown && hitZoneOnDown.name === "臉頰" && animNames.includes("Touch_End")) {
-                            player.animationState.setAnimation(0, "Touch_End", true);
-                            updateUI("Touch_End");
-                            
+                            player.animationState.setAnimation(0, "Touch_End", true); updateUI("Touch_End");
                             VoiceManager.playTouch(() => {
                                 voiceRecoveryTimer = setTimeout(() => {
-                                    player.animationState.setAnimation(0, "Idle_1", true);
-                                    updateUI("Idle_1");
-                                    safeStartIdle();
+                                    player.animationState.setAnimation(0, "Idle_1", true); updateUI("Idle_1"); safeStartIdle();
                                 }, 500);
                             });
-            
                         } else if (hitZoneOnDown && hitZoneOnDown.name === "頭部" && animNames.includes("Pat_End")) {
-                            player.animationState.setAnimation(0, "Pat_End", true);
-                            updateUI("Pat_End");
-                            
+                            player.animationState.setAnimation(0, "Pat_End", true); updateUI("Pat_End");
                             VoiceManager.playPat(() => {
                                 voiceRecoveryTimer = setTimeout(() => {
-                                    player.animationState.setAnimation(0, "Idle_1", true);
-                                    updateUI("Idle_1");
-                                    safeStartIdle();
+                                    player.animationState.setAnimation(0, "Idle_1", true); updateUI("Idle_1"); safeStartIdle();
                                 }, 500);
                             });
-            
                         } else if (hitZoneOnDown && hitZoneOnDown.name === "身體" && animNames.includes("Tickle_End")) {
-                            player.animationState.setAnimation(0, "Tickle_End", false);
-                            player.animationState.addAnimation(0, "Idle_1", true, 0);
-                            updateUI("Tickle_End");
-                            safeStartIdle();
+                            player.animationState.setAnimation(0, "Tickle_End", false); player.animationState.addAnimation(0, "Idle_1", true, 0); updateUI("Tickle_End"); safeStartIdle();
                         } else {
-                            player.animationState.setAnimation(0, "Idle_1", true);
-                            updateUI("Idle_1");
-                            safeStartIdle();
+                            player.animationState.setAnimation(0, "Idle_1", true); updateUI("Idle_1"); safeStartIdle();
                         }
                     } else if (hitZoneOnDown && dragDistance < 10) {
                         if ((hitZoneOnDown.name === "頭部" || hitZoneOnDown.name === "臉頰") && animNames.includes("Smash_End_1")) {
-                            
                             player.animationState.setAnimation(0, "Smash_End_1", false);
-                            if (animNames.includes("Smash_End_2")) {
-                                player.animationState.addAnimation(0, "Smash_End_2", true, 0);
-                            }
+                            if (animNames.includes("Smash_End_2")) { player.animationState.addAnimation(0, "Smash_End_2", true, 0); }
                             updateUI("Smash_End");
-                            
                             VoiceManager.playSmash(() => {
                                 voiceRecoveryTimer = setTimeout(() => {
-                                    player.animationState.setAnimation(0, "Idle_1", true);
-                                    updateUI("Idle_1");
-                                    safeStartIdle();
+                                    player.animationState.setAnimation(0, "Idle_1", true); updateUI("Idle_1"); safeStartIdle();
                                 }, 500);
                             });
-                        } else {
-                            safeStartIdle();
-                        }
-                    } else {
-                        safeStartIdle();
-                    }
+                        } else { safeStartIdle(); }
+                    } else { safeStartIdle(); }
                 };
             
                 canvas.addEventListener('pointerup', stopDrag);
                 canvas.addEventListener('pointercancel', stopDrag);
                 canvas.addEventListener('pointerout', stopDrag);
             }
-            // ==========================================
-            // 🌟 編輯模式與背景管理邏輯
-            // ==========================================
-            let isEditMode = false;
-            let availableBgs = [];
-            let currentBgIndex = 0;
-            let currentBgUrl = "";
-
-            function toggleEditMode() {
-                if (!globalPlayer || !globalPlayer.skeleton) return alert("請先選擇並載入一隻坨坨！");
-                
-                isEditMode = !isEditMode;
-                const btn = document.getElementById('btnEditMode');
-                const panel = document.getElementById('editTimelinePanel');
-                const bgPrev = document.getElementById('bgPrevBtn');
-                const bgNext = document.getElementById('bgNextBtn');
-                
-                // 🌟 抓取需要變身的 UI 元素
-                const btnPlayPause = document.getElementById('btnPlayPause');
-                const animDropdown = document.getElementById('animDropdownWrapper');
-                const slotDropdown = document.getElementById('slotDropdownWrapper');
-
-                if (isEditMode) {
-                    // 🛑 阻擋原本的閒置計時器
-                    if (typeof globalIdleTimer !== 'undefined') clearTimeout(globalIdleTimer);
-                    if (typeof voiceRecoveryTimer !== 'undefined') clearTimeout(voiceRecoveryTimer);
-
-                    btn.innerHTML = '⏺️ 輸出 GIF';
-                    btn.classList.replace('bg-green-500', 'bg-red-500');
-                    btn.classList.replace('hover:bg-green-600', 'hover:bg-red-600');
-                    
-                    panel.classList.remove('hidden'); panel.classList.add('flex');
-                    bgPrev.classList.remove('hidden'); bgNext.classList.remove('hidden');
-                    
-                    // 🌟 UI 變身：隱藏播放鍵與單一動作選單，讓插槽選單填滿空位
-                    btnPlayPause.classList.add('hidden');
-                    animDropdown.classList.add('hidden');
-                    slotDropdown.style.width = '100%';
-
-                    // 初始化背景清單
-                    availableBgs = [];
-                    const charRaceBg = (typeof SPINE_BACKGROUNDS !== 'undefined' && activeCharData && SPINE_BACKGROUNDS[activeCharData.race]) 
-                                       ? SPINE_BACKGROUNDS[activeCharData.race] 
-                                       : 'https://i.postimg.cc/x8wY5V8Q/Monster-Slot-Property-Tile.png';
-                    availableBgs.push({ url: charRaceBg, animated: true });
-
-                    if (typeof LOBBY_BACKGROUNDS !== 'undefined') {
-                        Object.values(LOBBY_BACKGROUNDS).forEach(url => availableBgs.push({ url: url, animated: false }));
-                    }
-                    
-                    currentBgIndex = 0;
-                    applyCurrentBg();
-
-                    // 初始化並啟動循環預覽
-                    if (editSequence.length === 0) addSequenceStep(); 
-                    else renderSequenceList();
-                    startSequencePreview();
-
-                } else {
-                    // 🌟 復原為一般播放器模式
-                    btnPlayPause.classList.remove('hidden');
-                    animDropdown.classList.remove('hidden');
-                    slotDropdown.style.width = '48%';
-                    
-                    stopSequencePreview();
-                    startGifRecording();
-                }
-            }
-
-            function applyCurrentBg() {
-                const bgData = availableBgs[currentBgIndex];
-                currentBgUrl = bgData.url;
-                const container = document.getElementById('spineCanvasContainer');
-                container.style.backgroundImage = `url('${currentBgUrl}')`;
-                
-                if (bgData.animated) container.classList.add('animated-bg');
-                else container.classList.remove('animated-bg');
-            }
-
-            function cycleBg(dir) {
-                currentBgIndex += dir;
-                if (currentBgIndex < 0) currentBgIndex = availableBgs.length - 1;
-                if (currentBgIndex >= availableBgs.length) currentBgIndex = 0;
-                applyCurrentBg();
-            }
-            // ==========================================
-            // 🌟 時間軸編輯器與 GIF 錄製
-            // ==========================================
-            let editSequence = [];
-            let seqTimer = null;
-            let currentSeqIndex = 0;
-            let gifInstance = null;
-            let gifWorkerUrl = null;
-
-            // 預載 GIF Worker
-            fetch('https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js')
-                .then(res => res.text())
-                .then(text => gifWorkerUrl = URL.createObjectURL(new Blob([text], { type: 'application/javascript' })));
-
-            function getAnimDuration(animName) {
-                if (!globalPlayer || !globalPlayer.skeleton) return 2000;
-                // 從 Spine 資料庫中尋找這個動作
-                const anim = globalPlayer.skeleton.data.animations.find(a => a.name === animName);
-                if (anim) {
-                    // Spine 的 duration 單位是秒，轉換為毫秒並四捨五入
-                    let ms = Math.round(anim.duration * 1000);
-                    // 防呆機制：有些單幀靜態動作 duration 會是 0，強制給予 1000 毫秒緩衝
-                    return ms > 0 ? ms : 1000;
-                }
-                return 2000;
-            }
-            function addSequenceStep() {
-                if (!globalPlayer || !globalPlayer.skeleton) return;
-                const anims = globalPlayer.skeleton.data.animations.map(a => a.name).sort();
-                const defaultAnim = anims.includes("Idle_1") ? "Idle_1" : anims[0];
-                
-                // 使用真實時長取代原本寫死的 2000
-                const actualDuration = getAnimDuration(defaultAnim);
-                editSequence.push({ anim: defaultAnim, duration: actualDuration });
-
-                // (加在 editSequence.push 之後)
-                selectedSeqIndex = editSequence.length - 1; // 自動選取最新加入的片段
-                renderSequenceList();
-                startSequencePreview();
-                
-                // 自動將時間軸捲動到最右邊
-                setTimeout(() => {
-                    const trackContainer = document.getElementById('timelineTrack').parentElement;
-                    trackContainer.scrollLeft = trackContainer.scrollWidth;
-                }, 50);
-                
-                renderSequenceList();
-                startSequencePreview();
-            }
-            function removeSequenceStep(index) {
-                editSequence.splice(index, 1);
-                if (editSequence.length === 0) addSequenceStep();
-                else renderSequenceList();
-            }
-
-            function updateSequenceStep(index, field, value) {
-                if (field === 'duration') {
-                    // 使用者手動修改時長
-                    value = Math.max(100, parseInt(value) || 1000);
-                    editSequence[index][field] = value;
-                } else if (field === 'anim') {
-                    // 使用者切換了不同的動作
-                    editSequence[index][field] = value;
-                    // 🌟 自動將時長重置為新動作的真實長度！
-                    editSequence[index].duration = getAnimDuration(value);
-                }
-                
-                // 如果是切換動作，必須重新渲染讓輸入框的數字更新
-                if (field === 'anim') renderSequenceList();
-                
-                startSequencePreview();
-            }
-
-            const MS_PER_PX = 15; // 比例尺：15毫秒等於螢幕上的 1 像素
-            let selectedSeqIndex = -1;
-
-            function renderSequenceList() {
-                const track = document.getElementById('timelineTrack');
-                const editor = document.getElementById('activeClipEditor');
-                if (!track) return;
-                
-                track.innerHTML = '';
-                
-                // 防呆：確保選取索引有效
-                if (editSequence.length === 0) selectedSeqIndex = -1; 
-                else if (selectedSeqIndex >= editSequence.length) selectedSeqIndex = editSequence.length - 1;
-                
-                editSequence.forEach((step, idx) => {
-                    // 計算長度 (限制最小寬度 45px，最大 800px 避免破版)
-                    const width = Math.min(Math.max(step.duration / MS_PER_PX, 45), 800); 
-                    
-                    const block = document.createElement('div');
-                    const isSelected = selectedSeqIndex === idx;
-                    
-                    block.className = `relative h-12 rounded-md shadow flex flex-col justify-center items-center cursor-pointer transition-all group select-none flex-shrink-0 ` +
-                                      (isSelected ? 'bg-amber-400 dark:bg-amber-500 scale-[1.02] z-10 shadow-md' : 'bg-green-400 dark:bg-green-600 hover:bg-green-300 dark:hover:bg-green-500 opacity-90');
-                    block.style.width = `${width}px`;
-                    block.draggable = true; // 允許 HTML5 拖曳排序
-                    
-                    // --- 🧩 功能 1：拖曳排序 (Drag to Reorder) ---
-                    block.ondragstart = (e) => { 
-                        e.dataTransfer.setData('text/plain', idx); 
-                        block.classList.add('opacity-40');
-                    };
-                    block.ondragend = () => block.classList.remove('opacity-40');
-                    block.ondragover = (e) => { e.preventDefault(); block.classList.add('brightness-125'); };
-                    block.ondragleave = () => block.classList.remove('brightness-125');
-                    block.ondrop = (e) => {
-                        e.preventDefault();
-                        block.classList.remove('brightness-125');
-                        const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
-                        if (fromIdx !== idx && !isNaN(fromIdx)) {
-                            const movedItem = editSequence.splice(fromIdx, 1)[0];
-                            editSequence.splice(idx, 0, movedItem);
-                            selectedSeqIndex = idx; // 自動選取剛移動的項目
-                            renderSequenceList();
-                            startSequencePreview();
-                        }
-                    };
-
-                    // 點擊選取片段
-                    block.onclick = (e) => {
-                        if(e.target.classList.contains('resize-handle') || e.target.classList.contains('delete-btn')) return;
-                        selectedSeqIndex = idx;
-                        renderSequenceList();
-                    };
-
-                    // 內部排版 (名稱、時間、刪除鈕、右側拉伸桿)
-                    block.innerHTML = `
-                        <span class="text-[10px] sm:text-[11px] font-black text-white truncate w-full text-center px-3 pointer-events-none drop-shadow-md leading-tight">${step.anim}</span>
-                        <span class="text-[9px] text-white/90 pointer-events-none tracking-wider font-bold">${step.duration}ms</span>
-                        <button class="delete-btn absolute -top-2 -right-2 w-4 h-4 bg-red-500 text-white rounded-full text-[8px] hidden group-hover:flex items-center justify-center shadow-sm border border-white z-20" onclick="removeSequenceStep(${idx})">✖</button>
-                        <div class="resize-handle absolute right-0 top-0 w-3 h-full cursor-ew-resize hover:bg-white/40 flex items-center justify-center rounded-r-md z-20 border-l border-black/10" title="拖曳調整時長">
-                            <div class="w-0.5 h-4 bg-white/80 rounded-full pointer-events-none shadow-sm"></div>
-                        </div>
-                    `;
-
-                    // --- 🧩 功能 2：滑鼠拖拉拉伸時間 (Drag to Resize) ---
-                    const handle = block.querySelector('.resize-handle');
-                    let startX, startWidth;
-                    handle.onpointerdown = (e) => {
-                        e.stopPropagation();
-                        e.preventDefault(); // 阻止原生的排序拖曳
-                        block.draggable = false;
-                        startX = e.clientX;
-                        startWidth = width;
-                        selectedSeqIndex = idx;
-                        
-                        const onMove = (moveEvt) => {
-                            const dx = moveEvt.clientX - startX;
-                            const newWidth = Math.max(45, startWidth + dx); // 限制不小於 45px
-                            let newDuration = Math.round(newWidth * MS_PER_PX);
-                            
-                            if(newDuration < 100) newDuration = 100; // 最短 100ms
-                            
-                            block.style.width = `${newDuration / MS_PER_PX}px`;
-                            block.querySelector('span:nth-child(2)').innerText = `${newDuration}ms`;
-                            step.duration = newDuration; // 即時更新記憶體數值
-                            
-                            // 同步更新下方輸入框
-                            const durInput = document.getElementById('clipDurationInput');
-                            if (durInput) durInput.value = newDuration;
-                        };
-                        const onUp = () => {
-                            window.removeEventListener('pointermove', onMove);
-                            window.removeEventListener('pointerup', onUp);
-                            block.draggable = true;
-                            updateSequenceStep(idx, 'duration', step.duration); // 儲存並重啟預覽
-                        };
-                        window.addEventListener('pointermove', onMove);
-                        window.addEventListener('pointerup', onUp);
-                    };
-
-                    track.appendChild(block);
-                });
-
-                // 更新下方的單獨片段編輯器
-                if (selectedSeqIndex >= 0 && selectedSeqIndex < editSequence.length) {
-                    editor.classList.remove('hidden'); editor.classList.add('flex');
-                    
-                    const step = editSequence[selectedSeqIndex];
-                    const anims = globalPlayer.skeleton.data.animations.map(a => a.name).sort();
-                    
-                    const selectEl = document.getElementById('clipAnimSelect');
-                    selectEl.innerHTML = anims.map(a => `<option value="${a}" ${a === step.anim ? 'selected' : ''}>${a}</option>`).join('');
-                    document.getElementById('clipDurationInput').value = step.duration;
-                } else {
-                    editor.classList.add('hidden'); editor.classList.remove('flex');
-                }
-            }
-
-            // 給下拉選單和時間輸入框呼叫的專用函式
-            function updateSelectedClip(field, value) {
-                if (selectedSeqIndex >= 0) updateSequenceStep(selectedSeqIndex, field, value);
-            }
-
-            // 用來標記是不是編輯器自己發出的動畫切換指令
-            let isEditorForcingAnim = false;
-
-            // (加在 isEditorForcingAnim = false; 下方)
-                        
-                        // 🌟 新增：高亮當前正在播放的時間軸方塊
-                        document.querySelectorAll('#timelineTrack > div').forEach((blk, i) => {
-                            if (i === currentSeqIndex) {
-                                blk.classList.add('ring-4', 'ring-green-400', 'brightness-110');
-                                blk.classList.remove('opacity-90');
-                            } else {
-                                blk.classList.remove('ring-4', 'ring-green-400', 'brightness-110');
-                                if(i !== selectedSeqIndex) blk.classList.add('opacity-90');
-                            }
-                        });
-
-            // 雙軌編輯狀態變數 (包含動作捕捉)
-            let interactionSequence = []; // 格式: { startTime: 500, duration: 1200, anim: 'Touch_Idle', bone: 'Character_Ball_Move', path: [{time, x, y}] }
-            let currentLoopStartTime = 0;
-            let previewAnimationFrame = null;
-            let isRecordingInteraction = false;
-            let currentRecordingInteraction = null;
-            // 🌟 終極動畫攔截器與預覽引擎
-            function startSequencePreview() {
-                stopSequencePreview();
-                if (!isEditMode || editSequence.length === 0) return;
-                
-                const playhead = document.getElementById('playhead');
-                const track = document.getElementById('timelineTrack');
-                if (playhead) playhead.classList.remove('hidden');
-
-                // 簡單攔截器：防止外部滑鼠事件直接修改動畫，保護預覽
-                if (globalPlayer && globalPlayer.animationState && !globalPlayer.animationState._isHooked) {
-                    const origSetAnim = globalPlayer.animationState.setAnimation.bind(globalPlayer.animationState);
-                    globalPlayer.animationState.setAnimation = function(trackIdx, anim, loop) {
-                        if (isEditMode && !isEditorForcingAnim) return null; 
-                        return origSetAnim(trackIdx, anim, loop);
-                    };
-                    globalPlayer.animationState._isHooked = true;
-                }
-
-                currentLoopStartTime = Date.now();
-                currentSeqIndex = 0;
-
-                function playNextStep() {
-                    if (!isEditMode) return;
-                    const step = editSequence[currentSeqIndex];
-                    
-                    isEditorForcingAnim = true;
-                    globalPlayer.animationState.setAnimation(0, step.anim, true);
-                    isEditorForcingAnim = false;
-                    
-                    document.querySelectorAll('#timelineTrack > div').forEach((blk, i) => {
-                        if (i === currentSeqIndex) {
-                            blk.classList.add('ring-4', 'ring-green-400', 'brightness-110');
-                            blk.classList.remove('opacity-90');
-                        } else {
-                            blk.classList.remove('ring-4', 'ring-green-400', 'brightness-110');
-                            if(i !== selectedSeqIndex) blk.classList.add('opacity-90');
-                        }
-                    });
-
-                    seqTimer = setTimeout(() => {
-                        currentSeqIndex = (currentSeqIndex + 1) % editSequence.length;
-                        if (currentSeqIndex === 0) currentLoopStartTime = Date.now(); 
-                        playNextStep();
-                    }, step.duration);
-                }
-                
-                function updatePlayhead() {
-                    if (!isEditMode) return;
-                    const elapsed = Date.now() - currentLoopStartTime;
-                    
-                    // 🌟 呼叫引擎：處理動態位移與 Track1 覆蓋
-                    applyInteractionEngine(globalPlayer, elapsed);
-
-                    if (playhead && track) {
-                        playhead.style.transform = `translateX(${elapsed / MS_PER_PX}px)`;
-                    }
-                    previewAnimationFrame = requestAnimationFrame(updatePlayhead);
-                }
-
-                playNextStep();
-                updatePlayhead();
-            }
-
-            function stopSequencePreview() {
-                if (seqTimer) clearTimeout(seqTimer);
-                if (previewAnimationFrame) cancelAnimationFrame(previewAnimationFrame);
-                const playhead = document.getElementById('playhead');
-                if (playhead) playhead.classList.add('hidden');
-                
-                // 停止時清除互動軌道上的殘留動畫
-                if (globalPlayer && globalPlayer.animationState) {
-                    globalPlayer.animationState.setEmptyAnimation(1, 0.2);
-                }
-            }
-
-            // 渲染互動軌道 (升級為長條方塊)
-            function renderInteractionTrack() {
-                const iTrack = document.getElementById('interactionTrack');
-                if (!iTrack) return;
-                iTrack.innerHTML = '';
-                
-                interactionSequence.forEach((inter, idx) => {
-                    // 最短顯示寬度 20px，方便使用者點擊
-                    const width = Math.max(inter.duration / MS_PER_PX, 20);
-                    const left = inter.startTime / MS_PER_PX;
-                    
-                    const marker = document.createElement('div');
-                    marker.className = "absolute top-1 h-6 bg-blue-500 rounded border border-white shadow flex items-center justify-center cursor-pointer hover:bg-red-500 transition-colors group z-20 overflow-hidden";
-                    marker.style.left = `${left}px`;
-                    marker.style.width = `${width}px`;
-                    marker.innerHTML = `
-                        <span class="text-[8px] text-white font-bold truncate px-1">${inter.anim}</span>
-                        <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-black/80 text-white text-[9px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none">
-                            點擊刪除
-                        </div>
-                    `;
-                    // 點擊標記即可刪除
-                    marker.onclick = () => {
-                        interactionSequence.splice(idx, 1);
-                        renderInteractionTrack();
-                    };
-                    iTrack.appendChild(marker);
-                });
-            }
-            // 🌟 動態骨架注入引擎：讀取錄製的軌跡，並覆蓋當前動畫
-            function applyInteractionEngine(player, elapsed) {
-                if (!player || !player.skeleton) return false;
-                let activeInter = null;
-                
-                // 尋找當前時間點是否有互動正在發生
-                for (let i = 0; i < interactionSequence.length; i++) {
-                    const inter = interactionSequence[i];
-                    if (elapsed >= inter.startTime && elapsed <= inter.startTime + inter.duration) {
-                        activeInter = inter;
-                        break;
-                    }
-                }
-
-                if (activeInter) {
-                    // 1. 強制維持互動動畫在 Track 1 (優先權高於主軌道，主軌道切換也不會中斷)
-                    isEditorForcingAnim = true;
-                    if (!player.animationState.getCurrent(1) || player.animationState.getCurrent(1).animation.name !== activeInter.anim) {
-                        player.animationState.setAnimation(1, activeInter.anim, true);
-                    }
-                    isEditorForcingAnim = false;
-
-                    // 2. 注入我們錄製的骨骼軌跡
-                    const targetBone = player.skeleton.findBone(activeInter.bone);
-                    if (targetBone && activeInter.path.length > 0) {
-                        const relTime = elapsed - activeInter.startTime;
-                        // 找出時間點最接近的滑鼠軌跡記錄
-                        let point = activeInter.path[0];
-                        for (let p of activeInter.path) {
-                            if (p.time <= relTime) point = p;
-                            else break;
-                        }
-                        // 覆寫骨骼坐標，實現「滑鼠拖扯變形」重現！
-                        targetBone.x = point.x;
-                        targetBone.y = point.y;
-                        player.skeleton.updateWorldTransform(); 
-                    }
-                    return true;
-                } else {
-                    // 如果沒有互動，清除 Track 1 讓主動作恢復正常
-                    if (player.animationState.getCurrent(1)) {
-                        player.animationState.setEmptyAnimation(1, 0.2);
-                    }
-                    return false;
-                }
-            }
-            // 🌟 強化版 GIF 輸出 (支援自訂寬高與雙軌同步)
-            function startGifRecording() {
-                const canvas = document.querySelector('#spineCanvasContainer canvas');
-                if (!canvas || editSequence.length === 0) return toggleEditMode(); 
-
-                const totalDuration = editSequence.reduce((sum, step) => sum + step.duration, 0);
-                if (totalDuration > 15000) {
-                    alert("總時長過長，建議保持在 15 秒以內以免瀏覽器崩潰！");
-                    return toggleEditMode();
-                }
-
-                const btn = document.getElementById('btnEditMode');
-                btn.innerHTML = '⏳ 擷取畫面中...';
-                btn.classList.replace('bg-red-500', 'bg-gray-500');
-                btn.classList.replace('hover:bg-red-600', 'hover:bg-gray-600');
-                btn.disabled = true;
-
-                // 處理使用者設定的尺寸 (高度不可超過畫布本身真實高度)
-                const realCanvasHeight = canvas.height;
-                let maxW = parseInt(document.getElementById('gifWidthInput').value) || 500;
-                let maxH = parseInt(document.getElementById('gifHeightInput').value) || 500;
-                
-                if (maxH > realCanvasHeight) maxH = realCanvasHeight; // 安全限制
-
-                const offCanvas = document.createElement('canvas');
-                offCanvas.width = maxW; 
-                offCanvas.height = maxH;
-                const offCtx = offCanvas.getContext('2d');
-
-                const bgImg = new Image();
-                bgImg.crossOrigin = "anonymous";
-                bgImg.src = currentBgUrl;
-
-                gifInstance = new GIF({ workers: 2, quality: 10, width: maxW, height: maxH, workerScript: gifWorkerUrl });
-                const fps = 20; 
-                let frameCount = 0;
-                const maxFrames = Math.ceil(totalDuration / (1000 / fps));
-
-                bgImg.onload = () => {
-                    // 開始錄製前，重置雙軌道
-                    currentSeqIndex = 0;
-                    currentLoopStartTime = Date.now();
-                    isEditMode = true; 
-                    
-                    // 用模擬時間軸取代 setTimeout 確保錄影幀數精準
-                    let simulatedTime = 0;
-                    let nextStepTime = 0;
-                    let stepIdx = 0;
-                    let triggered = new Set();
-
-                    const recordInterval = setInterval(() => {
-                        // 1. 處理主軌道動畫切換
-                        if (simulatedTime >= nextStepTime && stepIdx < editSequence.length) {
-                            const step = editSequence[stepIdx];
-                            isEditorForcingAnim = true;
-                            globalPlayer.animationState.setAnimation(0, step.anim, true);
-                            isEditorForcingAnim = false;
-                            
-                            nextStepTime += step.duration;
-                            stepIdx++;
-                        }
-                        
-                        // 2. 🌟 呼叫引擎處理動態位移與覆蓋
-                        applyInteractionEngine(globalPlayer, simulatedTime);
-
-                        // 3. 畫布繪製與裁切置中邏輯
-                        offCtx.fillStyle = '#fcf8f2';
-                        offCtx.fillRect(0, 0, maxW, maxH);
-                        
-                        // 畫背景 (Cover 效果)
-                        const imgRatio = bgImg.width / bgImg.height;
-                        const canvasRatio = maxW / maxH;
-                        let drawW = maxW, drawH = maxH, drawX = 0, drawY = 0;
-                        if (imgRatio > canvasRatio) { drawW = maxH * imgRatio; drawX = (maxW - drawW) / 2; } 
-                        else { drawH = maxW / imgRatio; drawY = (maxH - drawH) / 2; }
-                        offCtx.drawImage(bgImg, drawX, drawY, drawW, drawH);
-                        
-                        // 畫 Spine (置中裁切)
-                        const sW = canvas.width; const sH = canvas.height;
-                        const srcX = sW > maxW ? (sW - maxW) / 2 : 0;
-                        const srcY = sH > maxH ? (sH - maxH) / 2 : 0;
-                        const srcW = Math.min(sW, maxW);
-                        const srcH = Math.min(sH, maxH);
-                        const destX = maxW > sW ? (maxW - sW) / 2 : 0;
-                        const destY = maxH > sH ? (maxH - sH) / 2 : 0;
-                        
-                        offCtx.drawImage(canvas, srcX, srcY, srcW, srcH, destX, destY, srcW, srcH);
-                        
-                        gifInstance.addFrame(offCanvas, { copy: true, delay: 1000 / fps });
-                        
-                        simulatedTime += (1000 / fps);
-                        frameCount++;
-                        if (frameCount >= maxFrames) {
-                            clearInterval(recordInterval);
-                            stopSequencePreview();
-                            finalizeGifRecording();
-                        }
-                    }, 1000 / fps);
-                };
-                
-                bgImg.onerror = () => {
-                    alert("背景圖跨域權限阻擋，將僅錄製透明/純色背景。");
-                    bgImg.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-                };
-            }
-
-            function finalizeGifRecording() {
-                const btn = document.getElementById('btnEditMode');
-                
-                gifInstance.on('progress', p => { btn.innerHTML = `⚙️ 編碼中 ${Math.round(p * 100)}%`; });
-                gifInstance.on('finished', blob => {
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url; a.download = `${activeCharData ? activeCharData.name : 'Custom'}_Sequence.gif`;
-                    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-
-                    // 復原為編輯模式
-                    btn.disabled = false;
-                    isEditMode = false; // 為了讓 toggle 能正常切換
-                    toggleEditMode();
-                });
-                gifInstance.render();
-            }
-            window.onload = function() { initCharacterGrid(); };
-            // 偵測捲動距離以顯示/隱藏按鈕
-            window.onscroll = function() {
-            const btn = document.getElementById("backToTop");
-            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-            btn.style.display = "flex";
-            } else {
-            btn.style.display = "none";
-            }
-            };
             
-            // 執行平滑滾動至頂部
-            function scrollToTop() {
-            window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-            });
-            }
+            window.onload = function() { initCharacterGrid(); };
+            window.onscroll = function() {
+                const btn = document.getElementById("backToTop");
+                if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) { btn.style.display = "flex"; } else { btn.style.display = "none"; }
+            };
+            function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
         </script>
-        <button id="backToTop" onclick="scrollToTop()" title="回頂部">
-        ▲
-        </button>
+        <button id="backToTop" onclick="scrollToTop()" title="回頂部">▲</button>
     </body>
 </html>
