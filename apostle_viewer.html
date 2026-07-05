@@ -11,12 +11,24 @@
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@esotericsoftware/spine-player@4.1.23/dist/spine-player.min.css">
         <script src="https://cdn.jsdelivr.net/npm/@esotericsoftware/spine-player@4.1.23/dist/iife/spine-player.min.js"></script>
+        <!-- 🌟 GIF 錄製函式庫 -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
         <script>
             tailwind.config = { darkMode: 'class', }
             const isDarkMode = localStorage.getItem('theme') === 'dark' || 
                                (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
             if (isDarkMode) { document.documentElement.classList.add('dark'); }
             window.currentLang = localStorage.getItem('user_lang') || "zh-TW";
+
+            // 🌟 【無敵外掛】強制讓所有 Canvas 支援影像擷取 (解決 WebGL 錄製黑畫面問題)
+            const originalGetContext = HTMLCanvasElement.prototype.getContext;
+            HTMLCanvasElement.prototype.getContext = function(type, options) {
+                if (type === 'webgl' || type === 'webgl2') {
+                    options = options || {};
+                    options.preserveDrawingBuffer = true;
+                }
+                return originalGetContext.call(this, type, options);
+            };
         </script>
         <style>
             body { font-family: 'Noto Sans TC', sans-serif; }
@@ -142,6 +154,9 @@
                         <div class="flex items-center gap-2">
                             <button id="btnModeSwitch" onclick="toggleViewerMode()" class="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-xs sm:text-sm font-bold rounded-lg shadow transition-colors whitespace-nowrap">
                             🔄 模式: 大廳
+                            </button>
+                            <button id="btnRecordGif" onclick="toggleGifRecording()" class="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-xs sm:text-sm font-bold rounded-lg shadow transition-colors whitespace-nowrap">
+                                ⏺️ 錄製 GIF
                             </button>
                             <select id="costumeSelect" onchange="changeSpineCostume(this.value)" class="bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 text-xs sm:text-sm font-bold rounded-lg px-2 py-1.5 outline-none focus:ring-2 focus:ring-amber-500 min-w-[100px]">
                                 <option value="">服裝</option>
@@ -1217,7 +1232,115 @@
             btn.style.display = "none";
             }
             };
-            
+            // ==========================================
+            // 🌟 GIF 錄製核心邏輯
+            // ==========================================
+            let isRecordingGif = false;
+            let gifInstance = null;
+            let recordInterval = null;
+            let gifWorkerUrl = null;
+
+            // 預先載入 Worker (避開 Github Pages / 本地端的跨網域限制)
+            fetch('https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js')
+                .then(response => response.text())
+                .then(text => {
+                    const blob = new Blob([text], { type: 'application/javascript' });
+                    gifWorkerUrl = URL.createObjectURL(blob);
+                }).catch(err => console.error("GIF Worker 載入失敗", err));
+
+            function toggleGifRecording() {
+                if (isRecordingGif) stopGifRecording();
+                else startGifRecording();
+            }
+
+            function startGifRecording() {
+                const canvas = document.querySelector('#spineCanvasContainer canvas');
+                if (!canvas) return alert("找不到畫布！請先選擇一隻坨坨。");
+                if (!gifWorkerUrl) return alert("系統尚未準備好，請稍等一秒再試！");
+
+                const btn = document.getElementById('btnRecordGif');
+                isRecordingGif = true;
+                btn.innerHTML = '🛑 停止並輸出 (最多10秒)';
+                btn.classList.replace('bg-red-500', 'bg-gray-600');
+                btn.classList.replace('hover:bg-red-600', 'hover:bg-gray-700');
+
+                // 💡 效能保護：限制 GIF 最大寬度為 500px，避免戰鬥模式的超大解析度讓瀏覽器當機
+                const maxW = 500; 
+                let targetW = canvas.width;
+                let targetH = canvas.height;
+                if (targetW > maxW) {
+                    const ratio = maxW / targetW;
+                    targetW = Math.round(targetW * ratio);
+                    targetH = Math.round(targetH * ratio);
+                }
+
+                // 建立一個離線畫布，用來縮小畫面與填補背景
+                const offCanvas = document.createElement('canvas');
+                offCanvas.width = targetW;
+                offCanvas.height = targetH;
+                const offCtx = offCanvas.getContext('2d');
+
+                gifInstance = new GIF({
+                    workers: 2,
+                    quality: 10,       // 品質 (1-30，越低品質越好但處理越久)
+                    width: targetW,
+                    height: targetH,
+                    workerScript: gifWorkerUrl
+                });
+
+                const fps = 20; // 20 FPS 對 GIF 來說已經很順暢
+                let frameCount = 0;
+                const maxFrames = fps * 10; // 防呆機制：最多強制錄製 10 秒
+
+                recordInterval = setInterval(() => {
+                    if (!isRecordingGif) return;
+                    
+                    // 填補背景 (GIF 不支援半透明漸層，直接填滿大廳底色最美觀)
+                    offCtx.fillStyle = document.documentElement.classList.contains('dark') ? '#0f172a' : '#fcf8f2';
+                    offCtx.fillRect(0, 0, targetW, targetH);
+                    
+                    // 將 WebGL 畫面印到我們的小畫布上
+                    offCtx.drawImage(canvas, 0, 0, targetW, targetH);
+                    
+                    // 加入一幀
+                    gifInstance.addFrame(offCanvas, { copy: true, delay: 1000 / fps });
+                    
+                    frameCount++;
+                    if (frameCount >= maxFrames) stopGifRecording(); // 時間到強制停止
+                }, 1000 / fps);
+            }
+
+            function stopGifRecording() {
+                isRecordingGif = false;
+                clearInterval(recordInterval);
+                
+                const btn = document.getElementById('btnRecordGif');
+                btn.disabled = true;
+                
+                gifInstance.on('progress', function(p) {
+                    btn.innerHTML = `⏳ 轉檔中... ${Math.round(p * 100)}%`;
+                });
+
+                gifInstance.on('finished', function(blob) {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${activeCharData ? activeCharData.name : 'Character'}_Anim.gif`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+
+                    // 復原按鈕
+                    btn.innerHTML = '⏺️ 錄製 GIF';
+                    btn.classList.replace('bg-gray-600', 'bg-red-500');
+                    btn.classList.replace('hover:bg-gray-700', 'hover:bg-red-600');
+                    btn.disabled = false;
+                });
+
+                // 開始編碼打包
+                gifInstance.render();
+            }
             // 執行平滑滾動至頂部
             function scrollToTop() {
             window.scrollTo({
