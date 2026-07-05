@@ -125,11 +125,15 @@
                         <div class="flex items-center gap-2">
                             <button id="btnModeSwitch" onclick="toggleViewerMode()" class="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-xs sm:text-sm font-bold rounded-lg shadow transition-colors whitespace-nowrap">
                             🔄 模式: 大廳
-                            </button>
                             <!-- 🌟 AR 模式按鈕 -->
                             <button id="btnARMode" onclick="toggleARMode()" class="px-3 py-1.5 bg-purple-500 hover:bg-purple-600 text-white text-[10px] sm:text-sm font-bold rounded-lg shadow transition-colors whitespace-nowrap">
                             📷 AR
                             </button>
+                            <!-- 🌟 切換鏡頭按鈕 (預設隱藏) -->
+                            <button id="btnSwitchCamera" onclick="switchCamera()" class="hidden px-3 py-1.5 bg-teal-500 hover:bg-teal-600 text-white text-[10px] sm:text-sm font-bold rounded-lg shadow transition-colors whitespace-nowrap">
+                            🔄 相機
+                            </button>
+                            <!-- 🌟 拍照按鈕 (預設隱藏) -->
                             <button id="btnCapture" onclick="captureARPhoto()" class="hidden px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-[10px] sm:text-sm font-bold rounded-lg shadow transition-colors whitespace-nowrap">
                                 📸 拍照
                             </button>
@@ -551,32 +555,34 @@
             // 🌟 AR 攝影機模式 (WebRTC)
             // ==========================================
             let arStream = null;
+            let useFrontCamera = false; // 新增：追蹤目前是否使用前鏡頭
 
             async function toggleARMode() {
                 const video = document.getElementById('arVideoBg');
                 const container = document.getElementById('spineCanvasContainer');
                 const btn = document.getElementById('btnARMode');
                 const btnCapture = document.getElementById('btnCapture');
+                const btnSwitchCamera = document.getElementById('btnSwitchCamera');
 
                 if (arStream) {
-                    // 關閉 AR 模式
+                    // 關閉 AR 模式時：隱藏拍照與翻轉按鈕
                     btnCapture.classList.add('hidden');
+                    btnSwitchCamera.classList.add('hidden');
+                    
                     arStream.getTracks().forEach(track => track.stop());
                     arStream = null;
                     video.classList.add('hidden');
                     
-                    btn.innerHTML = '📷AR';
-                    btnCapture.classList.remove('hidden');
+                    btn.innerHTML = '📷 AR';
                     btn.classList.replace('bg-red-500', 'bg-purple-500');
                     btn.classList.replace('hover:bg-red-600', 'hover:bg-purple-600');
                     
                     if (activeCharData) applyRaceBackground(activeCharData.name);
                 } else {
-                    // 開啟 AR 模式
-                    btnCapture.classList.remove('hidden');
+                    // 開啟 AR 模式：注意，此時先不顯示拍照按鈕
                     try {
                         arStream = await navigator.mediaDevices.getUserMedia({ 
-                            video: { facingMode: { ideal: "environment" } } 
+                            video: { facingMode: useFrontCamera ? "user" : { ideal: "environment" } } 
                         });
                         video.srcObject = arStream;
                         video.classList.remove('hidden');
@@ -584,15 +590,50 @@
                         container.style.backgroundImage = "none";
                         container.classList.remove('animated-bg');
                         
-                        btn.innerHTML = '❌關閉AR';
+                        btn.innerHTML = '❌ 關閉AR';
                         btn.classList.replace('bg-purple-500', 'bg-red-500');
                         btn.classList.replace('hover:bg-purple-600', 'hover:bg-red-600');
                         
                         resetCamera();
+                        
+                        // 🌟 只有當相機「成功取得權限並開啟」後，才顯示拍照與翻轉按鈕
+                        btnCapture.classList.remove('hidden');
+                        btnSwitchCamera.classList.remove('hidden');
+                        
                     } catch (err) {
                         console.error("相機開啟失敗:", err);
-                        alert(`相機開啟失敗 😢\n\n錯誤類型：${err.name}\n錯誤訊息：${err.message}\n\n(如果是 NotAllowedError，代表依然被瀏覽器權限阻擋)`);
+                        // 發生錯誤或沒有相機時，確保按鈕維持隱藏
+                        btnCapture.classList.add('hidden');
+                        btnSwitchCamera.classList.add('hidden');
+                        alert(`相機開啟失敗 😢\n\n錯誤類型：${err.name}\n錯誤訊息：${err.message}\n\n(可能原因：無相機鏡頭、或瀏覽器權限被拒絕)`);
                     }
+                }
+            }
+
+            // ==========================================
+            // 🌟 切換前後鏡頭
+            // ==========================================
+            async function switchCamera() {
+                if (!arStream) return;
+                
+                // 1. 先停止目前的鏡頭
+                arStream.getTracks().forEach(track => track.stop());
+                
+                // 2. 切換狀態 (前/後)
+                useFrontCamera = !useFrontCamera;
+                
+                try {
+                    // 3. 重新請求新方向的鏡頭
+                    arStream = await navigator.mediaDevices.getUserMedia({ 
+                        video: { facingMode: useFrontCamera ? "user" : { ideal: "environment" } } 
+                    });
+                    const video = document.getElementById('arVideoBg');
+                    video.srcObject = arStream;
+                } catch (err) {
+                    console.error("切換鏡頭失敗:", err);
+                    alert("切換鏡頭失敗 😢\n可能是您的裝置沒有另一個鏡頭。");
+                    // 如果切換失敗，強制關閉 AR 以避免畫面卡死
+                    toggleARMode(); 
                 }
             }
             // ==========================================
