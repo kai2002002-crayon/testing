@@ -617,14 +617,14 @@
                 try {
                     const response = await fetch(dataURL);
                     const blob = await response.blob();
-                    const file = new File([blob], `AR_坨坨_${new Date().getTime()}.png`, { type: 'image/png' });
+                    const file = new File([blob], `AR_trickcal_${new Date().getTime()}.png`, { type: 'image/png' });
 
                     // 如果手機支援 Web Share API (iOS 15+ 支援)
                     if (navigator.canShare && navigator.canShare({ files: [file] })) {
                         await navigator.share({
                             files: [file],
-                            title: '坨坨 AR 拍照',
-                            text: '看看我的坨坨！'
+                            title: 'trickcalAR',
+                            text: 'SeeMyApostle！'
                         });
                     } else {
                         // 如果不支援分享，就改用自動下載作為備用方案
