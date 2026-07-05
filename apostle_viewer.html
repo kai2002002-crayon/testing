@@ -1353,7 +1353,18 @@
                 }
                 return 2000;
             }
-
+            function addSequenceStep() {
+                if (!globalPlayer || !globalPlayer.skeleton) return;
+                const anims = globalPlayer.skeleton.data.animations.map(a => a.name).sort();
+                const defaultAnim = anims.includes("Idle_1") ? "Idle_1" : anims[0];
+                
+                // 使用真實時長取代原本寫死的 2000
+                const actualDuration = getAnimDuration(defaultAnim);
+                editSequence.push({ anim: defaultAnim, duration: actualDuration });
+                
+                renderSequenceList();
+                startSequencePreview();
+            }
             function removeSequenceStep(index) {
                 editSequence.splice(index, 1);
                 if (editSequence.length === 0) addSequenceStep();
