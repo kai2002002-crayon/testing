@@ -139,7 +139,7 @@
             <div class="flex flex-col gap-3 min-w-0 relative z-10 w-full lg:w-3/4 mx-auto">
                 <div id="spineCanvasContainer" class="w-full h-[60vh] sm:h-[600px] rounded-xl border-2 border-dashed border-amber-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 relative overflow-hidden flex items-center justify-center cursor-move animated-bg" style="background-image: url('https://i.postimg.cc/x8wY5V8Q/Monster-Slot-Property-Tile.png');">
                     <!-- 🌟 AR 攝影機畫面 (放在這裡，並設為絕對定位、隱藏、不干擾點擊) -->
-                    <video id="arVideoBg" class="absolute inset-0 w-full h-full object-cover hidden pointer-events-none z-0" autoplay playsinline></video>
+                    <video id="arVideoBg" class="absolute inset-0 w-full h-full object-cover hidden pointer-events-none z-0" autoplay playsinline muted></video>
                     <!-- 背景切換按鈕 (僅編輯模式顯示) -->
                     <button id="bgPrevBtn" onclick="cycleBg(-1)" class="hidden absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 text-white text-xs rounded-full flex items-center justify-center z-[60] hover:bg-black/70 transition-all">◀</button>
                     <button id="bgNextBtn" onclick="cycleBg(1)" class="hidden absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 text-white text-xs rounded-full flex items-center justify-center z-[60] hover:bg-black/70 transition-all">▶</button>
@@ -803,9 +803,9 @@
                 } else {
                     // 開啟 AR 模式
                     try {
-                        // 請求相機權限，強制使用後置鏡頭 (environment)
+                        // 🌟 修正：把強制要求改為 "ideal" (理想狀態)，這樣 Safari 如果挑剔，至少會給一個能用的鏡頭而不會直接報錯
                         arStream = await navigator.mediaDevices.getUserMedia({ 
-                            video: { facingMode: "environment" } 
+                            video: { facingMode: { ideal: "environment" } } 
                         });
                         video.srcObject = arStream;
                         video.classList.remove('hidden');
@@ -823,7 +823,8 @@
                         resetCamera();
                     } catch (err) {
                         console.error("相機開啟失敗:", err);
-                        alert("無法開啟相機 😢\n請確認您的裝置是否支援，並已在瀏覽器允許「相機權限」！\n(請注意：網頁必須在 HTTPS 環境下才能使用相機)");
+                        // 🌟 修正：把 Safari 報的真實錯誤名稱印在警告視窗上！
+                        alert(`相機開啟失敗 😢\n\n錯誤類型：${err.name}\n錯誤訊息：${err.message}\n\n(如果是 NotAllowedError，代表依然被瀏覽器權限阻擋)`);
                     }
                 }
             }
