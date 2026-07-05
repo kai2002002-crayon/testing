@@ -1341,12 +1341,17 @@
                 .then(res => res.text())
                 .then(text => gifWorkerUrl = URL.createObjectURL(new Blob([text], { type: 'application/javascript' })));
 
-            function addSequenceStep() {
-                const anims = globalPlayer.skeleton.data.animations.map(a => a.name).sort();
-                const defaultAnim = anims.includes("Idle_1") ? "Idle_1" : anims[0];
-                editSequence.push({ anim: defaultAnim, duration: 2000 });
-                renderSequenceList();
-                startSequencePreview();
+            function getAnimDuration(animName) {
+                if (!globalPlayer || !globalPlayer.skeleton) return 2000;
+                // 從 Spine 資料庫中尋找這個動作
+                const anim = globalPlayer.skeleton.data.animations.find(a => a.name === animName);
+                if (anim) {
+                    // Spine 的 duration 單位是秒，轉換為毫秒並四捨五入
+                    let ms = Math.round(anim.duration * 1000);
+                    // 防呆機制：有些單幀靜態動作 duration 會是 0，強制給予 1000 毫秒緩衝
+                    return ms > 0 ? ms : 1000;
+                }
+                return 2000;
             }
 
             function removeSequenceStep(index) {
@@ -1356,8 +1361,20 @@
             }
 
             function updateSequenceStep(index, field, value) {
-                if (field === 'duration') value = Math.max(100, parseInt(value) || 1000);
-                editSequence[index][field] = value;
+                if (field === 'duration') {
+                    // 使用者手動修改時長
+                    value = Math.max(100, parseInt(value) || 1000);
+                    editSequence[index][field] = value;
+                } else if (field === 'anim') {
+                    // 使用者切換了不同的動作
+                    editSequence[index][field] = value;
+                    // 🌟 自動將時長重置為新動作的真實長度！
+                    editSequence[index].duration = getAnimDuration(value);
+                }
+                
+                // 如果是切換動作，必須重新渲染讓輸入框的數字更新
+                if (field === 'anim') renderSequenceList();
+                
                 startSequencePreview();
             }
 
