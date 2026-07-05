@@ -195,27 +195,52 @@
                     <div class="flex justify-between items-center border-b border-gray-200 dark:border-slate-600 pb-2">
                         <h3 class="font-black text-sm text-green-700 dark:text-green-400">🎬 動作編輯器 (循環預覽中)</h3>
                         <div class="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                            GIF 寬度: <input type="number" id="gifWidthInput" value="500" class="w-16 px-1.5 py-0.5 border border-gray-300 dark:border-slate-500 rounded bg-white dark:bg-slate-700 text-center outline-none"> px
+                            GIF尺寸: 
+                            <span class="text-[10px] text-gray-500">寬</span>
+                            <input type="number" id="gifWidthInput" value="500" class="w-12 px-1 py-0.5 border border-gray-300 dark:border-slate-500 rounded bg-white dark:bg-slate-700 text-center outline-none">
+                            <span class="text-[10px] text-gray-500">高</span>
+                            <input type="number" id="gifHeightInput" value="500" class="w-12 px-1 py-0.5 border border-gray-300 dark:border-slate-500 rounded bg-white dark:bg-slate-700 text-center outline-none">
                         </div>
                     </div>
                     
-                    <!-- 🌟 視覺化時間軸軌道 -->
-                    <div class="overflow-x-auto w-full bg-slate-100 dark:bg-slate-900 rounded-lg border border-gray-300 dark:border-slate-600 p-2 shadow-inner mb-2 custom-scrollbar">
-                        <div id="timelineTrack" class="flex h-14 min-w-full relative gap-1.5 items-center px-1">
-                            <!-- 動作方塊將由 JS 動態生成 -->
+                    <div class="text-[10px] text-gray-500 font-bold mb -1">
+                        💡 提示：預覽時直接點擊/撫摸角色，可將互動記錄至「互動軌道」。
+                    </div>
+
+                    <!-- 🌟 視覺化時間軸軌道 (雙軌) -->
+                    <div class="overflow-x-auto w-full bg-slate-100 dark:bg-slate-900 rounded-lg border border-gray-300 dark:border-slate-600 p-2 shadow-inner mb-2 custom-scrollbar relative">
+                        <!-- 播放進度指示線 -->
+                        <div id="playhead" class="absolute top-0 bottom-0 w-0.5 bg-red-500 z-50 pointer-events-none hidden shadow-[0_0_5px_rgba(239,68,68,0.8)]"></div>
+                        
+                        <!-- 主軌道 (Main Track) -->
+                        <div class="flex flex-col gap-1 min-w-max relative">
+                            <div class="flex items-center gap-2">
+                                <span class="text-[9px] font-black text-gray-400 w-8 text-right shrink-0">MAIN</span>
+                                <div id="timelineTrack" class="flex h-12 relative gap-1 items-center px-1 border-l-2 border-gray-300 dark:border-slate-600">
+                                    <!-- 主動作方塊 -->
+                                </div>
+                            </div>
+                            
+                            <!-- 互動軌道 (Interaction Track) -->
+                            <div class="flex items-center gap-2">
+                                <span class="text-[9px] font-black text-blue-400 w-8 text-right shrink-0">CLICK</span>
+                                <div id="interactionTrack" class="flex h-8 relative items-center px-1 border-l-2 border-gray-300 dark:border-slate-600 w-full bg-blue-50/50 dark:bg-blue-900/20 rounded-r">
+                                    <!-- 互動標記將由 JS 絕對定位 -->
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
-                    <!-- 🌟 選中片段的編輯器 (隱藏/展開) -->
-                    <div id="activeClipEditor" class="hidden items-center gap-2 bg-amber-50 dark:bg-slate-700/50 p-2 rounded-lg border border-amber-200 dark:border-slate-600 mb-2 transition-all">
-                        <span class="text-xs font-bold text-amber-800 dark:text-amber-400 whitespace-nowrap">✏️ 編輯片段:</span>
+                    <!-- 🌟 選中片段的編輯器 -->
+                    <div id="activeClipEditor" class="hidden items-center gap-2 bg-amber-50 dark:bg-slate-700/50 p-2 rounded-lg border border-amber-200 dark:border-slate-600 transition-all">
+                        <span class="text-xs font-bold text-amber-800 dark:text-amber-400 whitespace-nowrap">✏️ 主軌道:</span>
                         <select id="clipAnimSelect" onchange="updateSelectedClip('anim', this.value)" class="flex-1 text-xs px-2 py-1.5 rounded bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-500 outline-none text-gray-700 dark:text-gray-200"></select>
-                        <input id="clipDurationInput" type="number" onchange="updateSelectedClip('duration', this.value)" step="100" class="w-20 text-xs px-2 py-1.5 rounded bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-500 outline-none text-gray-700 dark:text-gray-200">
-                        <span class="text-[10px] font-bold text-gray-500 whitespace-nowrap">毫秒</span>
+                        <input id="clipDurationInput" type="number" onchange="updateSelectedClip('duration', this.value)" step="100" class="w-16 text-xs px-2 py-1.5 rounded bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-500 outline-none text-gray-700 dark:text-gray-200">
+                        <span class="text-[10px] font-bold text-gray-500 whitespace-nowrap">ms</span>
                     </div>
-                    
+
                     <button onclick="addSequenceStep()" class="w-full py-2 bg-green-50 dark:bg-slate-700 text-green-700 dark:text-green-400 border border-dashed border-green-300 dark:border-green-600 rounded-lg text-xs font-bold hover:bg-green-100 dark:hover:bg-slate-600 transition">
-                        ➕ 新增動作片段
+                        ➕ 新增主動作片段
                     </button>
                 </div>
         </section>
@@ -1550,51 +1575,161 @@
                             }
                         });
 
+            // 雙軌編輯狀態變數
+            let interactionSequence = []; // 格式: { timeOffset: 500, anim: 'Touch_Idle' }
+            let currentLoopStartTime = 0;
+            let previewAnimationFrame = null;
+
+            // 🌟 終極動畫攔截器與預覽引擎
             function startSequencePreview() {
                 stopSequencePreview();
                 if (!isEditMode || editSequence.length === 0) return;
                 
-                function playNext() {
+                const playhead = document.getElementById('playhead');
+                const track = document.getElementById('timelineTrack');
+                if (playhead) playhead.classList.remove('hidden');
+
+                // 綁定攔截器 (允許玩家點擊，並記錄到互動軌道)
+                if (globalPlayer && globalPlayer.animationState && !globalPlayer.animationState._isHooked) {
+                    const origSetAnim = globalPlayer.animationState.setAnimation.bind(globalPlayer.animationState);
+                    globalPlayer.animationState.setAnimation = function(trackIdx, anim, loop) {
+                        if (isEditMode && !isEditorForcingAnim) {
+                            // 玩家觸發了點擊互動！記錄當前時間點
+                            const now = Date.now();
+                            const timeOffset = now - currentLoopStartTime;
+                            
+                            // 檢查優先權：如果當前主軌道不是 Idle，則捨棄點擊互動 (主動作優先)
+                            const currentMainAnim = editSequence[currentSeqIndex]?.anim || "";
+                            if (!currentMainAnim.toLowerCase().includes('idle')) {
+                                return null; 
+                            }
+                            
+                            // 記錄到互動軌道
+                            interactionSequence.push({ timeOffset: timeOffset, anim: anim });
+                            renderInteractionTrack();
+                            
+                            // 互動動作統一在 Track 1 播放，覆蓋在 Idle 上面
+                            return origSetAnim(1, anim, false);
+                        }
+                        // 編輯器發出的主動作，在 Track 0 播放
+                        if (isEditorForcingAnim) return origSetAnim(0, anim, loop);
+                        
+                        return origSetAnim(trackIdx, anim, loop);
+                    };
+                    globalPlayer.animationState._isHooked = true;
+                }
+
+                currentLoopStartTime = Date.now();
+                currentSeqIndex = 0;
+                let totalDuration = editSequence.reduce((sum, step) => sum + step.duration, 0);
+
+                // 播放主軌道的下一步
+                function playNextStep() {
                     if (!isEditMode) return;
                     const step = editSequence[currentSeqIndex];
                     
-                    if (globalPlayer && globalPlayer.animationState) {
-                        // 🌟 終極動畫攔截器：如果是編輯模式，禁止任何滑鼠互動或閒置腳本修改動作
-                        if (!globalPlayer.animationState._isHooked) {
-                            const origSetAnim = globalPlayer.animationState.setAnimation.bind(globalPlayer.animationState);
-                            globalPlayer.animationState.setAnimation = function(track, anim, loop) {
-                                if (isEditMode && !isEditorForcingAnim) {
-                                    // 拒絕外部的動作切換，保護編輯器的時間軸
-                                    return null; 
-                                }
-                                return origSetAnim(track, anim, loop);
-                            };
-                            globalPlayer.animationState._isHooked = true;
-                        }
-
-                        // 開放權限給編輯器播放
-                        isEditorForcingAnim = true;
-                        globalPlayer.animationState.setAnimation(0, step.anim, true);
-                        isEditorForcingAnim = false; // 播完立刻收回權限
-                    }
+                    isEditorForcingAnim = true;
+                    globalPlayer.animationState.setAnimation(0, step.anim, true);
+                    // 切換主動作時，清除 Track 1 的殘留互動
+                    globalPlayer.animationState.setEmptyAnimation(1, 0.2); 
+                    isEditorForcingAnim = false;
                     
+                    // 高亮當前 UI
+                    document.querySelectorAll('#timelineTrack > div').forEach((blk, i) => {
+                        if (i === currentSeqIndex) {
+                            blk.classList.add('ring-4', 'ring-green-400', 'brightness-110');
+                            blk.classList.remove('opacity-90');
+                        } else {
+                            blk.classList.remove('ring-4', 'ring-green-400', 'brightness-110');
+                            if(i !== selectedSeqIndex) blk.classList.add('opacity-90');
+                        }
+                    });
+
                     seqTimer = setTimeout(() => {
                         currentSeqIndex = (currentSeqIndex + 1) % editSequence.length;
-                        playNext();
+                        if (currentSeqIndex === 0) currentLoopStartTime = Date.now(); // 新的一輪
+                        playNextStep();
                     }, step.duration);
                 }
                 
-                currentSeqIndex = 0;
-                playNext();
+                // 動態更新播放條 (Playhead) 與觸發預錄的互動
+                let triggeredInteractions = new Set();
+                function updatePlayhead() {
+                    if (!isEditMode) return;
+                    const now = Date.now();
+                    const elapsed = now - currentLoopStartTime;
+                    
+                    // 新的一輪，重置觸發紀錄
+                    if (elapsed < 50) triggeredInteractions.clear(); 
+                    
+                    // 觸發互動軌道的動作
+                    interactionSequence.forEach((interaction, idx) => {
+                        if (elapsed >= interaction.timeOffset && !triggeredInteractions.has(idx)) {
+                            triggeredInteractions.add(idx);
+                            // 檢查主軌道優先權
+                            const currentMainAnim = editSequence[currentSeqIndex]?.anim || "";
+                            if (currentMainAnim.toLowerCase().includes('idle')) {
+                                isEditorForcingAnim = true;
+                                globalPlayer.animationState.setAnimation(1, interaction.anim, false);
+                                isEditorForcingAnim = false;
+                            }
+                        }
+                    });
+
+                    // 移動紅線
+                    if (playhead && track) {
+                        const px = elapsed / MS_PER_PX;
+                        playhead.style.transform = `translateX(${px}px)`;
+                    }
+                    previewAnimationFrame = requestAnimationFrame(updatePlayhead);
+                }
+
+                playNextStep();
+                updatePlayhead();
             }
 
             function stopSequencePreview() {
                 if (seqTimer) clearTimeout(seqTimer);
+                if (previewAnimationFrame) cancelAnimationFrame(previewAnimationFrame);
+                const playhead = document.getElementById('playhead');
+                if (playhead) playhead.classList.add('hidden');
+                
+                // 停止時清除互動軌道上的殘留動畫
+                if (globalPlayer && globalPlayer.animationState) {
+                    globalPlayer.animationState.setEmptyAnimation(1, 0.2);
+                }
             }
 
+            // 渲染互動軌道標記
+            function renderInteractionTrack() {
+                const iTrack = document.getElementById('interactionTrack');
+                if (!iTrack) return;
+                iTrack.innerHTML = '';
+                
+                interactionSequence.forEach((inter, idx) => {
+                    const px = inter.timeOffset / MS_PER_PX;
+                    const marker = document.createElement('div');
+                    marker.className = "absolute top-1 w-6 h-6 bg-blue-500 rounded border border-white shadow flex items-center justify-center cursor-pointer hover:bg-red-500 transition-colors group z-20";
+                    marker.style.left = `${px}px`;
+                    marker.innerHTML = `
+                        <span class="text-[8px] text-white font-bold">👆</span>
+                        <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-black/80 text-white text-[9px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none">
+                            刪除 ${inter.anim}
+                        </div>
+                    `;
+                    // 點擊標記即可刪除
+                    marker.onclick = () => {
+                        interactionSequence.splice(idx, 1);
+                        renderInteractionTrack();
+                    };
+                    iTrack.appendChild(marker);
+                });
+            }
+
+            // 🌟 強化版 GIF 輸出 (支援自訂寬高與雙軌同步)
             function startGifRecording() {
                 const canvas = document.querySelector('#spineCanvasContainer canvas');
-                if (!canvas || editSequence.length === 0) return toggleEditMode(); // 復原
+                if (!canvas || editSequence.length === 0) return toggleEditMode(); 
 
                 const totalDuration = editSequence.reduce((sum, step) => sum + step.duration, 0);
                 if (totalDuration > 15000) {
@@ -1608,56 +1743,91 @@
                 btn.classList.replace('hover:bg-red-600', 'hover:bg-gray-600');
                 btn.disabled = true;
 
-                // 處理使用者設定的尺寸
+                // 處理使用者設定的尺寸 (高度不可超過畫布本身真實高度)
+                const realCanvasHeight = canvas.height;
                 let maxW = parseInt(document.getElementById('gifWidthInput').value) || 500;
-                let targetW = canvas.width;
-                let targetH = canvas.height;
-                if (targetW > maxW) {
-                    const ratio = maxW / targetW;
-                    targetW = Math.round(targetW * ratio);
-                    targetH = Math.round(targetH * ratio);
-                }
+                let maxH = parseInt(document.getElementById('gifHeightInput').value) || 500;
+                
+                if (maxH > realCanvasHeight) maxH = realCanvasHeight; // 安全限制
 
                 const offCanvas = document.createElement('canvas');
-                offCanvas.width = targetW; offCanvas.height = targetH;
+                offCanvas.width = maxW; 
+                offCanvas.height = maxH;
                 const offCtx = offCanvas.getContext('2d');
 
-                // 🌟 跨域載入背景圖片 (解決 CORS 污染問題)
                 const bgImg = new Image();
                 bgImg.crossOrigin = "anonymous";
                 bgImg.src = currentBgUrl;
 
-                gifInstance = new GIF({ workers: 2, quality: 10, width: targetW, height: targetH, workerScript: gifWorkerUrl });
+                gifInstance = new GIF({ workers: 2, quality: 10, width: maxW, height: maxH, workerScript: gifWorkerUrl });
                 const fps = 20; 
                 let frameCount = 0;
                 const maxFrames = Math.ceil(totalDuration / (1000 / fps));
 
-                // 確保圖片載入後再開始錄
                 bgImg.onload = () => {
-                    // 重置時間軸，從頭開始錄製
+                    // 開始錄製前，重置雙軌道
                     currentSeqIndex = 0;
-                    isEditMode = true; // 借用模式標籤讓播放器跑
-                    startSequencePreview();
+                    currentLoopStartTime = Date.now();
+                    isEditMode = true; 
+                    
+                    // 用模擬時間軸取代 setTimeout 確保錄影幀數精準
+                    let simulatedTime = 0;
+                    let nextStepTime = 0;
+                    let stepIdx = 0;
+                    let triggered = new Set();
 
                     const recordInterval = setInterval(() => {
-                        // 1. 畫背景圖 (如果有多餘空間，用純色墊底)
+                        // 1. 處理主軌道動畫切換
+                        if (simulatedTime >= nextStepTime && stepIdx < editSequence.length) {
+                            const step = editSequence[stepIdx];
+                            isEditorForcingAnim = true;
+                            globalPlayer.animationState.setAnimation(0, step.anim, true);
+                            globalPlayer.animationState.setEmptyAnimation(1, 0.2); 
+                            isEditorForcingAnim = false;
+                            
+                            nextStepTime += step.duration;
+                            stepIdx++;
+                        }
+                        
+                        // 2. 處理互動軌道切換
+                        interactionSequence.forEach((interaction, idx) => {
+                            if (simulatedTime >= interaction.timeOffset && !triggered.has(idx)) {
+                                triggered.add(idx);
+                                const currentMainAnim = stepIdx > 0 ? editSequence[stepIdx-1].anim : "";
+                                if (currentMainAnim.toLowerCase().includes('idle')) {
+                                    isEditorForcingAnim = true;
+                                    globalPlayer.animationState.setAnimation(1, interaction.anim, false);
+                                    isEditorForcingAnim = false;
+                                }
+                            }
+                        });
+
+                        // 3. 畫布繪製與裁切置中邏輯
                         offCtx.fillStyle = '#fcf8f2';
-                        offCtx.fillRect(0, 0, targetW, targetH);
+                        offCtx.fillRect(0, 0, maxW, maxH);
                         
-                        // 讓背景圖填滿，模擬 DOM cover 效果
+                        // 畫背景 (Cover 效果)
                         const imgRatio = bgImg.width / bgImg.height;
-                        const canvasRatio = targetW / targetH;
-                        let drawW = targetW, drawH = targetH, drawX = 0, drawY = 0;
-                        
-                        if (imgRatio > canvasRatio) { drawW = targetH * imgRatio; drawX = (targetW - drawW) / 2; } 
-                        else { drawH = targetW / imgRatio; drawY = (targetH - drawH) / 2; }
-                        
+                        const canvasRatio = maxW / maxH;
+                        let drawW = maxW, drawH = maxH, drawX = 0, drawY = 0;
+                        if (imgRatio > canvasRatio) { drawW = maxH * imgRatio; drawX = (maxW - drawW) / 2; } 
+                        else { drawH = maxW / imgRatio; drawY = (maxH - drawH) / 2; }
                         offCtx.drawImage(bgImg, drawX, drawY, drawW, drawH);
                         
-                        // 2. 畫上 Spine 動態
-                        offCtx.drawImage(canvas, 0, 0, targetW, targetH);
+                        // 畫 Spine (置中裁切)
+                        const sW = canvas.width; const sH = canvas.height;
+                        const srcX = sW > maxW ? (sW - maxW) / 2 : 0;
+                        const srcY = sH > maxH ? (sH - maxH) / 2 : 0;
+                        const srcW = Math.min(sW, maxW);
+                        const srcH = Math.min(sH, maxH);
+                        const destX = maxW > sW ? (maxW - sW) / 2 : 0;
+                        const destY = maxH > sH ? (maxH - sH) / 2 : 0;
+                        
+                        offCtx.drawImage(canvas, srcX, srcY, srcW, srcH, destX, destY, srcW, srcH);
+                        
                         gifInstance.addFrame(offCanvas, { copy: true, delay: 1000 / fps });
                         
+                        simulatedTime += (1000 / fps);
                         frameCount++;
                         if (frameCount >= maxFrames) {
                             clearInterval(recordInterval);
@@ -1669,7 +1839,7 @@
                 
                 bgImg.onerror = () => {
                     alert("背景圖跨域權限阻擋，將僅錄製透明/純色背景。");
-                    bgImg.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'; // 替換為空圖繼續
+                    bgImg.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
                 };
             }
 
