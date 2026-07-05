@@ -586,33 +586,58 @@
             // ==========================================
             // 🌟 AR 拍照與儲存功能
             // ==========================================
+            // ==========================================
+            // 🌟 整合版：拍照、合成角色、並呼叫系統相簿儲存
+            // ==========================================
             async function captureARPhoto() {
                 const video = document.getElementById('arVideoBg');
                 const canvas = document.querySelector('#spineCanvasContainer canvas');
                 
-                // 1. 建立一個暫存的 Canvas 來合成影片與 Spine 畫面
+                // 1. 強制重繪 Spine 畫面 (確保角色不會透明或消失)
+                if (globalPlayer && globalPlayer.sceneRenderer) {
+                    globalPlayer.sceneRenderer.draw(globalPlayer.skeleton);
+                }
+
+                // 2. 建立一個暫存的 Canvas 來進行合成
                 const captureCanvas = document.createElement('canvas');
                 captureCanvas.width = video.videoWidth;
                 captureCanvas.height = video.videoHeight;
                 const ctx = captureCanvas.getContext('2d');
                 
-                // 2. 畫入相機畫面
+                // 3. 先畫入相機鏡頭畫面
                 ctx.drawImage(video, 0, 0, captureCanvas.width, captureCanvas.height);
                 
-                // 3. 畫入 Spine Canvas 畫面
-                // 必須使用與視訊相同比例的縮放計算
-                const scaleX = captureCanvas.width / canvas.width;
-                const scaleY = captureCanvas.height / canvas.height;
-                ctx.drawImage(canvas, 0, 0, canvas.width * scaleX, canvas.height * scaleY);
+                // 4. 再疊加上 Spine 畫布 (角色)
+                ctx.drawImage(canvas, 0, 0, captureCanvas.width, captureCanvas.height);
                 
-                // 4. 轉為圖片下載
+                // 5. 轉為圖片數據
                 const dataURL = captureCanvas.toDataURL('image/png');
-                const link = document.createElement('a');
-                link.download = `AR_坨坨_${new Date().getTime()}.png`;
-                link.href = dataURL;
-                link.click();
-            }
+                
+                // 6. 呼叫系統分享介面 (這是 iOS 儲存到相簿的最佳解)
+                try {
+                    const response = await fetch(dataURL);
+                    const blob = await response.blob();
+                    const file = new File([blob], `AR_坨坨_${new Date().getTime()}.png`, { type: 'image/png' });
 
+                    // 如果手機支援 Web Share API (iOS 15+ 支援)
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        await navigator.share({
+                            files: [file],
+                            title: '坨坨 AR 拍照',
+                            text: '看看我的坨坨！'
+                        });
+                    } else {
+                        // 如果不支援分享，就改用自動下載作為備用方案
+                        const link = document.createElement('a');
+                        link.download = file.name;
+                        link.href = dataURL;
+                        link.click();
+                    }
+                } catch (err) {
+                    console.error("儲存失敗:", err);
+                    alert("自動儲存失敗，請長按圖片保存。");
+                }
+            }
             function togglePlay() {
                 if (!globalPlayer) return;
                 if (globalPlayer.paused) {
