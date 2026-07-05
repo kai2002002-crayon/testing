@@ -589,53 +589,63 @@
             // ==========================================
             // 🌟 整合版：拍照、合成角色、並呼叫系統相簿儲存
             // ==========================================
+            // ==========================================
+            // 🌟 最終整合版：拍照、合成角色、並呼叫系統相簿儲存
+            // ==========================================
             async function captureARPhoto() {
-                const video = document.getElementById('arVideoBg');
-                const canvas = document.querySelector('#spineCanvasContainer canvas');
-                
-                // 1. 強制重繪 Spine 畫面 (確保角色不會透明或消失)
-                if (globalPlayer && globalPlayer.sceneRenderer) {
-                    globalPlayer.sceneRenderer.draw(globalPlayer.skeleton);
-                }
-
-                // 2. 建立一個暫存的 Canvas 來進行合成
-                const captureCanvas = document.createElement('canvas');
-                captureCanvas.width = video.videoWidth;
-                captureCanvas.height = video.videoHeight;
-                const ctx = captureCanvas.getContext('2d');
-                
-                // 3. 先畫入相機鏡頭畫面
-                ctx.drawImage(video, 0, 0, captureCanvas.width, captureCanvas.height);
-                
-                // 4. 再疊加上 Spine 畫布 (角色)
-                ctx.drawImage(canvas, 0, 0, captureCanvas.width, captureCanvas.height);
-                
-                // 5. 轉為圖片數據
-                const dataURL = captureCanvas.toDataURL('image/png');
-                
-                // 6. 呼叫系統分享介面 (這是 iOS 儲存到相簿的最佳解)
                 try {
-                    const response = await fetch(dataURL);
-                    const blob = await response.blob();
+                    const video = document.getElementById('arVideoBg');
+                    const canvas = document.querySelector('#spineCanvasContainer canvas');
+                    
+                    if (!video || !canvas) {
+                        alert("找不到相機或畫布畫面！");
+                        return;
+                    }
+
+                    // 1. 建立一個暫存的 Canvas 來進行合成
+                    const captureCanvas = document.createElement('canvas');
+                    // 為了確保比例正確，使用實際畫布的長寬
+                    captureCanvas.width = canvas.width || video.videoWidth;
+                    captureCanvas.height = canvas.height || video.videoHeight;
+                    const ctx = captureCanvas.getContext('2d');
+                    
+                    // 2. 先畫入相機鏡頭畫面
+                    ctx.drawImage(video, 0, 0, captureCanvas.width, captureCanvas.height);
+                    
+                    // 3. 再疊加上 Spine 畫布 (角色)
+                    ctx.drawImage(canvas, 0, 0, captureCanvas.width, captureCanvas.height);
+                    
+                    // 4. 轉為 Base64 圖片數據 (這行如果報錯，通常是因為伺服器的 CORS 安全限制)
+                    const dataURL = captureCanvas.toDataURL('image/png');
+                    
+                    // 5. 【關鍵修正】同步將 Base64 轉為 File 物件，避免 Safari 阻擋 await 異步操作
+                    const byteString = atob(dataURL.split(',')[1]);
+                    const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+                    const ab = new ArrayBuffer(byteString.length);
+                    const ia = new Uint8Array(ab);
+                    for (let i = 0; i < byteString.length; i++) {
+                        ia[i] = byteString.charCodeAt(i);
+                    }
+                    const blob = new Blob([ab], { type: mimeString });
                     const file = new File([blob], `AR_trickcal_${new Date().getTime()}.png`, { type: 'image/png' });
 
-                    // 如果手機支援 Web Share API (iOS 15+ 支援)
+                    // 6. 呼叫系統分享介面 (iOS 儲存到相簿)
                     if (navigator.canShare && navigator.canShare({ files: [file] })) {
                         await navigator.share({
                             files: [file],
-                            title: 'trickcalAR',
-                            text: 'SeeMyApostle！'
+                            title: 'Trickcal AR',
+                            text: 'See my Apostle!'
                         });
                     } else {
-                        // 如果不支援分享，就改用自動下載作為備用方案
+                        // 如果不支援分享，改用自動下載備用方案
                         const link = document.createElement('a');
                         link.download = file.name;
                         link.href = dataURL;
                         link.click();
                     }
                 } catch (err) {
-                    console.error("儲存失敗:", err);
-                    alert("自動儲存失敗，請長按圖片保存。");
+                    console.error("拍照功能發生錯誤:", err);
+                    alert("拍照失敗 😢\n錯誤訊息：" + err.name + " - " + err.message + "\n\n(如果是 SecurityError，代表伺服器載入圖片時觸發了跨域安全限制)");
                 }
             }
             function togglePlay() {
