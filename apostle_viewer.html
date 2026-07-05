@@ -47,8 +47,8 @@
             z-index: 10;
             }
             @keyframes crayonFloat {
-            0%, 100% { transform: translateY(0) (1); filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.5)); }
-            50% { transform: translateY(-10px) (1.05); filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.9)); }
+            0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.5)); }
+            50% { transform: translateY(-10px) scale(1.05); filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.9)); }
             }
             /* 捲動條美化 */
             ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -203,7 +203,7 @@
                         </div>
                     </div>
                     
-                    <div class="text-[10px] text-gray-500 font-bold mb -1">
+                    <div class="text-[10px] text-gray-500 font-bold mb-1">
                         💡 提示：預覽時直接點擊/撫摸角色，可將互動記錄至「互動軌道」。
                     </div>
 
@@ -1164,7 +1164,7 @@
                                 y: activeInteractBone.y
                             });
                         }
-                    else if (!hitZoneOnDown) {
+                    } else if (!hitZoneOnDown) {
                         const cam = globalPlayer.sceneRenderer.camera;
                         
                         // 🌟 精準計算前一次與現在滑鼠移動的「世界坐標差」
