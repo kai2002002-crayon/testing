@@ -1861,16 +1861,25 @@
                 else { const provider = new firebase.auth.GoogleAuthProvider(); setTimeout(() => { auth.signInWithPopup(provider).catch(err => alert("登入被中斷，請確認是否允許跳出視窗。(" + err.code + ")")); }, 50); }
             }
             
-            function updateAuthButtonUI(user) {
-                const btn = document.getElementById('authBtn'); const svgLogo = document.getElementById('googleLogoSvg'); const logoutText = document.getElementById('logoutText'); if (!btn) return;
+                        function updateAuthButtonUI(user) {
+                const btn = document.getElementById('authBtn'); 
+                const svgLogo = document.getElementById('googleLogoSvg'); 
+                const logoutText = document.getElementById('logoutText'); 
+                if (!btn) return;
+                
                 if (user) { 
-                    if (svgLogo) svgLogo.classList.add('hidden'); if (logoutText) logoutText.classList.remove('hidden'); 
-                    btn.className = "px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-bold rounded-lg shadow-sm transition shrink-0 whitespace-nowrap h-7 sm:h-8 flex items-center justify-center"; 
+                    if (svgLogo) svgLogo.classList.add('hidden'); 
+                    if (logoutText) logoutText.classList.remove('hidden'); 
+                    // 登入後：只顯示「登出」文字，不帶方框與背景，加入 hover 漸層變色
+                    btn.className = "p-1 flex items-center justify-center transition hover:opacity-70 shrink-0 whitespace-nowrap"; 
                 } else { 
-                    if (svgLogo) svgLogo.classList.remove('hidden'); if (logoutText) logoutText.classList.add('hidden'); 
-                    btn.className = "google-login-btn bg-white dark:bg-gray-700 rounded-lg h-7 sm:h-8 px-1.5 flex items-center justify-center transition border border-gray-200 dark:border-gray-600 shrink-0 hover:bg-gray-50 dark:hover:bg-gray-600"; 
+                    if (svgLogo) svgLogo.classList.remove('hidden'); 
+                    if (logoutText) logoutText.classList.add('hidden'); 
+                    // 登出時：只顯示 Google Icon，不帶方框與背景
+                    btn.className = "p-1 flex items-center justify-center transition hover:opacity-70 shrink-0"; 
                 }
             }
+
             
             function spawnCrayonOnTrack() {
                 if (!isAnimationEnabled) return;
