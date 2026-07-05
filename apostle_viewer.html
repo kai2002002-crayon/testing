@@ -138,8 +138,12 @@
             </div>
             <div class="flex flex-col gap-3 min-w-0 relative z-10 w-full lg:w-3/4 mx-auto">
                 <div id="spineCanvasContainer" class="w-full h-[60vh] sm:h-[600px] rounded-xl border-2 border-dashed border-amber-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 relative overflow-hidden flex items-center justify-center cursor-move animated-bg" style="background-image: url('https://i.postimg.cc/x8wY5V8Q/Monster-Slot-Property-Tile.png');">
+                    <!-- 背景切換按鈕 (僅編輯模式顯示) -->
+                    <button id="bgPrevBtn" onclick="cycleBg(-1)" class="hidden absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 text-white text-xs rounded-full flex items-center justify-center z-[60] hover:bg-black/70 transition-all">◀</button>
+                    <button id="bgNextBtn" onclick="cycleBg(1)" class="hidden absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 text-white text-xs rounded-full flex items-center justify-center z-[60] hover:bg-black/70 transition-all">▶</button>
                     <div class="text-gray-500 font-bold tracking-widest bg-white/80 dark:bg-slate-800/80 px-4 py-2 rounded-lg backdrop-blur-sm shadow-sm">等待載入...</div>
                 </div>
+                
                 <div id="playerControls" class="bg-amber-50 dark:bg-slate-700/50 p-3 rounded-xl border border-amber-200 dark:border-slate-600 flex flex-col gap-3 opacity-50 pointer-events-none transition-opacity">
                     <div class="flex items-center justify-between gap-2 flex-wrap">
                         <div class="flex items-center gap-2">
@@ -155,8 +159,8 @@
                             <button id="btnModeSwitch" onclick="toggleViewerMode()" class="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-xs sm:text-sm font-bold rounded-lg shadow transition-colors whitespace-nowrap">
                             🔄 模式: 大廳
                             </button>
-                            <button id="btnRecordGif" onclick="toggleGifRecording()" class="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-xs sm:text-sm font-bold rounded-lg shadow transition-colors whitespace-nowrap">
-                                ⏺️ 錄製 GIF
+                            <button id="btnEditMode" onclick="toggleEditMode()" class="px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white text-xs sm:text-sm font-bold rounded-lg shadow transition-colors whitespace-nowrap">
+                                ✏️ 編輯
                             </button>
                             <select id="costumeSelect" onchange="changeSpineCostume(this.value)" class="bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 text-xs sm:text-sm font-bold rounded-lg px-2 py-1.5 outline-none focus:ring-2 focus:ring-amber-500 min-w-[100px]">
                                 <option value="">服裝</option>
@@ -185,6 +189,23 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <!-- 🌟 動態編輯播放條 -->
+                <div id="editTimelinePanel" class="hidden flex-col gap-3 mt-3 bg-white/90 dark:bg-slate-800/90 p-4 rounded-xl border-2 border-green-400 dark:border-green-500 shadow-inner z-20 transition-all">
+                    <div class="flex justify-between items-center border-b border-gray-200 dark:border-slate-600 pb-2">
+                        <h3 class="font-black text-sm text-green-700 dark:text-green-400">🎬 動作編輯器 (循環預覽中)</h3>
+                        <div class="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                            GIF 寬度: <input type="number" id="gifWidthInput" value="500" class="w-16 px-1.5 py-0.5 border border-gray-300 dark:border-slate-500 rounded bg-white dark:bg-slate-700 text-center outline-none"> px
+                        </div>
+                    </div>
+                    
+                    <div id="sequenceList" class="flex flex-col gap-2 max-h-[150px] overflow-y-auto pr-1">
+                        <!-- 動作清單將由 JS 動態生成 -->
+                    </div>
+                    
+                    <button onclick="addSequenceStep()" class="w-full py-2 bg-green-50 dark:bg-slate-700 text-green-700 dark:text-green-400 border border-dashed border-green-300 dark:border-green-600 rounded-lg text-xs font-bold hover:bg-green-100 dark:hover:bg-slate-600 transition">
+                        ➕ 新增動作片段
+                    </button>
                 </div>
         </section>
         </div>
@@ -1221,7 +1242,246 @@
                 canvas.addEventListener('pointercancel', stopDrag);
                 canvas.addEventListener('pointerout', stopDrag);
             }
-            
+            // ==========================================
+            // 🌟 編輯模式與背景管理邏輯
+            // ==========================================
+            let isEditMode = false;
+            let availableBgs = [];
+            let currentBgIndex = 0;
+            let currentBgUrl = "";
+
+            function toggleEditMode() {
+                if (!globalPlayer || !globalPlayer.skeleton) return alert("請先選擇並載入一隻坨坨！");
+                
+                isEditMode = !isEditMode;
+                const btn = document.getElementById('btnEditMode');
+                const panel = document.getElementById('editTimelinePanel');
+                const bgPrev = document.getElementById('bgPrevBtn');
+                const bgNext = document.getElementById('bgNextBtn');
+                const canvasContainer = document.getElementById('spineCanvasContainer');
+
+                if (isEditMode) {
+                    btn.innerHTML = '⏺️ 輸出 GIF';
+                    btn.classList.replace('bg-green-500', 'bg-red-500');
+                    btn.classList.replace('hover:bg-green-600', 'hover:bg-red-600');
+                    panel.classList.remove('hidden'); panel.classList.add('flex');
+                    bgPrev.classList.remove('hidden'); bgNext.classList.remove('hidden');
+                    
+                    // 初始化背景清單 (當前種族背景 + LOBBY_BACKGROUNDS)
+                    availableBgs = [];
+                    const charRaceBg = (typeof SPINE_BACKGROUNDS !== 'undefined' && activeCharData && SPINE_BACKGROUNDS[activeCharData.race]) 
+                                       ? SPINE_BACKGROUNDS[activeCharData.race] 
+                                       : 'https://i.postimg.cc/x8wY5V8Q/Monster-Slot-Property-Tile.png';
+                    availableBgs.push({ url: charRaceBg, animated: true });
+
+                    if (typeof LOBBY_BACKGROUNDS !== 'undefined') {
+                        Object.values(LOBBY_BACKGROUNDS).forEach(url => availableBgs.push({ url: url, animated: false }));
+                    }
+                    
+                    currentBgIndex = 0;
+                    applyCurrentBg();
+
+                    // 初始化並啟動循環預覽
+                    if (editSequence.length === 0) addSequenceStep(); 
+                    else renderSequenceList();
+                    startSequencePreview();
+
+                } else {
+                    // 如果點擊了「輸出 GIF」，會執行這裡
+                    stopSequencePreview();
+                    startGifRecording();
+                }
+            }
+
+            function applyCurrentBg() {
+                const bgData = availableBgs[currentBgIndex];
+                currentBgUrl = bgData.url;
+                const container = document.getElementById('spineCanvasContainer');
+                container.style.backgroundImage = `url('${currentBgUrl}')`;
+                
+                if (bgData.animated) container.classList.add('animated-bg');
+                else container.classList.remove('animated-bg');
+            }
+
+            function cycleBg(dir) {
+                currentBgIndex += dir;
+                if (currentBgIndex < 0) currentBgIndex = availableBgs.length - 1;
+                if (currentBgIndex >= availableBgs.length) currentBgIndex = 0;
+                applyCurrentBg();
+            }
+            // ==========================================
+            // 🌟 時間軸編輯器與 GIF 錄製
+            // ==========================================
+            let editSequence = [];
+            let seqTimer = null;
+            let currentSeqIndex = 0;
+            let gifInstance = null;
+            let gifWorkerUrl = null;
+
+            // 預載 GIF Worker
+            fetch('https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js')
+                .then(res => res.text())
+                .then(text => gifWorkerUrl = URL.createObjectURL(new Blob([text], { type: 'application/javascript' })));
+
+            function addSequenceStep() {
+                const anims = globalPlayer.skeleton.data.animations.map(a => a.name).sort();
+                const defaultAnim = anims.includes("Idle_1") ? "Idle_1" : anims[0];
+                editSequence.push({ anim: defaultAnim, duration: 2000 });
+                renderSequenceList();
+                startSequencePreview();
+            }
+
+            function removeSequenceStep(index) {
+                editSequence.splice(index, 1);
+                if (editSequence.length === 0) addSequenceStep();
+                else renderSequenceList();
+            }
+
+            function updateSequenceStep(index, field, value) {
+                if (field === 'duration') value = Math.max(100, parseInt(value) || 1000);
+                editSequence[index][field] = value;
+                startSequencePreview();
+            }
+
+            function renderSequenceList() {
+                const list = document.getElementById('sequenceList');
+                const anims = globalPlayer.skeleton.data.animations.map(a => a.name).sort();
+                
+                list.innerHTML = editSequence.map((step, idx) => `
+                    <div class="flex items-center gap-2 bg-gray-50 dark:bg-slate-700/50 p-2 rounded-lg border border-gray-200 dark:border-slate-600">
+                        <span class="text-xs font-bold text-gray-500 w-4">${idx + 1}.</span>
+                        <select onchange="updateSequenceStep(${idx}, 'anim', this.value)" class="flex-1 text-xs px-2 py-1 rounded bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-500 outline-none">
+                            ${anims.map(a => `<option value="${a}" ${a === step.anim ? 'selected' : ''}>${a}</option>`).join('')}
+                        </select>
+                        <input type="number" onchange="updateSequenceStep(${idx}, 'duration', this.value)" value="${step.duration}" step="100" class="w-16 text-xs px-2 py-1 rounded bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-500 outline-none">
+                        <span class="text-[10px] text-gray-500">毫秒</span>
+                        <button onclick="removeSequenceStep(${idx})" class="text-red-500 hover:text-red-700 font-bold px-2">✖</button>
+                    </div>
+                `).join('');
+            }
+
+            function startSequencePreview() {
+                stopSequencePreview();
+                if (!isEditMode || editSequence.length === 0) return;
+                
+                function playNext() {
+                    if (!isEditMode) return;
+                    const step = editSequence[currentSeqIndex];
+                    if (globalPlayer && globalPlayer.animationState) {
+                        globalPlayer.animationState.setAnimation(0, step.anim, true);
+                    }
+                    seqTimer = setTimeout(() => {
+                        currentSeqIndex = (currentSeqIndex + 1) % editSequence.length;
+                        playNext();
+                    }, step.duration);
+                }
+                currentSeqIndex = 0;
+                playNext();
+            }
+
+            function stopSequencePreview() {
+                if (seqTimer) clearTimeout(seqTimer);
+            }
+
+            function startGifRecording() {
+                const canvas = document.querySelector('#spineCanvasContainer canvas');
+                if (!canvas || editSequence.length === 0) return toggleEditMode(); // 復原
+
+                const totalDuration = editSequence.reduce((sum, step) => sum + step.duration, 0);
+                if (totalDuration > 15000) {
+                    alert("總時長過長，建議保持在 15 秒以內以免瀏覽器崩潰！");
+                    return toggleEditMode();
+                }
+
+                const btn = document.getElementById('btnEditMode');
+                btn.innerHTML = '⏳ 擷取畫面中...';
+                btn.classList.replace('bg-red-500', 'bg-gray-500');
+                btn.classList.replace('hover:bg-red-600', 'hover:bg-gray-600');
+                btn.disabled = true;
+
+                // 處理使用者設定的尺寸
+                let maxW = parseInt(document.getElementById('gifWidthInput').value) || 500;
+                let targetW = canvas.width;
+                let targetH = canvas.height;
+                if (targetW > maxW) {
+                    const ratio = maxW / targetW;
+                    targetW = Math.round(targetW * ratio);
+                    targetH = Math.round(targetH * ratio);
+                }
+
+                const offCanvas = document.createElement('canvas');
+                offCanvas.width = targetW; offCanvas.height = targetH;
+                const offCtx = offCanvas.getContext('2d');
+
+                // 🌟 跨域載入背景圖片 (解決 CORS 污染問題)
+                const bgImg = new Image();
+                bgImg.crossOrigin = "anonymous";
+                bgImg.src = currentBgUrl;
+
+                gifInstance = new GIF({ workers: 2, quality: 10, width: targetW, height: targetH, workerScript: gifWorkerUrl });
+                const fps = 20; 
+                let frameCount = 0;
+                const maxFrames = Math.ceil(totalDuration / (1000 / fps));
+
+                // 確保圖片載入後再開始錄
+                bgImg.onload = () => {
+                    // 重置時間軸，從頭開始錄製
+                    currentSeqIndex = 0;
+                    isEditMode = true; // 借用模式標籤讓播放器跑
+                    startSequencePreview();
+
+                    const recordInterval = setInterval(() => {
+                        // 1. 畫背景圖 (如果有多餘空間，用純色墊底)
+                        offCtx.fillStyle = '#fcf8f2';
+                        offCtx.fillRect(0, 0, targetW, targetH);
+                        
+                        // 讓背景圖填滿，模擬 DOM cover 效果
+                        const imgRatio = bgImg.width / bgImg.height;
+                        const canvasRatio = targetW / targetH;
+                        let drawW = targetW, drawH = targetH, drawX = 0, drawY = 0;
+                        
+                        if (imgRatio > canvasRatio) { drawW = targetH * imgRatio; drawX = (targetW - drawW) / 2; } 
+                        else { drawH = targetW / imgRatio; drawY = (targetH - drawH) / 2; }
+                        
+                        offCtx.drawImage(bgImg, drawX, drawY, drawW, drawH);
+                        
+                        // 2. 畫上 Spine 動態
+                        offCtx.drawImage(canvas, 0, 0, targetW, targetH);
+                        gifInstance.addFrame(offCanvas, { copy: true, delay: 1000 / fps });
+                        
+                        frameCount++;
+                        if (frameCount >= maxFrames) {
+                            clearInterval(recordInterval);
+                            stopSequencePreview();
+                            finalizeGifRecording();
+                        }
+                    }, 1000 / fps);
+                };
+                
+                bgImg.onerror = () => {
+                    alert("背景圖跨域權限阻擋，將僅錄製透明/純色背景。");
+                    bgImg.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'; // 替換為空圖繼續
+                };
+            }
+
+            function finalizeGifRecording() {
+                const btn = document.getElementById('btnEditMode');
+                
+                gifInstance.on('progress', p => { btn.innerHTML = `⚙️ 編碼中 ${Math.round(p * 100)}%`; });
+                gifInstance.on('finished', blob => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url; a.download = `${activeCharData ? activeCharData.name : 'Custom'}_Sequence.gif`;
+                    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+
+                    // 復原為編輯模式
+                    btn.disabled = false;
+                    isEditMode = false; // 為了讓 toggle 能正常切換
+                    toggleEditMode();
+                });
+                gifInstance.render();
+            }
             window.onload = function() { initCharacterGrid(); };
             // 偵測捲動距離以顯示/隱藏按鈕
             window.onscroll = function() {
@@ -1232,115 +1492,7 @@
             btn.style.display = "none";
             }
             };
-            // ==========================================
-            // 🌟 GIF 錄製核心邏輯
-            // ==========================================
-            let isRecordingGif = false;
-            let gifInstance = null;
-            let recordInterval = null;
-            let gifWorkerUrl = null;
-
-            // 預先載入 Worker (避開 Github Pages / 本地端的跨網域限制)
-            fetch('https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js')
-                .then(response => response.text())
-                .then(text => {
-                    const blob = new Blob([text], { type: 'application/javascript' });
-                    gifWorkerUrl = URL.createObjectURL(blob);
-                }).catch(err => console.error("GIF Worker 載入失敗", err));
-
-            function toggleGifRecording() {
-                if (isRecordingGif) stopGifRecording();
-                else startGifRecording();
-            }
-
-            function startGifRecording() {
-                const canvas = document.querySelector('#spineCanvasContainer canvas');
-                if (!canvas) return alert("找不到畫布！請先選擇一隻坨坨。");
-                if (!gifWorkerUrl) return alert("系統尚未準備好，請稍等一秒再試！");
-
-                const btn = document.getElementById('btnRecordGif');
-                isRecordingGif = true;
-                btn.innerHTML = '🛑 停止並輸出 (最多10秒)';
-                btn.classList.replace('bg-red-500', 'bg-gray-600');
-                btn.classList.replace('hover:bg-red-600', 'hover:bg-gray-700');
-
-                // 💡 效能保護：限制 GIF 最大寬度為 500px，避免戰鬥模式的超大解析度讓瀏覽器當機
-                const maxW = 500; 
-                let targetW = canvas.width;
-                let targetH = canvas.height;
-                if (targetW > maxW) {
-                    const ratio = maxW / targetW;
-                    targetW = Math.round(targetW * ratio);
-                    targetH = Math.round(targetH * ratio);
-                }
-
-                // 建立一個離線畫布，用來縮小畫面與填補背景
-                const offCanvas = document.createElement('canvas');
-                offCanvas.width = targetW;
-                offCanvas.height = targetH;
-                const offCtx = offCanvas.getContext('2d');
-
-                gifInstance = new GIF({
-                    workers: 2,
-                    quality: 10,       // 品質 (1-30，越低品質越好但處理越久)
-                    width: targetW,
-                    height: targetH,
-                    workerScript: gifWorkerUrl
-                });
-
-                const fps = 20; // 20 FPS 對 GIF 來說已經很順暢
-                let frameCount = 0;
-                const maxFrames = fps * 10; // 防呆機制：最多強制錄製 10 秒
-
-                recordInterval = setInterval(() => {
-                    if (!isRecordingGif) return;
-                    
-                    // 填補背景 (GIF 不支援半透明漸層，直接填滿大廳底色最美觀)
-                    offCtx.fillStyle = document.documentElement.classList.contains('dark') ? '#0f172a' : '#fcf8f2';
-                    offCtx.fillRect(0, 0, targetW, targetH);
-                    
-                    // 將 WebGL 畫面印到我們的小畫布上
-                    offCtx.drawImage(canvas, 0, 0, targetW, targetH);
-                    
-                    // 加入一幀
-                    gifInstance.addFrame(offCanvas, { copy: true, delay: 1000 / fps });
-                    
-                    frameCount++;
-                    if (frameCount >= maxFrames) stopGifRecording(); // 時間到強制停止
-                }, 1000 / fps);
-            }
-
-            function stopGifRecording() {
-                isRecordingGif = false;
-                clearInterval(recordInterval);
-                
-                const btn = document.getElementById('btnRecordGif');
-                btn.disabled = true;
-                
-                gifInstance.on('progress', function(p) {
-                    btn.innerHTML = `⏳ 轉檔中... ${Math.round(p * 100)}%`;
-                });
-
-                gifInstance.on('finished', function(blob) {
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `${activeCharData ? activeCharData.name : 'Character'}_Anim.gif`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-
-                    // 復原按鈕
-                    btn.innerHTML = '⏺️ 錄製 GIF';
-                    btn.classList.replace('bg-gray-600', 'bg-red-500');
-                    btn.classList.replace('hover:bg-gray-700', 'hover:bg-red-600');
-                    btn.disabled = false;
-                });
-
-                // 開始編碼打包
-                gifInstance.render();
-            }
+            
             // 執行平滑滾動至頂部
             function scrollToTop() {
             window.scrollTo({
