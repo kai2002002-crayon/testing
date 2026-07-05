@@ -111,6 +111,18 @@
                     
                     <div class="text-gray-500 font-bold tracking-widest bg-white/80 dark:bg-slate-800/80 px-4 py-2 rounded-lg backdrop-blur-sm shadow-sm">等待載入...</div>
                 </div>
+
+                <!-- 🌟 新增：AR 專屬相機控制區塊 (預設隱藏) -->
+                <div id="arControlsBar" class="hidden bg-slate-800/90 dark:bg-slate-900/90 backdrop-blur-md p-3 rounded-xl border-2 border-slate-600 shadow-lg relative z-20 flex justify-center items-center gap-3 transition-all duration-300">
+                    <span class="text-xs sm:text-sm font-bold text-amber-400 flex-shrink-0 tracking-widest">📷 相機面板</span>
+                    <button onclick="switchCamera()" class="px-4 py-2 bg-teal-500 hover:bg-teal-600 text-white text-xs sm:text-sm font-bold rounded-lg shadow transition-colors flex-1 max-w-[140px]">
+                        🔄 翻轉鏡頭
+                    </button>
+                    <button onclick="captureARPhoto()" class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white text-xs sm:text-sm font-bold rounded-lg shadow transition-colors flex-1 max-w-[140px]">
+                        📸 拍照儲存
+                    </button>
+                </div>
+
                 <div id="playerControls" class="bg-amber-50 dark:bg-slate-700/50 p-3 rounded-xl border border-amber-200 dark:border-slate-600 flex flex-col gap-3 opacity-50 pointer-events-none transition-opacity">
                     <div class="flex items-center justify-between gap-2 flex-wrap">
                         <div class="flex items-center gap-2">
@@ -125,17 +137,10 @@
                         <div class="flex items-center gap-2">
                             <button id="btnModeSwitch" onclick="toggleViewerMode()" class="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-xs sm:text-sm font-bold rounded-lg shadow transition-colors whitespace-nowrap">
                             🔄 模式: 大廳
-                            <!-- 🌟 AR 模式按鈕 -->
+                            </button>
+                            <!-- AR 總開關保留在此處 -->
                             <button id="btnARMode" onclick="toggleARMode()" class="px-3 py-1.5 bg-purple-500 hover:bg-purple-600 text-white text-[10px] sm:text-sm font-bold rounded-lg shadow transition-colors whitespace-nowrap">
-                            📷 AR
-                            </button>
-                            <!-- 🌟 切換鏡頭按鈕 (預設隱藏) -->
-                            <button id="btnSwitchCamera" onclick="switchCamera()" class="hidden px-3 py-1.5 bg-teal-500 hover:bg-teal-600 text-white text-[10px] sm:text-sm font-bold rounded-lg shadow transition-colors whitespace-nowrap">
-                            🔄 相機
-                            </button>
-                            <!-- 🌟 拍照按鈕 (預設隱藏) -->
-                            <button id="btnCapture" onclick="captureARPhoto()" class="hidden px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-[10px] sm:text-sm font-bold rounded-lg shadow transition-colors whitespace-nowrap">
-                                📸 拍照
+                            📷 開啟AR
                             </button>
                             <select id="costumeSelect" onchange="changeSpineCostume(this.value)" class="bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 text-xs sm:text-sm font-bold rounded-lg px-2 py-1.5 outline-none focus:ring-2 focus:ring-amber-500 min-w-[100px]">
                                 <option value="">服裝</option>
@@ -621,27 +626,26 @@
                 const video = document.getElementById('arVideoBg');
                 const container = document.getElementById('spineCanvasContainer');
                 const btn = document.getElementById('btnARMode');
-                const btnCapture = document.getElementById('btnCapture');
-                const btnSwitchCamera = document.getElementById('btnSwitchCamera');
+                // 取得新建立的 AR 專屬控制區塊
+                const arControlsBar = document.getElementById('arControlsBar');
 
                 initFocusRing(); // 確保對焦框已經載入
 
                 if (arStream) {
-                    // 關閉 AR 模式
-                    btnCapture.classList.add('hidden');
-                    btnSwitchCamera.classList.add('hidden');
+                    // ❌ 關閉 AR 模式
+                    arControlsBar.classList.add('hidden'); // 直接隱藏整條工具列
                     
                     arStream.getTracks().forEach(track => track.stop());
                     arStream = null;
                     video.classList.add('hidden');
                     
-                    btn.innerHTML = '📷 AR';
+                    btn.innerHTML = '📷 開啟AR';
                     btn.classList.replace('bg-red-500', 'bg-purple-500');
                     btn.classList.replace('hover:bg-red-600', 'hover:bg-purple-600');
                     
                     if (activeCharData) applyRaceBackground(activeCharData.name);
                 } else {
-                    // 開啟 AR 模式
+                    // ✅ 開啟 AR 模式
                     try {
                         arStream = await navigator.mediaDevices.getUserMedia({ 
                             video: { facingMode: useFrontCamera ? "user" : { ideal: "environment" } } 
@@ -658,10 +662,10 @@
                         
                         resetCamera();
                         
-                        btnCapture.classList.remove('hidden');
-                        btnSwitchCamera.classList.remove('hidden');
+                        // 🌟 相機啟動成功後，顯示專屬的相機控制面板
+                        arControlsBar.classList.remove('hidden');
 
-                        // 🌟 啟動 AR 時，嘗試強制開啟系統的「連續自動對焦」確保畫面清晰
+                        // 啟動 AR 時，嘗試強制開啟系統的「連續自動對焦」
                         try {
                             const track = arStream.getVideoTracks()[0];
                             const caps = track.getCapabilities();
@@ -672,8 +676,8 @@
                         
                     } catch (err) {
                         console.error("相機開啟失敗:", err);
-                        btnCapture.classList.add('hidden');
-                        btnSwitchCamera.classList.add('hidden');
+                        // 如果啟動失敗或沒鏡頭，確保面板保持隱藏
+                        arControlsBar.classList.add('hidden'); 
                         alert(`相機開啟失敗 😢\n請確認瀏覽器權限是否允許使用相機。`);
                     }
                 }
