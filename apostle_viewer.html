@@ -138,9 +138,9 @@
             </div>
             <div class="flex flex-col gap-3 min-w-0 relative z-10 w-full lg:w-3/4 mx-auto">
                 <div id="spineCanvasContainer" class="w-full h-[60vh] sm:h-[600px] rounded-xl border-2 border-dashed border-amber-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 relative overflow-hidden flex items-center justify-center cursor-move animated-bg" style="background-image: url('https://i.postimg.cc/x8wY5V8Q/Monster-Slot-Property-Tile.png');">
-                    <!-- 🌟 AR 攝影機畫面 (放在這裡，並設為絕對定位、隱藏、不干擾點擊) -->
+                    <!-- 🌟 就是這一行！請確保它存在，並且 id 完全是 arVideoBg -->
                     <video id="arVideoBg" class="absolute inset-0 w-full h-full object-cover hidden pointer-events-none z-0" autoplay playsinline muted></video>
-                    <!-- 背景切換按鈕 (僅編輯模式顯示) -->
+                    <!-- 背景切換按鈕 (原本的程式碼) -->
                     <button id="bgPrevBtn" onclick="cycleBg(-1)" class="hidden absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 text-white text-xs rounded-full flex items-center justify-center z-[60] hover:bg-black/70 transition-all">◀</button>
                     <button id="bgNextBtn" onclick="cycleBg(1)" class="hidden absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 text-white text-xs rounded-full flex items-center justify-center z-[60] hover:bg-black/70 transition-all">▶</button>
                     <div class="text-gray-500 font-bold tracking-widest bg-white/80 dark:bg-slate-800/80 px-4 py-2 rounded-lg backdrop-blur-sm shadow-sm">等待載入...</div>
