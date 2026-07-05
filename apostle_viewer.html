@@ -128,7 +128,10 @@
                             </button>
                             <!-- 🌟 AR 模式按鈕 -->
                             <button id="btnARMode" onclick="toggleARMode()" class="px-3 py-1.5 bg-purple-500 hover:bg-purple-600 text-white text-[10px] sm:text-sm font-bold rounded-lg shadow transition-colors whitespace-nowrap">
-                            📷 AR 模式
+                            📷 AR
+                            </button>
+                            <button id="btnCapture" onclick="captureARPhoto()" class="hidden px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-[10px] sm:text-sm font-bold rounded-lg shadow transition-colors whitespace-nowrap">
+                                📸 拍照
                             </button>
                             <select id="costumeSelect" onchange="changeSpineCostume(this.value)" class="bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 text-xs sm:text-sm font-bold rounded-lg px-2 py-1.5 outline-none focus:ring-2 focus:ring-amber-500 min-w-[100px]">
                                 <option value="">服裝</option>
@@ -541,14 +544,17 @@
                 const video = document.getElementById('arVideoBg');
                 const container = document.getElementById('spineCanvasContainer');
                 const btn = document.getElementById('btnARMode');
+                const btnCapture = document.getElementById('btnCapture');
 
                 if (arStream) {
                     // 關閉 AR 模式
+                    btnCapture.classList.add('hidden');
                     arStream.getTracks().forEach(track => track.stop());
                     arStream = null;
                     video.classList.add('hidden');
                     
                     btn.innerHTML = '📷 AR 模式';
+                    btnCapture.classList.remove('hidden');
                     btn.classList.replace('bg-red-500', 'bg-purple-500');
                     btn.classList.replace('hover:bg-red-600', 'hover:bg-purple-600');
                     
@@ -575,6 +581,35 @@
                         alert(`相機開啟失敗 😢\n\n錯誤類型：${err.name}\n錯誤訊息：${err.message}\n\n(如果是 NotAllowedError，代表依然被瀏覽器權限阻擋)`);
                     }
                 }
+            }
+            // ==========================================
+            // 🌟 AR 拍照與儲存功能
+            // ==========================================
+            async function captureARPhoto() {
+                const video = document.getElementById('arVideoBg');
+                const canvas = document.querySelector('#spineCanvasContainer canvas');
+                
+                // 1. 建立一個暫存的 Canvas 來合成影片與 Spine 畫面
+                const captureCanvas = document.createElement('canvas');
+                captureCanvas.width = video.videoWidth;
+                captureCanvas.height = video.videoHeight;
+                const ctx = captureCanvas.getContext('2d');
+                
+                // 2. 畫入相機畫面
+                ctx.drawImage(video, 0, 0, captureCanvas.width, captureCanvas.height);
+                
+                // 3. 畫入 Spine Canvas 畫面
+                // 必須使用與視訊相同比例的縮放計算
+                const scaleX = captureCanvas.width / canvas.width;
+                const scaleY = captureCanvas.height / canvas.height;
+                ctx.drawImage(canvas, 0, 0, canvas.width * scaleX, canvas.height * scaleY);
+                
+                // 4. 轉為圖片下載
+                const dataURL = captureCanvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.download = `AR_坨坨_${new Date().getTime()}.png`;
+                link.href = dataURL;
+                link.click();
             }
 
             function togglePlay() {
