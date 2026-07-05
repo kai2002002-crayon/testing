@@ -1032,6 +1032,18 @@
                         activeInteractBone = hitZoneOnDown.bone; 
                         initialBoneX = activeInteractBone.x; 
                         initialBoneY = activeInteractBone.y;
+
+                        // 🔴 開始錄製互動
+                        if (isEditMode) {
+                            isRecordingInteraction = true;
+                            currentRecordingInteraction = {
+                                startTime: Date.now() - currentLoopStartTime,
+                                duration: 0,
+                                bone: activeInteractBone.data.name,
+                                anim: hitZoneOnDown.name === "臉頰" ? "Touch_Idle" : "Pat_Idle",
+                                path: []
+                            };
+                        }
                     }
                 });
             
@@ -1143,7 +1155,15 @@
                         activeInteractBone.x = initialBoneX + localDx;
                         activeInteractBone.y = initialBoneY + localDy;
                         player.skeleton.updateWorldTransform();
-                    } 
+
+                        // 🔴 記錄骨架位移軌跡
+                        if (isEditMode && isRecordingInteraction && currentRecordingInteraction) {
+                            currentRecordingInteraction.path.push({
+                                time: Date.now() - currentLoopStartTime - currentRecordingInteraction.startTime,
+                                x: activeInteractBone.x,
+                                y: activeInteractBone.y
+                            });
+                        }
                     else if (!hitZoneOnDown) {
                         const cam = globalPlayer.sceneRenderer.camera;
                         
@@ -1182,6 +1202,15 @@
                 });
             
                 const stopDrag = (e) => { 
+                    // 🔴 結束錄製並計算總時長
+                    if (isEditMode && isRecordingInteraction && currentRecordingInteraction) {
+                        currentRecordingInteraction.duration = (Date.now() - currentLoopStartTime) - currentRecordingInteraction.startTime;
+                        interactionSequence.push(currentRecordingInteraction);
+                        isRecordingInteraction = false;
+                        currentRecordingInteraction = null;
+                        renderInteractionTrack(); // 刷新為長條方塊
+                    }
+                    
                     delete pointers[e.pointerId];
                     if (Object.keys(pointers).length < 2) initialPinchDistance = 0;
             
@@ -1575,11 +1604,12 @@
                             }
                         });
 
-            // 雙軌編輯狀態變數
-            let interactionSequence = []; // 格式: { timeOffset: 500, anim: 'Touch_Idle' }
+            // 雙軌編輯狀態變數 (包含動作捕捉)
+            let interactionSequence = []; // 格式: { startTime: 500, duration: 1200, anim: 'Touch_Idle', bone: 'Character_Ball_Move', path: [{time, x, y}] }
             let currentLoopStartTime = 0;
             let previewAnimationFrame = null;
-
+            let isRecordingInteraction = false;
+            let currentRecordingInteraction = null;
             // 🌟 終極動畫攔截器與預覽引擎
             function startSequencePreview() {
                 stopSequencePreview();
@@ -1589,31 +1619,11 @@
                 const track = document.getElementById('timelineTrack');
                 if (playhead) playhead.classList.remove('hidden');
 
-                // 綁定攔截器 (允許玩家點擊，並記錄到互動軌道)
+                // 簡單攔截器：防止外部滑鼠事件直接修改動畫，保護預覽
                 if (globalPlayer && globalPlayer.animationState && !globalPlayer.animationState._isHooked) {
                     const origSetAnim = globalPlayer.animationState.setAnimation.bind(globalPlayer.animationState);
                     globalPlayer.animationState.setAnimation = function(trackIdx, anim, loop) {
-                        if (isEditMode && !isEditorForcingAnim) {
-                            // 玩家觸發了點擊互動！記錄當前時間點
-                            const now = Date.now();
-                            const timeOffset = now - currentLoopStartTime;
-                            
-                            // 檢查優先權：如果當前主軌道不是 Idle，則捨棄點擊互動 (主動作優先)
-                            const currentMainAnim = editSequence[currentSeqIndex]?.anim || "";
-                            if (!currentMainAnim.toLowerCase().includes('idle')) {
-                                return null; 
-                            }
-                            
-                            // 記錄到互動軌道
-                            interactionSequence.push({ timeOffset: timeOffset, anim: anim });
-                            renderInteractionTrack();
-                            
-                            // 互動動作統一在 Track 1 播放，覆蓋在 Idle 上面
-                            return origSetAnim(1, anim, false);
-                        }
-                        // 編輯器發出的主動作，在 Track 0 播放
-                        if (isEditorForcingAnim) return origSetAnim(0, anim, loop);
-                        
+                        if (isEditMode && !isEditorForcingAnim) return null; 
                         return origSetAnim(trackIdx, anim, loop);
                     };
                     globalPlayer.animationState._isHooked = true;
@@ -1621,20 +1631,15 @@
 
                 currentLoopStartTime = Date.now();
                 currentSeqIndex = 0;
-                let totalDuration = editSequence.reduce((sum, step) => sum + step.duration, 0);
 
-                // 播放主軌道的下一步
                 function playNextStep() {
                     if (!isEditMode) return;
                     const step = editSequence[currentSeqIndex];
                     
                     isEditorForcingAnim = true;
                     globalPlayer.animationState.setAnimation(0, step.anim, true);
-                    // 切換主動作時，清除 Track 1 的殘留互動
-                    globalPlayer.animationState.setEmptyAnimation(1, 0.2); 
                     isEditorForcingAnim = false;
                     
-                    // 高亮當前 UI
                     document.querySelectorAll('#timelineTrack > div').forEach((blk, i) => {
                         if (i === currentSeqIndex) {
                             blk.classList.add('ring-4', 'ring-green-400', 'brightness-110');
@@ -1647,39 +1652,20 @@
 
                     seqTimer = setTimeout(() => {
                         currentSeqIndex = (currentSeqIndex + 1) % editSequence.length;
-                        if (currentSeqIndex === 0) currentLoopStartTime = Date.now(); // 新的一輪
+                        if (currentSeqIndex === 0) currentLoopStartTime = Date.now(); 
                         playNextStep();
                     }, step.duration);
                 }
                 
-                // 動態更新播放條 (Playhead) 與觸發預錄的互動
-                let triggeredInteractions = new Set();
                 function updatePlayhead() {
                     if (!isEditMode) return;
-                    const now = Date.now();
-                    const elapsed = now - currentLoopStartTime;
+                    const elapsed = Date.now() - currentLoopStartTime;
                     
-                    // 新的一輪，重置觸發紀錄
-                    if (elapsed < 50) triggeredInteractions.clear(); 
-                    
-                    // 觸發互動軌道的動作
-                    interactionSequence.forEach((interaction, idx) => {
-                        if (elapsed >= interaction.timeOffset && !triggeredInteractions.has(idx)) {
-                            triggeredInteractions.add(idx);
-                            // 檢查主軌道優先權
-                            const currentMainAnim = editSequence[currentSeqIndex]?.anim || "";
-                            if (currentMainAnim.toLowerCase().includes('idle')) {
-                                isEditorForcingAnim = true;
-                                globalPlayer.animationState.setAnimation(1, interaction.anim, false);
-                                isEditorForcingAnim = false;
-                            }
-                        }
-                    });
+                    // 🌟 呼叫引擎：處理動態位移與 Track1 覆蓋
+                    applyInteractionEngine(globalPlayer, elapsed);
 
-                    // 移動紅線
                     if (playhead && track) {
-                        const px = elapsed / MS_PER_PX;
-                        playhead.style.transform = `translateX(${px}px)`;
+                        playhead.style.transform = `translateX(${elapsed / MS_PER_PX}px)`;
                     }
                     previewAnimationFrame = requestAnimationFrame(updatePlayhead);
                 }
@@ -1700,21 +1686,25 @@
                 }
             }
 
-            // 渲染互動軌道標記
+            // 渲染互動軌道 (升級為長條方塊)
             function renderInteractionTrack() {
                 const iTrack = document.getElementById('interactionTrack');
                 if (!iTrack) return;
                 iTrack.innerHTML = '';
                 
                 interactionSequence.forEach((inter, idx) => {
-                    const px = inter.timeOffset / MS_PER_PX;
+                    // 最短顯示寬度 20px，方便使用者點擊
+                    const width = Math.max(inter.duration / MS_PER_PX, 20);
+                    const left = inter.startTime / MS_PER_PX;
+                    
                     const marker = document.createElement('div');
-                    marker.className = "absolute top-1 w-6 h-6 bg-blue-500 rounded border border-white shadow flex items-center justify-center cursor-pointer hover:bg-red-500 transition-colors group z-20";
-                    marker.style.left = `${px}px`;
+                    marker.className = "absolute top-1 h-6 bg-blue-500 rounded border border-white shadow flex items-center justify-center cursor-pointer hover:bg-red-500 transition-colors group z-20 overflow-hidden";
+                    marker.style.left = `${left}px`;
+                    marker.style.width = `${width}px`;
                     marker.innerHTML = `
-                        <span class="text-[8px] text-white font-bold">👆</span>
+                        <span class="text-[8px] text-white font-bold truncate px-1">${inter.anim}</span>
                         <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-black/80 text-white text-[9px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none">
-                            刪除 ${inter.anim}
+                            點擊刪除
                         </div>
                     `;
                     // 點擊標記即可刪除
@@ -1725,7 +1715,52 @@
                     iTrack.appendChild(marker);
                 });
             }
+            // 🌟 動態骨架注入引擎：讀取錄製的軌跡，並覆蓋當前動畫
+            function applyInteractionEngine(player, elapsed) {
+                if (!player || !player.skeleton) return false;
+                let activeInter = null;
+                
+                // 尋找當前時間點是否有互動正在發生
+                for (let i = 0; i < interactionSequence.length; i++) {
+                    const inter = interactionSequence[i];
+                    if (elapsed >= inter.startTime && elapsed <= inter.startTime + inter.duration) {
+                        activeInter = inter;
+                        break;
+                    }
+                }
 
+                if (activeInter) {
+                    // 1. 強制維持互動動畫在 Track 1 (優先權高於主軌道，主軌道切換也不會中斷)
+                    isEditorForcingAnim = true;
+                    if (!player.animationState.getCurrent(1) || player.animationState.getCurrent(1).animation.name !== activeInter.anim) {
+                        player.animationState.setAnimation(1, activeInter.anim, true);
+                    }
+                    isEditorForcingAnim = false;
+
+                    // 2. 注入我們錄製的骨骼軌跡
+                    const targetBone = player.skeleton.findBone(activeInter.bone);
+                    if (targetBone && activeInter.path.length > 0) {
+                        const relTime = elapsed - activeInter.startTime;
+                        // 找出時間點最接近的滑鼠軌跡記錄
+                        let point = activeInter.path[0];
+                        for (let p of activeInter.path) {
+                            if (p.time <= relTime) point = p;
+                            else break;
+                        }
+                        // 覆寫骨骼坐標，實現「滑鼠拖扯變形」重現！
+                        targetBone.x = point.x;
+                        targetBone.y = point.y;
+                        player.skeleton.updateWorldTransform(); 
+                    }
+                    return true;
+                } else {
+                    // 如果沒有互動，清除 Track 1 讓主動作恢復正常
+                    if (player.animationState.getCurrent(1)) {
+                        player.animationState.setEmptyAnimation(1, 0.2);
+                    }
+                    return false;
+                }
+            }
             // 🌟 強化版 GIF 輸出 (支援自訂寬高與雙軌同步)
             function startGifRecording() {
                 const canvas = document.querySelector('#spineCanvasContainer canvas');
@@ -1782,25 +1817,14 @@
                             const step = editSequence[stepIdx];
                             isEditorForcingAnim = true;
                             globalPlayer.animationState.setAnimation(0, step.anim, true);
-                            globalPlayer.animationState.setEmptyAnimation(1, 0.2); 
                             isEditorForcingAnim = false;
                             
                             nextStepTime += step.duration;
                             stepIdx++;
                         }
                         
-                        // 2. 處理互動軌道切換
-                        interactionSequence.forEach((interaction, idx) => {
-                            if (simulatedTime >= interaction.timeOffset && !triggered.has(idx)) {
-                                triggered.add(idx);
-                                const currentMainAnim = stepIdx > 0 ? editSequence[stepIdx-1].anim : "";
-                                if (currentMainAnim.toLowerCase().includes('idle')) {
-                                    isEditorForcingAnim = true;
-                                    globalPlayer.animationState.setAnimation(1, interaction.anim, false);
-                                    isEditorForcingAnim = false;
-                                }
-                            }
-                        });
+                        // 2. 🌟 呼叫引擎處理動態位移與覆蓋
+                        applyInteractionEngine(globalPlayer, simulatedTime);
 
                         // 3. 畫布繪製與裁切置中邏輯
                         offCtx.fillStyle = '#fcf8f2';
