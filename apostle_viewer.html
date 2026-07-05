@@ -1258,16 +1258,30 @@
                 const panel = document.getElementById('editTimelinePanel');
                 const bgPrev = document.getElementById('bgPrevBtn');
                 const bgNext = document.getElementById('bgNextBtn');
-                const canvasContainer = document.getElementById('spineCanvasContainer');
+                
+                // 🌟 抓取需要變身的 UI 元素
+                const btnPlayPause = document.getElementById('btnPlayPause');
+                const animDropdown = document.getElementById('animDropdownWrapper');
+                const slotDropdown = document.getElementById('slotDropdownWrapper');
 
                 if (isEditMode) {
+                    // 🛑 阻擋原本的閒置計時器
+                    if (typeof globalIdleTimer !== 'undefined') clearTimeout(globalIdleTimer);
+                    if (typeof voiceRecoveryTimer !== 'undefined') clearTimeout(voiceRecoveryTimer);
+
                     btn.innerHTML = '⏺️ 輸出 GIF';
                     btn.classList.replace('bg-green-500', 'bg-red-500');
                     btn.classList.replace('hover:bg-green-600', 'hover:bg-red-600');
+                    
                     panel.classList.remove('hidden'); panel.classList.add('flex');
                     bgPrev.classList.remove('hidden'); bgNext.classList.remove('hidden');
                     
-                    // 初始化背景清單 (當前種族背景 + LOBBY_BACKGROUNDS)
+                    // 🌟 UI 變身：隱藏播放鍵與單一動作選單，讓插槽選單填滿空位
+                    btnPlayPause.classList.add('hidden');
+                    animDropdown.classList.add('hidden');
+                    slotDropdown.style.width = '100%';
+
+                    // 初始化背景清單
                     availableBgs = [];
                     const charRaceBg = (typeof SPINE_BACKGROUNDS !== 'undefined' && activeCharData && SPINE_BACKGROUNDS[activeCharData.race]) 
                                        ? SPINE_BACKGROUNDS[activeCharData.race] 
@@ -1287,7 +1301,11 @@
                     startSequencePreview();
 
                 } else {
-                    // 如果點擊了「輸出 GIF」，會執行這裡
+                    // 🌟 復原為一般播放器模式
+                    btnPlayPause.classList.remove('hidden');
+                    animDropdown.classList.remove('hidden');
+                    slotDropdown.style.width = '48%';
+                    
                     stopSequencePreview();
                     startGifRecording();
                 }
@@ -1360,6 +1378,9 @@
                 `).join('');
             }
 
+            // 用來標記是不是編輯器自己發出的動畫切換指令
+            let isEditorForcingAnim = false;
+
             function startSequencePreview() {
                 stopSequencePreview();
                 if (!isEditMode || editSequence.length === 0) return;
@@ -1367,14 +1388,33 @@
                 function playNext() {
                     if (!isEditMode) return;
                     const step = editSequence[currentSeqIndex];
+                    
                     if (globalPlayer && globalPlayer.animationState) {
+                        // 🌟 終極動畫攔截器：如果是編輯模式，禁止任何滑鼠互動或閒置腳本修改動作
+                        if (!globalPlayer.animationState._isHooked) {
+                            const origSetAnim = globalPlayer.animationState.setAnimation.bind(globalPlayer.animationState);
+                            globalPlayer.animationState.setAnimation = function(track, anim, loop) {
+                                if (isEditMode && !isEditorForcingAnim) {
+                                    // 拒絕外部的動作切換，保護編輯器的時間軸
+                                    return null; 
+                                }
+                                return origSetAnim(track, anim, loop);
+                            };
+                            globalPlayer.animationState._isHooked = true;
+                        }
+
+                        // 開放權限給編輯器播放
+                        isEditorForcingAnim = true;
                         globalPlayer.animationState.setAnimation(0, step.anim, true);
+                        isEditorForcingAnim = false; // 播完立刻收回權限
                     }
+                    
                     seqTimer = setTimeout(() => {
                         currentSeqIndex = (currentSeqIndex + 1) % editSequence.length;
                         playNext();
                     }, step.duration);
                 }
+                
                 currentSeqIndex = 0;
                 playNext();
             }
