@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>著色板路徑繪製工具</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        /* 畫布網格設定：7欄，每欄64px，間距1px */
+        #board {
+            display: grid;
+            grid-template-columns: repeat(7, 64px);
+            grid-template-rows: repeat(14, 64px);
+            gap: 1px;
+            background-color: #ffffff; /* 間距的顏色 */
+            border: 2px solid #475569;
+            padding: 1px;
+            width: max-content;
+            touch-action: none; /* 避免手機上滑動畫面 */
+        }
+
+        /* 畫布中的每一格 */
+        .cell {
+            width: 64px;
+            height: 64px;
+            background-color: #cbd5e1; /* 空白格的預設顏色 */
+            cursor: crosshair;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .cell:hover {
+            filter: brightness(0.9);
+        }
+
+        /* 調色盤按鈕 */
+        .tool-btn {
+            width: 64px;
+            height: 64px;
+            border: 3px solid transparent;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: transform 0.1s;
+        }
+        .tool-btn:hover { transform: scale(1.05); }
+        .tool-btn.active { border-color: #fbbf24; background-color: #fef3c7; transform: scale(1.1); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .tool-icon { width: 100%; height: 100%; object-fit: contain; }
+    </style>
+</head>
+<body class="bg-slate-800 text-slate-200 min-h-screen flex flex-col items-center py-8">
+
+    <h1 class="text-3xl font-black text-amber-400 mb-6">🖍️ 著色板路徑繪製工具</h1>
+
+    <div class="flex flex-col md:flex-row gap-8 items-start">
+        
+        <!-- 左側：工具列 (調色盤) -->
+        <div class="bg-slate-700 p-4 rounded-xl shadow-lg flex flex-col items-center gap-3">
+            <h2 class="font-bold text-amber-300 border-b border-slate-500 pb-2 w-full text-center">選擇蠟筆</h2>
+            <div id="palette" class="grid grid-cols-2 gap-2">
+                <!-- 工具按鈕會由 JS 自動產生 -->
+            </div>
+            
+            <button onclick="clearBoard()" class="mt-4 w-full px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-bold rounded shadow transition">
+                🗑️ 清空畫布
+            </button>
+            <button onclick="exportPNG()" class="mt-2 w-full px-4 py-3 bg-green-500 hover:bg-green-600 text-white font-black rounded-lg shadow-lg transition flex items-center justify-center gap-2">
+                📸 匯出 PNG
+            </button>
+        </div>
+
+        <!-- 右側：繪圖區 -->
+        <div class="bg-slate-700 p-6 rounded-xl shadow-lg flex flex-col items-center">
+            <div class="mb-3 text-sm text-slate-400 font-bold">提示：支援按住滑鼠左鍵「拖曳」連續繪製！</div>
+            <!-- 畫布容器 -->
+            <div id="board" draggable="false"></div>
+        </div>
+
+    </div>
+
+    <!-- 隱藏的 Canvas 用於匯出圖片 -->
+    <canvas id="exportCanvas" class="hidden"></canvas>
+
+    <script>
+        // --- 1. 定義圖示與資源 ---
+        const ICONS = {
+            START: "https://i.postimg.cc/qBbXP4x1/START.png",
+            GATE: "https://i.postimg.cc/jqgQpt4z/GATE.png",
+            PATH: "https://i.postimg.cc/SQT7BkfG/PATH.png",
+            PURPLE: "https://i.postimg.cc/pVGYwRJZ/PURPLE.png",
+            ATK: "https://i.postimg.cc/1RCcksrw/ATK.png",
+            DEF: "https://i.postimg.cc/zDtSs8FC/DEF.png",
+            HP: "https://i.postimg.cc/8kKB2Nmm/HP.png",
+            CRI: "https://i.postimg.cc/zDtSs8Fw/CRI.png",
+            RES: "https://i.postimg.cc/fW2jGDfC/RES.png",
+            ERASE: null // 橡皮擦
+        };
+
+        const COLS = 7;
+        const ROWS = 14;
+        const CELL_SIZE = 64;
+        const GAP = 1;
+
+        let currentTool = 'START';
+        let isDrawing = false;
+        let boardData = new Array(COLS * ROWS).fill(null); // 儲存畫布資料
+        
+        // 預載圖片物件 (為了能在 Canvas 上順利匯出並解決 CORS 問題)
+        const loadedImages = {};
+        for (const [key, url] of Object.entries(ICONS)) {
+            if (url) {
+                const img = new Image();
+                img.crossOrigin = "anonymous"; // 關鍵：允許跨域匯出圖片
+                img.src = url;
+                loadedImages[key] = img;
+            }
+        }
+
+        // --- 2. 建立 UI ---
+        function initUI() {
+            // 建立調色盤
+            const palette = document.getElementById('palette');
+            for (const [key, url] of Object.entries(ICONS)) {
+                const btn = document.createElement('div');
+                btn.className = `tool-btn flex items-center justify-center bg-slate-800 ${key === currentTool ? 'active' : ''}`;
+                btn.onclick = () => selectTool(key, btn);
+                btn.title = key;
+
+                if (url) {
+                    btn.innerHTML = `<img src="${url}" class="tool-icon" draggable="false" alt="${key}">`;
+                } else {
+                    btn.innerHTML = `❌<br><span class="text-[10px]">橡皮擦</span>`;
+                }
+                palette.appendChild(btn);
+            }
+
+            // 建立畫布網格
+            const board = document.getElementById('board');
+            for (let i = 0; i < COLS * ROWS; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.dataset.index = i;
+                
+                // 滑鼠事件綁定 (支援點擊與拖曳)
+                cell.addEventListener('mousedown', (e) => {
+                    e.preventDefault(); // 防止預設拖曳
+                    isDrawing = true;
+                    paintCell(cell, i);
+                });
+                cell.addEventListener('mouseenter', (e) => {
+                    if (isDrawing) paintCell(cell, i);
+                });
+
+                board.appendChild(cell);
+            }
+
+            // 監聽全域滑鼠放開，停止繪製
+            document.addEventListener('mouseup', () => isDrawing = false);
+            document.addEventListener('mouseleave', () => isDrawing = false);
+        }
+
+        // --- 3. 互動邏輯 ---
+        function selectTool(key, btnElement) {
+            currentTool = key;
+            document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+        }
+
+        function paintCell(cellElement, index) {
+            boardData[index] = currentTool === 'ERASE' ? null : currentTool;
+            
+            if (currentTool === 'ERASE') {
+                cellElement.style.backgroundImage = 'none';
+            } else {
+                cellElement.style.backgroundImage = `url('${ICONS[currentTool]}')`;
+            }
+        }
+
+        function clearBoard() {
+            if(!confirm("確定要清空整張畫布嗎？")) return;
+            boardData.fill(null);
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.style.backgroundImage = 'none';
+            });
+        }
+
+        // --- 4. 匯出 PNG 功能 ---
+        function exportPNG() {
+            const canvas = document.getElementById('exportCanvas');
+            // 計算 Canvas 總尺寸 (包含間距)
+            canvas.width = (COLS * CELL_SIZE) + ((COLS - 1) * GAP);
+            canvas.height = (ROWS * CELL_SIZE) + ((ROWS - 1) * GAP);
+            
+            const ctx = canvas.getContext('2d');
+
+            // 填滿背景底色 (間隙的顏色，如果你想要透明間隙可以註解掉這行)
+            ctx.fillStyle = "rgba(255, 255, 255, 0)"; // 這裡設定全透明背景
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 遍歷所有格子並繪製
+            boardData.forEach((toolKey, i) => {
+                const col = i % COLS;
+                const row = Math.floor(i / COLS);
+                
+                const x = col * (CELL_SIZE + GAP);
+                const y = row * (CELL_SIZE + GAP);
+
+                if (toolKey && loadedImages[toolKey]) {
+                    // 如果這格有蠟筆，畫出圖片
+                    ctx.drawImage(loadedImages[toolKey], x, y, CELL_SIZE, CELL_SIZE);
+                } else {
+                    // 空白格可以選擇是否要畫出底色，這裡我們畫半透明或淺灰色當作基底
+                    ctx.fillStyle = "rgba(203, 213, 225, 0.4)"; // 淺灰半透明
+                    ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+                }
+            });
+
+            // 產生檔案並下載
+            try {
+                const dataURL = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.download = `CrayonPath_${new Date().getTime()}.png`;
+                link.href = dataURL;
+                link.click();
+            } catch (err) {
+                alert("匯出失敗！這通常是因為圖片載入時的跨域(CORS)問題。\n請確定您是在有網域的環境 (localhost 或 Github Pages) 開啟此檔案，而不是直接雙擊打開 .html。");
+                console.error(err);
+            }
+        }
+
+        // 啟動程式
+        initUI();
+    </script>
+</body>
+</html>
