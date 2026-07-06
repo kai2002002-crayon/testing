@@ -199,6 +199,7 @@
                     // 避免覆蓋原本標籤內的圖示(如 👥 或 🔄)，這裡建議 html 把純文字用 <span> 包起來，或者直接整個替換
                     el.innerText = translatedText; 
                 });
+                document.title = getI18n('ui_title');
             }
             
             // 確保在 window.onload 時呼叫它
