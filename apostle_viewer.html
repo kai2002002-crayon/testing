@@ -187,7 +187,7 @@
             }
 
             // 🌟 2. 啟動時翻譯靜態介面
-            function applyStaticTranslations() {
+            function applyTranslations() {
                 // 設定下拉選單的目前語言
                 const langSelect = document.getElementById('langSelect');
                 if (langSelect) langSelect.value = window.currentLang;
@@ -204,7 +204,7 @@
             // 確保在 window.onload 時呼叫它
             // 請找到你原本的 window.onload = function() { initCharacterGrid(); }; 改成：
             window.onload = function() { 
-                applyStaticTranslations(); // 先翻譯靜態介面
+                applyTranslations(); // 先翻譯靜態介面
                 initCharacterGrid();       // 再渲染角色清單
             };
             function getI18n(key) {
@@ -1226,7 +1226,6 @@
                 canvas.addEventListener('pointerout', stopDrag);
             }
             
-            window.onload = function() { initCharacterGrid(); };
             window.onscroll = function() {
                 const btn = document.getElementById("backToTop");
                 if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) { btn.style.display = "flex"; } else { btn.style.display = "none"; }
