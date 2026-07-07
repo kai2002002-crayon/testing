@@ -2,6 +2,31 @@
 // 🔮 願像系統 (Aside) 資料庫 - 多語系版本 (zh: 中文, ja: 日文, en: 英文)
 
 const ASIDE_DATA = {
+    "ALICE": { 
+        asideIcon: "", 
+        totalName: { zh: "最強幸運卡", ja: "最高の吉のカード", en: "The Ultimate Lucky Card" }, 
+        stars: {
+            1: { 
+                icon: "", 
+                name: { zh: "", ja: "", en: "" }, 
+                desc: { zh: "", ja: "", en: "" }, 
+                effects: { zh: [""], ja: [""], en: [""] } 
+            },
+            2: { 
+                icon: "", 
+                name: { zh: "", ja: "", en: "" }, 
+                desc: { zh: "", ja: "", en: "" }, 
+                effects: { zh: [""], ja: [""], en: [""] } 
+            },
+            3: { 
+                icon: "g", 
+                name: { zh: "", ja: "", en: "" }, 
+                desc: { zh: "", ja: "", en: "" }, 
+                effects: { zh: [""], ja: [""], en: [""] }, 
+                globalEffects: { zh: [""], ja: [""], en: [""] } 
+            }
+        }
+    },
     "Amelia": { 
         asideIcon: "https://i.postimg.cc/bsZs8jKN/Aside-Icon-Amelia.png", 
         totalName: { zh: "王子艾琳娜", ja: "王子エレナ", en: "White Knight Elena" }, 
@@ -474,6 +499,31 @@ const ASIDE_DATA = {
                 desc: { zh: "使敵人對所有友軍造成的傷害量減少。", ja: "味方全員の敵からの被ダメージ量を減少させる。", en: "Reduces the Incoming Damage of all allies." }, 
                 effects: { zh: ["受到的傷害量減少:7.5%"], ja: ["被ダメージ量減少: 7.5%"], en: ["Incoming DMG Reduction: 7.5%"] }, 
                 globalEffects: { zh: ["全體物理攻擊力 3%", "全體物理防禦力 3%"], ja: ["全体物理攻撃力 3%", "全体物理防御力 3%"], en: ["All Physical ATK 3%", "All Physical DEF 3%"] } 
+            }
+        }
+    },
+    "Sylla": { 
+        asideIcon: "", 
+        totalName: { zh: "回憶中的魔靈", ja: "思い出の中の精霊たち", en: "Elemental Memories" }, 
+        stars: {
+            1: { 
+                icon: "", 
+                name: { zh: "", ja: "", en: "" }, 
+                desc: { zh: "", ja: "", en: "" }, 
+                effects: { zh: [""], ja: [""], en: [""] } 
+            },
+            2: { 
+                icon: "", 
+                name: { zh: "", ja: "", en: "" }, 
+                desc: { zh: "", ja: "", en: "" }, 
+                effects: { zh: [""], ja: [""], en: [""] } 
+            },
+            3: { 
+                icon: "g", 
+                name: { zh: "", ja: "", en: "" }, 
+                desc: { zh: "", ja: "", en: "" }, 
+                effects: { zh: [""], ja: [""], en: [""] }, 
+                globalEffects: { zh: [""], ja: [""], en: [""] } 
             }
         }
     },
