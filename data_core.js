@@ -301,6 +301,60 @@ const CRAYON_PATH_CONFIG = {
         "V1": { layer1: ["攻擊", "防禦"], layer2: ["攻擊", "防禦", "血量"], layer3: ["攻擊", "血量", "爆擊", "爆抗"] }
     }
 };
+
+const PATH_IMAGES = {
+    "幽靈": {
+        "V1": { 1: "https://i.postimg.cc/nMb6P1wY/PHANTOM-V1-L1.png", 2: "https://i.postimg.cc/dDPzx9S6/PHANTOM-V1-L2.png", 3: "https://i.postimg.cc/vDFpNvSt/PHANTOM-V1-L3.png" },
+        "V2": { 1: "https://i.postimg.cc/PNsBRMF2/PHANTOM-V2-L1.png", 2: "https://i.postimg.cc/z3Z9ckPP/PHANTOM-V2-L2.png", 3: "https://i.postimg.cc/V5Q3VFHZ/PHANTOM-V2-L3.png" },
+        "V3": { 1: "https://i.postimg.cc/pybg6B1S/PHANTOM-V3-L1.png", 2: "https://i.postimg.cc/23RPKxXK/PHANTOM-V3-L2.png", 3: "https://i.postimg.cc/qBhqWM5V/PHANTOM-V3-L3.png" },
+        "V4": { 1: "https://i.postimg.cc/FFdzwsBm/PHANTOM-V4-L1.png", 2: "https://i.postimg.cc/WpFzxbHc/PHANTOM-V4-L2.png", 3: "https://i.postimg.cc/J7D0S428/PHANTOM-V4-L3.png" }
+    },
+    "???": {
+        "V1": { 1: "https://i.postimg.cc/L5LH55cN/UNKNOWN-V1-L1.png", 2: "https://i.postimg.cc/vTfQTTJ0/UNKNOWN-V1-L2.png", 3: "https://i.postimg.cc/ZnpTnnGj/UNKNOWN-V1-L3.png" }
+    },
+    "妖精": {
+        "V1": { 1: "https://i.postimg.cc/VNvmMKyN/SPRITE-V1-L1.png", 2: "https://i.postimg.cc/43ystWCx/SPRITE-V1-L2.png", 3: "https://i.postimg.cc/fbyDX84T/SPRITE-V1-L3.png" },
+        "V2": { 1: "https://i.postimg.cc/Jh0MJpwn/SPRITE-V2-L1.png", 2: "https://i.postimg.cc/s2xsSTFW/SPRITE-V2-L2.png", 3: "https://i.postimg.cc/TP1fmt85/SPRITE-V2-L3.png" },
+        "V3": { 1: "https://i.postimg.cc/k5Gq8Tr8/SPRITE-V3-L1.png", 2: "https://i.postimg.cc/xd8nH6rM/SPRITE-V3-L2.png", 3: "https://i.postimg.cc/yNxs9Lqm/SPRITE-V3-L3.png" },
+        "V4": { 1: "https://i.postimg.cc/zfQ5kT5y/SPRITE-V4-L1.png", 2: "https://i.postimg.cc/W4yj70jD/SPRITE-V4-L2.png", 3: "https://i.postimg.cc/d0fv9GvT/SPRITE-V4-L3.png" },
+        "V5": { 1: "https://i.postimg.cc/XvP3g935/SPRITE-V5-L1.png", 2: "https://i.postimg.cc/8CYDbLDW/SPRITE-V5-L2.png", 3: "https://i.postimg.cc/XvP3g93d/SPRITE-V5-L3.png" }
+    },
+    "魔靈": {
+        "V1": { 1: "https://i.postimg.cc/t4CjQB4m/ELEMENTAL-V1-L1.png", 2: "https://i.postimg.cc/NjfcqdjC/ELEMENTAL-V1-L2.png", 3: "https://i.postimg.cc/135Qhv3C/ELEMENTAL-V1-L3.png" },
+        "V2": { 1: "https://i.postimg.cc/mg2sfmgn/ELEMENTAL-V2-L1.png", 2: "https://i.postimg.cc/g2SPY3xg/ELEMENTAL-V2-L2.png", 3: "https://i.postimg.cc/pLGt2Kmq/ELEMENTAL-V2-L3.png" },
+        "V3": { 1: "https://i.postimg.cc/7ZsyxS5R/ELEMENTAL-V3-L1.png", 2: "https://i.postimg.cc/7ZsyxS5j/ELEMENTAL-V3-L2.png", 3: "https://i.postimg.cc/vZqdQ51w/ELEMENTAL-V3-L3.png" },
+        "V4": { 1: "https://i.postimg.cc/13CZ9Dgh/ELEMENTAL-V4-L1.png", 2: "https://i.postimg.cc/dVHKqG7K/ELEMENTAL-V4-L2.png", 3: "https://i.postimg.cc/zGt1JTLr/ELEMENTAL-V4-L3.png" },
+        "V5": { 1: "https://i.postimg.cc/sg6RV5Bs/ELEMENTAL-V5-L1.png", 2: "https://i.postimg.cc/3xSHK2yK/ELEMENTAL-V5-L2.png", 3: "https://i.postimg.cc/P53kt1LX/ELEMENTAL-V5-L3.png" }
+    },
+    "魔女": {
+        "V1": { 1: "https://i.postimg.cc/bYxcZ7G2/WITCH-V1-L1.png", 2: "https://i.postimg.cc/ZY8tWG9v/WITCH-V1-L2.png", 3: "https://i.postimg.cc/VsqQJxSt/WITCH-V1-L3.png" },
+        "V2": { 1: "https://i.postimg.cc/VsqQJxSC/WITCH-V2-L1.png", 2: "https://i.postimg.cc/RC75Wk3f/WITCH-V2-L2.png", 3: "https://i.postimg.cc/qBsVNPt8/WITCH-V2-L3.png" },
+        "V3": { 1: "https://i.postimg.cc/h4LWXkJV/WITCH-V3-L1.png", 2: "https://i.postimg.cc/dQ2Phb7r/WITCH-V3-L2.png", 3: "https://i.postimg.cc/ry1XDBdg/WITCH-V3-L3.png" },
+        "V4": { 1: "https://i.postimg.cc/NG6qK3yx/WITCH-V4-L1.png", 2: "https://i.postimg.cc/HWwDrqJ2/WITCH-V4-L2.png", 3: "https://i.postimg.cc/T2VMKzyC/WITCH-V4-L3.png" },
+        "V5": { 1: "https://i.postimg.cc/sfYdMkB0/WITCH-V5-L1.png", 2: "https://i.postimg.cc/SQ6FnBX5/WITCH-V5-L2.png", 3: "https://i.postimg.cc/FFy5YMfw/WITCH-V5-L3.png" }
+    },
+    "精靈": {
+        "V1": { 1: "https://i.postimg.cc/CMNrTSnK/ELF-V1-L1.png", 2: "https://i.postimg.cc/CMNrTSnM/ELF-V1-L2.png", 3: "https://i.postimg.cc/FFZC5Nks/ELF-V1-L3.png" },
+        "V2": { 1: "https://i.postimg.cc/h4rZWcQj/ELF-V2-L1.png", 2: "https://i.postimg.cc/J4z6RvjW/ELF-V2-L2.png", 3: "https://i.postimg.cc/Pr53d91H/ELF-V2-L3.png" },
+        "V3": { 1: "https://i.postimg.cc/5N27fT8f/ELF-V3-L1.png", 2: "https://i.postimg.cc/nchRngqV/ELF-V3-L2.png", 3: "https://i.postimg.cc/jdSgRmyx/ELF-V3-L3.png" },
+        "V4": { 1: "https://i.postimg.cc/28ScCMn5/ELF-V4-L1.png", 2: "https://i.postimg.cc/dtVHJpG1/ELF-V4-L2.png", 3: "https://i.postimg.cc/Ghm7bVv9/ELF-V4-L3.png" },
+        "V5": { 1: "https://i.postimg.cc/7YZsqdSf/ELF-V5-L1.png", 2: "https://i.postimg.cc/kXg17zW2/ELF-V5-L2.png", 3: "https://i.postimg.cc/rFwnq35r/ELF-V5-L3.png" }
+    },
+    "獸人": {
+        "V1": { 1: "https://i.postimg.cc/nrPvFRtL/WEREBEAST-V1-L1.png", 2: "https://i.postimg.cc/j2FzxgrL/WEREBEAST-V1-L2.png", 3: "https://i.postimg.cc/hv59Dyqv/WEREBEAST-V1-L3.png" },
+        "V2": { 1: "https://i.postimg.cc/NFz1sJwM/WEREBEAST-V2-L1.png", 2: "https://i.postimg.cc/qq58Jbdn/WEREBEAST-V2-L2.png", 3: "https://i.postimg.cc/nrPvFRtB/WEREBEAST-V2-L3.png" },
+        "V3": { 1: "https://i.postimg.cc/PJRmX3km/WEREBEAST-V3-L1.png", 2: "https://i.postimg.cc/j2Fzxgry/WEREBEAST-V3-L2.png", 3: "https://i.postimg.cc/MHFy6P8s/WEREBEAST-V3-L3.png" },
+        "V4": { 1: "https://i.postimg.cc/v8q7tBxp/WEREBEAST-V4-L1.png", 2: "https://i.postimg.cc/BZY5B6PR/WEREBEAST-V4-L2.png", 3: "https://i.postimg.cc/pVGQJTnt/WEREBEAST-V4-L3.png" },
+        "V5": { 1: "https://i.postimg.cc/c197BH8S/WEREBEAST-V5-L1.png", 2: "https://i.postimg.cc/QN4gJtWX/WEREBEAST-V5-L2.png", 3: "https://i.postimg.cc/L4Ck3XZ4/WEREBEAST-V5-L3.png" }
+    },
+    "龍族": {
+        "V1": { 1: "https://i.postimg.cc/5tSLYNVY/DRAGON-V1-L1.png", 2: "https://i.postimg.cc/W4wgFbvd/DRAGON-V1-L2.png", 3: "https://i.postimg.cc/Ls3LY6pq/DRAGON-V1-L3.png" },
+        "V2": { 1: "https://i.postimg.cc/cJBwg4St/DRAGON-V2-L1.png", 2: "https://i.postimg.cc/SsQ8WFSN/DRAGON-V2-L2.png", 3: "https://i.postimg.cc/RFCfc5SF/DRAGON-V2-L3.png" },
+        "V3": { 1: "https://i.postimg.cc/gJcRvFzc/DRAGON-V3-L1.png", 2: "https://i.postimg.cc/HxW5QDYn/DRAGON-V3-L2.png", 3: "https://i.postimg.cc/k4M8x3JR/DRAGON-V3-L3.png" },
+        "V4": { 1: "https://i.postimg.cc/9MXTG5mq/DRAGON-V4-L1.png", 2: "https://i.postimg.cc/PxfZmsXD/DRAGON-V4-L2.png", 3: "https://i.postimg.cc/bJYbQcyb/DRAGON-V4-L3.png" }
+    }
+};
+
 const CV_MAP = {
     "洛涅": "田向結月", "薇薇": "新井里美", "艾爾芬": "木野日菜", "x乂錫安乂x": "上坂すみれ", "伊弗利特": "安堂ななこ", "伊德": "内田真礼", "佩佩": "上田瞳", "佩斯塔": "仁見紗綾",
     "修帕": "大空直美", "傑德": "行成とあ", "優米": "高野麻里佳", "劉美美": "兼田めぐみ", "加薇雅": "大谷衣里奈", "卡洛特": "牧野由依", "卡蓮": "咲谷怜奈", "喬菲": "漆山ゆうき",
