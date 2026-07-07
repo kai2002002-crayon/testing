@@ -19,7 +19,7 @@ const ASIDE_DATA = {
                 effects: { zh: [""], ja: [""], en: [""] } 
             },
             3: { 
-                icon: "g", 
+                icon: "", 
                 name: { zh: "", ja: "", en: "" }, 
                 desc: { zh: "", ja: "", en: "" }, 
                 effects: { zh: [""], ja: [""], en: [""] }, 
