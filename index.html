@@ -820,7 +820,7 @@
             if (event) event.stopPropagation();
             
             if (!PATH_IMAGES || !PATH_IMAGES[race] || !PATH_IMAGES[race][version]) {
-            alert("目前尚無此版本的路徑圖資料！");
+            alert("目前尚無此版本的著色板資料！");
             return;
             }
             const url = PATH_IMAGES[race][version][layer];
@@ -1480,7 +1480,7 @@
                                 layerBox.innerHTML = `
                                 <div class="flex items-center gap-1.5 mb-1">
                                 <span class="text-[10px] font-bold opacity-70 whitespace-nowrap">${badgeText}</span>
-                                <div onclick="showPathImage('${char.race}', '${char.pathVersion}', ${l}, event)" class="path-btn cursor-pointer hover:scale-125 transition-transform flex items-center justify-center shrink-0 w-5 h-5 group" title="查看路徑圖">
+                                <div onclick="showPathImage('${char.race}', '${char.pathVersion}', ${l}, event)" class="path-btn cursor-pointer hover:scale-125 transition-transform flex items-center justify-center shrink-0 w-5 h-5 group" title="查看著色板">
                                 <div class="sprite-base sprite-common sprite-Album_Icon_Info shrink-0 scale-[0.35] origin-center opacity-60 group-hover:opacity-100 drop-shadow-sm"></div>
                                 </div>
                                 </div>
