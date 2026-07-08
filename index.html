@@ -1449,14 +1449,13 @@
                                 layerBox.className = `${bgStyle} p-2 rounded-xl border flex-col justify-between backdrop-blur-sm`;
                                 layerBox.style.flex = flexWeight; 
                                 
-                                // 🌟 【修改】在這裡加入彈出路徑圖的 Info Icon
                                 layerBox.innerHTML = `
-                                    <div class="flex items-center gap-1.5 mb-1">
-                                        <span class="text-[10px] font-bold opacity-70 whitespace-nowrap">${badgeText}</span>
-                                        <div onclick="showPathImage('${char.race}', '${char.pathVersion}', ${l})" class="cursor-pointer hover:scale-125 transition-transform flex items-center justify-center shrink-0 w-3 h-3 group" title="查看路徑圖">
-                                            <div class="sprite-base sprite-common sprite-Album_Icon_Info scale-[0.35] origin-center opacity-60 group-hover:opacity-100 drop-shadow-sm"></div>
-                                        </div>
-                                    </div>
+                                <div class="flex items-center gap-1.5 mb-1">
+                                <span class="text-[10px] font-bold opacity-70 whitespace-nowrap">${badgeText}</span>
+                                <div onclick="showPathImage('${char.race}', '${char.pathVersion}', ${l})" class="cursor-pointer hover:scale-125 transition-transform flex items-center justify-center shrink-0 w-5 h-5 group" title="查看路徑圖">
+                                <div class="sprite-base sprite-common sprite-Album_Icon_Info shrink-0 scale-[0.35] origin-center opacity-60 group-hover:opacity-100 drop-shadow-sm"></div>
+                                </div>
+                                </div>
                                 `;
 
                                 const btnGroup = document.createElement('div'); 
