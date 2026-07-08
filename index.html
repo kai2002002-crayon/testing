@@ -564,7 +564,11 @@
             <div class="relative bg-[#fcf8f2] dark:bg-gray-800 rounded-xl p-1.5 shadow-[0_10px_40px_rgba(0,0,0,0.3)] border-2 border-amber-300 dark:border-gray-600 pointer-events-auto">
                 <button class="absolute -top-3 -right-3 bg-red-500 hover:bg-red-600 transition-colors text-white rounded-full w-6 h-6 font-bold text-xs border-2 border-white shadow-md flex items-center justify-center z-50" onclick="closePathImage()">X</button>
                 <div class="overflow-hidden rounded-lg bg-white dark:bg-gray-900 flex items-center justify-center min-w-[100px] min-h-[100px]">
-                    <img id="pathImageEl" src="" class="max-w-[180px] sm:max-w-[220px] max-h-[50vh] object-contain hidden" onload="this.classList.remove('hidden'); document.getElementById('pathImageLoading').classList.add('hidden');">
+                    <img id="pathImageEl" 
+     src="" 
+     class="max-w-[180px] sm:max-w-[220px] max-h-[50vh] object-contain hidden" 
+     onload="this.classList.remove('hidden'); document.getElementById('pathImageLoading').classList.add('hidden');"
+     onerror="this.onerror=null; this.src='https://i.postimg.cc/qvjNxZzg/golden-crayon.png'; this.classList.remove('hidden'); document.getElementById('pathImageLoading').classList.add('hidden');">
                     <div id="pathImageLoading" class="absolute inset-0 flex flex-col items-center justify-center text-amber-600 dark:text-amber-400 font-bold gap-1 text-[10px]">
                         <img src="https://i.postimg.cc/qvjNxZzg/golden-crayon.png" class="animate-bounce w-5 h-5">
                         <span>載入中...</span>
@@ -1477,18 +1481,35 @@
                                 layerBox.className = `${bgStyle} p-2 rounded-xl border flex-col justify-between backdrop-blur-sm`;
                                 layerBox.style.flex = flexWeight; 
                                 
-                                // 在產生 layerBox.innerHTML 的地方，改成這樣：
-            layerBox.innerHTML = `
-            <div class="flex items-center gap-1.5 mb-1">
-            <span class="text-[10px] font-bold opacity-70 whitespace-nowrap">${badgeText}</span>
-            <div onclick="showPathImage('${char.race}', '${char.pathVersion}', ${l}, event)" 
+                                let pathBtnHTML = '';
+
+if (char.race && char.pathVersion) {
+    // 有資料時顯示正常按鈕
+    pathBtnHTML = `
+        <div onclick="showPathImage('${char.race}', '${char.pathVersion}', ${l}, event)" 
              class="path-btn cursor-pointer hover:scale-125 transition-transform flex items-center justify-center shrink-0 w-5 h-5 group" 
              data-lang-key="path_image_hint"
              title="${t('path_image_hint')}">
             <div class="sprite-base sprite-common sprite-Album_Icon_Info shrink-0 scale-[0.35] origin-center opacity-60 group-hover:opacity-100 drop-shadow-sm"></div>
-            </div>
-            </div>
-            `;
+        </div>
+    `;
+} else {
+    // 缺乏資料時顯示反灰不可點擊的按鈕
+    pathBtnHTML = `
+        <div class="path-btn flex items-center justify-center shrink-0 w-5 h-5 cursor-not-allowed opacity-30" 
+             data-lang-key="path_unknown"
+             title="${t('path_unknown') || '未知路徑'}">
+            <div class="sprite-base sprite-common sprite-Album_Icon_Info shrink-0 scale-[0.35] origin-center drop-shadow-sm"></div>
+        </div>
+    `;
+}
+
+layerBox.innerHTML = `
+    <div class="flex items-center gap-1.5 mb-1">
+        <span class="text-[10px] font-bold opacity-70 whitespace-nowrap">${badgeText}</span>
+        ${pathBtnHTML}
+    </div>
+`;
             
                                 const btnGroup = document.createElement('div'); 
                                 btnGroup.className = `grid ${gridCols} gap-1.5 h-full content-start`;
