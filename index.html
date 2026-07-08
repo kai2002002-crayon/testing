@@ -4,7 +4,6 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <meta name="referrer" content="no-referrer-when-downgrade">
-        
         <title>嘟嘟臉金蠟筆記事本</title>
         <meta name="description" content="《Trickcal: Chibi Go》嘟嘟臉金蠟筆記事本！提供最新的《嘟嘟臉惡作劇》(Trickcal Revive / トリカル) 角色圖鑑、金蠟筆與技能資料。The best Trickcal Revive Crayon Planner & Character Database. トリカル 最強キャラ・クレヨン攻略データベース。">
         <link rel="icon" href="https://i.postimg.cc/mkfSTq5k/Favicon.png" type="image/png">
@@ -317,15 +316,13 @@
         </style>
     </head>
     <body class="pt-16 sm:pt-20 p-3 sm:p-6 md:p-8 text-gray-800 dark:text-gray-100">
-        
         <div id="fixedTopBar" class="fixed top-0 left-0 w-full h-12 sm:h-14 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 z-[2000] flex justify-between items-center px-3 sm:px-6 shadow-sm">
             <button onclick="toggleSidebar()" class="flex items-center justify-center p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>
             </button>
-            
-                        <div class="flex items-center gap-3 sm:gap-4 pr-1">
+            <div class="flex items-center gap-3 sm:gap-4 pr-1">
                 <div class="relative flex items-center justify-center px-1 h-8 group cursor-pointer hover:opacity-70 transition">
                     <svg class="w-4 h-4 text-amber-600 dark:text-amber-400 mr-1" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
@@ -337,12 +334,10 @@
                         <option value="en">EN</option>
                     </select>
                 </div>
-                
                 <button onclick="toggleDarkMode()" class="h-8 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:opacity-70 transition shrink-0 text-sm sm:text-base">
-                    <span id="themeIconLight" class="block dark:hidden">🌙</span>
-                    <span id="themeIconDark" class="hidden dark:block">☀️</span>
+                <span id="themeIconLight" class="block dark:hidden">🌙</span>
+                <span id="themeIconDark" class="hidden dark:block">☀️</span>
                 </button>
-                
                 <div id="authPanel" class="flex flex-row items-center justify-end gap-2 h-8">
                     <div id="userStatus" class="hidden sm:flex flex-row items-center text-left text-[11px] text-gray-600 dark:text-gray-300">
                         <span class="font-bold text-amber-600 dark:text-amber-400 whitespace-nowrap" data-lang-key="auth_offline_title">🟡 未連線</span>
@@ -361,13 +356,14 @@
                 </div>
             </div>
         </div>
-
         <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-[2999] hidden backdrop-blur-sm transition-opacity opacity-0" onclick="toggleSidebar()"></div>
         <div id="sidebarMenu" class="fixed top-0 left-0 h-full w-[25vw] min-w-[240px] max-w-[320px] bg-[#fcf8f2] dark:bg-gray-900 z-[3000] shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out border-r border-amber-200 dark:border-gray-700 flex flex-col pt-14 sm:pt-16">
             <div class="px-5 pb-4 mb-2 border-b border-amber-200 dark:border-gray-700 flex justify-between items-center">
                 <span class="font-bold text-lg text-amber-900 dark:text-amber-400">系統選單</span>
                 <button onclick="toggleSidebar()" class="text-gray-400 hover:text-red-500 transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
                 </button>
             </div>
             <div class="flex flex-col gap-3 px-4">
@@ -377,14 +373,12 @@
                     </div>
                     <span class="font-bold text-sm text-amber-900 dark:text-gray-200" data-lang-key="menu_gacha">前往招募模擬器</span>
                 </a>
-                
                 <a href="apostle_viewer.html" target="_blank" class="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-gray-800 border border-amber-200 dark:border-gray-600 shadow-sm hover:bg-amber-50 dark:hover:bg-gray-700 transition group">
                     <div class="w-10 h-10 flex items-center justify-center bg-amber-100 dark:bg-gray-700 rounded-lg shrink-0 overflow-hidden">
                         <div class="sprite-base sprite-common sprite-Album_Icon_Skin shrink-0 scale-[0.6] group-hover:scale-[0.7] drop-shadow-sm transition-transform origin-center"></div>
                     </div>
                     <span class="font-bold text-sm text-amber-900 dark:text-gray-200" data-lang-key="menu_viewer">前往動態展示器</span>
                 </a>
-
                 <button onclick="toggleAnimation()" class="hidden md:flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-gray-800 border border-amber-200 dark:border-gray-600 shadow-sm hover:bg-amber-50 dark:hover:bg-gray-700 transition group text-left w-full">
                     <div class="w-10 h-10 flex items-center justify-center bg-amber-100 dark:bg-gray-700 rounded-lg shrink-0 overflow-hidden">
                         <div id="rimAnimIcon" class="sprite-base sprite-common sprite-minirim shrink-0 scale-[0.5] origin-center transition-all duration-200 grayscale opacity-50"></div>
@@ -393,7 +387,6 @@
                 </button>
             </div>
         </div>
-
         <div id="runnerArea" class="hidden md:block fixed top-[-1px] left-0 w-full h-[220px] z-[100] pointer-events-none overflow-visible">
             <div id="runnerTrack" class="absolute top-0 w-[250px] h-full pointer-events-none z-40" style="right: 0px; transform: translateX(0); opacity: 0;">
                 <div style="width: 100%; height: 100%; transform: scale(0.75); transform-origin: center;">
@@ -410,7 +403,6 @@
             <img src="https://i.postimg.cc/qvjNxZzg/golden-crayon.png" class="animate-bounce h-10 w-auto object-contain drop-shadow-md" alt="Loading...">
         </div>
         <div class="max-w-7xl mx-auto">
-            
             <header class="bg-gradient-to-r from-amber-100/90 via-yellow-100/90 to-orange-100/90 dark:from-gray-800/90 dark:via-gray-700/90 dark:to-gray-800/90 rounded-2xl p-4 sm:p-6 shadow-md mb-6 border-4 border-amber-400 dark:border-gray-600 flex flex-col transition-colors backdrop-blur-sm relative z-10">
                 <div class="w-full flex flex-row justify-between items-start mb-3 gap-2 relative z-[60] h-10 sm:h-11">
                     <div class="flex items-center gap-1.5 text-[10px] sm:text-xs font-bold text-amber-900/70 dark:text-gray-300 bg-white/60 dark:bg-gray-800/60 px-2.5 py-1 rounded-md backdrop-blur-sm border border-amber-200/80 dark:border-gray-600/80 shadow-sm shrink-0">
@@ -566,20 +558,33 @@
             <button class="bg-black text-white w-10 h-10 rounded-full shadow-xl flex items-center justify-center font-bold text-sm">X</button>
         </div>
         <div id="rim-live-container"></div>
-        
-        <div id="pathImageModal" class="fixed inset-0 z-[4000] bg-black/80 hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300 backdrop-blur-sm" onclick="closePathImage()">
-            <div class="relative bg-[#fcf8f2] dark:bg-gray-800 rounded-2xl p-2 max-w-[95vw] max-h-[95vh] shadow-2xl border-4 border-amber-300 dark:border-gray-600" onclick="event.stopPropagation()">
-                <button class="absolute -top-4 -right-4 bg-red-500 hover:bg-red-600 transition-colors text-white rounded-full w-8 h-8 font-bold border-2 border-white shadow-md flex items-center justify-center z-50" onclick="closePathImage()">X</button>
-                <div class="overflow-hidden rounded-xl bg-white dark:bg-gray-900 flex items-center justify-center min-w-[200px] min-h-[200px]">
-                    <img id="pathImageEl" src="" class="max-w-full max-h-[85vh] object-contain hidden" onload="this.classList.remove('hidden'); document.getElementById('pathImageLoading').classList.add('hidden');">
-                    <div id="pathImageLoading" class="absolute inset-0 flex flex-col items-center justify-center text-amber-600 dark:text-amber-400 font-bold gap-2">
-                        <img src="https://i.postimg.cc/qvjNxZzg/golden-crayon.png" class="animate-bounce w-8 h-8">
-                        <span>圖片載入中...</span>
+        <!-- 🌟 路徑圖彈出視窗 (Tooltip 懸浮版) -->
+        <div id="pathImageModal" class="fixed z-[4000] hidden opacity-0 transition-opacity duration-200 pointer-events-none" style="top: 0; left: 0;">
+            <!-- 加上陰影與邊框，確保在任何背景下都很清晰 -->
+            <div class="relative bg-[#fcf8f2] dark:bg-gray-800 rounded-xl p-1.5 shadow-[0_10px_40px_rgba(0,0,0,0.3)] border-2 border-amber-300 dark:border-gray-600 pointer-events-auto">
+                <button class="absolute -top-3 -right-3 bg-red-500 hover:bg-red-600 transition-colors text-white rounded-full w-6 h-6 font-bold text-xs border-2 border-white shadow-md flex items-center justify-center z-50" onclick="closePathImage()">X</button>
+                <div class="overflow-hidden rounded-lg bg-white dark:bg-gray-900 flex items-center justify-center min-w-[100px] min-h-[100px]">
+                    <!-- 尺寸減小，最大寬度約 220px -->
+                    <img id="pathImageEl" src="" class="max-w-[180px] sm:max-w-[220px] max-h-[50vh] object-contain hidden" onload="this.classList.remove('hidden'); document.getElementById('pathImageLoading').classList.add('hidden');">
+                    <div id="pathImageLoading" class="absolute inset-0 flex flex-col items-center justify-center text-amber-600 dark:text-amber-400 font-bold gap-1 text-[10px]">
+                        <img src="https://i.postimg.cc/qvjNxZzg/golden-crayon.png" class="animate-bounce w-5 h-5">
+                        <span>載入中...</span>
                     </div>
                 </div>
             </div>
         </div>
-
+        class="fixed inset-0 z-[4000] bg-black/80 hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300 backdrop-blur-sm" onclick="closePathImage()">
+        <div class="relative bg-[#fcf8f2] dark:bg-gray-800 rounded-2xl p-2 max-w-[95vw] max-h-[95vh] shadow-2xl border-4 border-amber-300 dark:border-gray-600" onclick="event.stopPropagation()">
+            <button class="absolute -top-4 -right-4 bg-red-500 hover:bg-red-600 transition-colors text-white rounded-full w-8 h-8 font-bold border-2 border-white shadow-md flex items-center justify-center z-50" onclick="closePathImage()">X</button>
+            <div class="overflow-hidden rounded-xl bg-white dark:bg-gray-900 flex items-center justify-center min-w-[200px] min-h-[200px]">
+                <img id="pathImageEl" src="" class="max-w-full max-h-[85vh] object-contain hidden" onload="this.classList.remove('hidden'); document.getElementById('pathImageLoading').classList.add('hidden');">
+                <div id="pathImageLoading" class="absolute inset-0 flex flex-col items-center justify-center text-amber-600 dark:text-amber-400 font-bold gap-2">
+                    <img src="https://i.postimg.cc/qvjNxZzg/golden-crayon.png" class="animate-bounce w-8 h-8">
+                    <span>圖片載入中...</span>
+                </div>
+            </div>
+        </div>
+        </div>
         <script>
             // ------------------------------------------------------------
             // 全域變數與常數宣告
@@ -771,7 +776,7 @@
                 const langTextMap = { "zh-TW": "繁中", "ja": "日文", "en": "EN" };
                 const langTextEl = document.getElementById('currentLangText');
                 if (langTextEl) langTextEl.innerText = langTextMap[lang] || "繁中";
-
+            
                 const safeLang = (typeof LANG_DICT !== 'undefined' && LANG_DICT[lang]) ? lang : 'zh-TW';
                 const dict = typeof LANG_DICT !== 'undefined' ? LANG_DICT[safeLang] : {};
                 
@@ -821,40 +826,76 @@
             // ------------------------------------------------------------
             // 顯示與關閉路徑圖的函數
             // ------------------------------------------------------------
-            function showPathImage(race, version, layer) {
-                if (!PATH_IMAGES || !PATH_IMAGES[race] || !PATH_IMAGES[race][version]) {
-                    alert("目前尚無此版本的路徑圖資料！");
-                    return;
-                }
-                const url = PATH_IMAGES[race][version][layer];
-                if (!url) {
-                    alert("找不到該層數的圖片！");
-                    return;
-                }
-                
-                const modal = document.getElementById('pathImageModal');
-                const img = document.getElementById('pathImageEl');
-                const loader = document.getElementById('pathImageLoading');
-                
-                img.classList.add('hidden');
-                loader.classList.remove('hidden');
-                img.src = url;
-                
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-                setTimeout(() => modal.classList.remove('opacity-0'), 10);
+            // ------------------------------------------------------------
+            // 顯示與關閉路徑圖的函數 (懸浮 Tooltip 版)
+            // ------------------------------------------------------------
+            function showPathImage(race, version, layer, event) {
+            if (event) event.stopPropagation();
+            
+            if (!PATH_IMAGES || !PATH_IMAGES[race] || !PATH_IMAGES[race][version]) {
+            alert("目前尚無此版本的路徑圖資料！");
+            return;
             }
-
+            const url = PATH_IMAGES[race][version][layer];
+            if (!url) {
+            alert("找不到該層數的圖片！");
+            return;
+            }
+            
+            const modal = document.getElementById('pathImageModal');
+            const img = document.getElementById('pathImageEl');
+            const loader = document.getElementById('pathImageLoading');
+            
+            img.classList.add('hidden');
+            loader.classList.remove('hidden');
+            img.src = url;
+            
+            // 智慧定位邏輯
+            if (event) {
+            const rect = event.currentTarget.getBoundingClientRect();
+            let leftPos = rect.right + 15; // 預設顯示在按鈕右側
+            let topPos = rect.top;
+            
+            // 預設視窗向上生長，底部切齊按鈕
+            modal.style.transform = `translateY(calc(-100% + 20px))`;
+            
+            // 如果右側空間不足 (預估寬度 240px)，改顯示在左側
+            if (leftPos + 240 > window.innerWidth) {
+            leftPos = Math.max(10, rect.left - 240 - 15);
+            }
+            
+            // 如果上方空間不足，改為向下展開
+            if (rect.top - 200 < 0) {
+            topPos = rect.bottom + 10;
+            modal.style.transform = `translateY(0)`; 
+            }
+            
+            modal.style.left = `${leftPos}px`;
+            modal.style.top = `${topPos}px`;
+            }
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+            }
+            
             function closePathImage() {
-                const modal = document.getElementById('pathImageModal');
-                modal.classList.add('opacity-0');
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                    modal.classList.remove('flex');
-                    document.getElementById('pathImageEl').src = "";
-                }, 300);
+            const modal = document.getElementById('pathImageModal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+            modal.classList.add('hidden');
+            document.getElementById('pathImageEl').src = "";
+            }, 200);
             }
-
+            
+            // 新增：點擊畫面空白處自動關閉懸浮窗
+            document.addEventListener('click', function(e) {
+            const modal = document.getElementById('pathImageModal');
+            // 判斷如果點擊的位置不是彈出窗內部，也不是觸發按鈕本身，就自動關閉
+            if (modal && !modal.classList.contains('hidden') && !modal.contains(e.target) && !e.target.closest('.path-btn')) {
+            closePathImage();
+            }
+            });
+            
             // ------------------------------------------------------------
             // 面板與矩陣渲染邏輯
             // ------------------------------------------------------------
@@ -1452,12 +1493,12 @@
                                 layerBox.innerHTML = `
                                 <div class="flex items-center gap-1.5 mb-1">
                                 <span class="text-[10px] font-bold opacity-70 whitespace-nowrap">${badgeText}</span>
-                                <div onclick="showPathImage('${char.race}', '${char.pathVersion}', ${l})" class="cursor-pointer hover:scale-125 transition-transform flex items-center justify-center shrink-0 w-5 h-5 group" title="查看路徑圖">
+                                <div onclick="showPathImage('${char.race}', '${char.pathVersion}', ${l}, event)" class="path-btn cursor-pointer hover:scale-125 transition-transform flex items-center justify-center shrink-0 w-5 h-5 group" title="查看路徑圖">
                                 <div class="sprite-base sprite-common sprite-Album_Icon_Info shrink-0 scale-[0.35] origin-center opacity-60 group-hover:opacity-100 drop-shadow-sm"></div>
                                 </div>
                                 </div>
                                 `;
-
+            
                                 const btnGroup = document.createElement('div'); 
                                 btnGroup.className = `grid ${gridCols} gap-1.5 h-full content-start`;
                 
@@ -1922,7 +1963,7 @@
                     btn.className = "p-1 flex items-center justify-center transition hover:opacity-70 shrink-0"; 
                 }
             }
-
+            
             
             function spawnCrayonOnTrack() {
                 if (!isAnimationEnabled) return;
