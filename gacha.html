@@ -92,11 +92,20 @@
     </head>
     <body class="p-3 sm:p-6 md:p-8 text-gray-800 dark:text-gray-100">
 
+        <!-- ========================================================== -->
+        <!-- 全螢幕轉蛋動畫舞台 -->
+        <!-- ========================================================== -->
         <div id="gachaStage" class="fixed inset-0 z-[99999] bg-black hidden flex items-center justify-center select-none">
+            <!-- 下層：艾爾芬 (負責接收互動，z-index: 10) -->
             <div id="gachaSpineContainerErpin" class="absolute inset-0 w-full h-full z-10 cursor-pointer"></div>
             
+            <!-- 中層：辦公桌與書本 (滑鼠穿透，z-index: 20) -->
             <div id="gachaSpineContainerDocs" class="absolute inset-0 w-full h-full z-20 pointer-events-none"></div>
+
+            <!-- 上層：大頭特寫 (專屬 Spine 容器，預設隱藏，z-index: 30) -->
+            <div id="gachaSpineContainerCloseup" class="absolute inset-0 w-full h-full z-30 pointer-events-none hidden bg-black/50"></div>
         </div>
+        <!-- ========================================================== -->
         <div class="max-w-4xl mx-auto space-y-6">
             <header class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-2xl p-4 sm:p-6 shadow border-2 border-amber-200/80 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <h1 class="text-2xl sm:text-3xl font-bold text-amber-900 dark:text-amber-400 flex items-center gap-2">
@@ -388,222 +397,92 @@
             }
 
             // ==========================================
-            // 攔截點與真實招募計算處理
+            // 攔截點：先計算招募結果，再決定播什麼動畫！
             // ==========================================
             let pendingGachaTimes = 0; 
+            let pendingGachaResults = [];
+            let has3Star = false;
+            let has2Star = false;
 
             function performGacha(times) {
+                // 1. 先把結果抽出來放進陣列 (不先顯示)
                 pendingGachaTimes = times;
+                pendingGachaResults = [];
+                has3Star = false;
+                has2Star = false;
+                
+                for (let i = 0; i < times; i++) {
+                    let isGuaranteed = (times === 10 && i === 9);
+                    let result = pullOne(isGuaranteed);
+                    pendingGachaResults.push(result);
+                    
+                    // 紀錄這包有沒有高星角色
+                    if (result.char.star === 3) has3Star = true;
+                    if (result.char.star === 2) has2Star = true;
+                }
+                
+                // 2. 啟動動畫
                 startGachaAnimation();
             }
 
-            function executeRealGachaRoll() {
-                let times = pendingGachaTimes;
-                let results = [];
-                for (let i = 0; i < times; i++) {
-                    let isGuaranteed = (times === 10 && i === 9);
-                    results.push(pullOne(isGuaranteed));
-                }
-                renderResultArea(results);
-                addToHistory(results, currentPool.name);
+            // 動畫全數播完後，秀出結果
+            function showRealGachaResults() {
+                renderResultArea(pendingGachaResults);
+                addToHistory(pendingGachaResults, currentPool.name);
                 document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth' });
-            }
-            
-            // ==========================
-            // UI 渲染與動畫
-            // ==========================
-            const SPRITE_CLASS_MAP = {
-                race_龍族: "sprite-Bg_Dragon", race_精靈: "sprite-Bg_Elf", race_妖精: "sprite-Bg_Sprite",
-                race_幽靈: "sprite-Bg_Phantom", race_魔靈: "sprite-Bg_Elemental", race_不明: "sprite-Bg_Unknown",
-                race_獸人: "sprite-Bg_Werebeast", race_魔女: "sprite-Bg_Witch", race_unknown: "sprite-Bg_Unknown"
-            };
-            const CHAR_SPRITE_MAP = {
-                "冷靜": "sprite-char-composed", "憂鬱": "sprite-char-depressed",
-                "天真": "sprite-char-innocence", "狂亂": "sprite-char-madness", "活潑": "sprite-char-vivacious"
-            };
-            
-            function createAvatarDOM(resultObj, index = 0, isHistory = false) {
-                const char = resultObj.char;
-                const isRateUp = resultObj.isRateUp;
-                const is3StarNormal = (char.star === 3 && !isRateUp);
-                
-                const borderColorClass = personalityBorderColors[char.personality] || "border-gray-300";
-                const glowClass = (is3StarNormal && !isHistory) ? (personalityShadows[char.personality] || "shadow-[0_0_15px_rgba(255,255,255,0.8)]") : "shadow-inner";
-                
-                const animClass = isHistory ? "" : (isRateUp ? "animate-pop-exaggerated" : "animate-pop");
-                const animStyle = isHistory ? "" : `animation-delay: ${index * 0.12}s;`;
-                const sizeClass = isHistory ? "w-10 h-10" : "w-16 h-16 sm:w-20 sm:h-20"; 
-                
-                const spineName = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[char.name] ? SPINE_MAP[char.name] : char.name;
-                const charSpriteBase = CHAR_SPRITE_MAP[char.personality] || "sprite-char-innocence";
-                const charSpriteClass = `sprite-${spineName}`;
-                
-                let raceKey = char.race; if (raceKey === "???") raceKey = "unknown";
-                const raceSprite = SPRITE_CLASS_MAP[`race_${raceKey}`] || "sprite-Bg_Unknown";
-                
-                const innerScale = isHistory ? "scale-[0.6]" : "scale-[1.0] sm:scale-[1.2]";
-                const bgScale = isHistory ? "scale-[0.35]" : "scale-[0.6] sm:scale-[0.75]";
-            
-                let avatarHTML = `
-                    <div class="relative shrink-0 ${sizeClass}">
-                        <div class="char-avatar-container ${sizeClass} rounded-lg border-[3px] ${borderColorClass} ${glowClass} bg-[#fcf8f2] dark:bg-gray-800 transition-all overflow-hidden relative flex items-center justify-center">
-                            <div class="absolute inset-0 flex items-center justify-center opacity-85">
-                                <div class="sprite-base sprite-common ${raceSprite} shrink-0 ${bgScale} origin-center"></div>
-                            </div>
-                            <div class="w-full h-full bg-white/20 dark:bg-black/20 backdrop-blur-[1px] absolute inset-0 z-0"></div>
-                            <div class="sprite-base ${charSpriteBase} ${charSpriteClass} shrink-0 ${innerScale} origin-center relative z-10"></div>
-                        </div>
-                        <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 flex gap-[1px] z-20">
-                            ${Array(char.star).fill('<span class="text-xs drop-shadow-md">⭐</span>').join('')}
-                        </div>
-                    </div>
-                `;
-            
-                if (isRateUp) {
-                    return `
-                        <div class="flex flex-col items-center gap-2 ${animClass}" style="${animStyle}">
-                            <div class="rainbow-wrapper p-[3px] rounded-xl transform scale-110">
-                                <div class="rainbow-content bg-white">
-                                    ${avatarHTML}
-                                </div>
-                            </div>
-                            <span class="text-[10px] font-bold text-amber-600 bg-amber-100 px-1 rounded z-10 relative">${char.name}</span>
-                        </div>
-                    `;
-                }
-            
-                return `
-                    <div class="flex flex-col items-center gap-2 pt-[3px] ${animClass}" style="${animStyle}">
-                        ${avatarHTML}
-                        <span class="text-[10px] font-bold text-gray-500 bg-gray-100 dark:bg-gray-800 px-1 rounded z-10 relative">${char.name}</span>
-                    </div>
-                `;
-            }
-            
-            function renderResultArea(results) {
-                const area = document.getElementById('resultArea');
-                area.innerHTML = '';
-                const container = document.createElement('div');
-                
-                const has3Star = results.some(r => r.char.star === 3);
-                if (has3Star) area.classList.add('flash-gold');
-                else area.classList.remove('flash-gold');
-            
-                container.className = results.length === 1 ? 'flex justify-center items-center w-full min-h-[120px]' : 'grid grid-cols-5 gap-4 sm:gap-6 justify-items-center w-full max-w-2xl min-h-[220px]';
-            
-                results.forEach((r, idx) => {
-                    const domWrapper = document.createElement('div');
-                    domWrapper.innerHTML = createAvatarDOM(r, idx, false);
-                    container.appendChild(domWrapper);
-                });
-            
-                area.appendChild(container);
-            }
-            
-            function addToHistory(results, poolName) {
-                const record = {
-                    poolName: poolName,
-                    results: results.map(r => ({ name: r.char.name, star: r.char.star })),
-                    timestamp: new Date().toISOString()
-                };
-                renderSingleHistoryEntry(record); 
-                saveHistoryToCloud(record);
-            }
-            
-            function renderHistory(historyArray) {
-                const historyArea = document.getElementById('historyArea');
-                historyArea.innerHTML = '';
-                historyArray.forEach(record => {
-                    renderSingleHistoryEntry(record);
-                });
-            }
-            
-            function renderSingleHistoryEntry(record) {
-                const historyArea = document.getElementById('historyArea');
-                const logEntry = document.createElement('div');
-                logEntry.className = 'relative p-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col gap-2';
-            
-                const poolBadge = document.createElement('div');
-                poolBadge.className = 'text-[10px] font-bold text-white bg-gray-500 rounded px-1.5 py-0.5 self-start shadow-sm';
-                poolBadge.innerText = record.poolName;
-            
-                const iconRow = document.createElement('div');
-                iconRow.className = 'flex flex-wrap gap-2';
-            
-                record.results.forEach(res => {
-                    const domWrapper = document.createElement('div');
-                    const mockResult = { char: { ...validChars.find(c => c.name === res.name), star: res.star }, isRateUp: false };
-                    domWrapper.innerHTML = createAvatarDOM(mockResult, 0, true);
-                    iconRow.appendChild(domWrapper);
-                });
-            
-                logEntry.appendChild(poolBadge);
-                logEntry.appendChild(iconRow);
-                historyArea.prepend(logEntry);
-            }
-            
-            window.addEventListener('load', () => {
-                initUI();
-            });
-            window.onscroll = function() {
-                const btn = document.getElementById("backToTop");
-                if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-                    btn.style.display = "flex";
-                } else {
-                    btn.style.display = "none";
-                }
-            };
-            
-            function scrollToTop() {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
 
             // ==========================================================
-            // 💡 Spine 視角與對齊配置中心（核心調試點）
+            // 💡 Spine 視角與對齊配置中心
             // ==========================================================
             const SPINE_CONFIG = {
                 viewport: {
-                    // 針對橫屏遊戲設定 16:9 比例，並把數值拉大來「縮小」模型
-                    x: -1500,      // 鏡頭左邊界 (設為 width 的一半，確保中心點 0 在正中央)
-                    y: -100,       // 鏡頭下邊界 (如果桌子還是飄在半空，把這裡改 -50 或 0)
-                    width: 3000,   // 鏡頭寬度 (⭐️ 如果畫面還是太大，就把 3000 改成 3500 或 4000！)
-                    height: 1687   // 鏡頭高度 (維持 16:9 比例，例如 3000 / 16 * 9 = 1687)
+                    // 💡 如果你發現窗戶還是被卡掉，請把 width 和 height 同比例加大 (如 2000, 1125)
+                    // 💡 如果艾爾芬太偏右，把 x 調小 (如 -1000)
+                    // 💡 如果艾爾芬太高(飛在空中)，把 y 往正數調 (如 0 或 100)
+                    x: -900,       
+                    y: -100,       
+                    width: 1800,   
+                    height: 1012   // 16:9 比例 (1800 * 9 / 16)
                 }
             };
-            const GachaState = {
-                INIT: 0, ERPIN_IDLE: 1, DOCUMENTS_DROP: 2, ERPIN_REACTION: 3, SHOW_RESULT: 4
-            };
+
+            const GachaState = { INIT: 0, ERPIN_IDLE: 1, DOCUMENTS_DROP: 2, ERPIN_REACTION: 3, CLOSEUP: 4, SHOW_RESULT: 5 };
             let currentGachaState = GachaState.INIT;
+            
             let gachaPlayerErpin = null;
             let gachaPlayerDocs = null;
+            let gachaPlayerCloseup = null;
 
             function startGachaAnimation() {
                 document.getElementById('gachaStage').classList.remove('hidden');
-                initErpinStage();
+                document.getElementById('gachaSpineContainerErpin').classList.remove('hidden');
+                document.getElementById('gachaSpineContainerDocs').classList.remove('hidden');
+                document.getElementById('gachaSpineContainerCloseup').classList.add('hidden');
+                
+                initSpineStages();
             }
 
-            function initErpinStage() {
+            function initSpineStages() {
                 currentGachaState = GachaState.ERPIN_IDLE;
                 
                 if (gachaPlayerErpin) { gachaPlayerErpin.dispose(); gachaPlayerErpin = null; }
                 if (gachaPlayerDocs) { gachaPlayerDocs.dispose(); gachaPlayerDocs = null; }
+                if (gachaPlayerCloseup) { gachaPlayerCloseup.dispose(); gachaPlayerCloseup = null; }
 
-                // 強制雙模組套用同一個 Viewport 配置，逼迫它們以同一個原點對齊
                 const vp = SPINE_CONFIG.viewport;
 
-                // 下層：載入艾爾芬
+                // 1. 載入艾爾芬
                 gachaPlayerErpin = new spine.SpinePlayer(document.getElementById('gachaSpineContainerErpin'), {
                     skelUrl: `./gacha/Gacha_Hero_Erpin.skel.bytes`, 
                     atlasUrl: `./gacha/Gacha_Hero_Erpin.atlas.txt`,
                     animation: "Idle", 
                     premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
                     viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height },
-                    success: function (player) {
-                        setupCheekDragInteraction(player);
-                    }
+                    success: function (player) { setupCheekDragInteraction(player); }
                 });
 
-                // 上層：載入辦公桌與書本
+                // 2. 載入辦公桌與書本
                 gachaPlayerDocs = new spine.SpinePlayer(document.getElementById('gachaSpineContainerDocs'), {
                     skelUrl: `./gacha/Gacha_Hero_Documents.skel.bytes`,
                     atlasUrl: `./gacha/Gacha_Hero_Documents.atlas.txt`,
@@ -611,22 +490,45 @@
                     premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
                     viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height }
                 });
+                
+                // 3. 預載大頭特寫 Spine (預設隱藏，不設定 viewport 讓它自適應滿版)
+                gachaPlayerCloseup = new spine.SpinePlayer(document.getElementById('gachaSpineContainerCloseup'), {
+                    skelUrl: `./gacha/Gacha_Hero_Closeup.skel.bytes`,
+                    atlasUrl: `./gacha/Gacha_Hero_Closeup.atlas.txt`,
+                    premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
+                    success: function(player) {
+                        console.log("=== 📜 特寫大頭動作清單 ===");
+                        player.skeleton.data.animations.forEach(anim => console.log(`- ${anim.name}`));
+                    }
+                });
             }
 
             function triggerDocumentsDrop() {
                 currentGachaState = GachaState.DOCUMENTS_DROP;
                 
-                let dropAnimName = (pendingGachaTimes === 1) ? "Drop_1" : "Drop_10_1";
-                let dropEndAnimName = (pendingGachaTimes === 1) ? "Drop_1_End" : "Drop_10_1_End";
+                // 🌟 根據星數決定書本顏色！
+                let dropAnimName = "Drop_1";
+                let dropEndAnimName = "Drop_1_End";
+                
+                if (pendingGachaTimes > 1) { // 10連抽
+                    if (has3Star) {
+                        dropAnimName = "Drop_10_3";       // 彩色發光書
+                        dropEndAnimName = "Drop_10_3_End";
+                    } else if (has2Star) {
+                        dropAnimName = "Drop_10_2";       // 金色書
+                        dropEndAnimName = "Drop_10_2_End";
+                    } else {
+                        dropAnimName = "Drop_10_1";       // 一般書
+                        dropEndAnimName = "Drop_10_1_End";
+                    }
+                }
                 
                 if (gachaPlayerDocs) {
                     gachaPlayerDocs.animationState.setAnimation(0, dropAnimName, false);
                     gachaPlayerDocs.animationState.addListener({
                         complete: function(entry) { 
                             if (entry.animation.name === dropAnimName) {
-                                // 書本跌落動畫播完，讓書本維持在掉落後的終點狀態
                                 gachaPlayerDocs.animationState.setAnimation(0, dropEndAnimName, true);
-                                // 同步觸發艾爾芬的反應動畫
                                 triggerErpinReaction();
                             }
                         }
@@ -639,20 +541,49 @@
             function triggerErpinReaction() {
                 currentGachaState = GachaState.ERPIN_REACTION;
                 
-                // 💡 1抽播 End_1，10抽播 End_2
-                let reactionAnimName = (pendingGachaTimes === 1) ? "End_1" : "End_2";
+                // 🌟 根據星數決定艾爾芬的反應！
+                let reactionAnimName = "End_1";
+                if (has3Star) reactionAnimName = "End_3";       // 3星終極驚訝
+                else if (has2Star) reactionAnimName = "End_2";  // 2星驚訝
 
                 if (gachaPlayerErpin) {
                     gachaPlayerErpin.animationState.setAnimation(0, reactionAnimName, false);
                     gachaPlayerErpin.animationState.addListener({
                         complete: function(entry) {
                             if (entry.animation.name === reactionAnimName) {
-                                // 艾爾芬哭完或反應完，自動切換至原本的卡片結果，無縫接軌！
+                                triggerCloseupSpine(); // 播完縮放反應後，進入大頭 Spine
+                            }
+                        }
+                    });
+                } else {
+                    triggerCloseupSpine();
+                }
+            }
+
+            function triggerCloseupSpine() {
+                currentGachaState = GachaState.CLOSEUP;
+                
+                const closeupBox = document.getElementById('gachaSpineContainerCloseup');
+                closeupBox.classList.remove('hidden');
+                
+                // 將後方已經播完的艾爾芬與桌子隱藏，避免穿幫
+                document.getElementById('gachaSpineContainerErpin').classList.add('hidden');
+                document.getElementById('gachaSpineContainerDocs').classList.add('hidden');
+                
+                if (gachaPlayerCloseup && gachaPlayerCloseup.skeleton.data.animations.length > 0) {
+                    // 自動抓取大頭 Spine 的第一個動作來播放 (防呆機制)
+                    let animName = gachaPlayerCloseup.skeleton.data.animations[0].name;
+                    
+                    gachaPlayerCloseup.animationState.setAnimation(0, animName, false);
+                    gachaPlayerCloseup.animationState.addListener({
+                        complete: function(entry) {
+                            if (entry.animation.name === animName) {
                                 finishGachaAnimation();
                             }
                         }
                     });
                 } else {
+                    // 防呆：如果特寫載入失敗，2秒後直接出結果
                     setTimeout(finishGachaAnimation, 2000);
                 }
             }
@@ -663,8 +594,10 @@
                 
                 if (gachaPlayerErpin) { gachaPlayerErpin.dispose(); gachaPlayerErpin = null; }
                 if (gachaPlayerDocs) { gachaPlayerDocs.dispose(); gachaPlayerDocs = null; }
+                if (gachaPlayerCloseup) { gachaPlayerCloseup.dispose(); gachaPlayerCloseup = null; }
                 
-                executeRealGachaRoll();
+                // 🌟 動畫播完，秀出剛剛已經偷抽好的結果！
+                showRealGachaResults();
             }
 
             function setupCheekDragInteraction(player) {
@@ -706,8 +639,6 @@
                     if (bone) {
                         const boneCanvasX = ((bone.worldX - camX) / camW) * rect.width;
                         const boneCanvasY = rect.height - ((bone.worldY - camY) / camH) * rect.height;
-                        
-                        // 判定範圍維持擴大版
                         if (Math.hypot(mouseX - boneCanvasX, mouseY - boneCanvasY) < 150) return bone;
                     }
                     return null;
