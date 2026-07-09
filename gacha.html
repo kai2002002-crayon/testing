@@ -583,20 +583,32 @@
                     skelUrl: `./gacha/Gacha_Hero_Erpin.skel.bytes`, 
                     atlasUrl: `./gacha/Gacha_Hero_Erpin.atlas.txt`,
                     
-                    // 🔴 把這裡的 "Idle_1" 改成 "Sleep" 或 "Idle" 試試看
-                    animation: "Sleep", 
+                    // 🌟 關鍵修改 1：直接把 animation 參數刪掉或註解掉！
+                    // 這樣 Spine 會自動載入第一個預設動作，絕對不會報錯！
+                    // animation: "Sleep", 
                     
                     premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
                     viewport: { x: -400, y: 0, width: 800, height: 1000 },
                     success: function (player) {
-                        console.log("=== 📜 艾爾芬動作清單 ===");
-                        if (player.skeleton.data.animations) {
-                            player.skeleton.data.animations.forEach(anim => console.log(`- ${anim.name}`));
+                        // 這裡一定會執行到了！
+                        console.log("=== 📜 成功載入！艾爾芬 (Erpin) 動作清單 ===");
+                        if (player && player.skeleton && player.skeleton.data.animations) {
+                            player.skeleton.data.animations.forEach(anim => console.log(`👉 ${anim.name}`));
                         }
+                        console.log("=========================================");
+                        
+                        // 🌟 關鍵修改 2：當你在 Console 看到名字後，把下一行的 "填入正確名稱" 換掉，並把最前面的 // 刪掉解開註解
+                        // player.animationState.setAnimation(0, "填入正確名稱", true);
+
                         setupCheekDragInteraction(player);
                     },
                     error: function (player, reason) {
-                        console.error("艾爾芬載入失敗:", reason);
+                        console.error("❌ 艾爾芬載入失敗:", reason);
+                        // 雙重保險：就算報錯，我也強制撈撈看有沒有讀到動作清單
+                        if (player && player.skeleton && player.skeleton.data && player.skeleton.data.animations) {
+                            console.log("=== 📜 崩潰前捕捉到的動作清單 ===");
+                            player.skeleton.data.animations.forEach(anim => console.log(`👉 ${anim.name}`));
+                        }
                         finishGachaAnimation();
                     }
                 });
@@ -607,24 +619,34 @@
                 const container = document.getElementById('gachaSpineContainer');
                 if (gachaPlayer) { gachaPlayer.dispose(); }
 
-                // 已更新為 ./gacha/ 路徑
                 gachaPlayer = new spine.SpinePlayer(container, {
                     skelUrl: `./gacha/Gacha_Hero_Documents.skel.bytes`,
                     atlasUrl: `./gacha/Gacha_Hero_Documents.atlas.txt`,
-                    animation: "Drop_Animation", 
+                    
+                    // 🌟 關鍵修改：書本跌落動畫也同樣先不寫 animation 參數！
+                    // animation: "Drop_Animation", 
+                    
                     premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
                     viewport: { x: -400, y: 0, width: 800, height: 1000 },
                     success: function (player) {
-                        console.log("=== 📜 掉落書本動作清單 ===");
-                        if (player.skeleton.data.animations) {
-                            player.skeleton.data.animations.forEach(anim => console.log(`- ${anim.name}`));
+                        console.log("=== 📜 成功載入！掉落書本 (Documents) 動作清單 ===");
+                        if (player && player.skeleton && player.skeleton.data.animations) {
+                            player.skeleton.data.animations.forEach(anim => console.log(`👉 ${anim.name}`));
                         }
+                        console.log("=========================================");
+
+                        // 🌟 同理，看到正確名字後，把下一行換掉並解開註解
+                        // player.animationState.setAnimation(0, "填入正確書本動作名", false);
+
                         player.animationState.addListener({
                             complete: function(entry) { prepareForCloseup(); }
                         });
                     },
                     error: function (player, reason) {
-                        console.error("書本動畫載入失敗:", reason);
+                        console.error("❌ 書本動畫載入失敗:", reason);
+                        if (player && player.skeleton && player.skeleton.data && player.skeleton.data.animations) {
+                            player.skeleton.data.animations.forEach(anim => console.log(`👉 ${anim.name}`));
+                        }
                         prepareForCloseup();
                     }
                 });
