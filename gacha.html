@@ -479,7 +479,13 @@
                     animation: "Idle", 
                     premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
                     viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height },
-                    success: function (player) { setupCheekDragInteraction(player); }
+                    success: function (player) { 
+                        // 🔍 印出艾爾芬的 Skin
+                        console.log("=== 👗 艾爾芬 Skin 清單 ===");
+                        player.skeleton.data.skins.forEach(skin => console.log(`- ${skin.name}`));
+                        
+                        setupCheekDragInteraction(player); 
+                    }
                 });
 
                 // 2. 載入辦公桌與書本
@@ -488,10 +494,15 @@
                     atlasUrl: `./gacha/Gacha_Hero_Documents.atlas.txt`,
                     animation: "Idle", 
                     premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
-                    viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height }
+                    viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height },
+                    success: function (player) {
+                        // 🔍 印出書本的 Skin
+                        console.log("=== 👗 辦公桌/書本 Skin 清單 ===");
+                        player.skeleton.data.skins.forEach(skin => console.log(`- ${skin.name}`));
+                    }
                 });
                 
-                // 3. 預載大頭特寫 Spine (預設隱藏，不設定 viewport 讓它自適應滿版)
+                // 3. 大頭特寫 Spine
                 gachaPlayerCloseup = new spine.SpinePlayer(document.getElementById('gachaSpineContainerCloseup'), {
                     skelUrl: `./gacha/Gacha_Hero_Closeup.skel.bytes`,
                     atlasUrl: `./gacha/Gacha_Hero_Closeup.atlas.txt`,
