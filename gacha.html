@@ -36,7 +36,6 @@
             }
             .dark body { color: #e2e8f0; }
             .dark body::after { background-color: rgba(26, 32, 44, 0.85); }
-            /* 彩虹發光框 (Rate UP 專用) */
             .rainbow-wrapper {
             position: relative; padding: 3px; border-radius: 12px;
             background: linear-gradient(45deg, #ff0000, #ff7300, #ffeb00, #47e247, #00bbff, #0055ff, #8800ff, #ff0000);
@@ -46,20 +45,17 @@
             }
             .rainbow-content { border-radius: 9px; overflow: visible; width: 100%; height: 100%; }
             @keyframes rainbowMove { 0% { background-position: 0 0; } 100% { background-position: 400% 0; } }
-            /* 頭像框基礎設計 */
             .char-avatar-container { 
             position: relative; overflow: hidden; transform-origin: center;
             display: flex; align-items: center; justify-content: center;
             }
             .char-avatar-container img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
-            /* 出金閃光特效 */
             @keyframes flashGold {
             0% { filter: brightness(1); }
             50% { filter: brightness(1.5) drop-shadow(0 0 15px gold); transform: scale(1.05); }
             100% { filter: brightness(1); }
             }
             .flash-gold { animation: flashGold 0.5s ease-out forwards; }
-            /* 基礎彈出動畫 */
             @keyframes popIn {
             0% { transform: scale(0); opacity: 0; }
             70% { transform: scale(1.1); opacity: 1; }
@@ -69,7 +65,6 @@
             animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
             opacity: 0; 
             }
-            /* 特選角色：誇張彈出動畫 (旋轉 + 縮放) */
             @keyframes popInExaggerated {
             0% { transform: scale(0) rotate(-15deg); opacity: 0; }
             50% { transform: scale(1.25) rotate(10deg); opacity: 1; filter: brightness(1.2); }
@@ -80,31 +75,17 @@
             animation: popInExaggerated 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
             opacity: 0; 
             }
-            /* 按鈕樣式 */
             .btn-gacha { transition: transform 0.1s; }
             .btn-gacha:active { transform: scale(0.95); }
             .pool-btn { transition: all 0.2s; }
             .pool-btn.active { background-color: #f59e0b; color: white; border-color: #d97706; }
-            /* 回頂部按鈕樣式 */
             #backToTop {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 9999;
-            display: none; /* 預設隱藏 */
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background-color: #fbbf24; /* 琥珀色 */
-            color: white;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: fixed; bottom: 20px; right: 20px; z-index: 9999;
+            display: none; width: 45px; height: 45px; border-radius: 50%;
+            background-color: #fbbf24; color: white; border: none;
+            cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             transition: transform 0.2s, background-color 0.3s;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-size: 20px; display: flex; align-items: center; justify-content: center;
             }
             #backToTop:hover { background-color: #d97706; transform: translateY(-5px); }
         </style>
@@ -115,7 +96,7 @@
             <div id="gachaSpineContainer" class="w-full h-full relative cursor-pointer"></div>
             
             <div id="gachaCloseupContainer" class="absolute inset-0 bg-transparent flex items-center justify-center hidden pointer-events-none">
-                <img id="gachaCloseupImg" src="Gacha_Hero_Closeup.png" class="w-full h-full object-cover">
+                <img id="gachaCloseupImg" src="./gacha/Gacha_Hero_Closeup.png" class="w-full h-full object-cover">
             </div>
         </div>
         <div class="max-w-4xl mx-auto space-y-6">
@@ -288,8 +269,6 @@
                 const icon1 = document.getElementById('iconGacha1');
                 const icon10 = document.getElementById('iconGacha10');
             
-                const commonClasses = "sprite-base sprite-common shrink-0 origin-center transition-all";
-            
                 if (icon1 && icon10) {
                     if (type === 'personality') {
                         icon1.className = "sprite-base sprite-common sprite-Icon_GachaPersonality scale-[0.4] origin-center";
@@ -410,18 +389,16 @@
                 return pool[pool.length - 1];
             }
 
-            // ==========================================================
-            // 🆕 修改區塊三：攔截 performGacha 的原始邏輯並進行動畫延遲
-            // ==========================================================
-            let pendingGachaTimes = 0; // 用於儲存玩家到底抽了 1 還是 10 連
+            // ==========================
+            // 攔截並觸發 Spine 動畫
+            // ==========================
+            let pendingGachaTimes = 0; 
 
             function performGacha(times) {
-                // 攔截原本直接執行抽卡的機制，改為儲存次數並開啟 Spine 動畫
                 pendingGachaTimes = times;
                 startGachaAnimation();
             }
 
-            // 動畫流程跑完之後，真正觸發計算、發送 Firebase 與生成頭像 DOM 的核心
             function executeRealGachaRoll() {
                 let times = pendingGachaTimes;
                 let results = [];
@@ -431,11 +408,8 @@
                 }
                 renderResultArea(results);
                 addToHistory(results, currentPool.name);
-
-                // 自動將螢幕滑動到結果卡片區域，提升體驗
                 document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth' });
             }
-            // ==========================================================
             
             // ==========================
             // UI 渲染與動畫
@@ -587,7 +561,7 @@
             }
 
             // ==========================================================
-            // 🆕 新增區塊四：Spine 控制核心狀態機與拖動算法 (至 </script> 結尾前)
+            // Spine 控制核心狀態機與拖動算法
             // ==========================================================
             const GachaState = {
                 INIT: 0, ERPIN_IDLE: 1, DOCUMENTS_DROP: 2, WAIT_CLOSEUP: 3, CLOSEUP_REACTION: 4, SHOW_RESULT: 5
@@ -605,9 +579,10 @@
                 const container = document.getElementById('gachaSpineContainer');
                 if (gachaPlayer) { gachaPlayer.dispose(); }
 
+                // 已更新為 ./gacha/ 路徑
                 gachaPlayer = new spine.SpinePlayer(container, {
-                    skelUrl: `./spine_assets/Gacha_Hero_Erpin/Gacha_Hero_Erpin.skel.bytes`, 
-                    atlasUrl: `./spine_assets/Gacha_Hero_Erpin/Gacha_Hero_Erpin.atlas.txt`,
+                    skelUrl: `./gacha/Gacha_Hero_Erpin.skel.bytes`, 
+                    atlasUrl: `./gacha/Gacha_Hero_Erpin.atlas.txt`,
                     animation: "Idle_1", 
                     premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
                     viewport: { x: -400, y: 0, width: 800, height: 1000 },
@@ -630,9 +605,10 @@
                 const container = document.getElementById('gachaSpineContainer');
                 if (gachaPlayer) { gachaPlayer.dispose(); }
 
+                // 已更新為 ./gacha/ 路徑
                 gachaPlayer = new spine.SpinePlayer(container, {
-                    skelUrl: `./spine_assets/Gacha_Hero_Documents/Gacha_Hero_Documents.skel.bytes`,
-                    atlasUrl: `./spine_assets/Gacha_Hero_Documents/Gacha_Hero_Documents.atlas.txt`,
+                    skelUrl: `./gacha/Gacha_Hero_Documents.skel.bytes`,
+                    atlasUrl: `./gacha/Gacha_Hero_Documents.atlas.txt`,
                     animation: "Drop_Animation", 
                     premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
                     viewport: { x: -400, y: 0, width: 800, height: 1000 },
@@ -679,7 +655,6 @@
                 document.getElementById('gachaStage').classList.add('hidden');
                 if (gachaPlayer) { gachaPlayer.dispose(); gachaPlayer = null; }
                 
-                // 動畫結束，無縫串接並顯示真實卡片抽獎結果
                 executeRealGachaRoll();
             }
 
