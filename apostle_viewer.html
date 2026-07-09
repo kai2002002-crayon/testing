@@ -100,20 +100,37 @@
         </section>
         <section id="spineViewerSection" class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-4 sm:p-5 rounded-2xl shadow-md border-4 border-amber-400 dark:border-slate-600 transition-all">
             <div class="flex justify-between items-center mb-4 border-b border-amber-100 dark:border-slate-700 pb-3">
-                <div class="flex items-center gap-3">
-                    <div id="activeCharIconContainer" class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg border-2 border-amber-400 shadow-sm overflow-hidden bg-white dark:bg-slate-700 hidden relative items-center justify-center shrink-0"></div>
-                    <div>
-                        <h2 id="activeCharName" class="text-lg sm:text-xl font-black text-amber-900 dark:text-amber-300" data-i18n="ui_please_select">請先選擇坨坨</h2>
-                    </div>
-                </div>
-                <button onclick="resetCamera()" class="px-3 py-1.5 bg-slate-600 hover:bg-slate-700 text-white text-[10px] sm:text-xs font-bold rounded-lg shadow transition-colors whitespace-nowrap shrink-0" data-i18n="ui_camera">
-                🔄 重置
-                </button>
+    <div class="flex items-center gap-3">
+        <div id="activeCharIconContainer" class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg border-2 border-amber-400 shadow-sm overflow-hidden bg-white dark:bg-slate-700 hidden relative items-center justify-center shrink-0"></div>
+        <div>
+            <h2 id="activeCharName" class="text-lg sm:text-xl font-black text-amber-900 dark:text-amber-300" data-i18n="ui_please_select">請先選擇坨坨</h2>
+        </div>
+    </div>
+    
+    <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        
+        <div id="pixelSettings" class="hidden items-center gap-1 bg-white dark:bg-slate-800 px-1.5 py-0.5 rounded-lg border border-amber-300 dark:border-slate-600 shadow-sm">
+            <span class="text-[10px] sm:text-xs font-bold text-amber-900 dark:text-amber-400">顆粒</span>
+            <span id="pixelScaleValue" class="text-[10px] sm:text-xs font-bold text-amber-600 w-3 text-center">5</span>
+            <div class="flex flex-col">
+                <button onclick="adjustPixelScale(1)" class="text-[8px] text-gray-500 hover:text-amber-600 leading-none p-[1.5px]">▲</button>
+                <button onclick="adjustPixelScale(-1)" class="text-[8px] text-gray-500 hover:text-amber-600 leading-none p-[1.5px]">▼</button>
             </div>
+        </div>
+
+        <button onclick="togglePixelMode()" class="px-2 py-1.5 sm:px-3 sm:py-1.5 bg-green-500 hover:bg-green-600 text-white text-[10px] sm:text-xs font-bold rounded-lg shadow transition-colors whitespace-nowrap">
+            👾 像素
+        </button>
+
+        <button onclick="resetCamera()" class="px-3 py-1.5 bg-slate-600 hover:bg-slate-700 text-white text-[10px] sm:text-xs font-bold rounded-lg shadow transition-colors whitespace-nowrap shrink-0" data-i18n="ui_camera">
+        🔄 重置
+        </button>
+    </div>
+</div>
             <div class="flex flex-col gap-3 min-w-0 relative z-10 w-full lg:w-3/4 mx-auto">
                 <div id="spineCanvasContainer" class="w-full h-[60vh] sm:h-[600px] rounded-xl border-2 border-dashed border-amber-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 relative overflow-hidden flex items-center justify-center cursor-move animated-bg" style="background-image: url('https://i.postimg.cc/x8wY5V8Q/Monster-Slot-Property-Tile.png');">
-                    <!-- 🌟 AR 攝影機畫面 -->
                     <video id="arVideoBg" class="absolute inset-0 w-full h-full object-cover hidden pointer-events-none z-0" autoplay playsinline muted></video>
+                    <canvas id="pixelOverlay" class="absolute inset-0 w-full h-full pointer-events-none z-10 hidden" style="image-rendering: pixelated; image-rendering: crisp-edges;"></canvas>
                     <div class="text-gray-500 font-bold tracking-widest bg-white/80 dark:bg-slate-800/80 px-4 py-2 rounded-lg backdrop-blur-sm shadow-sm" data-i18n="ui_waiting">等待載入...</div>
                 </div>
                 <!-- 🌟 新增：AR 專屬相機控制區塊 (預設隱藏) -->
@@ -143,8 +160,9 @@
                             </button>
                             <!-- AR 總開關保留在此處 -->
                             <button id="btnARMode" onclick="toggleARMode()" class="px-3 py-1.5 bg-purple-500 hover:bg-purple-600 text-white text-[10px] sm:text-sm font-bold rounded-lg shadow transition-colors whitespace-nowrap" data-i18n="ui_ar_open">
-                            📷 開啟AR
+                                📷 開啟AR
                             </button>
+                            
                             <select id="costumeSelect" onchange="changeSpineCostume(this.value)" class="bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 text-xs sm:text-sm font-bold rounded-lg px-2 py-1.5 outline-none focus:ring-2 focus:ring-amber-500 min-w-[100px]">
                                 <option value="" data-i18n="ui_costume">服裝</option>
                             </select>
@@ -513,10 +531,12 @@
                VoiceManager.init(baseFolderKey, costumeKey);
                if (globalPlayer) { globalPlayer.dispose(); globalPlayer = null; }
             
-               // 保留 AR Video 標籤，只修改內部其他元素
-               const existingVideo = document.getElementById('arVideoBg');
-               container.innerHTML = '<div class="spine-player-loading-custom"></div>';
-               if (existingVideo) container.appendChild(existingVideo);
+               // 保留 AR Video 與 Pixel 畫布標籤，只修改內部其他元素
+                const existingVideo = document.getElementById('arVideoBg');
+                const existingPixelOverlay = document.getElementById('pixelOverlay'); // 🌟 新增這行
+                container.innerHTML = '<div class="spine-player-loading-custom"></div>';
+                if (existingVideo) container.appendChild(existingVideo);
+                if (existingPixelOverlay) container.appendChild(existingPixelOverlay); // 🌟 新增這行
                
                document.getElementById('playerControls').classList.add('opacity-50', 'pointer-events-none');
                document.getElementById('slotsContainerInner').innerHTML = '<div class="p-3 text-center text-xs font-bold text-gray-400" data-i18n="ui_loading_data">讀取資料中...</div>';
@@ -537,13 +557,22 @@
                };
             
                globalPlayer = new spine.SpinePlayer(container, {
-                   skelUrl: skelUrl, atlasUrl: atlasUrl, premultipliedAlpha: true,
-                   backgroundColor: "#00000000", alpha: true, showControls: false,
-                   showLoading: false, debugRendering: true, viewport: { ...baseViewport },
-            
-                   success: function (player) {
-                       const loader = container.querySelector('.spine-player-loading-custom');
-                       if (loader) loader.remove();
+    skelUrl: skelUrl, atlasUrl: atlasUrl, premultipliedAlpha: true,
+    backgroundColor: "#00000000", alpha: true, showControls: false,
+    showLoading: false, debugRendering: true, viewport: { ...baseViewport },
+
+    success: function (player) {
+        const loader = container.querySelector('.spine-player-loading-custom');
+        if (loader) loader.remove();
+        
+        // 🌟 新增：換角色/服裝/模式時，如果目前是像素風，自動將新畫布變透明
+        if (isPixelMode) {
+            const originalCanvas = container.querySelector('canvas:not(#pixelOverlay)');
+            if (originalCanvas) originalCanvas.style.opacity = '0.001';
+        }
+
+        document.getElementById('playerControls').classList.remove('opacity-50', 'pointer-events-none');
+        setSpeed(1);
                        document.getElementById('playerControls').classList.remove('opacity-50', 'pointer-events-none');
                        setSpeed(1);
                        setTimeout(() => {
@@ -731,7 +760,10 @@
             async function captureARPhoto() {
                 try {
                     const video = document.getElementById('arVideoBg');
-                    const canvas = document.querySelector('#spineCanvasContainer canvas');
+                    // 🌟 判斷像素模式是否開啟，決定要抓哪一張畫布
+                    const pixelOverlay = document.getElementById('pixelOverlay');
+                    const isPixel = pixelOverlay && !pixelOverlay.classList.contains('hidden');
+                    const canvas = isPixel ? pixelOverlay : document.querySelector('#spineCanvasContainer canvas:not(#pixelOverlay)');
                     
                     if (!video || !canvas) {
                         alert("找不到相機或畫布畫面！");
@@ -748,6 +780,9 @@
                     ctx.drawImage(video, 0, 0, captureCanvas.width, captureCanvas.height);
                     
                     // 3. 再疊加上 Spine 畫布 (角色)
+                    if (isPixel) {
+                        ctx.imageSmoothingEnabled = false;
+                    }
                     ctx.drawImage(canvas, 0, 0, captureCanvas.width, captureCanvas.height);
                     
                     // 4. 轉為 Base64 圖片數據
@@ -1230,7 +1265,86 @@
                 canvas.addEventListener('pointercancel', stopDrag);
                 canvas.addEventListener('pointerout', stopDrag);
             }
-            
+            // ==========================================
+// 🌟 像素化運算邏輯 (支援玩家動態調整)
+// ==========================================
+let isPixelMode = false;
+let pixelAnimationFrame = null;
+
+// 🌟 移除原本的 const PIXEL_SCALE，改為 let 變數
+let currentPixelScale = 5; 
+
+// 🌟 移除原本的 updatePixelScale，換成這個：
+function adjustPixelScale(delta) {
+    // 加上 delta (1 或 -1)
+    currentPixelScale += delta;
+    
+    // 設定防呆限制：顆粒度最小 2，最大 10
+    if (currentPixelScale < 2) currentPixelScale = 2;
+    if (currentPixelScale > 10) currentPixelScale = 10;
+    
+    // 更新介面數字
+    document.getElementById('pixelScaleValue').innerText = currentPixelScale;
+}
+
+function togglePixelMode() {
+    isPixelMode = !isPixelMode;
+    const overlay = document.getElementById('pixelOverlay');
+    const container = document.getElementById('spineCanvasContainer');
+    const originalCanvas = container.querySelector('canvas:not(#pixelOverlay)'); 
+    
+    // 取得滑桿 UI
+    const settingsUI = document.getElementById('pixelSettings');
+
+    if (pixelAnimationFrame) {
+        cancelAnimationFrame(pixelAnimationFrame);
+        pixelAnimationFrame = null;
+    }
+
+    if (isPixelMode) {
+        overlay.style.setProperty('display', 'block', 'important');
+        if (originalCanvas) originalCanvas.style.opacity = '0.001'; 
+        
+        // 開啟像素風時，顯示滑桿
+        if (settingsUI) {
+            settingsUI.classList.remove('hidden');
+            settingsUI.classList.add('flex');
+        }
+        startPixelLoop();
+    } else {
+        overlay.style.setProperty('display', 'none', 'important');
+        if (originalCanvas) originalCanvas.style.opacity = '1'; 
+        
+        // 關閉像素風時，隱藏滑桿
+        if (settingsUI) {
+            settingsUI.classList.add('hidden');
+            settingsUI.classList.remove('flex');
+        }
+    }
+}
+
+function startPixelLoop() {
+    if (!isPixelMode) return;
+    
+    const container = document.getElementById('spineCanvasContainer');
+    const webglCanvas = container.querySelector('canvas:not(#pixelOverlay)');
+    const overlay = document.getElementById('pixelOverlay');
+    
+    if (webglCanvas && overlay) {
+        const ctx = overlay.getContext('2d');
+        
+        // 🌟 將原本的 PIXEL_SCALE 改為讀取 currentPixelScale
+        overlay.width = Math.floor(container.clientWidth / currentPixelScale);
+        overlay.height = Math.floor(container.clientHeight / currentPixelScale);
+        
+        ctx.clearRect(0, 0, overlay.width, overlay.height);
+        ctx.imageSmoothingEnabled = false; 
+        
+        ctx.drawImage(webglCanvas, 0, 0, overlay.width, overlay.height);
+    }
+    
+    pixelAnimationFrame = requestAnimationFrame(startPixelLoop);
+}
             window.onscroll = function() {
                 const btn = document.getElementById("backToTop");
                 if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) { btn.style.display = "flex"; } else { btn.style.display = "none"; }
