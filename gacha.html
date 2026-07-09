@@ -579,11 +579,13 @@
                 const container = document.getElementById('gachaSpineContainer');
                 if (gachaPlayer) { gachaPlayer.dispose(); }
 
-                // 已更新為 ./gacha/ 路徑
                 gachaPlayer = new spine.SpinePlayer(container, {
                     skelUrl: `./gacha/Gacha_Hero_Erpin.skel.bytes`, 
                     atlasUrl: `./gacha/Gacha_Hero_Erpin.atlas.txt`,
-                    animation: "Idle_1", 
+                    
+                    // 🔴 把這裡的 "Idle_1" 改成 "Sleep" 或 "Idle" 試試看
+                    animation: "Sleep", 
+                    
                     premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
                     viewport: { x: -400, y: 0, width: 800, height: 1000 },
                     success: function (player) {
@@ -767,7 +769,10 @@
                         } else {
                             player._bounceX = targetX; player._bounceY = targetY; player._bouncingBone = null;
                             if (hasTriggeredPull) { triggerDocumentsDrop(); } 
-                            else { player.animationState.setAnimation(0, "Idle_1", true); }
+                            else { 
+                                // 🔴 把這裡的 "Idle_1" 也改成 "Sleep" 或你剛剛上面測試成功的那個名字
+                                player.animationState.setAnimation(0, "Sleep", true); 
+                            }
                         }
                     }
                     applyBounce();
