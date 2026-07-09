@@ -396,32 +396,28 @@
                 return pool[pool.length - 1];
             }
 
-            // ==========================================
-            // 攔截點：先計算招募結果，再決定播什麼動畫！
-            // ==========================================
             let pendingGachaTimes = 0; 
             let pendingGachaResults = [];
             let has3Star = false;
             let has2Star = false;
+            let hasRateUp = false; // 🆕 新增：用來記錄有沒有抽到特選 Pickup 角色
 
             function performGacha(times) {
-                // 1. 先把結果抽出來放進陣列 (不先顯示)
                 pendingGachaTimes = times;
                 pendingGachaResults = [];
                 has3Star = false;
                 has2Star = false;
+                hasRateUp = false; // 🆕 每次抽卡重置狀態
                 
                 for (let i = 0; i < times; i++) {
                     let isGuaranteed = (times === 10 && i === 9);
                     let result = pullOne(isGuaranteed);
                     pendingGachaResults.push(result);
                     
-                    // 紀錄這包有沒有高星角色
                     if (result.char.star === 3) has3Star = true;
                     if (result.char.star === 2) has2Star = true;
+                    if (result.isRateUp) hasRateUp = true; // 🆕 如果這隻是當期特選，標記為 true
                 }
-                
-                // 2. 啟動動畫
                 startGachaAnimation();
             }
 
@@ -472,16 +468,19 @@
 
                 const vp = SPINE_CONFIG.viewport;
 
+                // 🆕 根據是否抽到特選角色，決定榮春（Choon）要不要開燈登場
+                let targetErpinSkin = hasRateUp ? "Choon_On" : "Choon_Off";
+
                 // 1. 載入艾爾芬
                 gachaPlayerErpin = new spine.SpinePlayer(document.getElementById('gachaSpineContainerErpin'), {
                     skelUrl: `./gacha/Gacha_Hero_Erpin.skel.bytes`, 
                     atlasUrl: `./gacha/Gacha_Hero_Erpin.atlas.txt`,
                     animation: "Idle", 
-                    skin: "Choon_On", // 🌟 試試看切換成這個 Skin，可能包含鳥或完整背景
+                    skin: targetErpinSkin, // 🆕 將寫死的 "Choon_On" 換成動態變數 targetErpinSkin
                     premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
                     viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height },
                     success: function (player) { 
-                        // 🌟 強制打開背景與窗戶的插槽 (如果美術預設隱藏的話)
+                        // 強制打開背景與窗戶的插槽
                         try { player.skeleton.setAttachment("BG", "BG"); } catch(e) {}
                         try { player.skeleton.setAttachment("BG_Window", "BG_Window"); } catch(e) {}
                         
