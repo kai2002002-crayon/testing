@@ -2,7 +2,7 @@
 // 🔮 願像系統 (Aside) 資料庫 - 多語系版本 (zh: 中文, ja: 日文, en: 英文)
 
 const ASIDE_DATA = {
-    "ALICE": { 
+    "Alice": { 
         asideIcon: "", 
         totalName: { zh: "最強幸運卡", ja: "最高の吉のカード", en: "The Ultimate Lucky Card" }, 
         stars: {
