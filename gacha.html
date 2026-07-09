@@ -477,12 +477,13 @@
                     skelUrl: `./gacha/Gacha_Hero_Erpin.skel.bytes`, 
                     atlasUrl: `./gacha/Gacha_Hero_Erpin.atlas.txt`,
                     animation: "Idle", 
+                    skin: "Choon_On", // 🌟 試試看切換成這個 Skin，可能包含鳥或完整背景
                     premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
                     viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height },
                     success: function (player) { 
-                        // 🔍 印出艾爾芬的 Skin
-                        console.log("=== 👗 艾爾芬 Skin 清單 ===");
-                        player.skeleton.data.skins.forEach(skin => console.log(`- ${skin.name}`));
+                        // 🌟 強制打開背景與窗戶的插槽 (如果美術預設隱藏的話)
+                        try { player.skeleton.setAttachment("BG", "BG"); } catch(e) {}
+                        try { player.skeleton.setAttachment("BG_Window", "BG_Window"); } catch(e) {}
                         
                         setupCheekDragInteraction(player); 
                     }
@@ -494,48 +495,51 @@
                     atlasUrl: `./gacha/Gacha_Hero_Documents.atlas.txt`,
                     animation: "Idle", 
                     premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
-                    viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height },
-                    success: function (player) {
-                        // 🔍 印出書本的 Skin
-                        console.log("=== 👗 辦公桌/書本 Skin 清單 ===");
-                        player.skeleton.data.skins.forEach(skin => console.log(`- ${skin.name}`));
-                    }
+                    viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height }
                 });
                 
                 // 3. 大頭特寫 Spine
                 gachaPlayerCloseup = new spine.SpinePlayer(document.getElementById('gachaSpineContainerCloseup'), {
                     skelUrl: `./gacha/Gacha_Hero_Closeup.skel.bytes`,
                     atlasUrl: `./gacha/Gacha_Hero_Closeup.atlas.txt`,
-                    premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
-                    success: function(player) {
-                        console.log("=== 📜 特寫大頭動作清單 ===");
-                        player.skeleton.data.animations.forEach(anim => console.log(`- ${anim.name}`));
-                    }
+                    premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false
                 });
             }
 
             function triggerDocumentsDrop() {
                 currentGachaState = GachaState.DOCUMENTS_DROP;
                 
-                // 🌟 根據星數決定書本顏色！
-                let dropAnimName = "Drop_1";
-                let dropEndAnimName = "Drop_1_End";
-                
-                if (pendingGachaTimes > 1) { // 10連抽
-                    if (has3Star) {
-                        dropAnimName = "Drop_10_3";       // 彩色發光書
-                        dropEndAnimName = "Drop_10_3_End";
-                    } else if (has2Star) {
-                        dropAnimName = "Drop_10_2";       // 金色書
-                        dropEndAnimName = "Drop_10_2_End";
-                    } else {
-                        dropAnimName = "Drop_10_1";       // 一般書
-                        dropEndAnimName = "Drop_10_1_End";
-                    }
-                }
+                // 動畫名稱 (預設播一般的 Drop_1 或 Drop_10_1 即可，發光效果由下方插槽控制)
+                let dropAnimName = (pendingGachaTimes === 1) ? "Drop_1" : "Drop_10_1";
+                let dropEndAnimName = (pendingGachaTimes === 1) ? "Drop_1_End" : "Drop_10_1_End";
                 
                 if (gachaPlayerDocs) {
                     gachaPlayerDocs.animationState.setAnimation(0, dropAnimName, false);
+                    
+                    // 🌟 核心魔法：劫持渲染週期，精準替換第 N 本書為 3 星發光書！
+                    // (因為 Spine 動畫播放時可能會不斷重置圖層，所以我們要在 update 裡面強制鎖定它)
+                    const origDocsUpdate = gachaPlayerDocs.skeleton.updateWorldTransform;
+                    gachaPlayerDocs.skeleton.updateWorldTransform = function () {
+                        origDocsUpdate.call(this); // 先執行原本的動畫
+                        
+                        if (pendingGachaTimes === 10) {
+                            // 遍歷 10 抽結果，如果第 idx 個角色是 3 星，就把對應的書換成彩色書
+                            pendingGachaResults.forEach((result, idx) => {
+                                if (result.char.star === 3) {
+                                    let bookIdx = idx + 1; // 書本編號 1~10
+                                    try { 
+                                        this.setAttachment(`Book_Drop_${bookIdx}`, `Book_Drop_${bookIdx}_3star`); 
+                                    } catch(e) {}
+                                }
+                            });
+                        } else {
+                            // 單抽如果是 3 星
+                            if (pendingGachaResults[0].char.star === 3) {
+                                try { this.setAttachment(`Book_Drop_1`, `Book_Drop_1_3star`); } catch(e) {}
+                            }
+                        }
+                    };
+
                     gachaPlayerDocs.animationState.addListener({
                         complete: function(entry) { 
                             if (entry.animation.name === dropAnimName) {
