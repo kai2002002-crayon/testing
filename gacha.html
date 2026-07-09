@@ -92,13 +92,23 @@
     </head>
     <body class="p-3 sm:p-6 md:p-8 text-gray-800 dark:text-gray-100">
 
+        <!-- ========================================================== -->
+        <!-- 全螢幕轉蛋動畫舞台 -->
+        <!-- ========================================================== -->
         <div id="gachaStage" class="fixed inset-0 z-[99999] bg-black hidden flex items-center justify-center select-none">
-            <div id="gachaSpineContainer" class="w-full h-full relative cursor-pointer"></div>
             
-            <div id="gachaCloseupContainer" class="absolute inset-0 bg-transparent flex items-center justify-center hidden pointer-events-none">
+            <!-- 🆕 下層：艾爾芬 (負責接收互動，z-index: 10) -->
+            <div id="gachaSpineContainerErpin" class="absolute inset-0 w-full h-full z-10 cursor-pointer"></div>
+            
+            <!-- 🆕 上層：桌子與書本 (滑鼠穿透 pointer-events-none，z-index: 20) -->
+            <div id="gachaSpineContainerDocs" class="absolute inset-0 w-full h-full z-20 pointer-events-none"></div>
+            
+            <!-- 特寫大圖 -->
+            <div id="gachaCloseupContainer" class="absolute inset-0 bg-transparent flex items-center justify-center hidden pointer-events-none z-30">
                 <img id="gachaCloseupImg" src="./gacha/Gacha_Hero_Closeup.png" class="w-full h-full object-cover">
             </div>
         </div>
+        <!-- ========================================================== -->
         <div class="max-w-4xl mx-auto space-y-6">
             <header class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-2xl p-4 sm:p-6 shadow border-2 border-amber-200/80 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <h1 class="text-2xl sm:text-3xl font-bold text-amber-900 dark:text-amber-400 flex items-center gap-2">
@@ -561,13 +571,14 @@
             }
 
             // ==========================================================
-            // Spine 控制核心狀態機與拖動算法
+            // Spine 控制核心狀態機與拖動算法 (雙模型疊加版)
             // ==========================================================
             const GachaState = {
                 INIT: 0, ERPIN_IDLE: 1, DOCUMENTS_DROP: 2, WAIT_CLOSEUP: 3, CLOSEUP_REACTION: 4, SHOW_RESULT: 5
             };
             let currentGachaState = GachaState.INIT;
-            let gachaPlayer = null;
+            let gachaPlayerErpin = null;
+            let gachaPlayerDocs = null;
 
             function startGachaAnimation() {
                 document.getElementById('gachaStage').classList.remove('hidden');
@@ -576,90 +587,62 @@
 
             function initErpinStage() {
                 currentGachaState = GachaState.ERPIN_IDLE;
-                const container = document.getElementById('gachaSpineContainer');
-                if (gachaPlayer) { gachaPlayer.dispose(); }
+                
+                if (gachaPlayerErpin) { gachaPlayerErpin.dispose(); gachaPlayerErpin = null; }
+                if (gachaPlayerDocs) { gachaPlayerDocs.dispose(); gachaPlayerDocs = null; }
 
-                gachaPlayer = new spine.SpinePlayer(container, {
+                // 🌟 1. 載入艾爾芬 (下層)
+                gachaPlayerErpin = new spine.SpinePlayer(document.getElementById('gachaSpineContainerErpin'), {
                     skelUrl: `./gacha/Gacha_Hero_Erpin.skel.bytes`, 
                     atlasUrl: `./gacha/Gacha_Hero_Erpin.atlas.txt`,
-                    
-                    // 👉 1. 將這裡填入 "Idle"
-                    animation: "Idle", 
-                    
+                    animation: "Idle", // 初始睡覺
                     premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
-                    // viewport: { x: -400, y: 0, width: 800, height: 1000 },
+                    // viewport: { x: -400, y: 0, width: 800, height: 1000 }, // 建議先註解掉讓系統自適應大小
                     success: function (player) {
-                        // 這裡一定會執行到了！
-                        console.log("=== 📜 成功載入！艾爾芬 (Erpin) 動作清單 ===");
-                        if (player && player.skeleton && player.skeleton.data.animations) {
-                            player.skeleton.data.animations.forEach(anim => console.log(`👉 ${anim.name}`));
-                        }
-                        console.log("=========================================");
-                        
-                        // 🌟 關鍵修改 2：當你在 Console 看到名字後，把下一行的 "填入正確名稱" 換掉，並把最前面的 // 刪掉解開註解
-                        // player.animationState.setAnimation(0, "填入正確名稱", true);
-
                         setupCheekDragInteraction(player);
-                    },
-                    error: function (player, reason) {
-                        console.error("❌ 艾爾芬載入失敗:", reason);
-                        // 雙重保險：就算報錯，我也強制撈撈看有沒有讀到動作清單
-                        if (player && player.skeleton && player.skeleton.data && player.skeleton.data.animations) {
-                            console.log("=== 📜 崩潰前捕捉到的動作清單 ===");
-                            player.skeleton.data.animations.forEach(anim => console.log(`👉 ${anim.name}`));
-                        }
-                        finishGachaAnimation();
                     }
+                });
+
+                // 🌟 2. 同時載入辦公桌與書本 (上層)
+                gachaPlayerDocs = new spine.SpinePlayer(document.getElementById('gachaSpineContainerDocs'), {
+                    skelUrl: `./gacha/Gacha_Hero_Documents.skel.bytes`,
+                    atlasUrl: `./gacha/Gacha_Hero_Documents.atlas.txt`,
+                    animation: "Idle", // 辦公桌的預設狀態
+                    premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false
+                    // viewport: 必須跟上面艾爾芬一樣！若上面註解掉，這裡也要註解掉才會對齊
                 });
             }
 
             function triggerDocumentsDrop() {
                 currentGachaState = GachaState.DOCUMENTS_DROP;
-                const container = document.getElementById('gachaSpineContainer');
-                if (gachaPlayer) { gachaPlayer.dispose(); }
-
-                gachaPlayer = new spine.SpinePlayer(container, {
-                    skelUrl: `./gacha/Gacha_Hero_Documents.skel.bytes`,
-                    atlasUrl: `./gacha/Gacha_Hero_Documents.atlas.txt`,
-                    
-                    // 🌟 關鍵修改：書本跌落動畫也同樣先不寫 animation 參數！
-                    // animation: "Drop_Animation", 
-                    
-                    premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
-                    viewport: { x: -400, y: 0, width: 800, height: 1000 },
-                    success: function (player) {
-                        console.log("=== 📜 成功載入！掉落書本 (Documents) 動作清單 ===");
-                        if (player && player.skeleton && player.skeleton.data.animations) {
-                            player.skeleton.data.animations.forEach(anim => console.log(`👉 ${anim.name}`));
+                
+                // 💡 判斷是 1抽 還是 10抽，給予對應的書本跌落動畫名稱
+                let dropAnimName = (pendingGachaTimes === 1) ? "Drop_1" : "Drop_10_1";
+                
+                if (gachaPlayerDocs) {
+                    // 直接命令上層的書本切換動作
+                    gachaPlayerDocs.animationState.setAnimation(0, dropAnimName, false);
+                    gachaPlayerDocs.animationState.addListener({
+                        complete: function(entry) { 
+                            if (entry.animation.name === dropAnimName) {
+                                prepareForCloseup(); 
+                            }
                         }
-                        console.log("=========================================");
-
-                        // 🌟 同理，看到正確名字後，把下一行換掉並解開註解
-                        // player.animationState.setAnimation(0, "填入正確書本動作名", false);
-
-                        player.animationState.addListener({
-                            complete: function(entry) { prepareForCloseup(); }
-                        });
-                    },
-                    error: function (player, reason) {
-                        console.error("❌ 書本動畫載入失敗:", reason);
-                        if (player && player.skeleton && player.skeleton.data && player.skeleton.data.animations) {
-                            player.skeleton.data.animations.forEach(anim => console.log(`👉 ${anim.name}`));
-                        }
-                        prepareForCloseup();
-                    }
-                });
+                    });
+                } else {
+                    prepareForCloseup();
+                }
             }
 
             function prepareForCloseup() {
                 currentGachaState = GachaState.WAIT_CLOSEUP;
-                const container = document.getElementById('gachaSpineContainer');
-                container.addEventListener('click', onStageClickOnce);
+                const stage = document.getElementById('gachaStage');
+                stage.addEventListener('click', onStageClickOnce);
             }
 
             function onStageClickOnce() {
-                const container = document.getElementById('gachaSpineContainer');
-                container.removeEventListener('click', onStageClickOnce);
+                const stage = document.getElementById('gachaStage');
+                stage.removeEventListener('click', onStageClickOnce);
                 if (currentGachaState === GachaState.WAIT_CLOSEUP) { triggerCloseupReaction(); }
             }
 
@@ -676,13 +659,17 @@
             function finishGachaAnimation() {
                 currentGachaState = GachaState.SHOW_RESULT;
                 document.getElementById('gachaStage').classList.add('hidden');
-                if (gachaPlayer) { gachaPlayer.dispose(); gachaPlayer = null; }
+                
+                // 清理雙模型
+                if (gachaPlayerErpin) { gachaPlayerErpin.dispose(); gachaPlayerErpin = null; }
+                if (gachaPlayerDocs) { gachaPlayerDocs.dispose(); gachaPlayerDocs = null; }
                 
                 executeRealGachaRoll();
             }
 
             function setupCheekDragInteraction(player) {
-                const canvas = document.querySelector('#gachaSpineContainer canvas');
+                // 指向下層艾爾芬的 Canvas
+                const canvas = document.querySelector('#gachaSpineContainerErpin canvas');
                 if (!canvas) return;
                 canvas.style.touchAction = 'none';
 
@@ -716,11 +703,14 @@
                     let camW = camera ? camera.viewportWidth * camera.zoom : 800;
                     let camH = camera ? camera.viewportHeight * camera.zoom : 1000;
 
+                    // 💡 注意：如果你發現還是拉不到，可以確認美術是否有將臉部骨骼命名為其他名稱
                     const bone = player.skeleton.findBone("Character_Ball_Move");
                     if (bone) {
                         const boneCanvasX = ((bone.worldX - camX) / camW) * rect.width;
                         const boneCanvasY = rect.height - ((bone.worldY - camY) / camH) * rect.height;
-                        if (Math.hypot(mouseX - boneCanvasX, mouseY - boneCanvasY) < 60) return bone;
+                        
+                        // 💡 已將判定範圍從 60 放大到 150
+                        if (Math.hypot(mouseX - boneCanvasX, mouseY - boneCanvasY) < 150) return bone;
                     }
                     return null;
                 }
@@ -738,7 +728,6 @@
                         canvas.setPointerCapture(e.pointerId);
 
                         const animNames = player.skeleton.data.animations.map(a => a.name);
-                        // 👉 2. 把原本的 "Touch_Idle" 改成 "Touch"
                         if (animNames.includes("Touch")) player.animationState.setAnimation(0, "Touch", true);
                     }
                 });
@@ -768,6 +757,7 @@
                         localDx = (localDx / rawDistance) * elasticDist; localDy = (localDy / rawDistance) * elasticDist;
                     }
                     player._customDragTargetX = initialBoneX + localDx; player._customDragTargetY = initialBoneY + localDy;
+                    
                     if (dragDistance > 30) hasTriggeredPull = true;
                     lastMouseX = e.clientX; lastMouseY = e.clientY;
                 });
@@ -790,9 +780,9 @@
                             requestAnimationFrame(applyBounce);
                         } else {
                             player._bounceX = targetX; player._bounceY = targetY; player._bouncingBone = null;
-                            if (hasTriggeredPull) { triggerDocumentsDrop(); } 
-                            else { 
-                                // 👉 3. 把這裡也改成 "Idle"
+                            if (hasTriggeredPull) { 
+                                triggerDocumentsDrop(); 
+                            } else { 
                                 player.animationState.setAnimation(0, "Idle", true); 
                             }
                         }
