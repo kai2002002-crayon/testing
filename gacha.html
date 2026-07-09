@@ -583,12 +583,12 @@
                     skelUrl: `./gacha/Gacha_Hero_Erpin.skel.bytes`, 
                     atlasUrl: `./gacha/Gacha_Hero_Erpin.atlas.txt`,
                     
-                    // 🌟 關鍵修改 1：直接把 animation 參數刪掉或註解掉！
-                    // 這樣 Spine 會自動載入第一個預設動作，絕對不會報錯！
-                    // animation: "Sleep", 
+                    // 👉 1. 將這裡填入 "Idle"
+                    animation: "Idle", 
                     
                     premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
                     viewport: { x: -400, y: 0, width: 800, height: 1000 },
+                    // ...底下省略...
                     success: function (player) {
                         // 這裡一定會執行到了！
                         console.log("=== 📜 成功載入！艾爾芬 (Erpin) 動作清單 ===");
@@ -739,7 +739,8 @@
                         canvas.setPointerCapture(e.pointerId);
 
                         const animNames = player.skeleton.data.animations.map(a => a.name);
-                        if (animNames.includes("Touch_Idle")) player.animationState.setAnimation(0, "Touch_Idle", true);
+                        // 👉 2. 把原本的 "Touch_Idle" 改成 "Touch"
+                        if (animNames.includes("Touch")) player.animationState.setAnimation(0, "Touch", true);
                     }
                 });
 
@@ -792,8 +793,8 @@
                             player._bounceX = targetX; player._bounceY = targetY; player._bouncingBone = null;
                             if (hasTriggeredPull) { triggerDocumentsDrop(); } 
                             else { 
-                                // 🔴 把這裡的 "Idle_1" 也改成 "Sleep" 或你剛剛上面測試成功的那個名字
-                                player.animationState.setAnimation(0, "Sleep", true); 
+                                // 👉 3. 把這裡也改成 "Idle"
+                                player.animationState.setAnimation(0, "Idle", true); 
                             }
                         }
                     }
