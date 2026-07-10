@@ -95,17 +95,6 @@
         <!-- ========================================================== -->
         <!-- 全螢幕轉蛋動畫舞台 -->
         <!-- ========================================================== -->
-        <div id="gachaStage" class="fixed inset-0 z-[99999] bg-black opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center select-none">
-            <!-- 下層：艾爾芬 -->
-            <div id="gachaSpineContainerErpin" class="absolute inset-0 w-full h-full z-10 cursor-pointer transition-opacity duration-300"></div>
-            
-            <!-- 中層：辦公桌與書本 -->
-            <div id="gachaSpineContainerDocs" class="absolute inset-0 w-full h-full z-20 pointer-events-none transition-opacity duration-300"></div>
-
-            <!-- 上層：大頭特寫 (將 hidden 改為 opacity-0，避免 Spine 算圖失敗！) -->
-            <div id="gachaSpineContainerCloseup" class="absolute inset-0 w-full h-full z-30 pointer-events-none opacity-0 transition-opacity duration-300"></div>
-        </div>
-        <!-- ========================================================== -->
         <div class="max-w-4xl mx-auto space-y-6">
             <header class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-2xl p-4 sm:p-6 shadow border-2 border-amber-200/80 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <h1 class="text-2xl sm:text-3xl font-bold text-amber-900 dark:text-amber-400 flex items-center gap-2">
