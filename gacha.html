@@ -103,7 +103,7 @@
             <div id="gachaSpineContainerDocs" class="absolute inset-0 w-full h-full z-20 pointer-events-none transition-opacity duration-300"></div>
 
             <!-- 上層：大頭特寫 (將 hidden 改為 opacity-0，避免 Spine 算圖失敗！) -->
-            <div id="gachaSpineContainerCloseup" class="absolute inset-0 w-full h-full z-30 pointer-events-none" style="opacity: 0; transition: opacity 0.3s;"></div>
+            <div id="gachaSpineContainerCloseup" class="absolute inset-0 w-full h-full z-30 pointer-events-none opacity-0 transition-opacity duration-300"></div>
         </div>
         <!-- ========================================================== -->
         <div class="max-w-4xl mx-auto space-y-6">
@@ -455,12 +455,15 @@
                 initSpineStages();
             }
 
-            function initSpineStages() {
+function initSpineStages() {
                 currentGachaState = GachaState.ERPIN_IDLE;
                 
                 if (gachaPlayerErpin) { gachaPlayerErpin.dispose(); gachaPlayerErpin = null; }
                 if (gachaPlayerDocs) { gachaPlayerDocs.dispose(); gachaPlayerDocs = null; }
+                
+                // 🌟 核心修改 1：這裡先清空大頭容器，但「不」預先載入大頭 Spine！
                 if (gachaPlayerCloseup) { gachaPlayerCloseup.dispose(); gachaPlayerCloseup = null; }
+                document.getElementById('gachaSpineContainerCloseup').innerHTML = ''; 
 
                 const vp = SPINE_CONFIG.viewport;
                 let targetErpinSkin = hasRateUp ? "Choon_On" : "Choon_Off";
@@ -476,10 +479,7 @@
                     success: function (player) { 
                         try { player.skeleton.setAttachment("BG", "BG"); } catch(e) {}
                         try { player.skeleton.setAttachment("BG_Window", "BG_Window"); } catch(e) {}
-                        
-                        // 🌟 強制關閉動作融合，避免 End_1 接 End_2 時發生 Zoom in 錯位變形
                         player.animationState.data.defaultMix = 0;
-                        
                         setupCheekDragInteraction(player); 
                     }
                 });
@@ -492,7 +492,7 @@
                     premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
                     viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height },
                     success: function(player) {
-                        player.animationState.data.defaultMix = 0; // 同樣關閉融合
+                        player.animationState.data.defaultMix = 0; 
                         const origDocsUpdate = player.skeleton.updateWorldTransform;
                         player.skeleton.updateWorldTransform = function () {
                             origDocsUpdate.call(this); 
@@ -511,13 +511,6 @@
                             }
                         };
                     }
-                });
-                
-                // 3. 載入大頭特寫
-                gachaPlayerCloseup = new spine.SpinePlayer(document.getElementById('gachaSpineContainerCloseup'), {
-                    skelUrl: `./gacha/Gacha_Hero_Closeup.skel.bytes`,
-                    atlasUrl: `./gacha/Gacha_Hero_Closeup.atlas.txt`,
-                    premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false
                 });
             }
 
@@ -590,44 +583,50 @@
                 currentGachaState = GachaState.CLOSEUP;
                 
                 const closeupBox = document.getElementById('gachaSpineContainerCloseup');
+                
+                // 1. 確保容器此時此刻 100% 顯示，有具體長寬！
                 closeupBox.classList.remove('opacity-0');
-                closeupBox.style.opacity = "1";
                 closeupBox.style.pointerEvents = "auto";
                 
-                // 🌟 修正：SpinePlayer 沒有 resize 方法，改為手動觸發 Canvas 的樣式更新
-                // 這會強迫瀏覽器重新計算該元素的大小
-                const canvas = closeupBox.querySelector('canvas');
-                if (canvas) {
-                    canvas.style.width = "100%";
-                    canvas.style.height = "100%";
-                }
-                
+                // 2. 隱藏背後的舞台
                 document.getElementById('gachaSpineContainerErpin').classList.add('opacity-0');
                 document.getElementById('gachaSpineContainerDocs').classList.add('opacity-0');
                 
-                if (gachaPlayerCloseup) {
-                    let animName = has3Star ? "Idle_3" : (has2Star ? "Idle_2" : "Idle_1");
-                    
-                    // 清除殘留動作並播放大頭動畫
-                    gachaPlayerCloseup.animationState.clearTracks();
-                    gachaPlayerCloseup.animationState.setAnimation(0, animName, false);
-                    gachaPlayerCloseup.animationState.addListener({
-                        complete: function(entry) {
-                            if (entry.animation.name === animName) {
-                                finishGachaAnimation();
+                let animName = has3Star ? "Idle_3" : (has2Star ? "Idle_2" : "Idle_1");
+                
+                // 🌟 核心修改 2：動態載入！在容器完全現身的這一刻，才注入 SpinePlayer！
+                // 這樣 WebGL 絕對能抓到正確的畫布大小，不會再當機了。
+                gachaPlayerCloseup = new spine.SpinePlayer(closeupBox, {
+                    skelUrl: `./gacha/Gacha_Hero_Closeup.skel.bytes`,
+                    atlasUrl: `./gacha/Gacha_Hero_Closeup.atlas.txt`,
+                    animation: animName, // 載入完成直接播放大頭動畫
+                    premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
+                    success: function(player) {
+                        player.animationState.addListener({
+                            complete: function(entry) {
+                                if (entry.animation.name === animName) {
+                                    finishGachaAnimation();
+                                }
                             }
-                        }
-                    });
-                } else {
-                    console.error("❌ 大頭艾爾芬 Spine 播放器尚未初始化！");
-                    setTimeout(finishGachaAnimation, 2000);
-                }
+                        });
+                    },
+                    error: function() {
+                        console.error("❌ 大頭艾爾芬 Spine 載入失敗！找不到檔案或路徑錯誤。");
+                        finishGachaAnimation();
+                    }
+                });
+
+                // 防呆機制：如果 Spine 檔案壞掉或卡住，最多看大頭 3.5 秒後強制進入結算畫面
+                setTimeout(() => {
+                    if (currentGachaState === GachaState.CLOSEUP) {
+                        finishGachaAnimation();
+                    }
+                }, 3500);
             }
 
             function finishGachaAnimation() {
                 currentGachaState = GachaState.SHOW_RESULT;
                 const stage = document.getElementById('gachaStage');
-                // 讓舞台漸隱
                 stage.classList.add('opacity-0', 'pointer-events-none');
                 
                 setTimeout(() => {
@@ -635,8 +634,11 @@
                     if (gachaPlayerDocs) { gachaPlayerDocs.dispose(); gachaPlayerDocs = null; }
                     if (gachaPlayerCloseup) { gachaPlayerCloseup.dispose(); gachaPlayerCloseup = null; }
                     
+                    // 清空大頭容器，為下一次抽卡準備
+                    document.getElementById('gachaSpineContainerCloseup').innerHTML = '';
+                    
                     showRealGachaResults();
-                }, 300); // 等待 CSS 漸隱結束後清理記憶體並顯示結果
+                }, 300);
             }
 
             function setupCheekDragInteraction(player) {
