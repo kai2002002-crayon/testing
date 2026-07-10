@@ -501,7 +501,12 @@
                     premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
                     viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height },
                     success: function(player) {
-                        // 🌟 劫持渲染週期，但只有在 showGlowingBooks 為 true 時才變換彩色書本！
+                        // 🔍 印出書本的動作清單！
+                        console.log("=== 📚 辦公桌/書本 (Documents) 動作清單 ===");
+                        player.skeleton.data.animations.forEach(anim => console.log(`👉 ${anim.name}`));
+                        console.log("=========================================");
+
+                        // 🌟 劫持渲染週期，變換彩色書本
                         const origDocsUpdate = player.skeleton.updateWorldTransform;
                         player.skeleton.updateWorldTransform = function () {
                             origDocsUpdate.call(this); 
@@ -528,13 +533,7 @@
                 gachaPlayerCloseup = new spine.SpinePlayer(document.getElementById('gachaSpineContainerCloseup'), {
                     skelUrl: `./gacha/Gacha_Hero_Closeup.skel.bytes`,
                     atlasUrl: `./gacha/Gacha_Hero_Closeup.atlas.txt`,
-                    premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
-                    success: function(player) {
-                        // 🔍 印出特寫大頭的動作清單！
-                        console.log("=== 📜 特寫大頭 (Closeup) 動作清單 ===");
-                        player.skeleton.data.animations.forEach(anim => console.log(`👉 ${anim.name}`));
-                        console.log("======================================");
-                    }
+                    premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false
                 });
             }
 
@@ -624,9 +623,14 @@
                 document.getElementById('gachaSpineContainerDocs').classList.add('hidden');
                 
                 if (gachaPlayerCloseup && gachaPlayerCloseup.skeleton.data.animations.length > 0) {
-                    // 💡 暫時自動抓第一個動作來播放。
-                    // 等你看完 Console 印出的名字後，我們就可以根據 1,2,3 星寫 if 判斷來指定大頭動作了！
-                    let animName = gachaPlayerCloseup.skeleton.data.animations[0].name;
+                    
+                    // 🌟 根據剛剛的抽卡結果，決定播哪個大頭特寫！
+                    let animName = "Idle_1"; // 預設 1 星普通反應
+                    if (has3Star) {
+                        animName = "Idle_3"; // 3 星大獎反應
+                    } else if (has2Star) {
+                        animName = "Idle_2"; // 2 星驚訝反應
+                    }
                     
                     gachaPlayerCloseup.animationState.setAnimation(0, animName, false);
                     gachaPlayerCloseup.animationState.addListener({
