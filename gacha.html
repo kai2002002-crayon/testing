@@ -128,9 +128,14 @@
                 </button>
             </section>
             <section id="gachaStage" class="hidden w-full max-w-4xl mx-auto mb-6 relative aspect-video bg-black rounded-2xl overflow-hidden shadow-xl border-4 border-amber-300 dark:border-gray-600">
-                <div id="gachaSpineContainerErpin" class="absolute inset-0 w-full h-full z-10 cursor-pointer transition-opacity duration-300"></div>
-                <div id="gachaSpineContainerDocs" class="absolute inset-0 w-full h-full z-20 pointer-events-none transition-opacity duration-300"></div>
-                <div id="gachaSpineContainerCloseup" class="absolute inset-0 w-full h-full z-30 pointer-events-none opacity-0 transition-opacity duration-300"></div>
+                <!-- 下層 (Z-10)：艾爾芬全身與背景 -->
+            <div id="gachaSpineContainerErpin" class="absolute inset-0 w-full h-full z-10 cursor-pointer transition-opacity duration-300"></div>
+
+            <!-- 中層 (Z-20)：大頭特寫 (將 transition 設慢一點，讓淡入更柔和) -->
+            <div id="gachaSpineContainerCloseup" class="absolute inset-0 w-full h-full z-20 pointer-events-none opacity-0 transition-opacity duration-700"></div>
+            
+            <!-- 上層 (Z-30)：辦公桌與書本 (蓋在大頭前面！) -->
+            <div id="gachaSpineContainerDocs" class="absolute inset-0 w-full h-full z-30 pointer-events-none transition-opacity duration-300"></div>
             </section>
 
             <section id="resultArea" class="bg-gradient-to-b from-white/95 to-amber-50/95 dark:from-gray-800/95 dark:to-gray-900/95 backdrop-blur-md rounded-2xl p-6 shadow-xl border-4 border-amber-300 dark:border-gray-600 min-h-[250px] flex flex-col items-center justify-center transition-all duration-300">
@@ -550,57 +555,47 @@
             function initSpineStages() {
                 currentGachaState = GachaState.ERPIN_IDLE;
                 
+                // 確保清空舊資料
                 if (gachaPlayerErpin) { gachaPlayerErpin.dispose(); gachaPlayerErpin = null; }
                 if (gachaPlayerDocs) { gachaPlayerDocs.dispose(); gachaPlayerDocs = null; }
-                
-                // 每次初始化前，清空大頭容器避免殘留畫布
                 if (gachaPlayerCloseup) { gachaPlayerCloseup.dispose(); gachaPlayerCloseup = null; }
                 document.getElementById('gachaSpineContainerCloseup').innerHTML = ''; 
 
                 const vp = SPINE_CONFIG.viewport;
                 let targetErpinSkin = hasRateUp ? "Choon_On" : "Choon_Off";
 
+                // 1. 底層：艾爾芬
                 gachaPlayerErpin = new spine.SpinePlayer(document.getElementById('gachaSpineContainerErpin'), {
                     skelUrl: `./gacha/Gacha_Hero_Erpin.skel.bytes`, 
                     atlasUrl: `./gacha/Gacha_Hero_Erpin.atlas.txt`,
-                    animation: "Idle", 
-                    skin: targetErpinSkin, 
+                    animation: "Idle", skin: targetErpinSkin,
                     premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
                     viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height },
                     success: function (player) { 
                         try { player.skeleton.setAttachment("BG", "BG"); } catch(e) {}
-                        try { player.skeleton.setAttachment("BG_Window", "BG_Window"); } catch(e) {}
                         player.animationState.data.defaultMix = 0;
                         setupCheekDragInteraction(player); 
                     }
                 });
 
+                // 2. 中層：大頭 (預載入，但 opacity 設為 0)
+                let animName = has3Star ? "Idle_3" : (has2Star ? "Idle_2" : "Idle_1");
+                gachaPlayerCloseup = new spine.SpinePlayer(document.getElementById('gachaSpineContainerCloseup'), {
+                    skelUrl: `./gacha/Gacha_Hero_Closeup.skel.bytes`,
+                    atlasUrl: `./gacha/Gacha_Hero_Closeup.atlas.txt`,
+                    animation: animName,
+                    premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
+                    viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height },
+                    success: (p) => { p.animationState.setAnimation(0, animName, true); }
+                });
+
+                // 3. 上層：辦公桌
                 gachaPlayerDocs = new spine.SpinePlayer(document.getElementById('gachaSpineContainerDocs'), {
                     skelUrl: `./gacha/Gacha_Hero_Documents.skel.bytes`,
                     atlasUrl: `./gacha/Gacha_Hero_Documents.atlas.txt`,
-                    animation: "Idle", 
+                    animation: "Idle",
                     premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
-                    viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height },
-                    success: function(player) {
-                        player.animationState.data.defaultMix = 0; 
-                        const origDocsUpdate = player.skeleton.updateWorldTransform;
-                        player.skeleton.updateWorldTransform = function () {
-                            origDocsUpdate.call(this); 
-                            if (showGlowingBooks) {
-                                if (pendingGachaTimes === 10) {
-                                    pendingGachaResults.forEach((result, idx) => {
-                                        if (result.char.star === 3) {
-                                            try { this.setAttachment(`Book_Drop_${idx + 1}`, `Book_Drop_${idx + 1}_3star`); } catch(e) {}
-                                        }
-                                    });
-                                } else {
-                                    if (pendingGachaResults[0].char.star === 3) {
-                                        try { this.setAttachment(`Book_Drop_1`, `Book_Drop_1_3star`); } catch(e) {}
-                                    }
-                                }
-                            }
-                        };
-                    }
+                    viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height }
                 });
             }
 
@@ -641,66 +636,39 @@
                 if (currentGachaState !== GachaState.END2_WAIT) return;
                 const stage = document.getElementById('gachaStage');
                 stage.removeEventListener('click', onStageClickForEnd3);
-
                 currentGachaState = GachaState.END3_ZOOM;
                 
+                // 🌟 讓大頭層淡入 (由 opacity 0 變為 1)
+                const closeupBox = document.getElementById('gachaSpineContainerCloseup');
+                closeupBox.classList.remove('opacity-0');
+
                 if (gachaPlayerDocs) {
                     let dropEndAnimName = (pendingGachaTimes === 1) ? "Drop_1_End" : "Drop_10_1_End";
-                    gachaPlayerDocs.animationState.setAnimation(0, dropEndAnimName, true);
+                    gachaPlayerDocs.animationState.setAnimation(0, dropEndAnimName, false);
                 }
 
                 if (gachaPlayerErpin) {
-                    gachaPlayerErpin.animationState.clearTracks();
                     gachaPlayerErpin.animationState.setAnimation(0, "End_3", false);
                     gachaPlayerErpin.animationState.addListener({
-                        complete: function(entry) {
-                            if (entry.animation.name === "End_3") {
-                                triggerCloseupSpine(); 
-                            }
-                        }
+                        complete: (entry) => { if (entry.animation.name === "End_3") triggerCloseupSpine(); }
                     });
-                } else {
-                    triggerCloseupSpine();
                 }
             }
 
             function triggerCloseupSpine() {
                 currentGachaState = GachaState.CLOSEUP;
                 
-                const closeupBox = document.getElementById('gachaSpineContainerCloseup');
-                closeupBox.classList.remove('opacity-0');
-                closeupBox.style.pointerEvents = "auto";
+                // 🌟 直接刪除這兩行，不要讓底層背景消失！
+                // document.getElementById('gachaSpineContainerErpin').classList.add('opacity-0');
+                // document.getElementById('gachaSpineContainerDocs').classList.add('opacity-0');
                 
-                document.getElementById('gachaSpineContainerErpin').classList.add('opacity-0');
-                document.getElementById('gachaSpineContainerDocs').classList.add('opacity-0');
+                document.getElementById('gachaSpineContainerCloseup').style.pointerEvents = "auto";
                 
-                // 🌟 給予瀏覽器 50 毫秒的瞬間把 div 畫出來，Spine 才能抓到正確畫布大小！
-                setTimeout(() => {
-                    let animName = has3Star ? "Idle_3" : (has2Star ? "Idle_2" : "Idle_1");
-                    const vp = SPINE_CONFIG.viewport;
-                    
-                    gachaPlayerCloseup = new spine.SpinePlayer(closeupBox, {
-                        skelUrl: `./gacha/Gacha_Hero_Closeup.skel.bytes`,
-                        atlasUrl: `./gacha/Gacha_Hero_Closeup.atlas.txt`,
-                        animation: animName, 
-                        premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
-                        viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height },
-                        success: function(player) {
-                            player.animationState.setAnimation(0, animName, true);
-                            const stage = document.getElementById('gachaStage');
-                            setTimeout(() => {
-                                stage.addEventListener('click', function closeCloseup() {
-                                    stage.removeEventListener('click', closeCloseup);
-                                    finishGachaAnimation();
-                                });
-                            }, 300);
-                        },
-                        error: function() {
-                            console.error("❌ 大頭載入失敗！");
-                            finishGachaAnimation();
-                        }
-                    });
-                }, 50);
+                const stage = document.getElementById('gachaStage');
+                stage.addEventListener('click', function closeCloseup() {
+                    stage.removeEventListener('click', closeCloseup);
+                    finishGachaAnimation();
+                });
             }
 
             function finishGachaAnimation() {
