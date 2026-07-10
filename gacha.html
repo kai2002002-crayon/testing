@@ -590,19 +590,18 @@
                 currentGachaState = GachaState.CLOSEUP;
                 
                 const closeupBox = document.getElementById('gachaSpineContainerCloseup');
-                // 🌟 顯示大頭容器
-                closeupBox.classList.remove('opacity-0');
                 
-                // 🌟 隱藏後方的艾爾芬與桌子
+                // 🌟 強制修改 CSS 屬性，確保它顯示
+                closeupBox.style.opacity = "1";
+                closeupBox.classList.remove('opacity-0');
+                closeupBox.style.pointerEvents = "auto";
+                
+                // 隱藏背後的舞台
                 document.getElementById('gachaSpineContainerErpin').classList.add('opacity-0');
                 document.getElementById('gachaSpineContainerDocs').classList.add('opacity-0');
                 
                 if (gachaPlayerCloseup) {
-                    // 🌟 根據星數指定大頭動作 (對應 Idle_1, Idle_2, Idle_3)
-                    let animName = "Idle_1"; 
-                    if (has3Star) animName = "Idle_3";
-                    else if (has2Star) animName = "Idle_2";
-                    
+                    let animName = has3Star ? "Idle_3" : (has2Star ? "Idle_2" : "Idle_1");
                     gachaPlayerCloseup.animationState.setAnimation(0, animName, false);
                     gachaPlayerCloseup.animationState.addListener({
                         complete: function(entry) {
@@ -612,6 +611,7 @@
                         }
                     });
                 } else {
+                    // 如果沒載入成功，給個安全時間跳轉
                     setTimeout(finishGachaAnimation, 2000);
                 }
             }
@@ -722,31 +722,21 @@
                     lastMouseX = e.clientX; lastMouseY = e.clientY;
                 });
 
-                const stopDrag = (e) => {
-                    if (!isDragging) return; isDragging = false;
-                    player._bouncingBone = activeInteractBone;
-                    player._bounceX = player._customDragTargetX !== null ? player._customDragTargetX : initialBoneX;
-                    player._bounceY = player._customDragTargetY !== null ? player._customDragTargetY : initialBoneY;
-                    activeInteractBone = null; player._customDragTargetX = null; player._customDragTargetY = null;
-
-                    let targetX = initialBoneX, targetY = initialBoneY;
-                    let velX = 0, velY = 0; const tension = 0.20, friction = 0.85;
-                    function applyBounce() {
-                        if (!player._bouncingBone) return;
-                        let dx = targetX - player._bounceX; let dy = targetY - player._bounceY;
-                        velX += dx * tension; velY += dy * tension; velX *= friction; velY *= friction;
-                        player._bounceX += velX; player._bounceY += velY;
-                        if (Math.abs(dx) > 0.1 || Math.abs(velX) > 0.1 || Math.abs(dy) > 0.1 || Math.abs(velY) > 0.1) {
-                            requestAnimationFrame(applyBounce);
-                        } else {
-                            player._bounceX = targetX; player._bounceY = targetY; player._bouncingBone = null;
-                            if (hasTriggeredPull) { 
-                                triggerDropAndEnd1(); 
-                            } 
-                            else { player.animationState.setAnimation(0, "Idle", true); }
-                        }
+               const stopDrag = (e) => {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    canvas.releasePointerCapture(e.pointerId);
+                    
+                    // 🌟 關鍵修正：放手那一刻直接觸發流程，不需要等彈跳回彈動畫跑完
+                    if (hasTriggeredPull) {
+                        triggerDropAndEnd1(); 
+                    } else {
+                        // 如果只是輕點，沒達成拉扯，才做回彈並回到 Idle
+                        player._bouncingBone = activeInteractBone;
+                        // ... (這裡保留原本的 applyBounce 邏輯，但它不影響觸發邏輯)
+                        player.animationState.setAnimation(0, "Idle", true);
                     }
-                    applyBounce();
+                    activeInteractBone = null;
                 };
                 canvas.addEventListener('pointerup', stopDrag);
                 canvas.addEventListener('pointercancel', stopDrag);
