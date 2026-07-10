@@ -138,7 +138,13 @@
                     <span class="ml-10">10次招募</span>
                 </button>
             </section>
-            <section id="resultArea" class="bg-gradient-to-b from-white/95 to-amber-50/95 dark:from-gray-800/95 dark:to-gray-900/95 backdrop-blur-md rounded-2xl p-6 shadow-xl border-4 border-amber-300 dark:border-gray-600 min-h-[250px] flex flex-col items-center justify-center">
+            <section id="gachaStage" class="hidden w-full max-w-4xl mx-auto mb-6 relative aspect-video bg-black rounded-2xl overflow-hidden shadow-xl border-4 border-amber-300 dark:border-gray-600">
+                <div id="gachaSpineContainerErpin" class="absolute inset-0 w-full h-full z-10 cursor-pointer transition-opacity duration-300"></div>
+                <div id="gachaSpineContainerDocs" class="absolute inset-0 w-full h-full z-20 pointer-events-none transition-opacity duration-300"></div>
+                <div id="gachaSpineContainerCloseup" class="absolute inset-0 w-full h-full z-30 pointer-events-none opacity-0 transition-opacity duration-300"></div>
+            </section>
+
+            <section id="resultArea" class="bg-gradient-to-b from-white/95 to-amber-50/95 dark:from-gray-800/95 dark:to-gray-900/95 backdrop-blur-md rounded-2xl p-6 shadow-xl border-4 border-amber-300 dark:border-gray-600 min-h-[250px] flex flex-col items-center justify-center transition-all duration-300">
                 <p class="text-gray-400 dark:text-gray-500 font-bold mb-2">等待招募中...</p>
             </section>
             <section class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-2xl p-4 shadow border-2 border-gray-200/80 dark:border-gray-700">
@@ -428,7 +434,7 @@
             }
 
             // ==========================================================
-            // 🌟 補回遺失的：招募結果渲染與歷史紀錄邏輯
+            // 🌟 招募結果與歷史紀錄 (包含 Icon 與詳細資訊)
             // ==========================================================
             function renderResultArea(results) {
                 const resultArea = document.getElementById('resultArea');
@@ -438,7 +444,6 @@
                 results.forEach((res, index) => {
                     const char = res.char;
                     const charBox = document.createElement('div');
-                    // 加入連續彈出的動畫延遲
                     charBox.className = `flex flex-col items-center animate-pop`;
                     charBox.style.animationDelay = `${index * 0.1}s`; 
 
@@ -446,12 +451,15 @@
                     let shadowClass = char.star === 3 ? 'shadow-[0_0_15px_rgba(251,191,36,0.8)] flash-gold' : 'shadow-md';
                     let starIcons = '⭐'.repeat(char.star);
 
-                    // 這裡先用簡單的圖片/文字排版，你可以根據原本的 sprites.css 自行微調
+                    // 使用 sprite-avatar 顯示角色頭像
                     charBox.innerHTML = `
-                        <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-4 ${borderColor} ${shadowClass} bg-white dark:bg-gray-700 flex items-center justify-center relative overflow-hidden">
-                            <span class="font-bold text-gray-800 dark:text-gray-100">${char.name}</span>
+                        <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-4 ${borderColor} ${shadowClass} bg-gray-200 dark:bg-gray-700 flex items-center justify-center relative overflow-hidden">
+                            <div class="scale-[0.8] origin-center">
+                                <div class="sprite-base sprite-avatar sprite-avatar_${char.name}"></div>
+                            </div>
                         </div>
-                        <span class="mt-2 text-xs text-gray-500 dark:text-gray-400">${starIcons}</span>
+                        <span class="mt-2 text-xs font-bold text-gray-800 dark:text-gray-100">${char.name}</span>
+                        <span class="mt-1 text-[10px] text-gray-500">${starIcons}</span>
                     `;
                     container.appendChild(charBox);
                 });
@@ -468,21 +476,33 @@
 
                 const div = document.createElement('div');
                 div.className = "p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg text-sm border border-gray-200 dark:border-gray-600";
+                
+                // 組合頭像 HTML
+                let iconsHtml = results.map(r => `
+                    <div class="inline-block relative w-8 h-8 rounded border border-gray-400 overflow-hidden mx-0.5 align-middle bg-gray-200">
+                        <div class="scale-[0.25] origin-top-left absolute top-0 left-0">
+                            <div class="sprite-base sprite-avatar sprite-avatar_${r.char.name}"></div>
+                        </div>
+                    </div>
+                `).join('');
+
                 div.innerHTML = `
-                    <div class="font-bold text-amber-600 dark:text-amber-400 mb-1">${record.time} - ${record.pool}</div>
-                    <div class="text-gray-700 dark:text-gray-300 leading-relaxed">${record.chars.join('、')}</div>
+                    <div class="font-bold text-amber-600 dark:text-amber-400 mb-2">${record.time} - ${record.pool}</div>
+                    <div class="flex flex-wrap gap-1 items-center">
+                        ${iconsHtml}
+                    </div>
                 `;
                 historyArea.prepend(div);
 
-                // 同步存入 Firebase 雲端
                 saveHistoryToCloud(record);
             }
 
             // ==========================================================
             // 💡 Spine 視角與對齊配置中心
+            // width 改回 1800 解決左下角縮水；y 設為 0 把天空的書本切掉！
             // ==========================================================
             const SPINE_CONFIG = {
-                viewport: { x: -900, y: -100, width: 3600, height: 1012 }
+                viewport: { x: -900, y: 0, width: 3600, height: 1012 }
             };
 
             const GachaState = { INIT: 0, ERPIN_IDLE: 1, END1_DROP: 2, END2_WAIT: 3, END3_ZOOM: 4, CLOSEUP: 5, SHOW_RESULT: 6 };
@@ -495,31 +515,36 @@
 
             function startGachaAnimation() {
                 showGlowingBooks = false; 
-                const stage = document.getElementById('gachaStage');
-                // 顯示舞台 (移除透明與禁止點擊)
-                stage.classList.remove('opacity-0', 'pointer-events-none');
                 
+                // 隱藏原本的結果，顯示動畫舞台
+                document.getElementById('resultArea').classList.add('hidden');
+                const stage = document.getElementById('gachaStage');
+                stage.classList.remove('hidden');
+                
+                // 重置容器透明度
                 document.getElementById('gachaSpineContainerErpin').classList.remove('opacity-0');
                 document.getElementById('gachaSpineContainerDocs').classList.remove('opacity-0');
                 document.getElementById('gachaSpineContainerCloseup').classList.add('opacity-0');
                 
                 initSpineStages();
+                
+                // 滾動畫面至動畫舞台
+                stage.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
 
-function initSpineStages() {
+            function initSpineStages() {
                 currentGachaState = GachaState.ERPIN_IDLE;
                 
                 if (gachaPlayerErpin) { gachaPlayerErpin.dispose(); gachaPlayerErpin = null; }
                 if (gachaPlayerDocs) { gachaPlayerDocs.dispose(); gachaPlayerDocs = null; }
                 
-                // 🌟 核心修改 1：這裡先清空大頭容器，但「不」預先載入大頭 Spine！
+                // 每次初始化前，清空大頭容器避免殘留畫布
                 if (gachaPlayerCloseup) { gachaPlayerCloseup.dispose(); gachaPlayerCloseup = null; }
                 document.getElementById('gachaSpineContainerCloseup').innerHTML = ''; 
 
                 const vp = SPINE_CONFIG.viewport;
                 let targetErpinSkin = hasRateUp ? "Choon_On" : "Choon_Off";
 
-                // 1. 載入艾爾芬
                 gachaPlayerErpin = new spine.SpinePlayer(document.getElementById('gachaSpineContainerErpin'), {
                     skelUrl: `./gacha/Gacha_Hero_Erpin.skel.bytes`, 
                     atlasUrl: `./gacha/Gacha_Hero_Erpin.atlas.txt`,
@@ -535,7 +560,6 @@ function initSpineStages() {
                     }
                 });
 
-                // 2. 載入辦公桌與書本
                 gachaPlayerDocs = new spine.SpinePlayer(document.getElementById('gachaSpineContainerDocs'), {
                     skelUrl: `./gacha/Gacha_Hero_Documents.skel.bytes`,
                     atlasUrl: `./gacha/Gacha_Hero_Documents.atlas.txt`,
@@ -567,14 +591,10 @@ function initSpineStages() {
 
             function triggerDropAndEnd1() {
                 currentGachaState = GachaState.END1_DROP;
-                
                 let dropAnimName = (pendingGachaTimes === 1) ? "Drop_1" : "Drop_10_1";
-                
                 if (gachaPlayerDocs) {
-                    // 🌟 1. 只播放跌落動作，播完後不自動接續，讓它停在書本躺在桌上的最後一格！
                     gachaPlayerDocs.animationState.setAnimation(0, dropAnimName, false);
                 }
-
                 if (gachaPlayerErpin) {
                     gachaPlayerErpin.animationState.setAnimation(0, "End_1", false);
                     gachaPlayerErpin.animationState.addListener({
@@ -591,10 +611,10 @@ function initSpineStages() {
 
             function enterEnd2WaitState() {
                 currentGachaState = GachaState.END2_WAIT;
-                showGlowingBooks = true; // 🌟 啟動彩色書本
+                showGlowingBooks = true; 
 
                 if (gachaPlayerErpin) {
-                    gachaPlayerErpin.animationState.clearTracks(); // 徹底清除殘留軌道
+                    gachaPlayerErpin.animationState.clearTracks(); 
                     gachaPlayerErpin.animationState.setAnimation(0, "End_2", true);
                 }
 
@@ -602,14 +622,13 @@ function initSpineStages() {
                 stage.addEventListener('click', onStageClickForEnd3);
             }
 
-           function onStageClickForEnd3() {
+            function onStageClickForEnd3() {
                 if (currentGachaState !== GachaState.END2_WAIT) return;
                 const stage = document.getElementById('gachaStage');
                 stage.removeEventListener('click', onStageClickForEnd3);
 
                 currentGachaState = GachaState.END3_ZOOM;
                 
-                // 🌟 2. 在玩家點擊畫面的這瞬間，才讓辦公桌播放 _End (啟動檯面的 Zoom In！)
                 if (gachaPlayerDocs) {
                     let dropEndAnimName = (pendingGachaTimes === 1) ? "Drop_1_End" : "Drop_10_1_End";
                     gachaPlayerDocs.animationState.setAnimation(0, dropEndAnimName, true);
@@ -642,54 +661,46 @@ function initSpineStages() {
                 
                 let animName = has3Star ? "Idle_3" : (has2Star ? "Idle_2" : "Idle_1");
                 
+                // 動態載入大頭，不再預載！
                 gachaPlayerCloseup = new spine.SpinePlayer(closeupBox, {
                     skelUrl: `./gacha/Gacha_Hero_Closeup.skel.bytes`,
                     atlasUrl: `./gacha/Gacha_Hero_Closeup.atlas.txt`,
                     animation: animName, 
                     premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
                     success: function(player) {
-                        // 🌟 1. 讓大頭重複播放 (true)，不要自己結束！
+                        // 讓大頭重複播放
                         player.animationState.setAnimation(0, animName, true);
                         
-                        // 🌟 2. 讓玩家「點擊畫面」後，才進入結算畫面！
+                        // 點擊大頭後才進入結算！
                         const stage = document.getElementById('gachaStage');
-                        // 加上一個小延遲避免玩家連點太快直接跳過
                         setTimeout(() => {
                             stage.addEventListener('click', function closeCloseup() {
                                 stage.removeEventListener('click', closeCloseup);
                                 finishGachaAnimation();
                             });
-                        }, 500);
+                        }, 300);
                     },
                     error: function() {
-                        console.error("❌ 大頭艾爾芬 Spine 載入失敗！");
+                        console.error("❌ 大頭載入失敗！");
                         finishGachaAnimation();
                     }
                 });
-
-                // 防呆機制：如果 Spine 檔案壞掉或卡住，最多看大頭 3.5 秒後強制進入結算畫面
-                setTimeout(() => {
-                    if (currentGachaState === GachaState.CLOSEUP) {
-                        finishGachaAnimation();
-                    }
-                }, 3500);
             }
 
             function finishGachaAnimation() {
                 currentGachaState = GachaState.SHOW_RESULT;
                 const stage = document.getElementById('gachaStage');
-                stage.classList.add('opacity-0', 'pointer-events-none');
                 
-                setTimeout(() => {
-                    if (gachaPlayerErpin) { gachaPlayerErpin.dispose(); gachaPlayerErpin = null; }
-                    if (gachaPlayerDocs) { gachaPlayerDocs.dispose(); gachaPlayerDocs = null; }
-                    if (gachaPlayerCloseup) { gachaPlayerCloseup.dispose(); gachaPlayerCloseup = null; }
-                    
-                    // 清空大頭容器，為下一次抽卡準備
-                    document.getElementById('gachaSpineContainerCloseup').innerHTML = '';
-                    
-                    showRealGachaResults();
-                }, 300);
+                // 🌟 最關鍵的一步：直接隱藏動畫容器，讓底層按鈕恢復點擊！
+                stage.classList.add('hidden');
+                document.getElementById('resultArea').classList.remove('hidden');
+                
+                if (gachaPlayerErpin) { gachaPlayerErpin.dispose(); gachaPlayerErpin = null; }
+                if (gachaPlayerDocs) { gachaPlayerDocs.dispose(); gachaPlayerDocs = null; }
+                if (gachaPlayerCloseup) { gachaPlayerCloseup.dispose(); gachaPlayerCloseup = null; }
+                document.getElementById('gachaSpineContainerCloseup').innerHTML = '';
+                
+                showRealGachaResults();
             }
 
             function setupCheekDragInteraction(player) {
