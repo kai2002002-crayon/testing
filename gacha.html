@@ -434,7 +434,7 @@
             }
 
             // ==========================================================
-            // 🌟 招募結果與歷史紀錄 (還原原本的 img 頭像結構)
+            // 🌟 招募結果與歷史紀錄 (完全還原為 Sprite Icon)
             // ==========================================================
             function renderResultArea(results) {
                 const resultArea = document.getElementById('resultArea');
@@ -451,13 +451,11 @@
                     let shadowClass = char.star === 3 ? 'shadow-[0_0_15px_rgba(251,191,36,0.8)] flash-gold' : 'shadow-md';
                     let starIcons = '⭐'.repeat(char.star);
 
-                    // 🌟 假設你原本的圖片是這個路徑。若不同，請更改這裡！
-                    let imgSrc = char.avatar || `./assets/${char.name}.png`;
-
+                    // 🌟 完美還原使用 sprite-avatar
                     charBox.innerHTML = `
                         <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-4 ${borderColor} ${shadowClass} bg-gray-200 dark:bg-gray-700 flex items-center justify-center relative overflow-hidden">
-                            <div class="char-avatar-container w-full h-full">
-                                <img src="${imgSrc}" alt="${char.name}" onerror="this.style.display='none'">
+                            <div class="scale-[0.8] origin-center">
+                                <div class="sprite-base sprite-avatar sprite-avatar_${char.name}"></div>
                             </div>
                         </div>
                         <span class="mt-2 text-xs font-bold text-gray-800 dark:text-gray-100">${char.name}</span>
@@ -479,17 +477,14 @@
                 const div = document.createElement('div');
                 div.className = "p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg text-sm border border-gray-200 dark:border-gray-600";
                 
-                // 🌟 歷史紀錄的微型頭像
-                let iconsHtml = results.map(r => {
-                    let imgSrc = r.char.avatar || `./assets/${r.char.name}.png`;
-                    return `
+                // 🌟 完美還原歷史紀錄的微型 sprite-avatar
+                let iconsHtml = results.map(r => `
                     <div class="inline-block relative w-8 h-8 rounded border border-gray-400 overflow-hidden mx-0.5 align-middle bg-gray-200">
-                        <div class="char-avatar-container w-full h-full">
-                            <img src="${imgSrc}" alt="${r.char.name}" onerror="this.style.display='none'">
+                        <div class="scale-[0.25] origin-top-left absolute top-0 left-0">
+                            <div class="sprite-base sprite-avatar sprite-avatar_${r.char.name}"></div>
                         </div>
                     </div>
-                    `;
-                }).join('');
+                `).join('');
 
                 div.innerHTML = `
                     <div class="font-bold text-amber-600 dark:text-amber-400 mb-2">${record.time} - ${record.pool}</div>
@@ -502,12 +497,8 @@
                 saveHistoryToCloud(record);
             }
 
-            // ==========================================================
-            // 💡 Spine 視角與對齊配置中心
-            // width 改回 1800 解決左下角縮水；y 設為 0 把天空的書本切掉！
-            // ==========================================================
             const SPINE_CONFIG = {
-                viewport: { x: -900, y: 0, width: 1800, height: 1012 }
+                viewport: { x: -900, y: -150, width: 1800, height: 1012 }
             };
 
             const GachaState = { INIT: 0, ERPIN_IDLE: 1, END1_DROP: 2, END2_WAIT: 3, END3_ZOOM: 4, CLOSEUP: 5, SHOW_RESULT: 6 };
@@ -525,19 +516,22 @@
                 document.getElementById('resultArea').classList.add('hidden');
                 const stage = document.getElementById('gachaStage');
                 stage.classList.remove('hidden');
+                stage.style.display = 'block'; // 強制顯現
                 
                 // 重置容器透明度
                 document.getElementById('gachaSpineContainerErpin').classList.remove('opacity-0');
                 document.getElementById('gachaSpineContainerDocs').classList.remove('opacity-0');
                 document.getElementById('gachaSpineContainerCloseup').classList.add('opacity-0');
                 
-                // 🌟 關鍵修復：給瀏覽器 50 毫秒的時間把 div 的長寬生出來，Spine 就不會當機了！
+                // 🌟 關鍵修復：強制瀏覽器立即計算 div 長寬，避免 Spine 取到 0x0 當機
+                stage.getBoundingClientRect(); 
+
+                // 給予 100 毫秒緩衝，確保畫面完全準備好再載入 Spine
                 setTimeout(() => {
                     initSpineStages();
                     stage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 50);
+                }, 100);
             }
-
             function initSpineStages() {
                 currentGachaState = GachaState.ERPIN_IDLE;
                 
