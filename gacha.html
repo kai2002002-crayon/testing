@@ -423,8 +423,21 @@
             }
 
             // ==========================================================
-            // 🌟 招募結果與歷史紀錄 (完全還原為 Sprite Icon)
+            // 🌟 招募結果與歷史紀錄 (完美適配性格雪碧圖)
             // ==========================================================
+            
+            // 幫助函式：將中文性格轉換為雪碧圖的 Class
+            function getPersonalitySpriteClass(personality) {
+                switch(personality) {
+                    case '冷靜': return 'sprite-char-composed';
+                    case '憂鬱': return 'sprite-char-depressed';
+                    case '天真': return 'sprite-char-innocence';
+                    case '狂亂': return 'sprite-char-madness';
+                    case '活潑': return 'sprite-char-vivacious';
+                    default: return 'sprite-char-innocence'; 
+                }
+            }
+
             function renderResultArea(results) {
                 const resultArea = document.getElementById('resultArea');
                 resultArea.innerHTML = '<h3 class="text-xl font-bold text-amber-900 dark:text-amber-400 mb-4 w-full text-center">🎉 招募結果 🎉</h3><div class="flex flex-wrap justify-center gap-4 w-full"></div>';
@@ -440,11 +453,14 @@
                     let shadowClass = char.star === 3 ? 'shadow-[0_0_15px_rgba(251,191,36,0.8)] flash-gold' : 'shadow-md';
                     let starIcons = '⭐'.repeat(char.star);
 
-                    // 🌟 完美還原使用 sprite-avatar
+                    // 🌟 自動配對底圖與頭像座標 (預設大小 126x126，配合外框縮小)
+                    let pClass = getPersonalitySpriteClass(char.personality);
+                    let spriteNameClass = `sprite-${char.engName || char.name}`;
+
                     charBox.innerHTML = `
                         <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-4 ${borderColor} ${shadowClass} bg-gray-200 dark:bg-gray-700 flex items-center justify-center relative overflow-hidden">
-                            <div class="scale-[0.8] origin-center">
-                                <div class="sprite-base sprite-avatar sprite-avatar_${char.name}"></div>
+                            <div class="scale-[0.6] sm:scale-[0.75] origin-center flex items-center justify-center">
+                                <div class="${pClass} ${spriteNameClass}"></div>
                             </div>
                         </div>
                         <span class="mt-2 text-xs font-bold text-gray-800 dark:text-gray-100">${char.name}</span>
@@ -466,14 +482,19 @@
                 const div = document.createElement('div');
                 div.className = "p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg text-sm border border-gray-200 dark:border-gray-600";
                 
-                // 🌟 完美還原歷史紀錄的微型 sprite-avatar
-                let iconsHtml = results.map(r => `
-                    <div class="inline-block relative w-8 h-8 rounded border border-gray-400 overflow-hidden mx-0.5 align-middle bg-gray-200">
-                        <div class="scale-[0.25] origin-top-left absolute top-0 left-0">
-                            <div class="sprite-base sprite-avatar sprite-avatar_${r.char.name}"></div>
+                // 🌟 歷史紀錄也套用雪碧圖 (縮放至 32x32 左右)
+                let iconsHtml = results.map(r => {
+                    let pClass = getPersonalitySpriteClass(r.char.personality);
+                    let spriteNameClass = `sprite-${r.char.engName || r.char.name}`;
+                    
+                    return `
+                    <div class="inline-flex items-center justify-center relative w-8 h-8 rounded border border-gray-400 overflow-hidden mx-0.5 align-middle bg-gray-200">
+                        <div class="scale-[0.25] origin-center flex items-center justify-center">
+                            <div class="${pClass} ${spriteNameClass}"></div>
                         </div>
                     </div>
-                `).join('');
+                    `;
+                }).join('');
 
                 div.innerHTML = `
                     <div class="font-bold text-amber-600 dark:text-amber-400 mb-2">${record.time} - ${record.pool}</div>
@@ -486,8 +507,10 @@
                 saveHistoryToCloud(record);
             }
 
+            // 💡 放大 width 和 height 可以讓鏡頭拉遠，角色看起來比較小
             const SPINE_CONFIG = {
-                viewport: { x: -900, y: -150, width: 1800, height: 1012 }
+                viewport: { x: -1200, y: -250, width: 2400, height: 1350 }
+            };
             };
 
             const GachaState = { INIT: 0, ERPIN_IDLE: 1, END1_DROP: 2, END2_WAIT: 3, END3_ZOOM: 4, CLOSEUP: 5, SHOW_RESULT: 6 };
@@ -501,21 +524,21 @@
             function startGachaAnimation() {
                 showGlowingBooks = false; 
                 
-                // 隱藏原本的結果，顯示動畫舞台
                 document.getElementById('resultArea').classList.add('hidden');
                 const stage = document.getElementById('gachaStage');
                 stage.classList.remove('hidden');
-                stage.style.display = 'block'; // 強制顯現
+                stage.style.display = 'block'; 
                 
-                // 重置容器透明度
                 document.getElementById('gachaSpineContainerErpin').classList.remove('opacity-0');
                 document.getElementById('gachaSpineContainerDocs').classList.remove('opacity-0');
-                document.getElementById('gachaSpineContainerCloseup').classList.add('opacity-0');
                 
-                // 🌟 關鍵修復：強制瀏覽器立即計算 div 長寬，避免 Spine 取到 0x0 當機
+                // 🌟 關鍵修復：除了透明，還必須把 pointerEvents 設回 none！否則會擋住第二次的拉扯！
+                const closeupBox = document.getElementById('gachaSpineContainerCloseup');
+                closeupBox.classList.add('opacity-0');
+                closeupBox.style.pointerEvents = 'none'; 
+                
                 stage.getBoundingClientRect(); 
 
-                // 給予 100 毫秒緩衝，確保畫面完全準備好再載入 Spine
                 setTimeout(() => {
                     initSpineStages();
                     stage.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -649,18 +672,16 @@
                 document.getElementById('gachaSpineContainerDocs').classList.add('opacity-0');
                 
                 let animName = has3Star ? "Idle_3" : (has2Star ? "Idle_2" : "Idle_1");
+                const vp = SPINE_CONFIG.viewport; // 取得視角參數
                 
-                // 動態載入大頭，不再預載！
                 gachaPlayerCloseup = new spine.SpinePlayer(closeupBox, {
                     skelUrl: `./gacha/Gacha_Hero_Closeup.skel.bytes`,
                     atlasUrl: `./gacha/Gacha_Hero_Closeup.atlas.txt`,
                     animation: animName, 
                     premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
+                    viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height }, // 🌟 關鍵：強制指定大小，避免黑屏
                     success: function(player) {
-                        // 讓大頭重複播放
                         player.animationState.setAnimation(0, animName, true);
-                        
-                        // 點擊大頭後才進入結算！
                         const stage = document.getElementById('gachaStage');
                         setTimeout(() => {
                             stage.addEventListener('click', function closeCloseup() {
@@ -670,7 +691,7 @@
                         }, 300);
                     },
                     error: function() {
-                        console.error("❌ 大頭載入失敗！");
+                        console.error("❌ 大頭載入失敗！請檢查路徑。");
                         finishGachaAnimation();
                     }
                 });
