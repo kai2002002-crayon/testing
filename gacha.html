@@ -590,18 +590,18 @@
                 currentGachaState = GachaState.CLOSEUP;
                 
                 const closeupBox = document.getElementById('gachaSpineContainerCloseup');
-                
-                // 1. 瞬間讓它恢復顯示屬性
                 closeupBox.classList.remove('opacity-0');
                 closeupBox.style.opacity = "1";
                 closeupBox.style.pointerEvents = "auto";
                 
-                // 2. 強制讓 Spine 重新計算畫布大小 (解決初始化渲染失敗的問題)
-                if (gachaPlayerCloseup) {
-                    gachaPlayerCloseup.resize();
+                // 🌟 修正：SpinePlayer 沒有 resize 方法，改為手動觸發 Canvas 的樣式更新
+                // 這會強迫瀏覽器重新計算該元素的大小
+                const canvas = closeupBox.querySelector('canvas');
+                if (canvas) {
+                    canvas.style.width = "100%";
+                    canvas.style.height = "100%";
                 }
                 
-                // 3. 隱藏背後的舞台，但保留 Spine 運作
                 document.getElementById('gachaSpineContainerErpin').classList.add('opacity-0');
                 document.getElementById('gachaSpineContainerDocs').classList.add('opacity-0');
                 
