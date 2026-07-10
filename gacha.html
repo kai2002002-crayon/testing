@@ -471,32 +471,28 @@
                 // 🆕 根據是否抽到特選角色，決定榮春（Choon）要不要開燈登場
                 let targetErpinSkin = hasRateUp ? "Choon_On" : "Choon_Off";
 
-                                // 1. 載入艾爾芬
+                // 1. 載入艾爾芬
                 gachaPlayerErpin = new spine.SpinePlayer(document.getElementById('gachaSpineContainerErpin'), {
                     skelUrl: `./gacha/Gacha_Hero_Erpin.skel.bytes`, 
                     atlasUrl: `./gacha/Gacha_Hero_Erpin.atlas.txt`,
                     animation: "Idle", 
                     skin: targetErpinSkin, 
-                    premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
+                    premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, 
+                    
+                    // 🌟 1. 將這裡的 false 改成 true，呼叫出播放控制器！
+                    showControls: true, 
+                    
+                    showLoading: false,
                     viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height },
                     success: function (player) { 
-                        // ==========================================
-                        // 🔍 核心偵錯：印出艾爾芬所有的動作名稱
-                        // ==========================================
-                        console.log("=== 📜 艾爾芬 (Erpin) 最新動作清單 ===");
-                        if (player.skeleton.data.animations) {
-                            player.skeleton.data.animations.forEach(anim => console.log(`👉 ${anim.name}`));
-                        }
-                        console.log("======================================");
-
                         // 強制打開背景與窗戶的插槽
                         try { player.skeleton.setAttachment("BG", "BG"); } catch(e) {}
                         try { player.skeleton.setAttachment("BG_Window", "BG_Window"); } catch(e) {}
                         
-                        setupCheekDragInteraction(player); 
+                        // 🌟 2. 暫時關閉拉臉頰互動，以免你點擊控制器時誤觸
+                        // setupCheekDragInteraction(player); 
                     }
                 });
-
 
                 // 2. 載入辦公桌與書本
                 gachaPlayerDocs = new spine.SpinePlayer(document.getElementById('gachaSpineContainerDocs'), {
