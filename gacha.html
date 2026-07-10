@@ -95,15 +95,15 @@
         <!-- ========================================================== -->
         <!-- 全螢幕轉蛋動畫舞台 -->
         <!-- ========================================================== -->
-        <div id="gachaStage" class="fixed inset-0 z-[99999] bg-black hidden flex items-center justify-center select-none">
-            <!-- 下層：艾爾芬 (負責接收互動，z-index: 10) -->
-            <div id="gachaSpineContainerErpin" class="absolute inset-0 w-full h-full z-10 cursor-pointer"></div>
+        <div id="gachaStage" class="fixed inset-0 z-[99999] bg-black opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center select-none">
+            <!-- 下層：艾爾芬 -->
+            <div id="gachaSpineContainerErpin" class="absolute inset-0 w-full h-full z-10 cursor-pointer transition-opacity duration-300"></div>
             
-            <!-- 中層：辦公桌與書本 (滑鼠穿透，z-index: 20) -->
-            <div id="gachaSpineContainerDocs" class="absolute inset-0 w-full h-full z-20 pointer-events-none"></div>
+            <!-- 中層：辦公桌與書本 -->
+            <div id="gachaSpineContainerDocs" class="absolute inset-0 w-full h-full z-20 pointer-events-none transition-opacity duration-300"></div>
 
-            <!-- 上層：大頭特寫 (專屬 Spine 容器，預設隱藏，z-index: 30) -->
-            <div id="gachaSpineContainerCloseup" class="absolute inset-0 w-full h-full z-30 pointer-events-none hidden bg-black/50"></div>
+            <!-- 上層：大頭特寫 (將 hidden 改為 opacity-0，避免 Spine 算圖失敗！) -->
+            <div id="gachaSpineContainerCloseup" class="absolute inset-0 w-full h-full z-30 pointer-events-none opacity-0 transition-opacity duration-300"></div>
         </div>
         <!-- ========================================================== -->
         <div class="max-w-4xl mx-auto space-y-6">
@@ -400,14 +400,14 @@
             let pendingGachaResults = [];
             let has3Star = false;
             let has2Star = false;
-            let hasRateUp = false; // 🆕 新增：用來記錄有沒有抽到特選 Pickup 角色
+            let hasRateUp = false;
 
             function performGacha(times) {
                 pendingGachaTimes = times;
                 pendingGachaResults = [];
                 has3Star = false;
                 has2Star = false;
-                hasRateUp = false; // 🆕 每次抽卡重置狀態
+                hasRateUp = false;
                 
                 for (let i = 0; i < times; i++) {
                     let isGuaranteed = (times === 10 && i === 9);
@@ -416,12 +416,11 @@
                     
                     if (result.char.star === 3) has3Star = true;
                     if (result.char.star === 2) has2Star = true;
-                    if (result.isRateUp) hasRateUp = true; // 🆕 如果這隻是當期特選，標記為 true
+                    if (result.isRateUp) hasRateUp = true;
                 }
                 startGachaAnimation();
             }
 
-            // 動畫全數播完後，秀出結果
             function showRealGachaResults() {
                 renderResultArea(pendingGachaResults);
                 addToHistory(pendingGachaResults, currentPool.name);
@@ -432,38 +431,26 @@
             // 💡 Spine 視角與對齊配置中心
             // ==========================================================
             const SPINE_CONFIG = {
-                viewport: {
-                    x: -900,       
-                    y: -100,       
-                    width: 3600,   
-                    height: 1012   
-                }
+                viewport: { x: -900, y: -100, width: 3600, height: 1012 }
             };
 
-            const GachaState = { 
-                INIT: 0, 
-                ERPIN_IDLE: 1, 
-                END1_DROP: 2, 
-                END2_WAIT: 3, 
-                END3_ZOOM: 4, 
-                CLOSEUP: 5, 
-                SHOW_RESULT: 6 
-            };
-            
+            const GachaState = { INIT: 0, ERPIN_IDLE: 1, END1_DROP: 2, END2_WAIT: 3, END3_ZOOM: 4, CLOSEUP: 5, SHOW_RESULT: 6 };
             let currentGachaState = GachaState.INIT;
+            
             let gachaPlayerErpin = null;
             let gachaPlayerDocs = null;
             let gachaPlayerCloseup = null;
-            
-            // 🌟 控制何時要把書本變彩色的開關
             let showGlowingBooks = false; 
 
             function startGachaAnimation() {
-                showGlowingBooks = false; // 每次抽卡前重置
-                document.getElementById('gachaStage').classList.remove('hidden');
-                document.getElementById('gachaSpineContainerErpin').classList.remove('hidden');
-                document.getElementById('gachaSpineContainerDocs').classList.remove('hidden');
-                document.getElementById('gachaSpineContainerCloseup').classList.add('hidden');
+                showGlowingBooks = false; 
+                const stage = document.getElementById('gachaStage');
+                // 顯示舞台 (移除透明與禁止點擊)
+                stage.classList.remove('opacity-0', 'pointer-events-none');
+                
+                document.getElementById('gachaSpineContainerErpin').classList.remove('opacity-0');
+                document.getElementById('gachaSpineContainerDocs').classList.remove('opacity-0');
+                document.getElementById('gachaSpineContainerCloseup').classList.add('opacity-0');
                 
                 initSpineStages();
             }
@@ -489,6 +476,10 @@
                     success: function (player) { 
                         try { player.skeleton.setAttachment("BG", "BG"); } catch(e) {}
                         try { player.skeleton.setAttachment("BG_Window", "BG_Window"); } catch(e) {}
+                        
+                        // 🌟 強制關閉動作融合，避免 End_1 接 End_2 時發生 Zoom in 錯位變形
+                        player.animationState.data.defaultMix = 0;
+                        
                         setupCheekDragInteraction(player); 
                     }
                 });
@@ -501,22 +492,15 @@
                     premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
                     viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height },
                     success: function(player) {
-                        // 🔍 印出書本的動作清單！
-                        console.log("=== 📚 辦公桌/書本 (Documents) 動作清單 ===");
-                        player.skeleton.data.animations.forEach(anim => console.log(`👉 ${anim.name}`));
-                        console.log("=========================================");
-
-                        // 🌟 劫持渲染週期，變換彩色書本
+                        player.animationState.data.defaultMix = 0; // 同樣關閉融合
                         const origDocsUpdate = player.skeleton.updateWorldTransform;
                         player.skeleton.updateWorldTransform = function () {
                             origDocsUpdate.call(this); 
-                            
                             if (showGlowingBooks) {
                                 if (pendingGachaTimes === 10) {
                                     pendingGachaResults.forEach((result, idx) => {
                                         if (result.char.star === 3) {
-                                            let bookIdx = idx + 1;
-                                            try { this.setAttachment(`Book_Drop_${bookIdx}`, `Book_Drop_${bookIdx}_3star`); } catch(e) {}
+                                            try { this.setAttachment(`Book_Drop_${idx + 1}`, `Book_Drop_${idx + 1}_3star`); } catch(e) {}
                                         }
                                     });
                                 } else {
@@ -529,7 +513,7 @@
                     }
                 });
                 
-                // 3. 預載大頭特寫 Spine
+                // 3. 載入大頭特寫
                 gachaPlayerCloseup = new spine.SpinePlayer(document.getElementById('gachaSpineContainerCloseup'), {
                     skelUrl: `./gacha/Gacha_Hero_Closeup.skel.bytes`,
                     atlasUrl: `./gacha/Gacha_Hero_Closeup.atlas.txt`,
@@ -540,7 +524,6 @@
             function triggerDropAndEnd1() {
                 currentGachaState = GachaState.END1_DROP;
                 
-                // 1. 書本開始掉落 (此時還是普通書)
                 let dropAnimName = (pendingGachaTimes === 1) ? "Drop_1" : "Drop_10_1";
                 let dropEndAnimName = (pendingGachaTimes === 1) ? "Drop_1_End" : "Drop_10_1_End";
                 
@@ -555,13 +538,11 @@
                     });
                 }
 
-                // 2. 艾爾芬播放 End_1 (回彈、榮春撞玻璃)
                 if (gachaPlayerErpin) {
                     gachaPlayerErpin.animationState.setAnimation(0, "End_1", false);
                     gachaPlayerErpin.animationState.addListener({
                         complete: function(entry) {
                             if (entry.animation.name === "End_1") {
-                                // 播完後，進入 End_2 待機環節
                                 enterEnd2WaitState();
                             }
                         }
@@ -573,36 +554,30 @@
 
             function enterEnd2WaitState() {
                 currentGachaState = GachaState.END2_WAIT;
-                
-                // 🌟 開啟發光書本開關！如果有 3 星，書本會在這個瞬間突然發光！
-                showGlowingBooks = true;
+                showGlowingBooks = true; // 🌟 啟動彩色書本
 
-                // 艾爾芬開始播放發呆循環 End_2
                 if (gachaPlayerErpin) {
+                    gachaPlayerErpin.animationState.clearTracks(); // 徹底清除殘留軌道
                     gachaPlayerErpin.animationState.setAnimation(0, "End_2", true);
                 }
 
-                // 加入點擊螢幕的監聽器，等待玩家點擊
                 const stage = document.getElementById('gachaStage');
                 stage.addEventListener('click', onStageClickForEnd3);
             }
 
             function onStageClickForEnd3() {
                 if (currentGachaState !== GachaState.END2_WAIT) return;
-                
-                // 移除監聽器，避免重複點擊
                 const stage = document.getElementById('gachaStage');
                 stage.removeEventListener('click', onStageClickForEnd3);
 
                 currentGachaState = GachaState.END3_ZOOM;
                 
-                // 播放 End_3 (鏡頭 Zoom in)
                 if (gachaPlayerErpin) {
+                    gachaPlayerErpin.animationState.clearTracks();
                     gachaPlayerErpin.animationState.setAnimation(0, "End_3", false);
                     gachaPlayerErpin.animationState.addListener({
                         complete: function(entry) {
                             if (entry.animation.name === "End_3") {
-                                // Zoom In 完畢，切換大頭特寫！
                                 triggerCloseupSpine(); 
                             }
                         }
@@ -616,21 +591,18 @@
                 currentGachaState = GachaState.CLOSEUP;
                 
                 const closeupBox = document.getElementById('gachaSpineContainerCloseup');
-                closeupBox.classList.remove('hidden');
+                // 🌟 顯示大頭容器
+                closeupBox.classList.remove('opacity-0');
                 
-                // 隱藏後方模型
-                document.getElementById('gachaSpineContainerErpin').classList.add('hidden');
-                document.getElementById('gachaSpineContainerDocs').classList.add('hidden');
+                // 🌟 隱藏後方的艾爾芬與桌子
+                document.getElementById('gachaSpineContainerErpin').classList.add('opacity-0');
+                document.getElementById('gachaSpineContainerDocs').classList.add('opacity-0');
                 
-                if (gachaPlayerCloseup && gachaPlayerCloseup.skeleton.data.animations.length > 0) {
-                    
-                    // 🌟 根據剛剛的抽卡結果，決定播哪個大頭特寫！
-                    let animName = "Idle_1"; // 預設 1 星普通反應
-                    if (has3Star) {
-                        animName = "Idle_3"; // 3 星大獎反應
-                    } else if (has2Star) {
-                        animName = "Idle_2"; // 2 星驚訝反應
-                    }
+                if (gachaPlayerCloseup) {
+                    // 🌟 根據星數指定大頭動作 (對應 Idle_1, Idle_2, Idle_3)
+                    let animName = "Idle_1"; 
+                    if (has3Star) animName = "Idle_3";
+                    else if (has2Star) animName = "Idle_2";
                     
                     gachaPlayerCloseup.animationState.setAnimation(0, animName, false);
                     gachaPlayerCloseup.animationState.addListener({
@@ -647,13 +619,17 @@
 
             function finishGachaAnimation() {
                 currentGachaState = GachaState.SHOW_RESULT;
-                document.getElementById('gachaStage').classList.add('hidden');
+                const stage = document.getElementById('gachaStage');
+                // 讓舞台漸隱
+                stage.classList.add('opacity-0', 'pointer-events-none');
                 
-                if (gachaPlayerErpin) { gachaPlayerErpin.dispose(); gachaPlayerErpin = null; }
-                if (gachaPlayerDocs) { gachaPlayerDocs.dispose(); gachaPlayerDocs = null; }
-                if (gachaPlayerCloseup) { gachaPlayerCloseup.dispose(); gachaPlayerCloseup = null; }
-                
-                showRealGachaResults();
+                setTimeout(() => {
+                    if (gachaPlayerErpin) { gachaPlayerErpin.dispose(); gachaPlayerErpin = null; }
+                    if (gachaPlayerDocs) { gachaPlayerDocs.dispose(); gachaPlayerDocs = null; }
+                    if (gachaPlayerCloseup) { gachaPlayerCloseup.dispose(); gachaPlayerCloseup = null; }
+                    
+                    showRealGachaResults();
+                }, 300); // 等待 CSS 漸隱結束後清理記憶體並顯示結果
             }
 
             function setupCheekDragInteraction(player) {
@@ -766,7 +742,6 @@
                         } else {
                             player._bounceX = targetX; player._bounceY = targetY; player._bouncingBone = null;
                             if (hasTriggeredPull) { 
-                                // 🌟 呼叫第一階段：Drop + End_1 同步播放！
                                 triggerDropAndEnd1(); 
                             } 
                             else { player.animationState.setAnimation(0, "Idle", true); }
