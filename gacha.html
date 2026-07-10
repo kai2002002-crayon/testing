@@ -428,6 +428,57 @@
             }
 
             // ==========================================================
+            // 🌟 補回遺失的：招募結果渲染與歷史紀錄邏輯
+            // ==========================================================
+            function renderResultArea(results) {
+                const resultArea = document.getElementById('resultArea');
+                resultArea.innerHTML = '<h3 class="text-xl font-bold text-amber-900 dark:text-amber-400 mb-4 w-full text-center">🎉 招募結果 🎉</h3><div class="flex flex-wrap justify-center gap-4 w-full"></div>';
+                const container = resultArea.querySelector('div');
+
+                results.forEach((res, index) => {
+                    const char = res.char;
+                    const charBox = document.createElement('div');
+                    // 加入連續彈出的動畫延遲
+                    charBox.className = `flex flex-col items-center animate-pop`;
+                    charBox.style.animationDelay = `${index * 0.1}s`; 
+
+                    let borderColor = char.star === 3 ? 'border-amber-400' : (char.star === 2 ? 'border-purple-400' : 'border-gray-300');
+                    let shadowClass = char.star === 3 ? 'shadow-[0_0_15px_rgba(251,191,36,0.8)] flash-gold' : 'shadow-md';
+                    let starIcons = '⭐'.repeat(char.star);
+
+                    // 這裡先用簡單的圖片/文字排版，你可以根據原本的 sprites.css 自行微調
+                    charBox.innerHTML = `
+                        <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-4 ${borderColor} ${shadowClass} bg-white dark:bg-gray-700 flex items-center justify-center relative overflow-hidden">
+                            <span class="font-bold text-gray-800 dark:text-gray-100">${char.name}</span>
+                        </div>
+                        <span class="mt-2 text-xs text-gray-500 dark:text-gray-400">${starIcons}</span>
+                    `;
+                    container.appendChild(charBox);
+                });
+            }
+
+            function addToHistory(results, poolName) {
+                const historyArea = document.getElementById('historyArea');
+                const now = new Date();
+                const record = {
+                    time: now.toLocaleString(),
+                    pool: poolName,
+                    chars: results.map(r => r.char.name)
+                };
+
+                const div = document.createElement('div');
+                div.className = "p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg text-sm border border-gray-200 dark:border-gray-600";
+                div.innerHTML = `
+                    <div class="font-bold text-amber-600 dark:text-amber-400 mb-1">${record.time} - ${record.pool}</div>
+                    <div class="text-gray-700 dark:text-gray-300 leading-relaxed">${record.chars.join('、')}</div>
+                `;
+                historyArea.prepend(div);
+
+                // 同步存入 Firebase 雲端
+                saveHistoryToCloud(record);
+            }
+
+            // ==========================================================
             // 💡 Spine 視角與對齊配置中心
             // ==========================================================
             const SPINE_CONFIG = {
@@ -583,38 +634,39 @@ function initSpineStages() {
                 currentGachaState = GachaState.CLOSEUP;
                 
                 const closeupBox = document.getElementById('gachaSpineContainerCloseup');
-                
-                // 1. 確保容器此時此刻 100% 顯示，有具體長寬！
                 closeupBox.classList.remove('opacity-0');
                 closeupBox.style.pointerEvents = "auto";
                 
-                // 2. 隱藏背後的舞台
                 document.getElementById('gachaSpineContainerErpin').classList.add('opacity-0');
                 document.getElementById('gachaSpineContainerDocs').classList.add('opacity-0');
                 
                 let animName = has3Star ? "Idle_3" : (has2Star ? "Idle_2" : "Idle_1");
                 
-                // 🌟 核心修改 2：動態載入！在容器完全現身的這一刻，才注入 SpinePlayer！
-                // 這樣 WebGL 絕對能抓到正確的畫布大小，不會再當機了。
                 gachaPlayerCloseup = new spine.SpinePlayer(closeupBox, {
                     skelUrl: `./gacha/Gacha_Hero_Closeup.skel.bytes`,
                     atlasUrl: `./gacha/Gacha_Hero_Closeup.atlas.txt`,
-                    animation: animName, // 載入完成直接播放大頭動畫
+                    animation: animName, 
                     premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
                     success: function(player) {
-                        player.animationState.addListener({
-                            complete: function(entry) {
-                                if (entry.animation.name === animName) {
-                                    finishGachaAnimation();
-                                }
-                            }
-                        });
+                        // 🌟 1. 讓大頭重複播放 (true)，不要自己結束！
+                        player.animationState.setAnimation(0, animName, true);
+                        
+                        // 🌟 2. 讓玩家「點擊畫面」後，才進入結算畫面！
+                        const stage = document.getElementById('gachaStage');
+                        // 加上一個小延遲避免玩家連點太快直接跳過
+                        setTimeout(() => {
+                            stage.addEventListener('click', function closeCloseup() {
+                                stage.removeEventListener('click', closeCloseup);
+                                finishGachaAnimation();
+                            });
+                        }, 500);
                     },
                     error: function() {
-                        console.error("❌ 大頭艾爾芬 Spine 載入失敗！找不到檔案或路徑錯誤。");
+                        console.error("❌ 大頭艾爾芬 Spine 載入失敗！");
                         finishGachaAnimation();
                     }
                 });
+            }
 
                 // 防呆機制：如果 Spine 檔案壞掉或卡住，最多看大頭 3.5 秒後強制進入結算畫面
                 setTimeout(() => {
