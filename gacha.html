@@ -433,24 +433,33 @@
             // ==========================================================
             const SPINE_CONFIG = {
                 viewport: {
-                    // 💡 如果你發現窗戶還是被卡掉，請把 width 和 height 同比例加大 (如 2000, 1125)
-                    // 💡 如果艾爾芬太偏右，把 x 調小 (如 -1000)
-                    // 💡 如果艾爾芬太高(飛在空中)，把 y 往正數調 (如 0 或 100)
                     x: -900,       
                     y: -100,       
-                    width: 3600,   
-                    height: 1012   // 16:9 比例 (1800 * 9 / 16)
+                    width: 1800,   
+                    height: 1012   
                 }
             };
 
-            const GachaState = { INIT: 0, ERPIN_IDLE: 1, DOCUMENTS_DROP: 2, ERPIN_REACTION: 3, CLOSEUP: 4, SHOW_RESULT: 5 };
-            let currentGachaState = GachaState.INIT;
+            const GachaState = { 
+                INIT: 0, 
+                ERPIN_IDLE: 1, 
+                END1_DROP: 2, 
+                END2_WAIT: 3, 
+                END3_ZOOM: 4, 
+                CLOSEUP: 5, 
+                SHOW_RESULT: 6 
+            };
             
+            let currentGachaState = GachaState.INIT;
             let gachaPlayerErpin = null;
             let gachaPlayerDocs = null;
             let gachaPlayerCloseup = null;
+            
+            // 🌟 控制何時要把書本變彩色的開關
+            let showGlowingBooks = false; 
 
             function startGachaAnimation() {
+                showGlowingBooks = false; // 每次抽卡前重置
                 document.getElementById('gachaStage').classList.remove('hidden');
                 document.getElementById('gachaSpineContainerErpin').classList.remove('hidden');
                 document.getElementById('gachaSpineContainerDocs').classList.remove('hidden');
@@ -467,8 +476,6 @@
                 if (gachaPlayerCloseup) { gachaPlayerCloseup.dispose(); gachaPlayerCloseup = null; }
 
                 const vp = SPINE_CONFIG.viewport;
-
-                // 🆕 根據是否抽到特選角色，決定榮春（Choon）要不要開燈登場
                 let targetErpinSkin = hasRateUp ? "Choon_On" : "Choon_Off";
 
                 // 1. 載入艾爾芬
@@ -477,20 +484,12 @@
                     atlasUrl: `./gacha/Gacha_Hero_Erpin.atlas.txt`,
                     animation: "Idle", 
                     skin: targetErpinSkin, 
-                    premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, 
-                    
-                    // 🌟 1. 將這裡的 false 改成 true，呼叫出播放控制器！
-                    showControls: true, 
-                    
-                    showLoading: false,
+                    premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
                     viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height },
                     success: function (player) { 
-                        // 強制打開背景與窗戶的插槽
                         try { player.skeleton.setAttachment("BG", "BG"); } catch(e) {}
                         try { player.skeleton.setAttachment("BG_Window", "BG_Window"); } catch(e) {}
-                        
-                        // 🌟 2. 暫時關閉拉臉頰互動，以免你點擊控制器時誤觸
-                        // setupCheekDragInteraction(player); 
+                        setupCheekDragInteraction(player); 
                     }
                 });
 
@@ -500,78 +499,112 @@
                     atlasUrl: `./gacha/Gacha_Hero_Documents.atlas.txt`,
                     animation: "Idle", 
                     premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
-                    viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height }
+                    viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height },
+                    success: function(player) {
+                        // 🌟 劫持渲染週期，但只有在 showGlowingBooks 為 true 時才變換彩色書本！
+                        const origDocsUpdate = player.skeleton.updateWorldTransform;
+                        player.skeleton.updateWorldTransform = function () {
+                            origDocsUpdate.call(this); 
+                            
+                            if (showGlowingBooks) {
+                                if (pendingGachaTimes === 10) {
+                                    pendingGachaResults.forEach((result, idx) => {
+                                        if (result.char.star === 3) {
+                                            let bookIdx = idx + 1;
+                                            try { this.setAttachment(`Book_Drop_${bookIdx}`, `Book_Drop_${bookIdx}_3star`); } catch(e) {}
+                                        }
+                                    });
+                                } else {
+                                    if (pendingGachaResults[0].char.star === 3) {
+                                        try { this.setAttachment(`Book_Drop_1`, `Book_Drop_1_3star`); } catch(e) {}
+                                    }
+                                }
+                            }
+                        };
+                    }
                 });
                 
-                // 3. 大頭特寫 Spine
+                // 3. 預載大頭特寫 Spine
                 gachaPlayerCloseup = new spine.SpinePlayer(document.getElementById('gachaSpineContainerCloseup'), {
                     skelUrl: `./gacha/Gacha_Hero_Closeup.skel.bytes`,
                     atlasUrl: `./gacha/Gacha_Hero_Closeup.atlas.txt`,
-                    premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false
+                    premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
+                    success: function(player) {
+                        // 🔍 印出特寫大頭的動作清單！
+                        console.log("=== 📜 特寫大頭 (Closeup) 動作清單 ===");
+                        player.skeleton.data.animations.forEach(anim => console.log(`👉 ${anim.name}`));
+                        console.log("======================================");
+                    }
                 });
             }
 
-            function triggerDocumentsDrop() {
-                currentGachaState = GachaState.DOCUMENTS_DROP;
+            function triggerDropAndEnd1() {
+                currentGachaState = GachaState.END1_DROP;
                 
-                // 動畫名稱 (預設播一般的 Drop_1 或 Drop_10_1 即可，發光效果由下方插槽控制)
+                // 1. 書本開始掉落 (此時還是普通書)
                 let dropAnimName = (pendingGachaTimes === 1) ? "Drop_1" : "Drop_10_1";
                 let dropEndAnimName = (pendingGachaTimes === 1) ? "Drop_1_End" : "Drop_10_1_End";
                 
                 if (gachaPlayerDocs) {
                     gachaPlayerDocs.animationState.setAnimation(0, dropAnimName, false);
-                    
-                    // 🌟 核心魔法：劫持渲染週期，精準替換第 N 本書為 3 星發光書！
-                    // (因為 Spine 動畫播放時可能會不斷重置圖層，所以我們要在 update 裡面強制鎖定它)
-                    const origDocsUpdate = gachaPlayerDocs.skeleton.updateWorldTransform;
-                    gachaPlayerDocs.skeleton.updateWorldTransform = function () {
-                        origDocsUpdate.call(this); // 先執行原本的動畫
-                        
-                        if (pendingGachaTimes === 10) {
-                            // 遍歷 10 抽結果，如果第 idx 個角色是 3 星，就把對應的書換成彩色書
-                            pendingGachaResults.forEach((result, idx) => {
-                                if (result.char.star === 3) {
-                                    let bookIdx = idx + 1; // 書本編號 1~10
-                                    try { 
-                                        this.setAttachment(`Book_Drop_${bookIdx}`, `Book_Drop_${bookIdx}_3star`); 
-                                    } catch(e) {}
-                                }
-                            });
-                        } else {
-                            // 單抽如果是 3 星
-                            if (pendingGachaResults[0].char.star === 3) {
-                                try { this.setAttachment(`Book_Drop_1`, `Book_Drop_1_3star`); } catch(e) {}
-                            }
-                        }
-                    };
-
                     gachaPlayerDocs.animationState.addListener({
                         complete: function(entry) { 
                             if (entry.animation.name === dropAnimName) {
                                 gachaPlayerDocs.animationState.setAnimation(0, dropEndAnimName, true);
-                                triggerErpinReaction();
+                            }
+                        }
+                    });
+                }
+
+                // 2. 艾爾芬播放 End_1 (回彈、榮春撞玻璃)
+                if (gachaPlayerErpin) {
+                    gachaPlayerErpin.animationState.setAnimation(0, "End_1", false);
+                    gachaPlayerErpin.animationState.addListener({
+                        complete: function(entry) {
+                            if (entry.animation.name === "End_1") {
+                                // 播完後，進入 End_2 待機環節
+                                enterEnd2WaitState();
                             }
                         }
                     });
                 } else {
-                    triggerErpinReaction();
+                    enterEnd2WaitState();
                 }
             }
 
-            function triggerErpinReaction() {
-                currentGachaState = GachaState.ERPIN_REACTION;
+            function enterEnd2WaitState() {
+                currentGachaState = GachaState.END2_WAIT;
                 
-                // 🌟 根據星數決定艾爾芬的反應！
-                let reactionAnimName = "End_1";
-                if (has3Star) reactionAnimName = "End_3";       // 3星終極驚訝
-                else if (has2Star) reactionAnimName = "End_2";  // 2星驚訝
+                // 🌟 開啟發光書本開關！如果有 3 星，書本會在這個瞬間突然發光！
+                showGlowingBooks = true;
 
+                // 艾爾芬開始播放發呆循環 End_2
                 if (gachaPlayerErpin) {
-                    gachaPlayerErpin.animationState.setAnimation(0, reactionAnimName, false);
+                    gachaPlayerErpin.animationState.setAnimation(0, "End_2", true);
+                }
+
+                // 加入點擊螢幕的監聽器，等待玩家點擊
+                const stage = document.getElementById('gachaStage');
+                stage.addEventListener('click', onStageClickForEnd3);
+            }
+
+            function onStageClickForEnd3() {
+                if (currentGachaState !== GachaState.END2_WAIT) return;
+                
+                // 移除監聽器，避免重複點擊
+                const stage = document.getElementById('gachaStage');
+                stage.removeEventListener('click', onStageClickForEnd3);
+
+                currentGachaState = GachaState.END3_ZOOM;
+                
+                // 播放 End_3 (鏡頭 Zoom in)
+                if (gachaPlayerErpin) {
+                    gachaPlayerErpin.animationState.setAnimation(0, "End_3", false);
                     gachaPlayerErpin.animationState.addListener({
                         complete: function(entry) {
-                            if (entry.animation.name === reactionAnimName) {
-                                triggerCloseupSpine(); // 播完縮放反應後，進入大頭 Spine
+                            if (entry.animation.name === "End_3") {
+                                // Zoom In 完畢，切換大頭特寫！
+                                triggerCloseupSpine(); 
                             }
                         }
                     });
@@ -586,12 +619,13 @@
                 const closeupBox = document.getElementById('gachaSpineContainerCloseup');
                 closeupBox.classList.remove('hidden');
                 
-                // 將後方已經播完的艾爾芬與桌子隱藏，避免穿幫
+                // 隱藏後方模型
                 document.getElementById('gachaSpineContainerErpin').classList.add('hidden');
                 document.getElementById('gachaSpineContainerDocs').classList.add('hidden');
                 
                 if (gachaPlayerCloseup && gachaPlayerCloseup.skeleton.data.animations.length > 0) {
-                    // 自動抓取大頭 Spine 的第一個動作來播放 (防呆機制)
+                    // 💡 暫時自動抓第一個動作來播放。
+                    // 等你看完 Console 印出的名字後，我們就可以根據 1,2,3 星寫 if 判斷來指定大頭動作了！
                     let animName = gachaPlayerCloseup.skeleton.data.animations[0].name;
                     
                     gachaPlayerCloseup.animationState.setAnimation(0, animName, false);
@@ -603,7 +637,6 @@
                         }
                     });
                 } else {
-                    // 防呆：如果特寫載入失敗，2秒後直接出結果
                     setTimeout(finishGachaAnimation, 2000);
                 }
             }
@@ -616,7 +649,6 @@
                 if (gachaPlayerDocs) { gachaPlayerDocs.dispose(); gachaPlayerDocs = null; }
                 if (gachaPlayerCloseup) { gachaPlayerCloseup.dispose(); gachaPlayerCloseup = null; }
                 
-                // 🌟 動畫播完，秀出剛剛已經偷抽好的結果！
                 showRealGachaResults();
             }
 
@@ -729,7 +761,10 @@
                             requestAnimationFrame(applyBounce);
                         } else {
                             player._bounceX = targetX; player._bounceY = targetY; player._bouncingBone = null;
-                            if (hasTriggeredPull) { triggerDocumentsDrop(); } 
+                            if (hasTriggeredPull) { 
+                                // 🌟 呼叫第一階段：Drop + End_1 同步播放！
+                                triggerDropAndEnd1(); 
+                            } 
                             else { player.animationState.setAnimation(0, "Idle", true); }
                         }
                     }
