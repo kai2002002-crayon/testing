@@ -460,8 +460,15 @@
                 `;
             }
             function showRealGachaResults() {
+                const resultArea = document.getElementById('resultArea');
+                
+                // 🌟 修復 1：先在 resultArea 內部建立標題與 gachaResultsGrid 容器，就不會報錯了！
+                resultArea.innerHTML = `
+                    <h3 class="text-xl font-bold text-amber-900 dark:text-amber-400 mb-4 w-full text-center">🎉 招募結果 🎉</h3>
+                    <div id="gachaResultsGrid" class="flex flex-wrap justify-center gap-4 w-full"></div>
+                `;
+                
                 const container = document.getElementById('gachaResultsGrid');
-                container.innerHTML = '';
                 
                 pendingGachaResults.forEach((result, idx) => {
                     const charData = result.char;
@@ -469,22 +476,22 @@
                     const is3Star = charData.star === 3;
                     
                     const card = document.createElement('div');
-                    // 三星給予閃爍金光外框，一二星一般外框
                     card.className = `relative p-2 sm:p-3 rounded-xl border-2 flex flex-col items-center gap-2 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm shadow-sm transition-transform hover:scale-105 ${is3Star ? 'border-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.5)]' : 'border-gray-200 dark:border-gray-700'}`;
                     
-                    // 🌟 呼叫剛才寫好的 Icon 生成器 (設定為大圖)
                     const iconHTML = getGachaCharIconHTML(charData, true);
+
+                    // 🌟 修復 2：加上 typeof t 的防呆，避免沒有翻譯器時整個當掉
+                    const displayName = typeof t === 'function' ? t(charData.name) : charData.name;
 
                     card.innerHTML = `
                         ${isNew ? '<div class="absolute -top-3 -right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md z-20 animate-pulse">NEW</div>' : ''}
                         ${iconHTML}
                         <div class="flex flex-col items-center">
                             <div class="text-yellow-400 text-xs sm:text-sm tracking-widest drop-shadow-sm">${'★'.repeat(charData.star)}</div>
-                            <div class="text-xs sm:text-sm font-bold text-gray-800 dark:text-gray-200 text-center w-full truncate px-1">${t(charData.name)}</div>
+                            <div class="text-xs sm:text-sm font-bold text-gray-800 dark:text-gray-200 text-center w-full truncate px-1">${displayName}</div>
                         </div>
                     `;
                     
-                    // 依序飛入動畫
                     card.style.opacity = '0';
                     card.style.transform = 'translateY(20px)';
                     container.appendChild(card);
@@ -786,7 +793,6 @@
                 currentGachaState = GachaState.SHOW_RESULT;
                 const stage = document.getElementById('gachaStage');
                 
-                // 🌟 終極防護：徹底清除所有殘留的點擊事件！解決單雙數次抽卡 Bug！
                 if (activeEnd3Handler) {
                     stage.removeEventListener('click', activeEnd3Handler);
                     activeEnd3Handler = null;
@@ -804,7 +810,11 @@
                 if (gachaPlayerCloseup) { gachaPlayerCloseup.dispose(); gachaPlayerCloseup = null; }
                 document.getElementById('gachaSpineContainerCloseup').innerHTML = '';
                 
+                // 1. 顯示精美卡片結果
                 showRealGachaResults();
+                
+                // 🌟 修復 3：補上寫入歷史紀錄的步驟！
+                addToHistory(pendingGachaResults, currentPool.name);
             }
 
             function setupCheekDragInteraction(player) {
