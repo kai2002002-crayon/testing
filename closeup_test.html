@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Closeup Spine 測試</title>
+    
+    <!-- 載入 Spine 官方播放器套件 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@esotericsoftware/spine-player@4.1.23/dist/spine-player.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@esotericsoftware/spine-player@4.1.23/dist/iife/spine-player.min.js"></script>
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #2d3748; /* 深灰色背景，讓大頭更明顯 */
+            color: white;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #player-container {
+            width: 800px;
+            height: 600px;
+            border: 2px solid #fbbf24;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background-color: transparent;
+        }
+        #info-panel {
+            background: #1a202c;
+            padding: 15px;
+            border-radius: 8px;
+            width: 800px;
+            box-sizing: border-box;
+        }
+        .anim-list {
+            color: #fbbf24;
+            font-weight: bold;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>🔍 Gacha_Hero_Closeup 獨立測試工具</h2>
+    
+    <!-- Spine 播放器容器 -->
+    <div id="player-container"></div>
+
+    <!-- 資訊面板 -->
+    <div id="info-panel">
+        <h3>載入狀態：<span id="status" style="color: yellow;">載入中...</span></h3>
+        <p>📋 <b>這組 Spine 內含的所有動作名稱：</b></p>
+        <p id="anim-list" class="anim-list">-</p>
+    </div>
+
+    <script>
+        // 初始化 Spine 播放器
+        new spine.SpinePlayer("player-container", {
+            skelUrl: "./gacha/Gacha_Hero_Closeup.skel.bytes",
+            atlasUrl: "./gacha/Gacha_Hero_Closeup.atlas.txt",
+            premultipliedAlpha: true,
+            backgroundColor: "#00000000", // 透明背景
+            alpha: true,
+            showControls: true, // 🌟 開啟播放控制器！
+            
+            success: function(player) {
+                console.log("✅ Closeup Spine 載入成功！");
+                document.getElementById('status').innerText = "✅ 成功載入！";
+                document.getElementById('status').style.color = "lime";
+
+                // 🌟 抓取並列出所有動作名稱
+                const animations = player.skeleton.data.animations.map(anim => anim.name);
+                console.log("🎬 所有可用的動作：", animations);
+                
+                // 顯示在網頁畫面上
+                document.getElementById('anim-list').innerText = animations.join(", ");
+                
+                // 預設播放第一個動作 (如果有的話)
+                if (animations.length > 0) {
+                    player.animationState.setAnimation(0, animations[0], true);
+                }
+            },
+            
+            error: function(err) {
+                console.error("❌ Closeup Spine 載入失敗：", err);
+                document.getElementById('status').innerText = "❌ 載入失敗！請檢查 F12 Console。";
+                document.getElementById('status').style.color = "red";
+            }
+        });
+    </script>
+
+</body>
+</html>
