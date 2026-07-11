@@ -521,13 +521,17 @@
                 viewport: { x: -1200, y: -600, width: 2400, height: 1350 }
             };
 
-            const GachaState = { INIT: 0, ERPIN_IDLE: 1, END1_DROP: 2, END2_WAIT: 3, END3_ZOOM: 4, CLOSEUP: 5, SHOW_RESULT: 6 };
+            const GachaState = { INIT: 0, ERPIN_IDLE: 1, END1_DROP: 2, END2_WAIT: 3, END3_ZOOM: 4, SHOW_RESULT: 5 };
             let currentGachaState = GachaState.INIT;
             
             let gachaPlayerErpin = null;
             let gachaPlayerDocs = null;
             let gachaPlayerCloseup = null;
             let showGlowingBooks = false; 
+
+            // 🌟 終極防護：用來記錄並清除殘留的點擊事件
+            let activeEnd3Handler = null;
+            let activeSkipHandler = null;
 
             function startGachaAnimation() {
                 showGlowingBooks = false; 
@@ -607,17 +611,16 @@
                     }
                 });
 
-                // 🌟 3. 中層大頭：【關鍵修復】載入後立刻切斷動畫，讓她靜止等待！
+                // 🌟 3. 中層大頭：拔掉 viewport！讓 Spine 自動將骨架放大到塞滿 100% 畫面！
                 let animName = has3Star ? "Idle_3" : (has2Star ? "Idle_2" : "Idle_1");
                 gachaPlayerCloseup = new spine.SpinePlayer(document.getElementById('gachaSpineContainerCloseup'), {
                     skelUrl: `./gacha/Gacha_Hero_Closeup.skel.bytes`,
                     atlasUrl: `./gacha/Gacha_Hero_Closeup.atlas.txt`,
-                    animation: animName, // SpinePlayer 必須給初始動作才能成功載入
+                    animation: animName,
                     premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
+                    // 不寫 viewport，讓它預設全螢幕！
                     success: (player) => { 
-                        // 💡 神來一筆：成功載入的瞬間，立刻清空播放軌道，並將骨架重置為預設姿勢！
-                        player.animationState.clearTracks();
-                        player.skeleton.setToSetupPose();
+                        player.animationState.timeScale = 0; // 暫停時間軸，等 Zoom In 再開始
                     }
                 });
             }
@@ -652,48 +655,46 @@
                 }
 
                 const stage = document.getElementById('gachaStage');
-                stage.addEventListener('click', onStageClickForEnd3);
+                // 🌟 綁定受控的點擊事件
+                activeEnd3Handler = onStageClickForEnd3;
+                stage.addEventListener('click', activeEnd3Handler);
             }
 
             function onStageClickForEnd3() {
                 if (currentGachaState !== GachaState.END2_WAIT) return;
                 const stage = document.getElementById('gachaStage');
-                stage.removeEventListener('click', onStageClickForEnd3);
+                
+                // 🛑 清除這個階段的點擊監聽，避免重複觸發
+                if (activeEnd3Handler) {
+                    stage.removeEventListener('click', activeEnd3Handler);
+                    activeEnd3Handler = null;
+                }
+
                 currentGachaState = GachaState.END3_ZOOM;
                 
-                // 開始淡入大頭 (此時它是準備好的靜止狀態)
+                // 1. 開始淡入大頭 (CSS 的 duration-700 會讓它漸漸出現)
                 const closeupBox = document.getElementById('gachaSpineContainerCloseup');
                 closeupBox.classList.remove('opacity-0');
+                closeupBox.style.pointerEvents = "auto";
 
+                // 2. 書本掉落收尾
                 if (gachaPlayerDocs) {
                     let dropEndAnimName = (pendingGachaTimes === 1) ? "Drop_1_End" : "Drop_10_1_End";
                     gachaPlayerDocs.animationState.setAnimation(0, dropEndAnimName, false);
                 }
 
+                // 3. 背景 Zoom In 運鏡
                 if (gachaPlayerErpin) {
                     gachaPlayerErpin.animationState.setAnimation(0, "End_3", false);
-                    gachaPlayerErpin.animationState.addListener({
-                        complete: (entry) => { 
-                            if (entry.animation.name === "End_3") {
-                                triggerCloseupSpine(); 
-                            }
-                        }
-                    });
                 }
-            }
 
-            function triggerCloseupSpine() {
-                currentGachaState = GachaState.CLOSEUP;
-                const closeupBox = document.getElementById('gachaSpineContainerCloseup');
-                closeupBox.style.pointerEvents = "auto";
-                
+                // 🌟 4. 同時開始播放大頭動畫！不再等背景 Zoom 完了！
                 let animName = has3Star ? "Idle_3" : (has2Star ? "Idle_2" : "Idle_1");
-
                 if (gachaPlayerCloseup) {
-                    // 🌟 終於到了該表演的時候，從頭開始播放動畫！
-                    gachaPlayerCloseup.animationState.setAnimation(0, animName, false); 
+                    gachaPlayerCloseup.animationState.timeScale = 1; // 恢復播放
+                    gachaPlayerCloseup.animationState.setAnimation(0, animName, false);
                     
-                    // 🌟 監聽動作播完，自動跳轉結算！
+                    // 播完大頭動作就進結算
                     gachaPlayerCloseup.animationState.addListener({
                         complete: function(entry) {
                             if (entry.animation.name === animName) {
@@ -702,23 +703,33 @@
                         }
                     });
                 } else {
-                    finishGachaAnimation();
+                    setTimeout(finishGachaAnimation, 1500); // 備用防卡死
                 }
-                
-                // 保留：如果玩家不想等，也可以點擊螢幕提前跳過
-                const stage = document.getElementById('gachaStage');
-                const skipHandler = function() {
-                    stage.removeEventListener('click', skipHandler);
+
+                // 🌟 5. 綁定「跳過」的點擊事件，並受控管理
+                activeSkipHandler = function() {
                     finishGachaAnimation();
                 };
-                stage.addEventListener('click', skipHandler);
+                // 給 300ms 緩衝再綁定，避免玩家剛點螢幕觸發 Zoom 的這一下，直接被誤判成跳過
+                setTimeout(() => {
+                    stage.addEventListener('click', activeSkipHandler);
+                }, 300);
             }
 
             function finishGachaAnimation() {
                 currentGachaState = GachaState.SHOW_RESULT;
                 const stage = document.getElementById('gachaStage');
                 
-                // 🌟 最關鍵的一步：直接隱藏動畫容器，讓底層按鈕恢復點擊！
+                // 🌟 終極防護：徹底清除所有殘留的點擊事件！解決單雙數次抽卡 Bug！
+                if (activeEnd3Handler) {
+                    stage.removeEventListener('click', activeEnd3Handler);
+                    activeEnd3Handler = null;
+                }
+                if (activeSkipHandler) {
+                    stage.removeEventListener('click', activeSkipHandler);
+                    activeSkipHandler = null;
+                }
+                
                 stage.classList.add('hidden');
                 document.getElementById('resultArea').classList.remove('hidden');
                 
