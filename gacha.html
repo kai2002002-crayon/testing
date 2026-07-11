@@ -586,10 +586,10 @@
 
             // 💡 放大 width 和 height 可以讓鏡頭拉遠，角色看起來比較小
             const SPINE_CONFIG = {
-                viewport: { x: -1200, y: -600, width: 2400, height: 1350 }
+                viewport: { x: -1200, y: -600, width: 2400, height: 1215 }
             };
             // width 和 height 的數字改小，要往上移：把 y 的負數改得更小，記得 x 永遠設定為 -width / 2 才會左右置中
-            const CLOSEUP_VIEWPORT = { x: -840, y: -400, width: 1680, height: 945 };
+            const CLOSEUP_VIEWPORT = { x: -1080, y: -400, width: 2160, height: 945 };
 
             const GachaState = { INIT: 0, ERPIN_IDLE: 1, END1_DROP: 2, END2_WAIT: 3, END3_ZOOM: 4, SHOW_RESULT: 5 };
             let currentGachaState = GachaState.INIT;
