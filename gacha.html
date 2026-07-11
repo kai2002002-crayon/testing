@@ -520,6 +520,7 @@
             const SPINE_CONFIG = {
                 viewport: { x: -1200, y: -600, width: 2400, height: 1350 }
             };
+            const CLOSEUP_VIEWPORT = { x: -300, y: -150, width: 600, height: 337 };
 
             const GachaState = { INIT: 0, ERPIN_IDLE: 1, END1_DROP: 2, END2_WAIT: 3, END3_ZOOM: 4, SHOW_RESULT: 5 };
             let currentGachaState = GachaState.INIT;
@@ -611,14 +612,17 @@
                     }
                 });
 
-                // 🌟 3. 中層大頭：拔掉 viewport！讓 Spine 自動將骨架放大到塞滿 100% 畫面！
+                // 🌟 3. 中層大頭：套用專屬的放大視角！
                 let animName = has3Star ? "Idle_3" : (has2Star ? "Idle_2" : "Idle_1");
                 gachaPlayerCloseup = new spine.SpinePlayer(document.getElementById('gachaSpineContainerCloseup'), {
                     skelUrl: `./gacha/Gacha_Hero_Closeup.skel.bytes`,
                     atlasUrl: `./gacha/Gacha_Hero_Closeup.atlas.txt`,
                     animation: animName,
                     premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
-                    // 不寫 viewport，讓它預設全螢幕！
+                    
+                    // 👇 關鍵：強制套用我們算好的放大視角！
+                    viewport: CLOSEUP_VIEWPORT, 
+                    
                     success: (player) => { 
                         player.animationState.timeScale = 0; // 暫停時間軸，等 Zoom In 再開始
                     }
