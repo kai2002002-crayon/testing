@@ -420,11 +420,81 @@
                 }
                 startGachaAnimation();
             }
+            // 🌟 專門用來生成「性格外框 + 種族背景 + 角色精靈圖」的 Icon
+            function getGachaCharIconHTML(charData, isLarge = false) {
+                const personalityBorderColors = {
+                    "天真": "border-green-500", "冷靜": "border-blue-500",
+                    "狂亂": "border-red-500", "活潑": "border-yellow-400", "憂鬱": "border-purple-500"
+                };
+                const bgClassMap = {
+                    "龍族": "sprite-Bg_Dragon", "精靈": "sprite-Bg_Elf", "妖精": "sprite-Bg_Sprite",
+                    "獸人": "sprite-Bg_Werebeast", "幽靈": "sprite-Bg_Phantom", "???": "sprite-Bg_Unknown",
+                    "unknown": "sprite-Bg_Unknown", "魔靈": "sprite-Bg_Elemental", "魔女": "sprite-Bg_Witch"
+                };
+                const charSpriteBaseMap = {
+                    "冷靜": "sprite-char-composed", "憂鬱": "sprite-char-depressed",
+                    "天真": "sprite-char-innocence", "狂亂": "sprite-char-madness", "活潑": "sprite-char-vivacious"
+                };
 
+                const borderColor = personalityBorderColors[charData.personality] || "border-gray-300";
+                const raceKey = (charData.race === "???" || !charData.race) ? "unknown" : charData.race;
+                const bgSprite = bgClassMap[raceKey] || "sprite-Bg_Unknown";
+                
+                const spineName = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charData.name] ? SPINE_MAP[charData.name] : charData.name;
+                const charSpriteBase = charSpriteBaseMap[charData.personality] || "";
+                const charSpriteClass = `sprite-${spineName}`;
+
+                // 依據是否為大圖 (招募結果) 或小圖 (歷史紀錄) 決定外框與縮放比例
+                const sizeClass = isLarge ? "w-16 h-16 sm:w-20 sm:h-20" : "w-10 h-10";
+                const bgScaleClass = isLarge ? "scale-[0.6]" : "scale-[0.45]";
+                const charScaleClass = isLarge ? "scale-[0.55]" : "scale-[0.35]";
+
+                return `
+                    <div class="${sizeClass} rounded-lg border-2 ${borderColor} shadow-inner bg-[#fcf8f2] dark:bg-gray-800 relative overflow-hidden shrink-0">
+                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sprite-base sprite-common ${bgSprite} ${bgScaleClass} z-0 opacity-90"></div>
+                        <div class="absolute inset-0 bg-white/20 dark:bg-black/20 backdrop-blur-[1px] z-[5]"></div>
+                        <div class="absolute inset-0 flex items-center justify-center z-10">
+                            <div class="sprite-base ${charSpriteBase} ${charSpriteClass} shrink-0 ${charScaleClass} origin-center"></div>
+                        </div>
+                    </div>
+                `;
+            }
             function showRealGachaResults() {
-                renderResultArea(pendingGachaResults);
-                addToHistory(pendingGachaResults, currentPool.name);
-                document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth' });
+                const container = document.getElementById('gachaResultsGrid');
+                container.innerHTML = '';
+                
+                pendingGachaResults.forEach((result, idx) => {
+                    const charData = result.char;
+                    const isNew = result.isNew;
+                    const is3Star = charData.star === 3;
+                    
+                    const card = document.createElement('div');
+                    // 三星給予閃爍金光外框，一二星一般外框
+                    card.className = `relative p-2 sm:p-3 rounded-xl border-2 flex flex-col items-center gap-2 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm shadow-sm transition-transform hover:scale-105 ${is3Star ? 'border-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.5)]' : 'border-gray-200 dark:border-gray-700'}`;
+                    
+                    // 🌟 呼叫剛才寫好的 Icon 生成器 (設定為大圖)
+                    const iconHTML = getGachaCharIconHTML(charData, true);
+
+                    card.innerHTML = `
+                        ${isNew ? '<div class="absolute -top-3 -right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md z-20 animate-pulse">NEW</div>' : ''}
+                        ${iconHTML}
+                        <div class="flex flex-col items-center">
+                            <div class="text-yellow-400 text-xs sm:text-sm tracking-widest drop-shadow-sm">${'★'.repeat(charData.star)}</div>
+                            <div class="text-xs sm:text-sm font-bold text-gray-800 dark:text-gray-200 text-center w-full truncate px-1">${t(charData.name)}</div>
+                        </div>
+                    `;
+                    
+                    // 依序飛入動畫
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    container.appendChild(card);
+                    
+                    setTimeout(() => {
+                        card.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 100 * idx);
+                });
             }
             
             // ==========================================================
@@ -489,38 +559,29 @@
                 const div = document.createElement('div');
                 div.className = "p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg text-sm border border-gray-200 dark:border-gray-600";
                 
+                // 🌟 直接呼叫共用的 Icon 生成器 (設定為小圖 isLarge = false)
                 let iconsHtml = results.map(r => {
-                    let pClass = getPersonalitySpriteClass(r.char.personality);
-                    
-                    // 🌟 歷史紀錄也同樣透過 SPINE_MAP 轉換
-                    let engName = (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[r.char.name]) ? SPINE_MAP[r.char.name] : r.char.name;
-                    let spriteNameClass = `sprite-${engName}`;
-                    
-                    return `
-                    <div class="inline-flex items-center justify-center relative w-8 h-8 rounded border border-gray-400 overflow-hidden mx-0.5 align-middle bg-gray-200">
-                        <div class="scale-[0.25] origin-center flex items-center justify-center">
-                            <div class="${pClass} ${spriteNameClass} bg-no-repeat"></div>
-                        </div>
-                    </div>
-                    `;
+                    return getGachaCharIconHTML(r.char, false);
                 }).join('');
 
                 div.innerHTML = `
                     <div class="font-bold text-amber-600 dark:text-amber-400 mb-2">${record.time} - ${record.pool}</div>
-                    <div class="flex flex-wrap gap-1 items-center">
+                    <div class="flex flex-wrap gap-1.5 items-center">
                         ${iconsHtml}
                     </div>
                 `;
                 historyArea.prepend(div);
 
-                saveHistoryToCloud(record);
+                if (typeof saveHistoryToCloud === 'function') {
+                    saveHistoryToCloud(record);
+                }
             }
 
             // 💡 放大 width 和 height 可以讓鏡頭拉遠，角色看起來比較小
             const SPINE_CONFIG = {
                 viewport: { x: -1200, y: -600, width: 2400, height: 1350 }
             };
-            const CLOSEUP_VIEWPORT = { x: -300, y: -150, width: 1200, height: 675 };
+            const CLOSEUP_VIEWPORT = { x: -300, y: -150, width: 1440, height: 810 };
 
             const GachaState = { INIT: 0, ERPIN_IDLE: 1, END1_DROP: 2, END2_WAIT: 3, END3_ZOOM: 4, SHOW_RESULT: 5 };
             let currentGachaState = GachaState.INIT;
