@@ -589,7 +589,7 @@
                 viewport: { x: -1200, y: -600, width: 2400, height: 1350 }
             };
             // width 和 height 的數字改小，要往上移：把 y 的負數改得更小，記得 x 永遠設定為 -width / 2 才會左右置中
-            const CLOSEUP_VIEWPORT = { x: -720, y: -300, width: 1440, height: 810 };
+            const CLOSEUP_VIEWPORT = { x: -840, y: -200, width: 1680, height: 945 };
 
             const GachaState = { INIT: 0, ERPIN_IDLE: 1, END1_DROP: 2, END2_WAIT: 3, END3_ZOOM: 4, SHOW_RESULT: 5 };
             let currentGachaState = GachaState.INIT;
@@ -626,19 +626,28 @@
                     stage.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }, 100);
             }
-           function initSpineStages() {
+           async function initSpineStages() {
                 currentGachaState = GachaState.ERPIN_IDLE;
                 
+                // 1. 徹底銷毀現有播放器
                 if (gachaPlayerErpin) { gachaPlayerErpin.dispose(); gachaPlayerErpin = null; }
                 if (gachaPlayerDocs) { gachaPlayerDocs.dispose(); gachaPlayerDocs = null; }
                 if (gachaPlayerCloseup) { gachaPlayerCloseup.dispose(); gachaPlayerCloseup = null; }
+                
+                // 2. 清空容器後，給瀏覽器一個微小的喘息時間（這是防止 Shader 報錯的關鍵！）
+                await new Promise(resolve => setTimeout(resolve, 50)); 
+
                 document.getElementById('gachaSpineContainerCloseup').innerHTML = ''; 
 
                 const vp = SPINE_CONFIG.viewport;
                 let targetErpinSkin = hasRateUp ? "Choon_On" : "Choon_Off";
 
-                // 1. 底層
-                gachaPlayerErpin = new spine.SpinePlayer(document.getElementById('gachaSpineContainerErpin'), {
+                // 3. 檢查容器是否存在 (增加防呆)
+                const erpinContainer = document.getElementById('gachaSpineContainerErpin');
+                if (!erpinContainer) return;
+
+                // 4. 初始化
+                gachaPlayerErpin = new spine.SpinePlayer(erpinContainer, {
                     skelUrl: `./gacha/Gacha_Hero_Erpin.skel.bytes`, 
                     atlasUrl: `./gacha/Gacha_Hero_Erpin.atlas.txt`,
                     animation: "Idle", skin: targetErpinSkin,
@@ -646,7 +655,6 @@
                     viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height },
                     success: function (player) { 
                         try { player.skeleton.setAttachment("BG", "BG"); } catch(e) {}
-                        try { player.skeleton.setAttachment("BG_Window", "BG_Window"); } catch(e) {}
                         player.animationState.data.defaultMix = 0;
                         setupCheekDragInteraction(player); 
                     }
