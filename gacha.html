@@ -599,11 +599,15 @@
             let gachaPlayerCloseup = null;
             let showGlowingBooks = false; 
 
+            // 🌟 新增：記錄 Spine 是否已經初始化，用來重複利用畫布
+            let isSpineInitialized = false; 
+
             // 🌟 終極防護：用來記錄並清除殘留的點擊事件
             let activeEnd3Handler = null;
             let activeSkipHandler = null;
 
-            function startGachaAnimation() {
+
+                        function startGachaAnimation() {
                 showGlowingBooks = false; 
                 
                 document.getElementById('resultArea').classList.add('hidden');
@@ -614,44 +618,57 @@
                 document.getElementById('gachaSpineContainerErpin').classList.remove('opacity-0');
                 document.getElementById('gachaSpineContainerDocs').classList.remove('opacity-0');
                 
-                // 🌟 關鍵修復：除了透明，還必須把 pointerEvents 設回 none！否則會擋住第二次的拉扯！
                 const closeupBox = document.getElementById('gachaSpineContainerCloseup');
                 closeupBox.classList.add('opacity-0');
                 closeupBox.style.pointerEvents = 'none'; 
                 
                 stage.getBoundingClientRect(); 
 
-                setTimeout(() => {
-                    initSpineStages();
-                    stage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 100);
+                // 🌟 直接呼叫，不需要 setTimeout 等待了！
+                initSpineStages();
+                stage.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
-           async function initSpineStages() {
+
+            async function initSpineStages() {
                 currentGachaState = GachaState.ERPIN_IDLE;
-                
-                // 1. 徹底銷毀現有播放器
-                if (gachaPlayerErpin) { gachaPlayerErpin.dispose(); gachaPlayerErpin = null; }
-                if (gachaPlayerDocs) { gachaPlayerDocs.dispose(); gachaPlayerDocs = null; }
-                if (gachaPlayerCloseup) { gachaPlayerCloseup.dispose(); gachaPlayerCloseup = null; }
-                
-                // 2. 清空容器後，給瀏覽器一個微小的喘息時間（這是防止 Shader 報錯的關鍵！）
-                await new Promise(resolve => setTimeout(resolve, 50)); 
-
-                document.getElementById('gachaSpineContainerCloseup').innerHTML = ''; 
-
                 const vp = SPINE_CONFIG.viewport;
                 let targetErpinSkin = hasRateUp ? "Choon_On" : "Choon_Off";
+                let animName = has3Star ? "Idle_3" : (has2Star ? "Idle_2" : "Idle_1");
 
-                // 3. 檢查容器是否存在 (增加防呆)
+                // 🌟 核心修復 1：如果已經建立過，就「重複利用」並重置狀態！(不再觸發 Shader Error)
+                if (isSpineInitialized) {
+                    if (gachaPlayerErpin) {
+                        gachaPlayerErpin.skeleton.setSkinByName(targetErpinSkin);
+                        gachaPlayerErpin.skeleton.setSlotsToSetupPose();
+                        gachaPlayerErpin.animationState.setAnimation(0, "Idle", true);
+                        gachaPlayerErpin._customDragTargetX = null;
+                        gachaPlayerErpin._customDragTargetY = null;
+                        try { gachaPlayerErpin.skeleton.setAttachment("BG", "BG"); } catch(e) {}
+                    }
+                    if (gachaPlayerDocs) {
+                        gachaPlayerDocs.skeleton.setSlotsToSetupPose();
+                        gachaPlayerDocs.animationState.setAnimation(0, "Idle", true);
+                    }
+                    if (gachaPlayerCloseup) {
+                        gachaPlayerCloseup.skeleton.setSlotsToSetupPose();
+                        gachaPlayerCloseup.animationState.setAnimation(0, animName, false);
+                        gachaPlayerCloseup.animationState.timeScale = 0; // 暫停等 Zoom In
+                    }
+                    return; // 直接中斷，不需要重建畫布
+                }
+
+                // --- 以下是「第一次載入」的建立流程 ---
+
                 const erpinContainer = document.getElementById('gachaSpineContainerErpin');
                 if (!erpinContainer) return;
 
-                // 4. 初始化
+                // 🌟 核心修復 2：將所有的 premultipliedAlpha 設為 false，修補陰影破洞！
                 gachaPlayerErpin = new spine.SpinePlayer(erpinContainer, {
                     skelUrl: `./gacha/Gacha_Hero_Erpin.skel.bytes`, 
                     atlasUrl: `./gacha/Gacha_Hero_Erpin.atlas.txt`,
                     animation: "Idle", skin: targetErpinSkin,
-                    premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
+                    premultipliedAlpha: false,  // 👈 陰影防破洞設定
+                    backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
                     viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height },
                     success: function (player) { 
                         try { player.skeleton.setAttachment("BG", "BG"); } catch(e) {}
@@ -660,12 +677,12 @@
                     }
                 });
 
-                // 2. 上層書本
                 gachaPlayerDocs = new spine.SpinePlayer(document.getElementById('gachaSpineContainerDocs'), {
                     skelUrl: `./gacha/Gacha_Hero_Documents.skel.bytes`,
                     atlasUrl: `./gacha/Gacha_Hero_Documents.atlas.txt`,
                     animation: "Idle",
-                    premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
+                    premultipliedAlpha: false,  // 👈 陰影防破洞設定
+                    backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
                     viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height },
                     success: function(player) {
                         player.animationState.data.defaultMix = 0; 
@@ -689,22 +706,22 @@
                     }
                 });
 
-                // 🌟 3. 中層大頭：套用專屬的放大視角！
-                let animName = has3Star ? "Idle_3" : (has2Star ? "Idle_2" : "Idle_1");
                 gachaPlayerCloseup = new spine.SpinePlayer(document.getElementById('gachaSpineContainerCloseup'), {
                     skelUrl: `./gacha/Gacha_Hero_Closeup.skel.bytes`,
                     atlasUrl: `./gacha/Gacha_Hero_Closeup.atlas.txt`,
                     animation: animName,
-                    premultipliedAlpha: true, backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
-                    
-                    // 👇 關鍵：強制套用我們算好的放大視角！
+                    premultipliedAlpha: false,  // 👈 陰影防破洞設定
+                    backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
                     viewport: CLOSEUP_VIEWPORT, 
-                    
                     success: (player) => { 
-                        player.animationState.timeScale = 0; // 暫停時間軸，等 Zoom In 再開始
+                        player.animationState.timeScale = 0; 
                     }
                 });
+
+                // 標記為已初始化，以後就只重置不重建！
+                isSpineInitialized = true; 
             }
+
 
             function triggerDropAndEnd1() {
                 currentGachaState = GachaState.END1_DROP;
@@ -797,7 +814,7 @@
                 }, 300);
             }
 
-            function finishGachaAnimation() {
+                        function finishGachaAnimation() {
                 currentGachaState = GachaState.SHOW_RESULT;
                 const stage = document.getElementById('gachaStage');
                 
@@ -810,20 +827,17 @@
                     activeSkipHandler = null;
                 }
                 
+                // 隱藏舞台，顯示結果
                 stage.classList.add('hidden');
                 document.getElementById('resultArea').classList.remove('hidden');
                 
-                if (gachaPlayerErpin) { gachaPlayerErpin.dispose(); gachaPlayerErpin = null; }
-                if (gachaPlayerDocs) { gachaPlayerDocs.dispose(); gachaPlayerDocs = null; }
-                if (gachaPlayerCloseup) { gachaPlayerCloseup.dispose(); gachaPlayerCloseup = null; }
-                document.getElementById('gachaSpineContainerCloseup').innerHTML = '';
-                
-                // 1. 顯示精美卡片結果
+                // 🚫 核心修復 1：把原本這裡所有的 .dispose() 和 .innerHTML = '' 徹底刪除！保留畫布實體！
+
+                // 顯示結果與寫入歷史
                 showRealGachaResults();
-                
-                // 🌟 修復 3：補上寫入歷史紀錄的步驟！
                 addToHistory(pendingGachaResults, currentPool.name);
             }
+
 
             function setupCheekDragInteraction(player) {
                 const canvas = document.querySelector('#gachaSpineContainerErpin canvas');
