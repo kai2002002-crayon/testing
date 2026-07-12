@@ -75,6 +75,22 @@
             animation: popInExaggerated 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
             opacity: 0; 
             }
+            /* 1. 檯面發光特效 (由下往上放射狀) */
+            .table-glow-up {
+                /* 使用徑向漸層，圓心放在正下方 (50% 110%)，模擬從底部打光 */
+                background: radial-gradient(circle at 50% 110%, rgba(255, 255, 200, 0.8) 0%, rgba(255, 215, 0, 0.3) 50%, transparent 80%);
+                mix-blend-mode: screen; /* 讓光影自然疊加 */
+                pointer-events: none;
+                opacity: 0;
+                transition: opacity 0.7s ease; /* 配合大頭的 duration-700 淡入 */
+            }
+
+            /* 2. 3星書本自發光特效 (直接套用在畫布上，自動追蹤書本形狀) */
+            .book-glow-3star canvas {
+                /* 利用 drop-shadow 讓非透明區域發出金光，並微調亮度 */
+                filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.9)) drop-shadow(0 0 30px rgba(255, 165, 0, 0.6)) brightness(1.1);
+                transition: filter 0.3s ease;
+            }
             .btn-gacha { transition: transform 0.1s; }
             .btn-gacha:active { transform: scale(0.95); }
             .pool-btn { transition: all 0.2s; }
@@ -128,14 +144,12 @@
                 </button>
             </section>
             <section id="gachaStage" class="hidden w-full max-w-4xl mx-auto mb-6 relative aspect-video bg-black rounded-2xl overflow-hidden shadow-xl border-4 border-amber-300 dark:border-gray-600">
-                <!-- 下層 (Z-10)：艾爾芬全身與背景 -->
-            <div id="gachaSpineContainerErpin" class="absolute inset-0 w-full h-full z-10 cursor-pointer transition-opacity duration-300"></div>
+                <div id="gachaSpineContainerErpin" class="absolute inset-0 w-full h-full z-10 cursor-pointer transition-opacity duration-300"></div>
+                <div id="gachaSpineContainerCloseup" class="absolute inset-0 w-full h-full z-20 pointer-events-none opacity-0 transition-opacity duration-700"></div>
+    
+                <div id="closeupTableGlow" class="absolute inset-0 w-full h-full z-[25] table-glow-up"></div>
 
-            <!-- 中層 (Z-20)：大頭特寫 (將 transition 設慢一點，讓淡入更柔和) -->
-            <div id="gachaSpineContainerCloseup" class="absolute inset-0 w-full h-full z-20 pointer-events-none opacity-0 transition-opacity duration-700"></div>
-            
-            <!-- 上層 (Z-30)：辦公桌與書本 (蓋在大頭前面！) -->
-            <div id="gachaSpineContainerDocs" class="absolute inset-0 w-full h-full z-30 pointer-events-none transition-opacity duration-300"></div>
+                <div id="gachaSpineContainerDocs" class="absolute inset-0 w-full h-full z-30 pointer-events-none transition-opacity duration-300"></div>
             </section>
 
             <section id="resultArea" class="bg-gradient-to-b from-white/95 to-amber-50/95 dark:from-gray-800/95 dark:to-gray-900/95 backdrop-blur-md rounded-2xl p-6 shadow-xl border-4 border-amber-300 dark:border-gray-600 min-h-[250px] flex flex-col items-center justify-center transition-all duration-300">
@@ -607,8 +621,13 @@
             let activeSkipHandler = null;
 
 
-                        function startGachaAnimation() {
+            function startGachaAnimation() {
                 showGlowingBooks = false; 
+    
+                // 🌟 關閉特效
+                document.getElementById('closeupTableGlow').style.opacity = '0';
+                document.getElementById('gachaSpineContainerDocs').classList.remove('book-glow-3star');
+                // ... 原本的程式碼保持不變 ... 
                 
                 document.getElementById('resultArea').classList.add('hidden');
                 const stage = document.getElementById('gachaStage');
@@ -761,7 +780,11 @@
 
             function enterEnd2WaitState() {
                 currentGachaState = GachaState.END2_WAIT;
-                showGlowingBooks = true; 
+                showGlowingBooks = true;
+                / 🌟 如果抽到3星，幫書本層加上發光 class
+                    if (has3Star) {
+                        document.getElementById('gachaSpineContainerDocs').classList.add('book-glow-3star');
+                    }
 
                 if (gachaPlayerErpin) {
                     gachaPlayerErpin.animationState.clearTracks(); 
@@ -790,6 +813,8 @@
                 const closeupBox = document.getElementById('gachaSpineContainerCloseup');
                 closeupBox.classList.remove('opacity-0');
                 closeupBox.style.pointerEvents = "auto";
+                // 🌟 顯示大頭的檯面發光特效
+                document.getElementById('closeupTableGlow').style.opacity = '1';
 
                 // 2. 書本掉落收尾
                 if (gachaPlayerDocs) {
