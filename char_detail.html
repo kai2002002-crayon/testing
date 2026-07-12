@@ -792,9 +792,7 @@
                     viewport: { x: -400, y: 0, width: 800, height: 1000 },
             
                     success: function (player) {
-                            // 🌟 呼叫修復函數
-                            fixSpineMultiplyHole(player);
-                            
+                                                        
                             const loader = avatarBox.querySelector('.spine-player-loading-custom');
                             if (loader) loader.remove();
             
@@ -813,7 +811,9 @@
                                     player.skeleton.updateWorldTransform(); 
                                 }
                             }
-                            
+                            // 🌟 呼叫修復函數
+                            fixSpineMultiplyHole(player);
+                        
                             const animations = player.skeleton.data.animations;
                             if (animations && animations.length > 0) {
                                 const animNames = animations.map(a => a.name);
