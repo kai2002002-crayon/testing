@@ -194,6 +194,18 @@
         </section>
         </div>
         <script>
+            // 🌟 全域通用：專門修復 WebGL 透明畫布下的「色彩增值(Multiply)」破洞 Bug
+            function fixSpineMultiplyHole(player) {
+                if (!player || !player.skeleton) return;
+                player.skeleton.slots.forEach(slot => {
+                    if (slot.data.blendMode === spine.BlendMode.Multiply) {
+                        // 強制轉為正常模式
+                        slot.data.blendMode = spine.BlendMode.Normal;
+                        // 降低透明度讓陰影保持柔和 (如果覺得陰影太深或太淺，可以微調這個 0.4 的數值)
+                        slot.color.a = Math.min(slot.color.a, 0.4); 
+                    }
+                });
+            }
             // 🌟 1. 切換語言並重新整理
             function changeLanguage(lang) {
                 localStorage.setItem('user_lang', lang);
@@ -557,13 +569,14 @@
                };
             
                globalPlayer = new spine.SpinePlayer(container, {
-    skelUrl: skelUrl, atlasUrl: atlasUrl, premultipliedAlpha: true,
-    backgroundColor: "#00000000", alpha: true, showControls: false,
-    showLoading: false, debugRendering: true, viewport: { ...baseViewport },
-
-    success: function (player) {
-        const loader = container.querySelector('.spine-player-loading-custom');
-        if (loader) loader.remove();
+                   skelUrl: skelUrl, atlasUrl: atlasUrl, premultipliedAlpha: true,
+                   backgroundColor: "#00000000", alpha: true, showControls: false,
+                   showLoading: false, debugRendering: true, viewport: { ...baseViewport },
+                   
+                   success: function (player) {
+                       const loader = container.querySelector('.spine-player-loading-custom');
+                       if (loader) loader.remove();
+                       fixSpineMultiplyHole(player);
         
         // 🌟 新增：換角色/服裝/模式時，如果目前是像素風，自動將新畫布變透明
         if (isPixelMode) {
