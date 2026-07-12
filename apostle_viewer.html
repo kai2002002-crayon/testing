@@ -198,11 +198,13 @@
             function fixSpineMultiplyHole(player) {
                 if (!player || !player.skeleton) return;
                 player.skeleton.slots.forEach(slot => {
-                    if (slot.data.blendMode === spine.BlendMode.Multiply) {
-                        // 強制轉為正常模式
+                    if (slot.data.blendMode === spine.BlendMode.Multiply || slot.data.name.toLowerCase().includes('shadow')) {
+                        // 將混合模式改為 Normal 避免自我重疊造成的破洞加深
                         slot.data.blendMode = spine.BlendMode.Normal;
-                        // 降低透明度讓陰影保持柔和 (如果覺得陰影太深或太淺，可以微調這個 0.4 的數值)
-                        slot.color.a = Math.min(slot.color.a, 0.4); 
+            
+                        // 強制設定為半透明黑色 (R, G, B, A)
+                        // 將 Alpha 設為 0.4 或 0.5，絕對不要設為 1.0！
+                        slot.color.set(0, 0, 0, 0.4);
                     }
                 });
             }
@@ -607,9 +609,6 @@
                        player.skeleton.scaleX = currentZoom; player.skeleton.scaleY = currentZoom;
                        player.skeleton.setToSetupPose(); 
             
-                       const shadowSlot = player.skeleton.findSlot("Sport_Face_Shadow");
-                       if (shadowSlot) { shadowSlot.data.blendMode = 0; shadowSlot.color.a = 0.6; }
-            
                        player.skeleton.updateWorldTransform();
                        buildAnimationDropdown(player); buildSlotsPanel(player);
             
@@ -927,7 +926,14 @@
                 slotVisibilityMap[slotName] = isVisible;
                 if (globalPlayer && globalPlayer.skeleton) {
                     const s = globalPlayer.skeleton.findSlot(slotName);
-                    if (s) s.color.a = isVisible ? 1 : 0;
+                    if (s) {
+                        if (isVisible) {
+                            s.setToSetupPose(); // 恢復原始設定（包含預設的透明度）
+                            fixSpineMultiplyHole(globalPlayer); // 重新補強陰影透明度，避免破洞
+                        } else {
+                            s.color.a = 0; // 隱藏時設為 0
+                        }
+                    }
                 }
             }
             
@@ -940,10 +946,21 @@
                     slotVisibilityMap[slotName] = show;
                     if (globalPlayer && globalPlayer.skeleton) {
                         const s = globalPlayer.skeleton.findSlot(slotName);
-                        if (s) s.color.a = show ? 1 : 0;
+                        if (s) {
+                            if (show) {
+                                s.setToSetupPose(); // 恢復原始設定
+                            } else {
+                                s.color.a = 0; // 隱藏時設為 0
+                            }
+                        }
                     }
                 });
-            }
+    
+    // 如果是「全顯」，統一呼叫一次修復陰影函數
+    if (show) {
+        fixSpineMultiplyHole(globalPlayer);
+    }
+}
             
             function resetCamera() {
                 if (!globalPlayer || !globalPlayer.skeleton) return;
