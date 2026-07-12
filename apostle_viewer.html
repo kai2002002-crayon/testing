@@ -203,9 +203,11 @@
                         // 將混合模式改為 Normal 避免自我重疊造成的破洞加深
                        slot.data.blendMode = spine.BlendMode.Normal;
             
-                        // 強制設定為半透明黑色 (R, G, B, A)
-                        // 將 Alpha 設為 0.4 或 0.5，絕對不要設為 1.0！
-                       slot.color.set(0, 0, 0, 0.4);
+                       // 強制設定為半透明黑色 (R, G, B, A)
+                       // 將 Alpha 設為 0.4 或 0.5，絕對不要設為 1.0！
+                       // slot.color.set(0, 0, 0, 0.4);
+                       // 降低透明度讓陰影保持柔和 (如果覺得陰影太深或太淺，可以微調這個 0.4 的數值)
+                       slot.color.a = Math.min(slot.color.a, 0.5);
                     }
                 });
             }
