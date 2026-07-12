@@ -635,7 +635,19 @@
                 let targetErpinSkin = hasRateUp ? "Choon_On" : "Choon_Off";
                 let animName = has3Star ? "Idle_3" : (has2Star ? "Idle_2" : "Idle_1");
 
-                // 🌟 核心修復 1：如果已經建立過，就「重複利用」並重置狀態！(不再觸發 Shader Error)
+                // 🌟 核心駭客技術：專門修復 WebGL 透明畫布下的「色彩增值(Multiply)」破洞 Bug
+                function fixMultiplyHole(player) {
+                    if (!player || !player.skeleton) return;
+                    player.skeleton.slots.forEach(slot => {
+                        // 如果發現混合模式是色彩增值 (Multiply)，就強制轉為正常 (Normal)
+                        if (slot.data.blendMode === spine.BlendMode.Multiply) {
+                            slot.data.blendMode = spine.BlendMode.Normal;
+                            // 稍微降低透明度，讓 Normal 模式疊加起來依然柔和像陰影
+                            slot.color.a = Math.min(slot.color.a, 0.4); 
+                        }
+                    });
+                }
+
                 if (isSpineInitialized) {
                     if (gachaPlayerErpin) {
                         gachaPlayerErpin.skeleton.setSkinByName(targetErpinSkin);
@@ -652,37 +664,39 @@
                     if (gachaPlayerCloseup) {
                         gachaPlayerCloseup.skeleton.setSlotsToSetupPose();
                         gachaPlayerCloseup.animationState.setAnimation(0, animName, false);
-                        gachaPlayerCloseup.animationState.timeScale = 0; // 暫停等 Zoom In
+                        gachaPlayerCloseup.animationState.timeScale = 0; 
                     }
-                    return; // 直接中斷，不需要重建畫布
+                    return; 
                 }
-
-                // --- 以下是「第一次載入」的建立流程 ---
 
                 const erpinContainer = document.getElementById('gachaSpineContainerErpin');
                 if (!erpinContainer) return;
 
-                // 🌟 核心修復 2：將所有的 premultipliedAlpha 設為 false，修補陰影破洞！
+                // 🌟 1. 底層艾爾芬：全部恢復為透明 (alpha: true) 與 (premultipliedAlpha: true)
                 gachaPlayerErpin = new spine.SpinePlayer(erpinContainer, {
                     skelUrl: `./gacha/Gacha_Hero_Erpin.skel.bytes`, 
                     atlasUrl: `./gacha/Gacha_Hero_Erpin.atlas.txt`,
                     animation: "Idle", skin: targetErpinSkin,
-                    premultipliedAlpha: false,  // 👈 陰影防破洞設定
-                    backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
+                    premultipliedAlpha: true,  
+                    backgroundColor: "#00000000", alpha: true, // 👈 保持透明！
+                    showControls: false, showLoading: false,
                     viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height },
                     success: function (player) { 
                         try { player.skeleton.setAttachment("BG", "BG"); } catch(e) {}
                         player.animationState.data.defaultMix = 0;
+                        fixMultiplyHole(player); // 👈 呼叫修復程式，拯救陰影破洞！
                         setupCheekDragInteraction(player); 
                     }
                 });
 
+                // 🌟 2. 上層書本
                 gachaPlayerDocs = new spine.SpinePlayer(document.getElementById('gachaSpineContainerDocs'), {
                     skelUrl: `./gacha/Gacha_Hero_Documents.skel.bytes`,
                     atlasUrl: `./gacha/Gacha_Hero_Documents.atlas.txt`,
                     animation: "Idle",
-                    premultipliedAlpha: false,  // 👈 陰影防破洞設定
-                    backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
+                    premultipliedAlpha: true,  
+                    backgroundColor: "#00000000", alpha: true,
+                    showControls: false, showLoading: false,
                     viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height },
                     success: function(player) {
                         player.animationState.data.defaultMix = 0; 
@@ -706,19 +720,21 @@
                     }
                 });
 
+                // 🌟 3. 中層大頭特寫：恢復透明，不遮擋背景！
                 gachaPlayerCloseup = new spine.SpinePlayer(document.getElementById('gachaSpineContainerCloseup'), {
                     skelUrl: `./gacha/Gacha_Hero_Closeup.skel.bytes`,
                     atlasUrl: `./gacha/Gacha_Hero_Closeup.atlas.txt`,
                     animation: animName,
-                    premultipliedAlpha: false,  // 👈 陰影防破洞設定
-                    backgroundColor: "#00000000", alpha: true, showControls: false, showLoading: false,
+                    premultipliedAlpha: true,  
+                    backgroundColor: "#00000000", alpha: true, // 👈 保持透明，保留層次感！
+                    showControls: false, showLoading: false,
                     viewport: CLOSEUP_VIEWPORT, 
                     success: (player) => { 
                         player.animationState.timeScale = 0; 
+                        fixMultiplyHole(player); // 👈 呼叫修復程式，拯救特寫陰影破洞！
                     }
                 });
 
-                // 標記為已初始化，以後就只重置不重建！
                 isSpineInitialized = true; 
             }
 
