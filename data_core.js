@@ -26,6 +26,8 @@ const LANG_DICT = {
         stats_toggle_hint: "點擊展開 / 收起", stats_layer_1_title: "🥇 第一層統計", stats_layer_2_title: "🥈 第二層統計", stats_layer_3_title: "🥉 第三層統計",
         stats_layer_1_rule: "(每格+3%, 蠟筆×2)", stats_layer_2_rule: "(每格+4%, 蠟筆×4)", stats_layer_3_rule: "(每格+5%, 蠟筆×6)",
         stats_global_bonus: "📊 全體屬性加成", stats_need_more_prefix: "尚要 ", stats_need_more_suffix: " 根蠟筆",
+		menu_system_title: "系統選單", menu_gacha: "前往招募模擬器", menu_viewer: "前往動態展示器", menu_toggle_anim: "開關頂部跑酷動畫",
+		quick_action_title: "⚡ 快捷操作", quick_action_all_chars: "全體坨坨:", quick_action_own_all: "一鍵全部擁有", quick_action_cancel_all: "一鍵全部取消", quick_action_fill_crayons: "填滿蠟筆:", quick_action_clear_crayons: "清空蠟筆:", quick_action_fill_all: "填滿全層", quick_action_clear_all: "清空全層", quick_action_layer_1: "第一層", quick_action_layer_2: "第二層", quick_action_layer_3: "第三層", quick_action_own: "擁有", quick_action_cancel: "取消擁有", quick_action_fill: "填滿", quick_action_clear: "清空", quick_action_all_layers: "所有層數", quick_action_layer_n: "第 {n} 層", quick_action_confirm_chars: "確定要一鍵「{action}」所有坨坨嗎？\n(此操作會覆蓋所有坨坨的擁有狀態！)", quick_action_confirm_grids: "確定要「{action}」全體坨坨【{layer}】的蠟筆格子嗎？\n(⚠️ 警告：此操作會直接覆蓋目前的紀錄，且無法復原！)",
 		path_image_hint: "查看路徑圖",
 		info_job_reward: "💰 打工獎勵", info_food: "🍲 喜好料理", aside_title: "願像", aside_loading: "願像資料載入中...",
 		stats_attribute: "攻擊類型", 物理: "物理", 魔法: "魔法", 艾爾丁: "艾爾丁", 普通坨坨: "普通坨坨", 身份: "身份",
@@ -80,6 +82,8 @@ const LANG_DICT = {
         stats_toggle_hint: "クリックで展開 / 折りたたみ", stats_layer_1_title: "🥇 1段階目の統計", stats_layer_2_title: "🥈 2段階目の統計", stats_layer_3_title: "🥉 3段階目の統計",
         stats_layer_1_rule: "(各マス+3%, クレヨン×2)", stats_layer_2_rule: "(各マス+4%, クレヨン×4)", stats_layer_3_rule: "(各マス+5%, クレヨン×6)",
         stats_global_bonus: "📊 全体ステータスバフ", stats_need_more_prefix: "必要クレヨン数: ", stats_need_more_suffix: " 本",
+		menu_system_title: "システムメニュー", menu_gacha: "ガチャシミュレーターへ", menu_viewer: "アニメーション展示へ", menu_toggle_anim: "ランニングアニメーション切替",
+		quick_action_title: "⚡ クイック操作", quick_action_all_chars: "全使徒:", quick_action_own_all: "一括所有する", quick_action_cancel_all: "一括解除する", quick_action_fill_crayons: "クレヨンを埋める:", quick_action_clear_crayons: "クレヨンをクリア:", quick_action_fill_all: "全層を埋める", quick_action_clear_all: "全層をクリア", quick_action_layer_1: "1段階目", quick_action_layer_2: "2段階目", quick_action_layer_3: "3段階目", quick_action_own: "所有する", quick_action_cancel: "所有を解除", quick_action_fill: "埋める", quick_action_clear: "クリア", quick_action_all_layers: "すべての層", quick_action_layer_n: "{n} 段階目", quick_action_confirm_chars: "全使徒を「{action}」してもよろしいですか？\n(この操作はすべての使徒の所有状態を上書きします！)", quick_action_confirm_grids: "全使徒の【{layer}】のクレヨンマスを「{action}」してもよろしいですか？\n(⚠️ 警告: この操作は現在の記録を上書きし、元に戻すことはできません！)",
 		path_image_hint: "ルート図を見る",
 		info_job_reward: "💰 獲得報酬", info_food: "🍲 食べ物の好み", aside_title: "アサイド", aside_loading: "アサイドデータ読み込み中...",
 		stats_attribute: "攻撃タイプ", 物理: "物理", 魔法: "魔法", 艾爾丁: "エルダイン", 普通坨坨: "ノーマル使徒", 身份: "身分",
@@ -134,7 +138,9 @@ const LANG_DICT = {
         stats_toggle_hint: "Click to Expand / Collapse", stats_layer_1_title: "🥇 Board 1 Stats", stats_layer_2_title: "🥈 Board 2 Stats", stats_layer_3_title: "🥉 Board 3 Stats",
         stats_layer_1_rule: "(Node+3%, Crayon×2)", stats_layer_2_rule: "(Node+4%, Crayon×4)", stats_layer_3_rule: "(Node+5%, Crayon×6)",
         stats_global_bonus: "📊 Global Stat Bonus", stats_need_more_prefix: "Need ", stats_need_more_suffix: " Crayons",
-		"path_image_hint": "View Path Chart",
+		menu_system_title: "System Menu", menu_gacha: "Gacha Simulator", menu_viewer: "Apostle Viewer", menu_toggle_anim: "Toggle Running Animation",
+		quick_action_title: "⚡ Quick Actions", quick_action_all_chars: "All Apostles:", quick_action_own_all: "Own All", quick_action_cancel_all: "Cancel All", quick_action_fill_crayons: "Fill Crayons:", quick_action_clear_crayons: "Clear Crayons:", quick_action_fill_all: "Fill All Layers", quick_action_clear_all: "Clear All Layers", quick_action_layer_1: "Layer 1", quick_action_layer_2: "Layer 2", quick_action_layer_3: "Layer 3", quick_action_own: "Own", quick_action_cancel: "Cancel", quick_action_fill: "Fill", quick_action_clear: "Clear", quick_action_all_layers: "All Layers", quick_action_layer_n: "Layer {n}", quick_action_confirm_chars: "Are you sure you want to '{action}' all Apostles?\n(This will overwrite the ownership status of all Apostles!)", quick_action_confirm_grids: "Are you sure you want to '{action}' the crayon grids for all Apostles in [{layer}]?\n(⚠️ Warning: This will overwrite current records and cannot be undone!)",
+		path_image_hint: "View Path Chart",
 		info_job_reward: "💰 Acquired Rewards", info_food: "🍲 Favorite Food", aside_title: "Aside", aside_loading: "Loading Aside data...",
 		stats_attribute: "Attack Type", 物理: "Physical", 魔法: "Magical", 艾爾丁: "Eldain", 普通坨坨: "Normal Apostle", 身份: "Identity",
         x_label: "Official Global X", official_x_url: "https://x.com/trickcal_en",
@@ -713,7 +719,7 @@ const IMAGE_MAP = {
     "avatar_莉絲蒂": "https://i.postimg.cc/1gQQcpMM/Risty.png", 
     "avatar_雷內瓦": "https://i.postimg.cc/bGhhHQLg/Renewa-Awaken.png", 
     "avatar_芭瓏": "https://i.postimg.cc/cg1GP0p8/barong.png"
-    //新角色備用https://i.postimg.cc/YG2BTM5N/Arco.png, https://i.postimg.cc/xJjVBnwy/Arnet.png, https://i.postimg.cc/G83n6dWj/Bana.png, https://i.postimg.cc/ftWQ1DG5/Barie.png, https://i.postimg.cc/BLhf0R3c/Beni-Beni.png, https://i.postimg.cc/tZrGj8bD/Canta.png, https://i.postimg.cc/1nW1QbSC/Crepe.png, https://i.postimg.cc/34LQTzhq/Daya.png, https://i.postimg.cc/LYyFpGSc/Delia.png, https://i.postimg.cc/MMsJSgx8/Diana-Yester.png, https://i.postimg.cc/XG26bt3b/Eisia.png, https://i.postimg.cc/D48ky5yh/Goldy.png, https://i.postimg.cc/4HmkNwNs/Guin.png, https://i.postimg.cc/m1tf2V2r/Joanne.png, https://i.postimg.cc/Fk75sGsk/Kommy-Swim.png, https://i.postimg.cc/Mfv2KtKQ/Laika.png, https://i.postimg.cc/mhDGwZ3X/Lethe.png, https://i.postimg.cc/yWdzP6hr/Lil1li.png, https://i.postimg.cc/pyTtZVQ3/Lion.png, https://i.postimg.cc/NKTtHN8M/Makasha.png, https://i.postimg.cc/87WG6ydj/Mayo-Cool.png, https://i.postimg.cc/21vYZHdx/Neti.png, https://i.postimg.cc/FYcvLPbV/Opal.png, https://i.postimg.cc/PCZHw6b4/Orr.png, https://i.postimg.cc/t1jjthDW/Pira.png, https://i.postimg.cc/LqppBzvf/Polan.png, https://i.postimg.cc/yJHHXFnX/Ran.png, https://i.postimg.cc/qtTTX8Qx/Renewa.png, https://i.postimg.cc/2qDDF4Tc/Ricota.png, https://i.postimg.cc/xk22yKg6/Rim-Chaos.png, https://i.postimg.cc/qtTTX8Q5/Rohne-Mayor.png, https://i.postimg.cc/gwWWqv47/Rollett.png, https://i.postimg.cc/3yFHLdbc/Shady-Twisted.png, https://i.postimg.cc/wtQdW7br/Shasha.png, https://i.postimg.cc/3yFHLdcM/Sherum.png, https://i.postimg.cc/4KQT8mSx/Speaki-Maid.png, https://i.postimg.cc/QBJr6Hyx/Suro.png, https://i.postimg.cc/Jy5WTG2t/Tig.png, https://i.postimg.cc/yJyzfkbD/Uros.png, https://i.postimg.cc/3yFHLdc0/Vela.png
+    //新坨坨備用https://i.postimg.cc/YG2BTM5N/Arco.png, https://i.postimg.cc/xJjVBnwy/Arnet.png, https://i.postimg.cc/G83n6dWj/Bana.png, https://i.postimg.cc/ftWQ1DG5/Barie.png, https://i.postimg.cc/BLhf0R3c/Beni-Beni.png, https://i.postimg.cc/tZrGj8bD/Canta.png, https://i.postimg.cc/1nW1QbSC/Crepe.png, https://i.postimg.cc/34LQTzhq/Daya.png, https://i.postimg.cc/LYyFpGSc/Delia.png, https://i.postimg.cc/MMsJSgx8/Diana-Yester.png, https://i.postimg.cc/XG26bt3b/Eisia.png, https://i.postimg.cc/D48ky5yh/Goldy.png, https://i.postimg.cc/4HmkNwNs/Guin.png, https://i.postimg.cc/m1tf2V2r/Joanne.png, https://i.postimg.cc/Fk75sGsk/Kommy-Swim.png, https://i.postimg.cc/Mfv2KtKQ/Laika.png, https://i.postimg.cc/mhDGwZ3X/Lethe.png, https://i.postimg.cc/yWdzP6hr/Lil1li.png, https://i.postimg.cc/pyTtZVQ3/Lion.png, https://i.postimg.cc/NKTtHN8M/Makasha.png, https://i.postimg.cc/87WG6ydj/Mayo-Cool.png, https://i.postimg.cc/21vYZHdx/Neti.png, https://i.postimg.cc/FYcvLPbV/Opal.png, https://i.postimg.cc/PCZHw6b4/Orr.png, https://i.postimg.cc/t1jjthDW/Pira.png, https://i.postimg.cc/LqppBzvf/Polan.png, https://i.postimg.cc/yJHHXFnX/Ran.png, https://i.postimg.cc/qtTTX8Qx/Renewa.png, https://i.postimg.cc/2qDDF4Tc/Ricota.png, https://i.postimg.cc/xk22yKg6/Rim-Chaos.png, https://i.postimg.cc/qtTTX8Q5/Rohne-Mayor.png, https://i.postimg.cc/gwWWqv47/Rollett.png, https://i.postimg.cc/3yFHLdbc/Shady-Twisted.png, https://i.postimg.cc/wtQdW7br/Shasha.png, https://i.postimg.cc/3yFHLdcM/Sherum.png, https://i.postimg.cc/4KQT8mSx/Speaki-Maid.png, https://i.postimg.cc/QBJr6Hyx/Suro.png, https://i.postimg.cc/Jy5WTG2t/Tig.png, https://i.postimg.cc/yJyzfkbD/Uros.png, https://i.postimg.cc/3yFHLdc0/Vela.png
 };
 
 const SKILL_ICONS = {
@@ -795,7 +801,7 @@ const FOOD_ICON = {
     "烤海賊漫畫肉": { ja: "海賊マンガ肉焼き", url: "https://i.postimg.cc/R6QYbWZL/Icon-Food-66.png" },
     "三重薄荷冰淇淋": { ja: "トリブルチョコスミントアイス", url: "https://i.postimg.cc/TLqsHK3Q/Icon-Food-67.png" },
     
-    // 給 1 星角色使用的通用餐牌
+    // 給 1 星坨坨使用的通用餐牌
     "餐牌": { ja: "メニュー", url: "https://i.postimg.cc/YGfPyvCb/My-Home-Restaurant-Menu-Icon.png" }
 };
 
