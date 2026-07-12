@@ -16,7 +16,6 @@
         <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
         <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
         <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-        
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@esotericsoftware/spine-player@4.1.23/dist/spine-player.min.css">
         <script src="https://cdn.jsdelivr.net/npm/@esotericsoftware/spine-player@4.1.23/dist/iife/spine-player.min.js"></script>
         <style>
@@ -75,21 +74,45 @@
             animation: popInExaggerated 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
             opacity: 0; 
             }
-            /* 1. 檯面發光特效 (由下往上放射狀) */
-            .table-glow-up {
-                /* 使用徑向漸層，圓心放在正下方 (50% 110%)，模擬從底部打光 */
-                background: radial-gradient(circle at 50% 110%, rgba(255, 255, 200, 0.8) 0%, rgba(255, 215, 0, 0.3) 50%, transparent 80%);
-                mix-blend-mode: screen; /* 讓光影自然疊加 */
-                pointer-events: none;
-                opacity: 0;
-                transition: opacity 0.7s ease; /* 配合大頭的 duration-700 淡入 */
+            /* 🌟 1. 3星書本專屬的獨立發光 (光環 + 脈動) */
+            .book-star-glow {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            /* 讓座標對準中心點 */
+            margin-left: -60px;
+            margin-top: -60px;
+            /* 模擬華麗的彩色光暈，中心白、外圈彩 */
+            background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,215,0,0.8) 20%, rgba(255,50,200,0.4) 50%, transparent 70%);
+            mix-blend-mode: screen;
+            pointer-events: none;
+            animation: pulseBookGlow 1s infinite alternate;
             }
-
-            /* 2. 3星書本自發光特效 (直接套用在畫布上，自動追蹤書本形狀) */
-            .book-glow-3star canvas {
-                /* 利用 drop-shadow 讓非透明區域發出金光，並微調亮度 */
-                filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.9)) drop-shadow(0 0 30px rgba(255, 165, 0, 0.6)) brightness(1.1);
-                transition: filter 0.3s ease;
+            @keyframes pulseBookGlow {
+            0% { transform: scale(0.7); opacity: 0.7; }
+            100% { transform: scale(1.2); opacity: 1; filter: brightness(1.2); }
+            }
+            /* 🌟 2. 大頭特寫檯面發光：2星 (金黃) */
+            .table-glow-2star {
+            background: radial-gradient(circle at 50% 110%, rgba(255, 215, 0, 0.9) 0%, rgba(255, 165, 0, 0.3) 60%, transparent 80%);
+            mix-blend-mode: screen;
+            }
+            /* 🌟 3. 大頭特寫檯面發光：3星 (彩虹放射旋轉光) */
+            .table-glow-3star {
+            /* 使用圓錐漸層製造放射狀，並套用彩虹色 */
+            background: conic-gradient(from 0deg at 50% 100%, 
+            rgba(255,0,0,0.6), rgba(255,165,0,0.6), rgba(255,255,0,0.6), 
+            rgba(0,128,0,0.6), rgba(0,0,255,0.6), rgba(75,0,130,0.6), 
+            rgba(238,130,238,0.6), rgba(255,0,0,0.6));
+            /* 使用遮罩讓上方自然淡出，不會遮住臉 */
+            -webkit-mask-image: radial-gradient(circle at 50% 100%, black 10%, transparent 80%);
+            mix-blend-mode: screen;
+            transform-origin: 50% 100%;
+            animation: spinRainbow 8s linear infinite;
+            }
+            @keyframes spinRainbow {
+            0% { transform: rotate(0deg) scale(2); }
+            100% { transform: rotate(360deg) scale(2); }
             }
             .btn-gacha { transition: transform 0.1s; }
             .btn-gacha:active { transform: scale(0.95); }
@@ -107,7 +130,6 @@
         </style>
     </head>
     <body class="p-3 sm:p-6 md:p-8 text-gray-800 dark:text-gray-100">
-
         <!-- ========================================================== -->
         <!-- 全螢幕轉蛋動畫舞台 -->
         <!-- ========================================================== -->
@@ -146,12 +168,10 @@
             <section id="gachaStage" class="hidden w-full max-w-4xl mx-auto mb-6 relative aspect-video bg-black rounded-2xl overflow-hidden shadow-xl border-4 border-amber-300 dark:border-gray-600">
                 <div id="gachaSpineContainerErpin" class="absolute inset-0 w-full h-full z-10 cursor-pointer transition-opacity duration-300"></div>
                 <div id="gachaSpineContainerCloseup" class="absolute inset-0 w-full h-full z-20 pointer-events-none opacity-0 transition-opacity duration-700"></div>
-    
-                <div id="closeupTableGlow" class="absolute inset-0 w-full h-full z-[25] table-glow-up"></div>
-
+                <div id="closeupTableGlow" class="absolute inset-0 w-full h-full z-[25] pointer-events-none opacity-0 transition-opacity duration-500"></div>
                 <div id="gachaSpineContainerDocs" class="absolute inset-0 w-full h-full z-30 pointer-events-none transition-opacity duration-300"></div>
+                <div id="bookGlowContainer" class="absolute inset-0 w-full h-full z-40 pointer-events-none"></div>
             </section>
-
             <section id="resultArea" class="bg-gradient-to-b from-white/95 to-amber-50/95 dark:from-gray-800/95 dark:to-gray-900/95 backdrop-blur-md rounded-2xl p-6 shadow-xl border-4 border-amber-300 dark:border-gray-600 min-h-[250px] flex flex-col items-center justify-center transition-all duration-300">
                 <p class="text-gray-400 dark:text-gray-500 font-bold mb-2">等待招募中...</p>
             </section>
@@ -409,13 +429,13 @@
                 }
                 return pool[pool.length - 1];
             }
-
+            
             let pendingGachaTimes = 0; 
             let pendingGachaResults = [];
             let has3Star = false;
             let has2Star = false;
             let hasRateUp = false;
-
+            
             function performGacha(times) {
                 pendingGachaTimes = times;
                 pendingGachaResults = [];
@@ -449,7 +469,7 @@
                     "冷靜": "sprite-char-composed", "憂鬱": "sprite-char-depressed",
                     "天真": "sprite-char-innocence", "狂亂": "sprite-char-madness", "活潑": "sprite-char-vivacious"
                 };
-
+            
                 const borderColor = personalityBorderColors[charData.personality] || "border-gray-300";
                 const raceKey = (charData.race === "???" || !charData.race) ? "unknown" : charData.race;
                 const bgSprite = bgClassMap[raceKey] || "sprite-Bg_Unknown";
@@ -457,12 +477,12 @@
                 const spineName = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charData.name] ? SPINE_MAP[charData.name] : charData.name;
                 const charSpriteBase = charSpriteBaseMap[charData.personality] || "";
                 const charSpriteClass = `sprite-${spineName}`;
-
+            
                 // 依據是否為大圖 (招募結果) 或小圖 (歷史紀錄) 決定外框與縮放比例
                 const sizeClass = isLarge ? "w-16 h-16 sm:w-20 sm:h-20" : "w-10 h-10";
                 const bgScaleClass = isLarge ? "scale-[0.6]" : "scale-[0.45]";
                 const charScaleClass = isLarge ? "scale-[0.55]" : "scale-[0.35]";
-
+            
                 return `
                     <div class="${sizeClass} rounded-lg border-2 ${borderColor} shadow-inner bg-[#fcf8f2] dark:bg-gray-800 relative overflow-hidden shrink-0">
                         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sprite-base sprite-common ${bgSprite} ${bgScaleClass} z-0 opacity-90"></div>
@@ -493,10 +513,10 @@
                     card.className = `relative p-2 sm:p-3 rounded-xl border-2 flex flex-col items-center gap-2 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm shadow-sm transition-transform hover:scale-105 ${is3Star ? 'border-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.5)]' : 'border-gray-200 dark:border-gray-700'}`;
                     
                     const iconHTML = getGachaCharIconHTML(charData, true);
-
+            
                     // 🌟 修復 2：加上 typeof t 的防呆，避免沒有翻譯器時整個當掉
                     const displayName = typeof t === 'function' ? t(charData.name) : charData.name;
-
+            
                     card.innerHTML = `
                         ${isNew ? '<div class="absolute -top-3 -right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md z-20 animate-pulse">NEW</div>' : ''}
                         ${iconHTML}
@@ -531,29 +551,29 @@
                     default: return 'sprite-char-innocence'; 
                 }
             }
-
+            
             function renderResultArea(results) {
                 const resultArea = document.getElementById('resultArea');
                 resultArea.innerHTML = '<h3 class="text-xl font-bold text-amber-900 dark:text-amber-400 mb-4 w-full text-center">🎉 招募結果 🎉</h3><div class="flex flex-wrap justify-center gap-4 w-full"></div>';
                 const container = resultArea.querySelector('div');
-
+            
                 results.forEach((res, index) => {
                     const char = res.char;
                     const charBox = document.createElement('div');
                     charBox.className = `flex flex-col items-center animate-pop`;
                     charBox.style.animationDelay = `${index * 0.1}s`; 
-
+            
                     let borderColor = char.star === 3 ? 'border-amber-400' : (char.star === 2 ? 'border-purple-400' : 'border-gray-300');
                     let shadowClass = char.star === 3 ? 'shadow-[0_0_15px_rgba(251,191,36,0.8)] flash-gold' : 'shadow-md';
                     let starIcons = '⭐'.repeat(char.star);
-
+            
                     // 🌟 取得性格底圖
                     let pClass = getPersonalitySpriteClass(char.personality);
                     
                     // 🌟 關鍵修正：透過 SPINE_MAP 將中文名稱轉換為英文類別名稱！
                     let engName = (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[char.name]) ? SPINE_MAP[char.name] : char.name;
                     let spriteNameClass = `sprite-${engName}`;
-
+            
                     charBox.innerHTML = `
                         <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-4 ${borderColor} ${shadowClass} bg-gray-200 dark:bg-gray-700 flex items-center justify-center relative overflow-hidden">
                             <div class="scale-[0.6] sm:scale-[0.75] origin-center flex items-center justify-center">
@@ -567,7 +587,7 @@
                     container.appendChild(charBox);
                 });
             }
-
+            
             function addToHistory(results, poolName) {
                 const historyArea = document.getElementById('historyArea');
                 const now = new Date();
@@ -576,7 +596,7 @@
                     pool: poolName,
                     chars: results.map(r => r.char.name)
                 };
-
+            
                 const div = document.createElement('div');
                 div.className = "p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg text-sm border border-gray-200 dark:border-gray-600";
                 
@@ -584,7 +604,7 @@
                 let iconsHtml = results.map(r => {
                     return getGachaCharIconHTML(r.char, false);
                 }).join('');
-
+            
                 div.innerHTML = `
                     <div class="font-bold text-amber-600 dark:text-amber-400 mb-2">${record.time} - ${record.pool}</div>
                     <div class="flex flex-wrap gap-1.5 items-center">
@@ -592,19 +612,19 @@
                     </div>
                 `;
                 historyArea.prepend(div);
-
+            
                 if (typeof saveHistoryToCloud === 'function') {
                     saveHistoryToCloud(record);
                 }
             }
-
+            
             // 💡 放大 width 和 height 可以讓鏡頭拉遠，角色看起來比較小
             const SPINE_CONFIG = {
                 viewport: { x: -1200, y: -600, width: 2400, height: 1215 }
             };
             // width 和 height 的數字改小，要往上移：把 y 的負數改得更小，記得 x 永遠設定為 -width / 2 才會左右置中
             const CLOSEUP_VIEWPORT = { x: -1080, y: -400, width: 2160, height: 945 };
-
+            
             const GachaState = { INIT: 0, ERPIN_IDLE: 1, END1_DROP: 2, END2_WAIT: 3, END3_ZOOM: 4, SHOW_RESULT: 5 };
             let currentGachaState = GachaState.INIT;
             
@@ -612,22 +632,31 @@
             let gachaPlayerDocs = null;
             let gachaPlayerCloseup = null;
             let showGlowingBooks = false; 
-
+            let bookGlowElements = {}; // 追蹤書本發光DOM
+            let reactionLightTimer = null; // 控制大頭打光的延遲
+            
             // 🌟 新增：記錄 Spine 是否已經初始化，用來重複利用畫布
             let isSpineInitialized = false; 
-
+            
             // 🌟 終極防護：用來記錄並清除殘留的點擊事件
             let activeEnd3Handler = null;
             let activeSkipHandler = null;
-
-
+            
+            
             function startGachaAnimation() {
-                showGlowingBooks = false; 
-    
-                // 🌟 關閉特效
-                document.getElementById('closeupTableGlow').style.opacity = '0';
-                document.getElementById('gachaSpineContainerDocs').classList.remove('book-glow-3star');
-                // ... 原本的程式碼保持不變 ... 
+            showGlowingBooks = false; 
+            
+            // 🌟 清除光效
+            document.getElementById('bookGlowContainer').innerHTML = '';
+            bookGlowElements = {};
+            clearTimeout(reactionLightTimer);
+            
+            const glowLayer = document.getElementById('closeupTableGlow');
+            glowLayer.style.opacity = '0';
+            glowLayer.className = 'absolute inset-0 w-full h-full z-[25] pointer-events-none opacity-0 transition-opacity duration-500';
+            
+            // ... 原本程式碼不變 ...
+            }
                 
                 document.getElementById('resultArea').classList.add('hidden');
                 const stage = document.getElementById('gachaStage');
@@ -642,18 +671,18 @@
                 closeupBox.style.pointerEvents = 'none'; 
                 
                 stage.getBoundingClientRect(); 
-
+            
                 // 🌟 直接呼叫，不需要 setTimeout 等待了！
                 initSpineStages();
                 stage.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
-
+            
             async function initSpineStages() {
                 currentGachaState = GachaState.ERPIN_IDLE;
                 const vp = SPINE_CONFIG.viewport;
                 let targetErpinSkin = hasRateUp ? "Choon_On" : "Choon_Off";
                 let animName = has3Star ? "Idle_3" : (has2Star ? "Idle_2" : "Idle_1");
-
+            
                 // 🌟 核心駭客技術：專門修復 WebGL 透明畫布下的「色彩增值(Multiply)」破洞 Bug
                 function fixMultiplyHole(player) {
                     if (!player || !player.skeleton) return;
@@ -666,7 +695,7 @@
                         }
                     });
                 }
-
+            
                 if (isSpineInitialized) {
                     if (gachaPlayerErpin) {
                         gachaPlayerErpin.skeleton.setSkinByName(targetErpinSkin);
@@ -687,10 +716,10 @@
                     }
                     return; 
                 }
-
+            
                 const erpinContainer = document.getElementById('gachaSpineContainerErpin');
                 if (!erpinContainer) return;
-
+            
                 // 🌟 1. 底層艾爾芬：全部恢復為透明 (alpha: true) 與 (premultipliedAlpha: true)
                 gachaPlayerErpin = new spine.SpinePlayer(erpinContainer, {
                     skelUrl: `./gacha/Gacha_Hero_Erpin.skel.bytes`, 
@@ -707,7 +736,7 @@
                         setupCheekDragInteraction(player); 
                     }
                 });
-
+            
                 // 🌟 2. 上層書本
                 gachaPlayerDocs = new spine.SpinePlayer(document.getElementById('gachaSpineContainerDocs'), {
                     skelUrl: `./gacha/Gacha_Hero_Documents.skel.bytes`,
@@ -720,25 +749,50 @@
                     success: function(player) {
                         player.animationState.data.defaultMix = 0; 
                         const origDocsUpdate = player.skeleton.updateWorldTransform;
-                        player.skeleton.updateWorldTransform = function () {
-                            origDocsUpdate.call(this); 
-                            if (showGlowingBooks) {
-                                if (pendingGachaTimes === 10) {
-                                    pendingGachaResults.forEach((result, idx) => {
-                                        if (result.char.star === 3) {
-                                            try { this.setAttachment(`Book_Drop_${idx + 1}`, `Book_Drop_${idx + 1}_3star`); } catch(e) {}
-                                        }
-                                    });
-                                } else {
-                                    if (pendingGachaResults[0].char.star === 3) {
-                                        try { this.setAttachment(`Book_Drop_1`, `Book_Drop_1_3star`); } catch(e) {}
-                                    }
-                                }
-                            }
-                        };
+            player.skeleton.updateWorldTransform = function () {
+            origDocsUpdate.call(this); 
+            
+            if (showGlowingBooks) {
+            const vp = SPINE_CONFIG.viewport;
+            const canvas = document.querySelector('#gachaSpineContainerDocs canvas');
+            const glowContainer = document.getElementById('bookGlowContainer');
+            if (!canvas) return;
+            const rect = canvas.getBoundingClientRect();
+            
+            pendingGachaResults.forEach((result, idx) => {
+            if (result.char.star === 3) {
+                let slotName = (pendingGachaTimes === 1) ? 'Book_Drop_1' : `Book_Drop_${idx + 1}`;
+                try { this.setAttachment(slotName, `${slotName}_3star`); } catch(e) {}
+                
+                // 🌟 神級技巧：取得書本的骨骼座標，並映射到畫布的實際像素
+                let slot = this.findSlot(slotName);
+                if (slot && slot.bone) {
+                    let bx = slot.bone.worldX;
+                    let by = slot.bone.worldY;
+                    
+                    // WebGL 的座標系與 DOM 轉換比例
+                    let percentX = (bx - vp.x) / vp.width;
+                    let percentY = (by - vp.y) / vp.height;
+                    let pixelX = percentX * rect.width;
+                    let pixelY = (1 - percentY) * rect.height; // Y軸反轉
+            
+                    let glowDiv = bookGlowElements[idx];
+                    if (!glowDiv) {
+                        glowDiv = document.createElement('div');
+                        glowDiv.className = 'book-star-glow';
+                        glowContainer.appendChild(glowDiv);
+                        bookGlowElements[idx] = glowDiv;
+                    }
+                    glowDiv.style.left = pixelX + 'px';
+                    glowDiv.style.top = pixelY + 'px';
+                }
+            }
+            });
+            }
+            };
                     }
                 });
-
+            
                 // 🌟 3. 中層大頭特寫：恢復透明，不遮擋背景！
                 gachaPlayerCloseup = new spine.SpinePlayer(document.getElementById('gachaSpineContainerCloseup'), {
                     skelUrl: `./gacha/Gacha_Hero_Closeup.skel.bytes`,
@@ -753,11 +807,11 @@
                         fixMultiplyHole(player); // 👈 呼叫修復程式，拯救特寫陰影破洞！
                     }
                 });
-
+            
                 isSpineInitialized = true; 
             }
-
-
+            
+            
             function triggerDropAndEnd1() {
                 currentGachaState = GachaState.END1_DROP;
                 let dropAnimName = (pendingGachaTimes === 1) ? "Drop_1" : "Drop_10_1";
@@ -777,7 +831,7 @@
                     enterEnd2WaitState();
                 }
             }
-
+            
             function enterEnd2WaitState() {
                 currentGachaState = GachaState.END2_WAIT;
                 showGlowingBooks = true;
@@ -785,18 +839,18 @@
                     if (has3Star) {
                         document.getElementById('gachaSpineContainerDocs').classList.add('book-glow-3star');
                     }
-
+            
                 if (gachaPlayerErpin) {
                     gachaPlayerErpin.animationState.clearTracks(); 
                     gachaPlayerErpin.animationState.setAnimation(0, "End_2", true);
                 }
-
+            
                 const stage = document.getElementById('gachaStage');
                 // 🌟 綁定受控的點擊事件
                 activeEnd3Handler = onStageClickForEnd3;
                 stage.addEventListener('click', activeEnd3Handler);
             }
-
+            
             function onStageClickForEnd3() {
                 if (currentGachaState !== GachaState.END2_WAIT) return;
                 const stage = document.getElementById('gachaStage');
@@ -806,7 +860,7 @@
                     stage.removeEventListener('click', activeEnd3Handler);
                     activeEnd3Handler = null;
                 }
-
+            
                 currentGachaState = GachaState.END3_ZOOM;
                 
                 // 1. 開始淡入大頭 (CSS 的 duration-700 會讓它漸漸出現)
@@ -815,18 +869,33 @@
                 closeupBox.style.pointerEvents = "auto";
                 // 🌟 顯示大頭的檯面發光特效
                 document.getElementById('closeupTableGlow').style.opacity = '1';
-
+            
+                // 🌟 判斷星級，設定延遲的專屬打光！(800ms 可以根據艾爾芬驚訝的時間點微調)
+            const glowLayer = document.getElementById('closeupTableGlow');
+            if (has3Star) {
+            reactionLightTimer = setTimeout(() => {
+            glowLayer.classList.add('table-glow-3star');
+            glowLayer.style.opacity = '1';
+            }, 700); // 700 毫秒後爆發彩虹光！
+            } else if (has2Star) {
+            reactionLightTimer = setTimeout(() => {
+            glowLayer.classList.add('table-glow-2star');
+            glowLayer.style.opacity = '1';
+            }, 700); // 700 毫秒後爆發金黃光！
+            }
+            // 1星什麼都不做 (保持 opacity: 0)
+            
                 // 2. 書本掉落收尾
                 if (gachaPlayerDocs) {
                     let dropEndAnimName = (pendingGachaTimes === 1) ? "Drop_1_End" : "Drop_10_1_End";
                     gachaPlayerDocs.animationState.setAnimation(0, dropEndAnimName, false);
                 }
-
+            
                 // 3. 背景 Zoom In 運鏡
                 if (gachaPlayerErpin) {
                     gachaPlayerErpin.animationState.setAnimation(0, "End_3", false);
                 }
-
+            
                 // 🌟 4. 同時開始播放大頭動畫！不再等背景 Zoom 完了！
                 let animName = has3Star ? "Idle_3" : (has2Star ? "Idle_2" : "Idle_1");
                 if (gachaPlayerCloseup) {
@@ -844,7 +913,7 @@
                 } else {
                     setTimeout(finishGachaAnimation, 1500); // 備用防卡死
                 }
-
+            
                 // 🌟 5. 綁定「跳過」的點擊事件，並受控管理
                 activeSkipHandler = function() {
                     finishGachaAnimation();
@@ -854,7 +923,7 @@
                     stage.addEventListener('click', activeSkipHandler);
                 }, 300);
             }
-
+            
                         function finishGachaAnimation() {
                 currentGachaState = GachaState.SHOW_RESULT;
                 const stage = document.getElementById('gachaStage');
@@ -873,28 +942,28 @@
                 document.getElementById('resultArea').classList.remove('hidden');
                 
                 // 🚫 核心修復 1：把原本這裡所有的 .dispose() 和 .innerHTML = '' 徹底刪除！保留畫布實體！
-
+            
                 // 顯示結果與寫入歷史
                 showRealGachaResults();
                 addToHistory(pendingGachaResults, currentPool.name);
             }
-
-
+            
+            
             function setupCheekDragInteraction(player) {
                 const canvas = document.querySelector('#gachaSpineContainerErpin canvas');
                 if (!canvas) return;
                 canvas.style.touchAction = 'none';
-
+            
                 let activeInteractBone = null;
                 let initialBoneX = 0, initialBoneY = 0;
                 let initialBoneWorldX = 0, initialBoneWorldY = 0;
                 let isDragging = false;
                 let startX = 0, startY = 0, lastMouseX = 0, lastMouseY = 0, dragDistance = 0;
                 let hasTriggeredPull = false;
-
+            
                 player._customDragTargetX = null; player._customDragTargetY = null;
                 player._bouncingBone = null; player._bounceX = null; player._bounceY = null;
-
+            
                 const origUpdateWorldTransform = player.skeleton.updateWorldTransform;
                 player.skeleton.updateWorldTransform = function () {
                     if (activeInteractBone && player._customDragTargetX !== null) {
@@ -906,7 +975,7 @@
                     }
                     origUpdateWorldTransform.call(this);
                 };
-
+            
                 function checkHitCheek(mouseX, mouseY) {
                     const rect = canvas.getBoundingClientRect();
                     const camera = player.camera || (player.sceneRenderer && player.sceneRenderer.camera);
@@ -914,7 +983,7 @@
                     let camY = camera ? camera.position.y - (camera.viewportHeight * camera.zoom) / 2 : SPINE_CONFIG.viewport.y;
                     let camW = camera ? camera.viewportWidth * camera.zoom : SPINE_CONFIG.viewport.width;
                     let camH = camera ? camera.viewportHeight * camera.zoom : SPINE_CONFIG.viewport.height;
-
+            
                     const bone = player.skeleton.findBone("Character_Ball_Move");
                     if (bone) {
                         const boneCanvasX = ((bone.worldX - camX) / camW) * rect.width;
@@ -923,7 +992,7 @@
                     }
                     return null;
                 }
-
+            
                 canvas.addEventListener('pointerdown', (e) => {
                     if (currentGachaState !== GachaState.ERPIN_IDLE) return;
                     const rect = canvas.getBoundingClientRect();
@@ -935,29 +1004,29 @@
                         initialBoneX = activeInteractBone.x; initialBoneY = activeInteractBone.y;
                         initialBoneWorldX = activeInteractBone.worldX; initialBoneWorldY = activeInteractBone.worldY;
                         canvas.setPointerCapture(e.pointerId);
-
+            
                         const animNames = player.skeleton.data.animations.map(a => a.name);
                         if (animNames.includes("Touch")) player.animationState.setAnimation(0, "Touch", true);
                     }
                 });
-
+            
                 canvas.addEventListener('pointermove', (e) => {
                     if (!isDragging || !player.skeleton || !activeInteractBone) return;
                     const rect = canvas.getBoundingClientRect();
                     const dx = e.clientX - lastMouseX; const dy = e.clientY - lastMouseY;
                     dragDistance += Math.hypot(dx, dy);
-
+            
                     const camera = player.camera || (player.sceneRenderer && player.sceneRenderer.camera);
                     let camW = camera ? camera.viewportWidth * camera.zoom : SPINE_CONFIG.viewport.width;
                     let camH = camera ? camera.viewportHeight * camera.zoom : SPINE_CONFIG.viewport.height;
-
+            
                     let worldDx = (e.clientX - startX) * (camW / rect.width) * 1.3;
                     let worldDy = -(e.clientY - startY) * (camH / rect.height) * 1.3;
                     if (worldDx > 0) worldDx *= 0.1;
-
+            
                     let targetWorld = { x: initialBoneWorldX + worldDx, y: initialBoneWorldY + worldDy };
                     if (activeInteractBone.parent) activeInteractBone.parent.worldToLocal(targetWorld);
-
+            
                     let localDx = targetWorld.x - initialBoneX; let localDy = targetWorld.y - initialBoneY;
                     let rawDistance = Math.hypot(localDx, localDy);
                     const MAX_RADIUS = 55;
@@ -970,7 +1039,7 @@
                     if (dragDistance > 30) hasTriggeredPull = true;
                     lastMouseX = e.clientX; lastMouseY = e.clientY;
                 });
-
+            
                const stopDrag = (e) => {
                     if (!isDragging) return;
                     isDragging = false;
@@ -990,7 +1059,7 @@
                 canvas.addEventListener('pointerup', stopDrag);
                 canvas.addEventListener('pointercancel', stopDrag);
             }
-
+            
             // ==========================
             // 網頁載入與滾動事件
             // ==========================
