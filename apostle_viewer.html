@@ -579,7 +579,6 @@
                    success: function (player) {
                        const loader = container.querySelector('.spine-player-loading-custom');
                        if (loader) loader.remove();
-                       fixSpineMultiplyHole(player);
         
         // 🌟 新增：換角色/服裝/模式時，如果目前是像素風，自動將新畫布變透明
         if (isPixelMode) {
@@ -609,6 +608,8 @@
                        
                        player.skeleton.scaleX = currentZoom; player.skeleton.scaleY = currentZoom;
                        player.skeleton.setToSetupPose(); 
+
+                       fixSpineMultiplyHole(player);
             
                        player.skeleton.updateWorldTransform();
                        buildAnimationDropdown(player); buildSlotsPanel(player);
