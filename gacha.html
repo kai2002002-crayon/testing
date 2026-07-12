@@ -644,38 +644,36 @@
             
             
             function startGachaAnimation() {
-            showGlowingBooks = false; 
-            
-            // 🌟 清除光效
-            document.getElementById('bookGlowContainer').innerHTML = '';
-            bookGlowElements = {};
-            clearTimeout(reactionLightTimer);
-            
-            const glowLayer = document.getElementById('closeupTableGlow');
-            glowLayer.style.opacity = '0';
-            glowLayer.className = 'absolute inset-0 w-full h-full z-[25] pointer-events-none opacity-0 transition-opacity duration-500';
-            
-            // ... 原本程式碼不變 ...
-            }
-                
-                document.getElementById('resultArea').classList.add('hidden');
-                const stage = document.getElementById('gachaStage');
-                stage.classList.remove('hidden');
-                stage.style.display = 'block'; 
-                
-                document.getElementById('gachaSpineContainerErpin').classList.remove('opacity-0');
-                document.getElementById('gachaSpineContainerDocs').classList.remove('opacity-0');
-                
-                const closeupBox = document.getElementById('gachaSpineContainerCloseup');
-                closeupBox.classList.add('opacity-0');
-                closeupBox.style.pointerEvents = 'none'; 
-                
-                stage.getBoundingClientRect(); 
-            
-                // 🌟 直接呼叫，不需要 setTimeout 等待了！
-                initSpineStages();
-                stage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
+    showGlowingBooks = false; 
+
+    // 🌟 清除光效
+    document.getElementById('bookGlowContainer').innerHTML = '';
+    bookGlowElements = {};
+    clearTimeout(reactionLightTimer);
+
+    const glowLayer = document.getElementById('closeupTableGlow');
+    glowLayer.style.opacity = '0';
+    glowLayer.className = 'absolute inset-0 w-full h-full z-[25] pointer-events-none opacity-0 transition-opacity duration-500';
+
+    // 以下是原本的重置動畫舞台邏輯
+    document.getElementById('resultArea').classList.add('hidden');
+    const stage = document.getElementById('gachaStage');
+    stage.classList.remove('hidden');
+    stage.style.display = 'block'; 
+
+    document.getElementById('gachaSpineContainerErpin').classList.remove('opacity-0');
+    document.getElementById('gachaSpineContainerDocs').classList.remove('opacity-0');
+
+    const closeupBox = document.getElementById('gachaSpineContainerCloseup');
+    closeupBox.classList.add('opacity-0');
+    closeupBox.style.pointerEvents = 'none'; 
+
+    stage.getBoundingClientRect(); 
+
+    // 🌟 直接呼叫，啟動 Spine 載入與動畫
+    initSpineStages();
+    stage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
             
             async function initSpineStages() {
                 currentGachaState = GachaState.ERPIN_IDLE;
@@ -738,60 +736,116 @@
                 });
             
                 // 🌟 2. 上層書本
-                gachaPlayerDocs = new spine.SpinePlayer(document.getElementById('gachaSpineContainerDocs'), {
-                    skelUrl: `./gacha/Gacha_Hero_Documents.skel.bytes`,
-                    atlasUrl: `./gacha/Gacha_Hero_Documents.atlas.txt`,
-                    animation: "Idle",
-                    premultipliedAlpha: true,  
-                    backgroundColor: "#00000000", alpha: true,
-                    showControls: false, showLoading: false,
-                    viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height },
-                    success: function(player) {
-                        player.animationState.data.defaultMix = 0; 
-                        const origDocsUpdate = player.skeleton.updateWorldTransform;
-            player.skeleton.updateWorldTransform = function () {
+gachaPlayerDocs = new spine.SpinePlayer(document.getElementById('gachaSpineContainerDocs'), {
+    skelUrl: `./gacha/Gacha_Hero_Documents.skel.bytes`,
+    atlasUrl: `./gacha/Gacha_Hero_Documents.atlas.txt`,
+    animation: "Idle",
+    premultipliedAlpha: true,  
+    backgroundColor: "#00000000", alpha: true,
+    showControls: false, showLoading: false,
+    viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height },
+    success: function(player) {
+        player.animationState.data.defaultMix = 0; 
+        const origDocsUpdate = player.skeleton.updateWorldTransform;
+        
+        player.skeleton.updateWorldTransform = function () {
             origDocsUpdate.call(this); 
             
             if (showGlowingBooks) {
-            const vp = SPINE_CONFIG.viewport;
-            const canvas = document.querySelector('#gachaSpineContainerDocs canvas');
-            const glowContainer = document.getElementById('bookGlowContainer');
-            if (!canvas) return;
-            const rect = canvas.getBoundingClientRect();
-            
-            pendingGachaResults.forEach((result, idx) => {
-            if (result.char.star === 3) {
-                let slotName = (pendingGachaTimes === 1) ? 'Book_Drop_1' : `Book_Drop_${idx + 1}`;
-                try { this.setAttachment(slotName, `${slotName}_3star`); } catch(e) {}
+                const vp = SPINE_CONFIG.viewport;
+                const canvas = document.querySelector('#gachaSpineContainerDocs canvas');
+                const glowContainer = document.getElementById('bookGlowContainer');
+                if (!canvas) return;
+                const rect = canvas.getBoundingClientRect();
                 
-                // 🌟 神級技巧：取得書本的骨骼座標，並映射到畫布的實際像素
-                let slot = this.findSlot(slotName);
-                if (slot && slot.bone) {
-                    let bx = slot.bone.worldX;
-                    let by = slot.bone.worldY;
-                    
-                    // WebGL 的座標系與 DOM 轉換比例
-                    let percentX = (bx - vp.x) / vp.width;
-                    let percentY = (by - vp.y) / vp.height;
-                    let pixelX = percentX * rect.width;
-                    let pixelY = (1 - percentY) * rect.height; // Y軸反轉
-            
-                    let glowDiv = bookGlowElements[idx];
-                    if (!glowDiv) {
-                        glowDiv = document.createElement('div');
-                        glowDiv.className = 'book-star-glow';
-                        glowContainer.appendChild(glowDiv);
-                        bookGlowElements[idx] = glowDiv;
-                    }
-                    glowDiv.style.left = pixelX + 'px';
-                    glowDiv.style.top = pixelY + 'px';
-                }
-            }
-            });
-            }
-            };
+                pendingGachaResults.forEach((result, idx) => {
+                    if (result.char.star === 3) {
+                        let slotName = (pendingGachaTimes === 1) ? 'Book_Drop_1' : `Book_Drop_${idx + 1}`;
+                        try { this.setAttachment(slotName, `${slotName}_3star`); } catch(e) {}
+                        
+                        // 🌟 神級技巧：取得書本的骨骼座標，並映射到畫布的實際像素
+                        let slot = this.findSlot(slotName);
+                        if (slot && slot.bone) {
+                            let bx = slot.bone.worldX;
+                            let by = slot.bone.worldY;
+                            
+                            // WebGL 的座標系與 DOM 轉換比例
+                            let percentX = (bx - vp.x) / vp.width;
+                            let percentY = (by - vp.y) / vp.height;
+                            let pixelX = percentX * rect.width;
+                            let pixelY = (1 - percentY) * rect.height; // Y軸反轉
+                            
+                            let glowDiv = bookGlowElements[idx];
+                            if (!glowDiv) {
+                                glowDiv = document.createElement('div');
+                                glowDiv.className = 'book-star-glow';
+                                glowContainer.appendChild(glowDiv);
+                                bookGlowElements[idx] = glowDiv;
+                            }
+                            glowDiv.style.left = pixelX + 'px';
+                            glowDiv.style.top = pixelY + 'px';
+                        }
                     }
                 });
+            }
+        };
+    }
+});// 🌟 2. 上層書本
+gachaPlayerDocs = new spine.SpinePlayer(document.getElementById('gachaSpineContainerDocs'), {
+    skelUrl: `./gacha/Gacha_Hero_Documents.skel.bytes`,
+    atlasUrl: `./gacha/Gacha_Hero_Documents.atlas.txt`,
+    animation: "Idle",
+    premultipliedAlpha: true,  
+    backgroundColor: "#00000000", alpha: true,
+    showControls: false, showLoading: false,
+    viewport: { x: vp.x, y: vp.y, width: vp.width, height: vp.height },
+    success: function(player) {
+        player.animationState.data.defaultMix = 0; 
+        const origDocsUpdate = player.skeleton.updateWorldTransform;
+        
+        player.skeleton.updateWorldTransform = function () {
+            origDocsUpdate.call(this); 
+            
+            if (showGlowingBooks) {
+                const vp = SPINE_CONFIG.viewport;
+                const canvas = document.querySelector('#gachaSpineContainerDocs canvas');
+                const glowContainer = document.getElementById('bookGlowContainer');
+                if (!canvas) return;
+                const rect = canvas.getBoundingClientRect();
+                
+                pendingGachaResults.forEach((result, idx) => {
+                    if (result.char.star === 3) {
+                        let slotName = (pendingGachaTimes === 1) ? 'Book_Drop_1' : `Book_Drop_${idx + 1}`;
+                        try { this.setAttachment(slotName, `${slotName}_3star`); } catch(e) {}
+                        
+                        // 🌟 神級技巧：取得書本的骨骼座標，並映射到畫布的實際像素
+                        let slot = this.findSlot(slotName);
+                        if (slot && slot.bone) {
+                            let bx = slot.bone.worldX;
+                            let by = slot.bone.worldY;
+                            
+                            // WebGL 的座標系與 DOM 轉換比例
+                            let percentX = (bx - vp.x) / vp.width;
+                            let percentY = (by - vp.y) / vp.height;
+                            let pixelX = percentX * rect.width;
+                            let pixelY = (1 - percentY) * rect.height; // Y軸反轉
+                            
+                            let glowDiv = bookGlowElements[idx];
+                            if (!glowDiv) {
+                                glowDiv = document.createElement('div');
+                                glowDiv.className = 'book-star-glow';
+                                glowContainer.appendChild(glowDiv);
+                                bookGlowElements[idx] = glowDiv;
+                            }
+                            glowDiv.style.left = pixelX + 'px';
+                            glowDiv.style.top = pixelY + 'px';
+                        }
+                    }
+                });
+            }
+        };
+    }
+});
             
                 // 🌟 3. 中層大頭特寫：恢復透明，不遮擋背景！
                 gachaPlayerCloseup = new spine.SpinePlayer(document.getElementById('gachaSpineContainerCloseup'), {
