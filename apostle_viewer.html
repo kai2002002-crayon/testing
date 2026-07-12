@@ -196,7 +196,7 @@
         <script>
             // 🌟 全域通用：專門修復 WebGL 透明畫布下的「色彩增值(Multiply)」破洞 Bug
            
-            *function fixSpineMultiplyHole(player) {
+            function fixSpineMultiplyHole(player) {
                 if (!player || !player.skeleton) return;
                 player.skeleton.slots.forEach(slot => {
                    if (slot.data.blendMode === spine.BlendMode.Multiply || slot.data.name.toLowerCase().includes('shadow')) {
