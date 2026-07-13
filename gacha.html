@@ -177,26 +177,24 @@
                     <span class="ml-10">10次招募</span>
                 </button>
             </section>
-            <!-- ========================================================== -->
-            <!-- 全螢幕轉蛋動畫舞台與結果重疊區塊 -->
-            <!-- ========================================================== -->
             <div class="relative w-full max-w-4xl mx-auto mb-6 aspect-video bg-white/90 dark:bg-gray-800/90 rounded-2xl shadow-xl border-4 border-amber-300 dark:border-gray-600 overflow-hidden">
-                <!-- 招募動畫舞台 (預設隱藏，開始時浮現) -->
                 <section id="gachaStage" class="absolute inset-0 w-full h-full bg-black transition-opacity duration-500 z-10 opacity-0 pointer-events-none">
                     <div id="gachaSpineContainerErpin" class="absolute inset-0 w-full h-full z-10 cursor-pointer"></div>
                     <div id="gachaSpineContainerCloseup" class="absolute inset-0 w-full h-full z-20 pointer-events-none opacity-0"></div>
                     <div id="closeupTableGlow" class="table-glow-container z-[25]"></div>
-                    <!-- 書本底層發光容器 (z-28 墊在書本下方) -->
                     <div id="bookGlowContainer" class="absolute inset-0 w-full h-full pointer-events-none z-[28]"></div>
                     <div id="gachaSpineContainerDocs" class="absolute inset-0 w-full h-full z-30 pointer-events-none"></div>
                 </section>
-                <!-- 招募結果區塊 (預設顯示，用來放「等待招募中...」或最終結果) -->
                 <section id="resultArea" class="absolute inset-0 w-full h-full bg-gradient-to-b from-white/95 to-amber-50/95 dark:from-gray-800/95 dark:to-gray-900/95 backdrop-blur-md p-6 flex flex-col items-center justify-start overflow-y-auto transition-opacity duration-500 z-20">
                     <div class="h-full w-full flex items-center justify-center min-h-[250px]">
                         <p class="text-gray-400 dark:text-gray-500 font-bold">等待招募中...</p>
                     </div>
                 </section>
             </div>
+            <section class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-2xl p-4 shadow border-2 border-gray-200/80 dark:border-gray-700">
+                <h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">📜 招募紀錄</h3>
+                <div id="historyArea" class="space-y-4 max-h-[500px] overflow-y-auto pr-2"></div>
+            </section>
         </div>
         <script>
             // ==========================
@@ -862,7 +860,7 @@
                 document.getElementById('gachaSpineContainerDocs').classList.add('book-glow-3star');
             }
             }
-            }, 3500); 
+            }, 4500); 
             
             if (gachaPlayerErpin) {
             gachaPlayerErpin.animationState.setAnimation(0, "End_1", false);
