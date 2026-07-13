@@ -76,25 +76,29 @@
             }
             //* 🌟 3星書本躺平式發光特效 */
             /* 🌟 3星書本「墊底」發光光暈 (橢圓形放射，完美模擬打在桌面上的光) */
+/* 🌟 3星書本「墊底」發光光暈 (強化版) */
 .book-star-glow {
     position: absolute;
-    width: 140px;  /* 光暈的寬度 */
-    height: 60px;  /* 壓扁的高度，符合桌面透視 */
+    width: 200px;  /* 🌟 加大尺寸，確保光暈範圍超出書本 */
+    height: 100px; /* 🌟 加大尺寸 */
     transform: translate(-50%, -50%);
     pointer-events: none;
-    mix-blend-mode: screen;
+    z-index: 28;   /* 🌟 直接在這裡鎖定層級 */
     border-radius: 50%;
-    /* 核心：用漸層畫出實體光暈，取代虛無縹緲的 box-shadow */
+    
+    /* 🌟 移除 mix-blend-mode: screen，避免被 WebGL 畫布吃掉透明度 */
+    /* 改用高純度白光與金光直接硬疊 */
     background: radial-gradient(ellipse at center, 
                 rgba(255, 255, 255, 1) 0%, 
-                rgba(255, 215, 0, 0.8) 20%, 
-                rgba(255, 100, 200, 0.5) 50%, 
+                rgba(255, 215, 0, 0.95) 25%, 
+                rgba(255, 100, 200, 0.6) 55%, 
                 rgba(0, 200, 255, 0) 80%);
     animation: pulseBookSurround 0.8s infinite alternate ease-in-out;
 }
+
 @keyframes pulseBookSurround {
-    0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.8; }
-    100% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; filter: brightness(1.2); }
+    0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.9; }
+    100% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; filter: brightness(1.3); }
 }
             /* 🌟 大頭檯面發光容器 (加高高度，讓光能往上暈染) */
             .table-glow-container {
@@ -957,35 +961,43 @@
             }
             
                         function finishGachaAnimation() {
-                // 🌟 2. 放在這裡：玩家跳過動畫時，掐斷所有還在等時間的發光特效
-            reactionLightTimers.forEach(t => clearTimeout(t));
-            reactionLightTimers = [];
-            const glowLayer = document.getElementById('closeupTableGlow');
-            glowLayer.className = 'table-glow-container';
-            glowLayer.innerHTML = '';
-            
-            currentGachaState = GachaState.SHOW_RESULT;
-            const stage = document.getElementById('gachaStage');
-                
-                if (activeEnd3Handler) {
-                    stage.removeEventListener('click', activeEnd3Handler);
-                    activeEnd3Handler = null;
-                }
-                if (activeSkipHandler) {
-                    stage.removeEventListener('click', activeSkipHandler);
-                    activeSkipHandler = null;
-                }
-                
-                // 隱藏舞台，顯示結果
-                stage.classList.add('hidden');
-                document.getElementById('resultArea').classList.remove('hidden');
-                
-                // 🚫 核心修復 1：把原本這裡所有的 .dispose() 和 .innerHTML = '' 徹底刪除！保留畫布實體！
-            
-                // 顯示結果與寫入歷史
-                showRealGachaResults();
-                addToHistory(pendingGachaResults, currentPool.name);
-            }
+    // 🌟 修正 Bug 關鍵 1：如果已經在展示結果狀態，就直接返回，絕對不執行第二次！
+    if (currentGachaState === GachaState.SHOW_RESULT) return;
+    
+    currentGachaState = GachaState.SHOW_RESULT;
+
+    // 🌟 修正 Bug 關鍵 2：徹底強制停止大頭動畫，並清除它的播放完畢監聽器
+    if (gachaPlayerCloseup && gachaPlayerCloseup.animationState) {
+        gachaPlayerCloseup.animationState.timeScale = 0;
+        gachaPlayerCloseup.animationState.clearListeners();
+    }
+
+    // 🌟 玩家跳過動畫時，掐斷所有還在等時間的發光特效
+    reactionLightTimers.forEach(t => clearTimeout(t));
+    reactionLightTimers = [];
+    const glowLayer = document.getElementById('closeupTableGlow');
+    glowLayer.className = 'table-glow-container';
+    glowLayer.innerHTML = '';
+
+    const stage = document.getElementById('gachaStage');
+    
+    if (activeEnd3Handler) {
+        stage.removeEventListener('click', activeEnd3Handler);
+        activeEnd3Handler = null;
+    }
+    if (activeSkipHandler) {
+        stage.removeEventListener('click', activeSkipHandler);
+        activeSkipHandler = null;
+    }
+    
+    // 隱藏舞台，顯示結果
+    stage.classList.add('hidden');
+    document.getElementById('resultArea').classList.remove('hidden');
+    
+    // 顯示結果與寫入歷史
+    showRealGachaResults();
+    addToHistory(pendingGachaResults, currentPool.name);
+}
             
             
             function setupCheekDragInteraction(player) {
