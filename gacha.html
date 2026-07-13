@@ -649,6 +649,7 @@
             let showGlowingBooks = false; 
             let bookGlowElements = {}; 
             let reactionLightTimers = []; // 🌟 改為陣列，管理多段變臉計時器
+            let bookChangeTimer = null;
             
             // 🌟 新增：記錄 Spine 是否已經初始化，用來重複利用畫布
             let isSpineInitialized = false; 
@@ -660,6 +661,7 @@
             
             function startGachaAnimation() {
             showGlowingBooks = false; 
+                clearTimeout(bookChangeTimer);
             
             // 🌟 清除書本光效
             document.getElementById('bookGlowContainer').innerHTML = '';
@@ -831,43 +833,48 @@
             
             
             function triggerDropAndEnd1() {
-                currentGachaState = GachaState.END1_DROP;
-                let dropAnimName = (pendingGachaTimes === 1) ? "Drop_1" : "Drop_10_1";
-                if (gachaPlayerDocs) {
-                    gachaPlayerDocs.animationState.setAnimation(0, dropAnimName, false);
-                }
-                if (gachaPlayerErpin) {
-                    gachaPlayerErpin.animationState.setAnimation(0, "End_1", false);
-                    gachaPlayerErpin.animationState.addListener({
-                        complete: function(entry) {
-                            if (entry.animation.name === "End_1") {
-                                enterEnd2WaitState();
-                            }
-                        }
-                    });
-                } else {
+    currentGachaState = GachaState.END1_DROP;
+    let dropAnimName = (pendingGachaTimes === 1) ? "Drop_1" : "Drop_10_1";
+    if (gachaPlayerDocs) {
+        gachaPlayerDocs.animationState.setAnimation(0, dropAnimName, false);
+    }
+
+    // 🌟 核心修改：利用計時器讓書本在掉落途中提早變色！
+    bookChangeTimer = setTimeout(() => {
+        if (currentGachaState !== GachaState.SHOW_RESULT) {
+            showGlowingBooks = true;
+            if (has3Star) {
+                document.getElementById('gachaSpineContainerDocs').classList.add('book-glow-3star');
+            }
+        }
+    }, 1500); 
+
+    if (gachaPlayerErpin) {
+        gachaPlayerErpin.animationState.setAnimation(0, "End_1", false);
+        gachaPlayerErpin.animationState.addListener({
+            complete: function(entry) {
+                if (entry.animation.name === "End_1") {
                     enterEnd2WaitState();
                 }
             }
+        });
+    } else {
+        enterEnd2WaitState();
+    }
+}
             
-            function enterEnd2WaitState() {
-                currentGachaState = GachaState.END2_WAIT;
-                showGlowingBooks = true;
-                // 🌟 如果抽到3星，幫書本層加上發光 class
-                    if (has3Star) {
-                        document.getElementById('gachaSpineContainerDocs').classList.add('book-glow-3star');
-                    }
-            
-                if (gachaPlayerErpin) {
-                    gachaPlayerErpin.animationState.clearTracks(); 
-                    gachaPlayerErpin.animationState.setAnimation(0, "End_2", true);
-                }
-            
-                const stage = document.getElementById('gachaStage');
-                // 🌟 綁定受控的點擊事件
-                activeEnd3Handler = onStageClickForEnd3;
-                stage.addEventListener('click', activeEnd3Handler);
-            }
+           function enterEnd2WaitState() {
+    currentGachaState = GachaState.END2_WAIT;
+    
+    if (gachaPlayerErpin) {
+        gachaPlayerErpin.animationState.clearTracks(); 
+        gachaPlayerErpin.animationState.setAnimation(0, "End_2", true);
+    }
+
+    const stage = document.getElementById('gachaStage');
+    activeEnd3Handler = onStageClickForEnd3;
+    stage.addEventListener('click', activeEnd3Handler);
+}
             
             function onStageClickForEnd3() {
                 if (currentGachaState !== GachaState.END2_WAIT) return;
@@ -965,6 +972,7 @@
     if (currentGachaState === GachaState.SHOW_RESULT) return;
     
     currentGachaState = GachaState.SHOW_RESULT;
+                            clearTimeout(bookChangeTimer);
 
     // 🌟 修正 Bug 關鍵 2：徹底強制停止大頭動畫，並清除它的播放完畢監聽器
     if (gachaPlayerCloseup && gachaPlayerCloseup.animationState) {
