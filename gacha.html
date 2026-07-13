@@ -75,16 +75,22 @@
             opacity: 0; 
             }
 
-            /* 🌟 1. 3星書本自體呼吸燈特效 (直接套用在 Spine 畫布上，拒絕溢出破圖) */
-            .book-glow-3star canvas {
+            /* 🌟 核彈級防禦：強制隱藏所有 Spine 的內建控制列與錯誤框 */
+            .spine-player-controls, .spine-player-error {
+                display: none !important;
+                pointer-events: none !important;
+            }
+
+            /* 🌟 1. 3星書本自體呼吸燈特效 (改為套用在容器上，利用 drop-shadow 追蹤書本輪廓) */
+            .book-glow-3star {
                 animation: bookSheetBreath 1.5s ease-in-out infinite alternate;
             }
             @keyframes bookSheetBreath {
                 0% {
-                    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.45)) brightness(1);
+                    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.4));
                 }
                 100% {
-                    filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.95)) drop-shadow(0 0 10px rgba(255, 100, 200, 0.6)) brightness(1.25);
+                    filter: drop-shadow(0 0 30px rgba(255, 215, 0, 1)) drop-shadow(0 0 15px rgba(255, 100, 200, 0.8));
                 }
             }
 
@@ -108,7 +114,7 @@
                 background: radial-gradient(ellipse at 50% 100%, rgba(255, 215, 0, 1) 0%, rgba(255, 140, 0, 0.6) 45%, transparent 85%);
             }
 
-            /* 3星 彩色向上放射光 (由強變弱完美漸變，色相柔和變幻流動) */
+            /* 3星 彩色向上放射光 (保留你喜歡的流動彩光呼吸效果) */
             .table-glow-3star {
                 width: 100%; height: 100%;
                 background: radial-gradient(ellipse at 50% 100%, 
@@ -232,13 +238,6 @@
             const personalities = ["天真", "冷靜", "狂亂", "活潑", "憂鬱"];
             
             const personalityBorderColors = { "天真": "border-green-500", "冷靜": "border-blue-500", "狂亂": "border-red-500", "活潑": "border-yellow-400", "憂鬱": "border-purple-500" };
-            const personalityShadows = { 
-                "天真": "shadow-[0_0_15px_rgba(34,197,94,0.85)]", 
-                "冷靜": "shadow-[0_0_15px_rgba(59,130,246,0.85)]", 
-                "狂亂": "shadow-[0_0_15px_rgba(239,68,68,0.85)]", 
-                "活潑": "shadow-[0_0_15px_rgba(250,204,21,0.85)]", 
-                "憂鬱": "shadow-[0_0_15px_rgba(168,85,247,0.85)]" 
-            };
             
             const validChars = INITIAL_DATA.filter(c => !c.releaseDate || new Date(c.releaseDate).getTime() < Date.now()).map(c => {
                 let starNum = 1;
@@ -554,49 +553,6 @@
                 });
             }
             
-            function getPersonalitySpriteClass(personality) {
-                switch(personality) {
-                    case '冷靜': return 'sprite-char-composed';
-                    case '憂鬱': return 'sprite-char-depressed';
-                    case '天真': return 'sprite-char-innocence';
-                    case '狂亂': return 'sprite-char-madness';
-                    case '活潑': return 'sprite-char-vivacious';
-                    default: return 'sprite-char-innocence'; 
-                }
-            }
-            
-            function renderResultArea(results) {
-                const resultArea = document.getElementById('resultArea');
-                resultArea.innerHTML = '<h3 class="text-xl font-bold text-amber-900 dark:text-amber-400 mb-4 w-full text-center">🎉 招募結果 🎉</h3><div class="flex flex-wrap justify-center gap-4 w-full"></div>';
-                const container = resultArea.querySelector('div');
-            
-                results.forEach((res, index) => {
-                    const char = res.char;
-                    const charBox = document.createElement('div');
-                    charBox.className = `flex flex-col items-center animate-pop`;
-                    charBox.style.animationDelay = `${index * 0.1}s`; 
-            
-                    let borderColor = char.star === 3 ? 'border-amber-400' : (char.star === 2 ? 'border-purple-400' : 'border-gray-300');
-                    let shadowClass = char.star === 3 ? 'shadow-[0_0_15px_rgba(251,191,36,0.8)] flash-gold' : 'shadow-md';
-                    let starIcons = '⭐'.repeat(char.star);
-            
-                    let pClass = getPersonalitySpriteClass(char.personality);
-                    let engName = (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[char.name]) ? SPINE_MAP[char.name] : char.name;
-                    let spriteNameClass = `sprite-${engName}`;
-            
-                    charBox.innerHTML = `
-                        <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-4 ${borderColor} ${shadowClass} bg-gray-200 dark:bg-gray-700 flex items-center justify-center relative overflow-hidden">
-                            <div class="scale-[0.6] sm:scale-[0.75] origin-center flex items-center justify-center">
-                                <div class="${pClass} ${spriteNameClass} bg-no-repeat"></div>
-                            </div>
-                        </div>
-                        <span class="mt-2 text-xs font-bold text-gray-800 dark:text-gray-100">${char.name}</span>
-                        <span class="mt-1 text-[10px] text-gray-500">${starIcons}</span>
-                    `;
-                    container.appendChild(charBox);
-                });
-            }
-            
             function addToHistory(results, poolName) {
                 const historyArea = document.getElementById('historyArea');
                 const now = new Date();
@@ -638,7 +594,6 @@
             let gachaPlayerDocs = null;
             let gachaPlayerCloseup = null;
             let showGlowingBooks = false; 
-            let bookGlowElements = {}; 
             let reactionLightTimers = []; 
             let bookChangeTimer = null;
             
@@ -652,8 +607,8 @@
             showGlowingBooks = false; 
             clearTimeout(bookChangeTimer); 
             
-            document.getElementById('bookGlowContainer').innerHTML = '';
-            bookGlowElements = {};
+            // 🌟 核心防呆：每次開始前確保書本的發光 class 被清掉
+            document.getElementById('gachaSpineContainerDocs').classList.remove('book-glow-3star');
             
             reactionLightTimers.forEach(t => clearTimeout(t));
             reactionLightTimers = [];
@@ -672,9 +627,15 @@
             
             document.getElementById('gachaSpineContainerErpin').classList.remove('opacity-0');
             document.getElementById('gachaSpineContainerDocs').classList.remove('opacity-0');
+            
             const closeupBox = document.getElementById('gachaSpineContainerCloseup');
             closeupBox.classList.add('opacity-0');
             closeupBox.style.pointerEvents = 'none'; 
+            
+            // 🌟 核心修復：強制將大頭 Skeleton 透明度歸零！杜絕閃現！
+            if (gachaPlayerCloseup && gachaPlayerCloseup.skeleton) {
+                gachaPlayerCloseup.skeleton.color.a = 0;
+            }
             
             initSpineStages();
             stage.parentElement.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
@@ -710,6 +671,8 @@
                         gachaPlayerDocs.animationState.setAnimation(0, "Idle", true);
                     }
                     if (gachaPlayerCloseup) {
+                        // 🌟 強制透明！
+                        gachaPlayerCloseup.skeleton.color.a = 0; 
                         gachaPlayerCloseup.skeleton.setSlotsToSetupPose();
                         gachaPlayerCloseup.animationState.setAnimation(0, animName, false);
                         gachaPlayerCloseup.animationState.timeScale = 0; 
@@ -769,8 +732,10 @@
                     animation: animName,
                     premultipliedAlpha: true,  
                     backgroundColor: "#00000000", alpha: true, 
+                    showControls: false, showLoading: false,
                     viewport: CLOSEUP_VIEWPORT, 
                     success: (player) => { 
+                        player.skeleton.color.a = 0; // 🌟 第一次建立時也強制透明
                         player.animationState.timeScale = 0; 
                         fixMultiplyHole(player); 
                     }
@@ -791,6 +756,7 @@
             if (currentGachaState !== GachaState.SHOW_RESULT) {
             showGlowingBooks = true;
             if (has3Star) {
+                // 🌟 給外層容器加上呼吸燈效果
                 document.getElementById('gachaSpineContainerDocs').classList.add('book-glow-3star');
             }
             }
@@ -877,6 +843,8 @@
             
                 let animName = has3Star ? "Idle_3" : (has2Star ? "Idle_2" : "Idle_1");
                 if (gachaPlayerCloseup) {
+                    // 🌟 Zoom In 階段正式把骨骼的透明度開回來，並播放動畫！
+                    gachaPlayerCloseup.skeleton.color.a = 1; 
                     gachaPlayerCloseup.animationState.timeScale = 1; 
                     gachaPlayerCloseup.animationState.setAnimation(0, animName, false);
             
