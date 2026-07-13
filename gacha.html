@@ -418,23 +418,30 @@
             }
             
             function triggerDropAndEnd1() {
-            currentGachaState = GachaState.END1_DROP;
-            
-            // 🌟 強制重置所有書本為普通版
-            if (gachaPlayerDocs) {
-            pendingGachaResults.forEach((_, idx) => {
-            try { gachaPlayerDocs.skeleton.setAttachment(`Book_Drop_${idx + 1}`, `Book_Drop_${idx + 1}`); } catch(e) {}
-            });
+    currentGachaState = GachaState.END1_DROP;
+
+    // 1. 【時序保險】在動畫播放的同時，確保所有書本被強制重置為普通版
+    // 使用 requestAnimationFrame 確保 Spine 引擎已經進入下落狀態
+    requestAnimationFrame(() => {
+        if (gachaPlayerDocs && gachaPlayerDocs.skeleton) {
+            for (let i = 1; i <= 10; i++) {
+                try { gachaPlayerDocs.skeleton.setAttachment(`Book_Drop_${i}`, `Book_Drop_${i}`); } catch(e) {}
             }
-            
-            let dropAnimName = (pendingGachaTimes === 1) ? "Drop_1" : "Drop_10_1";
-            if (gachaPlayerDocs) gachaPlayerDocs.animationState.setAnimation(0, dropAnimName, false);
-            
-            bookChangeTimer = setTimeout(() => {
-            if (currentGachaState !== GachaState.SHOW_RESULT) {
-            showGlowingBooks = true; // 這才開啟呼吸燈邏輯
-            }
-            }, 4500); 
+            gachaPlayerDocs.skeleton.updateWorldTransform();
+        }
+    });
+
+    // 2. 播放下落動畫
+    let dropAnimName = (pendingGachaTimes === 1) ? "Drop_1" : "Drop_10_1";
+    if (gachaPlayerDocs) gachaPlayerDocs.animationState.setAnimation(0, dropAnimName, false);
+    
+    // 3. 【顏色鎖定】只有在動畫播放 3.5 秒後 (接近落地)，才允許 showGlowingBooks 變為 true
+    // 這樣在跌落過程中，書本絕對不會變成彩書
+    bookChangeTimer = setTimeout(() => {
+        if (currentGachaState !== GachaState.SHOW_RESULT) {
+            showGlowingBooks = true;
+        }
+    }, 4500); 
             
                 if (gachaPlayerErpin) {
                     gachaPlayerErpin.animationState.setAnimation(0, "End_1", false);
