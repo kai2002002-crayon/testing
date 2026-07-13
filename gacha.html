@@ -376,39 +376,43 @@
                     success: function(player) {
                         player.animationState.data.defaultMix = 0; const origDocsUpdate = player.skeleton.updateWorldTransform;
                         player.skeleton.updateWorldTransform = function () {
-                            origDocsUpdate.call(this); 
-                            
-                            // 在 gachaPlayerDocs.skeleton.updateWorldTransform 內：
-							let pulse = 1.0;
-							if (showGlowingBooks) {
-							const BREATH_SPEED = 400; // 數字越大越慢，越小越快
-							// 核心邏輯：將呼吸範圍設在 1.0 (原色) 到 1.8 (極亮) 之間
-							// Math.sin 的範圍是 -1 ~ 1，我們先把它轉為 0 ~ 1，再做偏移
-							let sinVal = 0.5 + 0.5 * Math.sin(Date.now() / BREATH_SPEED);
-							pulse = 1.0 + (sinVal * 0.8); // 1.0 + (0~0.8) = 1.0 ~ 1.8
-							}
-							
-							pendingGachaResults.forEach((result, idx) => {
-							let slotName = (pendingGachaTimes === 1) ? 'Book_Drop_1' : `Book_Drop_${idx + 1}`;
-							if (result.char.star === 3) {
-							try { 
-							this.setAttachment(slotName, `${slotName}_3star`);
-							let slot = this.findSlot(slotName);
-							if (slot) {
-								// 🌟 關鍵修正：同時等比例調整 RGB，保證亮度提升且不偏紅
-								// pulse 為 1.0 時是原色，數值越大越亮
-								slot.color.r = pulse; 
-								slot.color.g = pulse;
-								slot.color.b = pulse;
-							}
-							} catch(e) {}
-							} else {
-							// 非 3 星書本恢復正常
-							let slot = this.findSlot(slotName);
-							if (slot) { slot.color.r = 1; slot.color.g = 1; slot.color.b = 1; }
-							}
-							});
-                        };
+    origDocsUpdate.call(this); 
+    
+    let pulse = 1.0;
+    if (showGlowingBooks) {
+        const BREATH_SPEED = 400; // 數字越大越慢，越小越快
+        let sinVal = 0.5 + 0.5 * Math.sin(Date.now() / BREATH_SPEED);
+        pulse = 1.0 + (sinVal * 0.8); 
+    }
+    
+    pendingGachaResults.forEach((result, idx) => {
+        let slotName = (pendingGachaTimes === 1) ? 'Book_Drop_1' : `Book_Drop_${idx + 1}`;
+        
+        // 🌟 核心修正：必須同時符合「是3星」且「落地時間已到 (showGlowingBooks 為 true)」才准換彩書！
+        if (result.char.star === 3 && showGlowingBooks) {
+            try { 
+                this.setAttachment(slotName, `${slotName}_3star`);
+                let slot = this.findSlot(slotName);
+                if (slot) {
+                    slot.color.r = pulse; 
+                    slot.color.g = pulse;
+                    slot.color.b = pulse;
+                }
+            } catch(e) {}
+        } else {
+            // 🌟 關鍵防線：只要不是3星，或者「還沒落地」，一律強制鎖死在「普通書本」貼圖
+            try {
+                this.setAttachment(slotName, slotName); // 強制設為普通書本貼圖 (沒有 _3star)
+                let slot = this.findSlot(slotName);
+                if (slot) { 
+                    slot.color.r = 1; 
+                    slot.color.g = 1; 
+                    slot.color.b = 1; 
+                }
+            } catch(e) {}
+        }
+    });
+};
                     }
                 });
             
