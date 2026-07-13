@@ -143,22 +143,32 @@
             </section>
         </div>
         <script>
+            // ==========================
+            // 系統與 Firebase 初始化
+            // ==========================
             const firebaseConfig = { apiKey: "AIzaSyDhv8D2pY_0M56UJrDTQw0RGPHA-BkXU8Y", authDomain: "crayon-note.firebaseapp.com", projectId: "crayon-note", storageBucket: "crayon-note.firebasestorage.app", messagingSenderId: "210614088940", appId: "1:210614088940:web:7addbdc7c466eeb05421c9", measurementId: "G-M1EJPE12TE" };
             if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
             const db = firebase.firestore();
             const auth = firebase.auth();
             let currentUser = null;
             auth.onAuthStateChanged(user => { currentUser = user; if (user) { loadHistoryFromCloud(); } });
+            
             function saveHistoryToCloud(record) {
                 if (!currentUser) return;
                 db.collection("gacha_history").doc(currentUser.uid).update({ logs: firebase.firestore.FieldValue.arrayUnion(record) })
                 .catch(() => { db.collection("gacha_history").doc(currentUser.uid).set({ logs: [record] }); });
             }
+            
             function loadHistoryFromCloud() {
                 if (!currentUser) return;
-                db.collection("gacha_history").doc(currentUser.uid).get().then(doc => { if (doc.exists && doc.data().logs) { renderHistory(doc.data().logs); } }).catch(err => console.error("讀取歷史紀錄失敗:", err));
+                db.collection("gacha_history").doc(currentUser.uid).get().then(doc => { 
+                    if (doc.exists && doc.data().logs) { renderHistory(doc.data().logs); } 
+                }).catch(err => console.error("讀取歷史紀錄失敗:", err));
             }
             
+            // ==========================
+            // 角色與UI初始化
+            // ==========================
             let currentPool = { type: 'normal', rateUpChars: [], personality: null, name: '普通招募' };
             const personalities = ["天真", "冷靜", "狂亂", "活潑", "憂鬱"];
             const validChars = INITIAL_DATA.filter(c => !c.releaseDate || new Date(c.releaseDate).getTime() < Date.now()).map(c => {
@@ -216,67 +226,50 @@
                 });
             }
             
+            // ==========================
+            // 機率運算
+            // ==========================
             function getGachaPool(isGuaranteed) {
-                let p1 = isGuaranteed ? 0 : 0.76; 
-                let p2 = isGuaranteed ? 0.97 : 0.21; 
-                let p3 = 0.03; 
-                let eldainBase = 0.00036;
+                let p1 = isGuaranteed ? 0 : 0.76; let p2 = isGuaranteed ? 0.97 : 0.21; let p3 = 0.03; let eldainBase = 0.00036;
                 let availableChars = validChars; 
-                
                 if (currentPool.type === 'personality') availableChars = validChars.filter(c => c.personality === currentPool.personality);
-                let stars1 = availableChars.filter(c => c.star === 1); 
-                let stars2 = availableChars.filter(c => c.star === 2); 
-                let stars3 = availableChars.filter(c => c.star === 3);
+                let stars1 = availableChars.filter(c => c.star === 1); let stars2 = availableChars.filter(c => c.star === 2); let stars3 = availableChars.filter(c => c.star === 3);
                 let weightedPool = [];
                 
                 if (stars1.length > 0) { let w = p1 / stars1.length; stars1.forEach(c => weightedPool.push({ char: c, weight: w, isRateUp: false })); }
                 if (stars2.length > 0) { let w = p2 / stars2.length; stars2.forEach(c => weightedPool.push({ char: c, weight: w, isRateUp: false })); }
                 if (stars3.length > 0) {
-                    let allEldains = stars3.filter(c => c.isEldain); 
-                    let normal3s = stars3.filter(c => !c.isEldain);
+                    let allEldains = stars3.filter(c => c.isEldain); let normal3s = stars3.filter(c => !c.isEldain);
                     if (currentPool.type === 'personality') {
                         let eldainTotalWeight = 0; 
                         if (allEldains.length > 0) { 
-                            eldainTotalWeight = 0.00032; 
-                            let w = eldainTotalWeight / allEldains.length; 
+                            eldainTotalWeight = 0.00032; let w = eldainTotalWeight / allEldains.length; 
                             allEldains.forEach(c => weightedPool.push({ char: c, weight: w, isRateUp: false })); 
                         }
                         let remaining3Prob = p3 - eldainTotalWeight; 
-                        if (normal3s.length > 0) { 
-                            let w = remaining3Prob / normal3s.length; 
-                            normal3s.forEach(c => weightedPool.push({ char: c, weight: w, isRateUp: false })); 
-                        }
+                        if (normal3s.length > 0) { let w = remaining3Prob / normal3s.length; normal3s.forEach(c => weightedPool.push({ char: c, weight: w, isRateUp: false })); }
                     } else {
                         let rateUpEldains = allEldains.filter(c => currentPool.rateUpChars.includes(c.name)); 
                         let rateUpNormals = normal3s.filter(c => currentPool.rateUpChars.includes(c.name));
                         if (rateUpEldains.length > 0) { 
-                            let totalEldainProb = allEldains.length * eldainBase; 
-                            let targetWeight = (totalEldainProb * 2) / rateUpEldains.length; 
+                            let totalEldainProb = allEldains.length * eldainBase; let targetWeight = (totalEldainProb * 2) / rateUpEldains.length; 
                             rateUpEldains.forEach(c => weightedPool.push({ char: c, weight: targetWeight, isRateUp: true })); 
-                        } else { 
-                            allEldains.forEach(c => weightedPool.push({ char: c, weight: eldainBase, isRateUp: false })); 
-                        }
+                        } else { allEldains.forEach(c => weightedPool.push({ char: c, weight: eldainBase, isRateUp: false })); }
                         
                         let currentTotal3Weight = weightedPool.filter(p => p.char.star === 3).reduce((sum, p) => sum + p.weight, 0); 
                         let remaining3Prob = p3 - currentTotal3Weight;
                         
                         if (normal3s.length > 0) {
                             if (rateUpNormals.length > 0) {
-                                // 🌟 絕對精準的特選角色機率 0.8%
-                                let targetRateUpWeight = 0.008; 
+                                let targetRateUpWeight = 0.008; // 修正特選為精準 0.8%
                                 let totalRateUpWeight = targetRateUpWeight * rateUpNormals.length;
                                 let otherNormalWeight = Math.max(0, (remaining3Prob - totalRateUpWeight) / (normal3s.length - rateUpNormals.length));
-                                
                                 normal3s.forEach(c => { 
-                                    if (currentPool.rateUpChars.includes(c.name)) { 
-                                        weightedPool.push({ char: c, weight: targetRateUpWeight, isRateUp: true }); 
-                                    } else { 
-                                        weightedPool.push({ char: c, weight: otherNormalWeight, isRateUp: false }); 
-                                    } 
+                                    if (currentPool.rateUpChars.includes(c.name)) { weightedPool.push({ char: c, weight: targetRateUpWeight, isRateUp: true }); } 
+                                    else { weightedPool.push({ char: c, weight: otherNormalWeight, isRateUp: false }); } 
                                 });
                             } else { 
-                                let w = remaining3Prob / normal3s.length; 
-                                normal3s.forEach(c => weightedPool.push({ char: c, weight: w, isRateUp: false })); 
+                                let w = remaining3Prob / normal3s.length; normal3s.forEach(c => weightedPool.push({ char: c, weight: w, isRateUp: false })); 
                             }
                         }
                     }
@@ -298,6 +291,9 @@
                 startGachaAnimation();
             }
             
+            // ==========================
+            // UI 生成區 (整合舊歷史與新排版)
+            // ==========================
             function getGachaCharIconHTML(charData, isLarge = false, isRateUp = false) {
                 const personalityBorderColors = { "天真": "border-green-500", "冷靜": "border-blue-500", "狂亂": "border-red-500", "活潑": "border-yellow-400", "憂鬱": "border-purple-500" };
                 const personalityHexMap = { "天真": "#22c55e", "冷靜": "#3b82f6", "狂亂": "#ef4444", "活潑": "#facc15", "憂鬱": "#a855f7" };
@@ -340,7 +336,6 @@
             
             function showRealGachaResults() {
                 const resultArea = document.getElementById('resultArea');
-                
                 let gridClass = pendingGachaTimes > 1 
                     ? "grid grid-cols-5 gap-x-1 gap-y-3 sm:gap-x-4 sm:gap-y-4 w-full max-w-3xl mx-auto justify-items-center" 
                     : "flex justify-center w-full";
@@ -351,16 +346,11 @@
                 `;
                 
                 const container = document.getElementById('gachaResultsGrid');
-                
                 pendingGachaResults.forEach((result, idx) => {
-                    const charData = result.char; 
-                    const isNew = result.isNew; 
-                    const is3Star = charData.star === 3; 
-                    const isRateUp = result.isRateUp;
+                    const charData = result.char; const isNew = result.isNew; 
+                    const is3Star = charData.star === 3; const isRateUp = result.isRateUp;
                     const card = document.createElement('div');
-                    
                     card.className = `relative flex flex-col items-center gap-0 w-[58px] sm:w-[76px] transition-transform hover:scale-105`;
-                    
                     const iconHTML = getGachaCharIconHTML(charData, true, isRateUp); 
                     const displayName = typeof t === 'function' ? t(charData.name) : charData.name;
                     
@@ -374,28 +364,70 @@
                             <div class="text-[10px] sm:text-xs font-bold text-gray-800 dark:text-gray-200 text-center w-full truncate px-0.5 leading-none">${displayName}</div>
                         </div>
                     `;
-                    
-                    card.style.opacity = '0'; 
-                    card.style.transform = 'translateY(20px)'; 
-                    container.appendChild(card);
-                    
-                    setTimeout(() => { 
-                        card.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'; 
-                        card.style.opacity = '1'; 
-                        card.style.transform = 'translateY(0)'; 
-                    }, 100 * idx);
+                    card.style.opacity = '0'; card.style.transform = 'translateY(20px)'; container.appendChild(card);
+                    setTimeout(() => { card.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'; card.style.opacity = '1'; card.style.transform = 'translateY(0)'; }, 100 * idx);
                 });
             }
             
+            // 🌟 核心修正：完美還原舊版 Firebase 存檔格式與渲染邏輯
             function addToHistory(results, poolName) {
-                const historyArea = document.getElementById('historyArea'); const now = new Date();
-                const record = { time: now.toLocaleString(), pool: poolName, chars: results.map(r => r.char.name) };
-                const div = document.createElement('div'); div.className = "p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg text-sm border border-gray-200 dark:border-gray-600";
-                let iconsHtml = results.map(r => getGachaCharIconHTML(r.char, false)).join('');
-                div.innerHTML = `<div class="font-bold text-amber-600 dark:text-amber-400 mb-2">${record.time} - ${record.pool}</div><div class="flex flex-wrap gap-1.5 items-center">${iconsHtml}</div>`;
-                historyArea.prepend(div); if (typeof saveHistoryToCloud === 'function') saveHistoryToCloud(record);
+                const record = {
+                    poolName: poolName,
+                    results: results.map(r => ({ name: r.char.name, star: r.char.star })),
+                    timestamp: new Date().toISOString()
+                };
+                renderSingleHistoryEntry(record); 
+                saveHistoryToCloud(record);
             }
             
+            function renderHistory(historyArray) {
+                const historyArea = document.getElementById('historyArea');
+                historyArea.innerHTML = '';
+                historyArray.forEach(record => {
+                    renderSingleHistoryEntry(record);
+                });
+            }
+            
+            function renderSingleHistoryEntry(record) {
+                const historyArea = document.getElementById('historyArea');
+                const logEntry = document.createElement('div');
+                logEntry.className = 'relative p-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col gap-2';
+            
+                const poolBadge = document.createElement('div');
+                poolBadge.className = 'text-[10px] font-bold text-white bg-gray-500 rounded px-1.5 py-0.5 self-start shadow-sm';
+                
+                // 兼容不同時間格式的保護機制
+                let timeStr = record.timestamp ? new Date(record.timestamp).toLocaleString() : (record.time || "未知時間");
+                let pName = record.poolName || record.pool || "未知招募";
+                poolBadge.innerText = `${timeStr} - ${pName}`;
+            
+                const iconRow = document.createElement('div');
+                iconRow.className = 'flex flex-wrap gap-2';
+            
+                // 兼容新舊資料格式
+                let charsArray = record.results || record.chars || [];
+                
+                charsArray.forEach(charInfo => {
+                    let cName = typeof charInfo === 'string' ? charInfo : charInfo.name;
+                    let cStar = typeof charInfo === 'string' ? 1 : charInfo.star;
+                    
+                    // 從資料庫找回完整資料來作畫，避免歷史紀錄破圖
+                    let fullCharData = validChars.find(c => c.name === cName) || { name: cName, star: cStar, personality: "天真" };
+                    fullCharData.star = cStar; 
+                    
+                    const domWrapper = document.createElement('div');
+                    domWrapper.innerHTML = getGachaCharIconHTML(fullCharData, false, false);
+                    iconRow.appendChild(domWrapper);
+                });
+            
+                logEntry.appendChild(poolBadge);
+                logEntry.appendChild(iconRow);
+                historyArea.prepend(logEntry);
+            }
+            
+            // ==========================
+            // Spine 動畫控制系統
+            // ==========================
             const SPINE_CONFIG = { viewport: { x: -1200, y: -600, width: 2400, height: 1215 } };
             const CLOSEUP_VIEWPORT = { x: -1080, y: -400, width: 2160, height: 945 };
             const GachaState = { INIT: 0, ERPIN_IDLE: 1, END1_DROP: 2, END2_WAIT: 3, END3_ZOOM: 4, SHOW_RESULT: 5 };
@@ -411,7 +443,6 @@
                     gachaPlayerCloseup.animationState.clearTracks();
                 }
                 showGlowingBooks = false; clearTimeout(bookChangeTimer); 
-                // 1. 強制讓大頭 Spine 的 Canvas 消失
                 const closeupBox = document.getElementById('gachaSpineContainerCloseup');
                 closeupBox.style.display = 'none'; 
                 closeupBox.style.visibility = 'hidden';
@@ -473,36 +504,25 @@
                         player.animationState.data.defaultMix = 0; const origDocsUpdate = player.skeleton.updateWorldTransform;
                         player.skeleton.updateWorldTransform = function () {
                             origDocsUpdate.call(this); 
-                            
                             let pulse = 1.0;
                             if (showGlowingBooks) {
                                 const BREATH_SPEED = 400; 
                                 let sinVal = 0.5 + 0.5 * Math.sin(Date.now() / BREATH_SPEED);
                                 pulse = 1.0 + (sinVal * 0.8); 
                             }
-                            
                             pendingGachaResults.forEach((result, idx) => {
                                 let slotName = (pendingGachaTimes === 1) ? 'Book_Drop_1' : `Book_Drop_${idx + 1}`;
-                                
                                 if (result.char.star === 3 && showGlowingBooks) {
                                     try { 
                                         this.setAttachment(slotName, `${slotName}_3star`);
                                         let slot = this.findSlot(slotName);
-                                        if (slot) {
-                                            slot.color.r = pulse; 
-                                            slot.color.g = pulse;
-                                            slot.color.b = pulse;
-                                        }
+                                        if (slot) { slot.color.r = pulse; slot.color.g = pulse; slot.color.b = pulse; }
                                     } catch(e) {}
                                 } else {
                                     try {
                                         this.setAttachment(slotName, slotName); 
                                         let slot = this.findSlot(slotName);
-                                        if (slot) { 
-                                            slot.color.r = 1; 
-                                            slot.color.g = 1; 
-                                            slot.color.b = 1; 
-                                        }
+                                        if (slot) { slot.color.r = 1; slot.color.g = 1; slot.color.b = 1; }
                                     } catch(e) {}
                                 }
                             });
@@ -521,12 +541,9 @@
             
             function triggerDropAndEnd1() {
                 currentGachaState = GachaState.END1_DROP;
-            
                 requestAnimationFrame(() => {
                     if (gachaPlayerDocs && gachaPlayerDocs.skeleton) {
-                        for (let i = 1; i <= 10; i++) {
-                            try { gachaPlayerDocs.skeleton.setAttachment(`Book_Drop_${i}`, `Book_Drop_${i}`); } catch(e) {}
-                        }
+                        for (let i = 1; i <= 10; i++) { try { gachaPlayerDocs.skeleton.setAttachment(`Book_Drop_${i}`, `Book_Drop_${i}`); } catch(e) {} }
                         gachaPlayerDocs.skeleton.updateWorldTransform();
                     }
                 });
@@ -534,17 +551,11 @@
                 let dropAnimName = (pendingGachaTimes === 1) ? "Drop_1" : "Drop_10_1";
                 if (gachaPlayerDocs) gachaPlayerDocs.animationState.setAnimation(0, dropAnimName, false);
                 
-                bookChangeTimer = setTimeout(() => {
-                    if (currentGachaState !== GachaState.SHOW_RESULT) {
-                        showGlowingBooks = true;
-                    }
-                }, 4500); 
+                bookChangeTimer = setTimeout(() => { if (currentGachaState !== GachaState.SHOW_RESULT) { showGlowingBooks = true; } }, 4500); 
                 
                 if (gachaPlayerErpin) {
                     gachaPlayerErpin.animationState.setAnimation(0, "End_1", false);
-                    gachaPlayerErpin.animationState.addListener({
-                        complete: function(entry) { if (entry.animation.name === "End_1") enterEnd2WaitState(); }
-                    });
+                    gachaPlayerErpin.animationState.addListener({ complete: function(entry) { if (entry.animation.name === "End_1") enterEnd2WaitState(); } });
                 } else { enterEnd2WaitState(); }
             }
             
@@ -562,15 +573,8 @@
                 currentGachaState = GachaState.END3_ZOOM;
                 
                 const closeupBox = document.getElementById('gachaSpineContainerCloseup');
-                
-                closeupBox.style.visibility = 'visible';
-                closeupBox.style.display = 'block';
-                closeupBox.style.pointerEvents = "auto";
-                
-                requestAnimationFrame(() => {
-                    closeupBox.style.opacity = '1';
-                    if (gachaPlayerCloseup) gachaPlayerCloseup.skeleton.color.a = 1;
-                });
+                closeupBox.style.visibility = 'visible'; closeupBox.style.display = 'block'; closeupBox.style.pointerEvents = "auto";
+                requestAnimationFrame(() => { closeupBox.style.opacity = '1'; if (gachaPlayerCloseup) gachaPlayerCloseup.skeleton.color.a = 1; });
             
                 const glowLayer = document.getElementById('closeupTableGlow'); glowLayer.className = 'table-glow-container'; glowLayer.innerHTML = '';
                 reactionLightTimers.forEach(t => clearTimeout(t)); reactionLightTimers = [];
@@ -590,26 +594,19 @@
             
                 let animName = has3Star ? "Idle_3" : (has2Star ? "Idle_2" : "Idle_1");
                 if (gachaPlayerCloseup) {
-                    gachaPlayerCloseup.skeleton.color.a = 1; 
-                    gachaPlayerCloseup.animationState.timeScale = 1; 
-                    gachaPlayerCloseup.animationState.setAnimation(0, animName, false);
-                    gachaPlayerCloseup.animationState.clearListeners();
-                    gachaPlayerCloseup.animationState.addListener({
-                        complete: function(entry) { if (entry.animation.name === animName) finishGachaAnimation(); }
-                    });
+                    gachaPlayerCloseup.skeleton.color.a = 1; gachaPlayerCloseup.animationState.timeScale = 1; 
+                    gachaPlayerCloseup.animationState.setAnimation(0, animName, false); gachaPlayerCloseup.animationState.clearListeners();
+                    gachaPlayerCloseup.animationState.addListener({ complete: function(entry) { if (entry.animation.name === animName) finishGachaAnimation(); } });
                 } else { setTimeout(finishGachaAnimation, 1500); }
                 activeSkipHandler = function() { finishGachaAnimation(); }; setTimeout(() => { stage.addEventListener('click', activeSkipHandler); }, 300);
             }
             
             function finishGachaAnimation() {
                 if (currentGachaState === GachaState.SHOW_RESULT) return; currentGachaState = GachaState.SHOW_RESULT;
-                
                 clearTimeout(bookChangeTimer); 
             
                 const closeupBox = document.getElementById('gachaSpineContainerCloseup');
-                closeupBox.style.transition = 'none';
-                closeupBox.style.display = 'none';
-                closeupBox.style.opacity = '0';
+                closeupBox.style.transition = 'none'; closeupBox.style.display = 'none'; closeupBox.style.opacity = '0';
             
                 if (gachaPlayerCloseup && gachaPlayerCloseup.animationState) {
                     gachaPlayerCloseup.animationState.timeScale = 0; gachaPlayerCloseup.animationState.clearListeners();
