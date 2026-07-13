@@ -40,7 +40,8 @@
             display: none !important;
             pointer-events: none !important;
             }
-            /* 🌟 檯面發光防禦容器：高度提升至 100%，防止任何硬邊截斷 */
+            
+            /* 🌟 檯面發光防禦容器 */
             .table-glow-container {
             position: absolute;
             bottom: 0; left: 0; width: 100%; height: 100%;
@@ -53,12 +54,14 @@
             .table-glow-container.active {
             opacity: 1; transform: scaleY(1);
             }
-            /* 🌟 2星發光調整：漸層在 55% 高度處完美淡出至透明 */
+            
+            /* 🌟 2星發光調整 */
             .table-glow-2star {
             width: 100%; height: 100%;
             background: radial-gradient(ellipse at 50% 100%, rgba(255, 215, 0, 1) 0%, rgba(255, 140, 0, 0.4) 25%, transparent 55%);
             }
-            /* 🌟 3星彩色發光調整：由高飽和中心向外擴散，在 65% 高度處自然羽化全透明，絕不切邊 */
+            
+            /* 🌟 3星彩色發光調整 */
             .table-glow-3star {
             width: 100%; height: 100%;
             background: radial-gradient(ellipse at 50% 100%, 
@@ -214,40 +217,67 @@
             }
             
             function getGachaPool(isGuaranteed) {
-                let p1 = isGuaranteed ? 0 : 0.76; let p2 = isGuaranteed ? 0.97 : 0.21; let p3 = 0.03; let eldainBase = 0.00036;
-                let availableChars = validChars; if (currentPool.type === 'personality') availableChars = validChars.filter(c => c.personality === currentPool.personality);
-                let stars1 = availableChars.filter(c => c.star === 1); let stars2 = availableChars.filter(c => c.star === 2); let stars3 = availableChars.filter(c => c.star === 3);
+                let p1 = isGuaranteed ? 0 : 0.76; 
+                let p2 = isGuaranteed ? 0.97 : 0.21; 
+                let p3 = 0.03; 
+                let eldainBase = 0.00036;
+                let availableChars = validChars; 
+                
+                if (currentPool.type === 'personality') availableChars = validChars.filter(c => c.personality === currentPool.personality);
+                let stars1 = availableChars.filter(c => c.star === 1); 
+                let stars2 = availableChars.filter(c => c.star === 2); 
+                let stars3 = availableChars.filter(c => c.star === 3);
                 let weightedPool = [];
+                
                 if (stars1.length > 0) { let w = p1 / stars1.length; stars1.forEach(c => weightedPool.push({ char: c, weight: w, isRateUp: false })); }
                 if (stars2.length > 0) { let w = p2 / stars2.length; stars2.forEach(c => weightedPool.push({ char: c, weight: w, isRateUp: false })); }
                 if (stars3.length > 0) {
-                    let allEldains = stars3.filter(c => c.isEldain); let normal3s = stars3.filter(c => !c.isEldain);
+                    let allEldains = stars3.filter(c => c.isEldain); 
+                    let normal3s = stars3.filter(c => !c.isEldain);
                     if (currentPool.type === 'personality') {
-                        let eldainTotalWeight = 0; if (allEldains.length > 0) { eldainTotalWeight = 0.00032; let w = eldainTotalWeight / allEldains.length; allEldains.forEach(c => weightedPool.push({ char: c, weight: w, isRateUp: false })); }
-                        let remaining3Prob = p3 - eldainTotalWeight; if (normal3s.length > 0) { let w = remaining3Prob / normal3s.length; normal3s.forEach(c => weightedPool.push({ char: c, weight: w, isRateUp: false })); }
+                        let eldainTotalWeight = 0; 
+                        if (allEldains.length > 0) { 
+                            eldainTotalWeight = 0.00032; 
+                            let w = eldainTotalWeight / allEldains.length; 
+                            allEldains.forEach(c => weightedPool.push({ char: c, weight: w, isRateUp: false })); 
+                        }
+                        let remaining3Prob = p3 - eldainTotalWeight; 
+                        if (normal3s.length > 0) { 
+                            let w = remaining3Prob / normal3s.length; 
+                            normal3s.forEach(c => weightedPool.push({ char: c, weight: w, isRateUp: false })); 
+                        }
                     } else {
-                        let rateUpEldains = allEldains.filter(c => currentPool.rateUpChars.includes(c.name)); let rateUpNormals = normal3s.filter(c => currentPool.rateUpChars.includes(c.name));
-                        if (rateUpEldains.length > 0) { let totalEldainProb = allEldains.length * eldainBase; let targetWeight = (totalEldainProb * 2) / rateUpEldains.length; rateUpEldains.forEach(c => weightedPool.push({ char: c, weight: targetWeight, isRateUp: true })); } 
-                        else { allEldains.forEach(c => weightedPool.push({ char: c, weight: eldainBase, isRateUp: false })); }
-                        let currentTotal3Weight = weightedPool.filter(p => p.char.star === 3).reduce((sum, p) => sum + p.weight, 0); let remaining3Prob = p3 - currentTotal3Weight;
+                        let rateUpEldains = allEldains.filter(c => currentPool.rateUpChars.includes(c.name)); 
+                        let rateUpNormals = normal3s.filter(c => currentPool.rateUpChars.includes(c.name));
+                        if (rateUpEldains.length > 0) { 
+                            let totalEldainProb = allEldains.length * eldainBase; 
+                            let targetWeight = (totalEldainProb * 2) / rateUpEldains.length; 
+                            rateUpEldains.forEach(c => weightedPool.push({ char: c, weight: targetWeight, isRateUp: true })); 
+                        } else { 
+                            allEldains.forEach(c => weightedPool.push({ char: c, weight: eldainBase, isRateUp: false })); 
+                        }
+                        
+                        let currentTotal3Weight = weightedPool.filter(p => p.char.star === 3).reduce((sum, p) => sum + p.weight, 0); 
+                        let remaining3Prob = p3 - currentTotal3Weight;
+                        
                         if (normal3s.length > 0) {
-                           if (rateUpNormals.length > 0) {
-            // 🌟 修正點：將特選角色機率強制設定為 0.8% (0.008)
-            let targetRateUpWeight = 0.008; 
-            let totalRateUpWeight = targetRateUpWeight * rateUpNormals.length;
-            
-            // 剩下的 3 星機率扣除艾爾丁與特選後，由其他常規 3 星平分
-            let otherNormalWeight = Math.max(0, (remaining3Prob - totalRateUpWeight) / (normal3s.length - rateUpNormals.length));
-            
-            normal3s.forEach(c => { 
-            if (currentPool.rateUpChars.includes(c.name)) { 
-            weightedPool.push({ char: c, weight: targetRateUpWeight, isRateUp: true }); 
-            } else { 
-            weightedPool.push({ char: c, weight: otherNormalWeight, isRateUp: false }); 
-            } 
-            });
-            }
-                            } else { let w = remaining3Prob / normal3s.length; normal3s.forEach(c => weightedPool.push({ char: c, weight: w, isRateUp: false })); }
+                            if (rateUpNormals.length > 0) {
+                                // 🌟 絕對精準的特選角色機率 0.8%
+                                let targetRateUpWeight = 0.008; 
+                                let totalRateUpWeight = targetRateUpWeight * rateUpNormals.length;
+                                let otherNormalWeight = Math.max(0, (remaining3Prob - totalRateUpWeight) / (normal3s.length - rateUpNormals.length));
+                                
+                                normal3s.forEach(c => { 
+                                    if (currentPool.rateUpChars.includes(c.name)) { 
+                                        weightedPool.push({ char: c, weight: targetRateUpWeight, isRateUp: true }); 
+                                    } else { 
+                                        weightedPool.push({ char: c, weight: otherNormalWeight, isRateUp: false }); 
+                                    } 
+                                });
+                            } else { 
+                                let w = remaining3Prob / normal3s.length; 
+                                normal3s.forEach(c => weightedPool.push({ char: c, weight: w, isRateUp: false })); 
+                            }
                         }
                     }
                 }
@@ -269,144 +299,92 @@
             }
             
             function getGachaCharIconHTML(charData, isLarge = false, isRateUp = false) {
-            const personalityBorderColors = { "天真": "border-green-500", "冷靜": "border-blue-500", "狂亂": "border-red-500", "活潑": "border-yellow-400", "憂鬱": "border-purple-500" };
-            // 新增性格對應的發光色碼 (HEX)
-            const personalityHexMap = { "天真": "#22c55e", "冷靜": "#3b82f6", "狂亂": "#ef4444", "活潑": "#facc15", "憂鬱": "#a855f7" };
-            const bgClassMap = { "龍族": "sprite-Bg_Dragon", "精靈": "sprite-Bg_Elf", "妖精": "sprite-Bg_Sprite", "獸人": "sprite-Bg_Werebeast", "幽靈": "sprite-Bg_Phantom", "???": "sprite-Bg_Unknown", "unknown": "sprite-Bg_Unknown", "魔靈": "sprite-Bg_Elemental", "魔女": "sprite-Bg_Witch" };
-            const charSpriteBaseMap = { "冷靜": "sprite-char-composed", "憂鬱": "sprite-char-depressed", "天真": "sprite-char-innocence", "狂亂": "sprite-char-madness", "活潑": "sprite-char-vivacious" };
-            
-            const borderColor = personalityBorderColors[charData.personality] || "border-gray-300"; 
-            const pColorHex = personalityHexMap[charData.personality] || "rgba(255,255,255,0.5)"; // 取得性格光暈顏色
-            const raceKey = (charData.race === "???" || !charData.race) ? "unknown" : charData.race; 
-            const bgSprite = bgClassMap[raceKey] || "sprite-Bg_Unknown";
-            const spineName = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charData.name] ? SPINE_MAP[charData.name] : charData.name; 
-            const charSpriteBase = charSpriteBaseMap[charData.personality] || ""; 
-            const charSpriteClass = `sprite-${spineName}`;
-            
-            // 為了適應手機一排 5 個，大圖標寬度微調至 58px
-            const sizeClass = isLarge ? "w-[58px] h-[58px] sm:w-[76px] sm:h-[76px]" : "w-10 h-10"; 
-            const bgScaleClass = isLarge ? "scale-[0.52] sm:scale-[0.6]" : "scale-[0.45]"; 
-            const charScaleClass = isLarge ? "scale-[0.45] sm:scale-[0.55]" : "scale-[0.35]";
-            
-            // 頭像內部的共有結構
-            const innerHTML = `
-            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sprite-base sprite-common ${bgSprite} ${bgScaleClass} z-0 opacity-90"></div>
-            <div class="absolute inset-0 bg-white/20 dark:bg-black/20 backdrop-blur-[1px] z-[5]"></div>
-            <div class="absolute inset-0 flex items-center justify-center z-10"><div class="sprite-base ${charSpriteBase} ${charSpriteClass} shrink-0 ${charScaleClass} origin-center"></div></div>
-            `;
-            
-            // 只有在結算畫面 (isLarge) 且 是特選角色 (isRateUp) 時，才啟用彩虹發光
-            if (isLarge && isRateUp) {
-            return `
-            <div class="${sizeClass} rounded-lg relative shrink-0 p-[3px] z-10" style="box-shadow: 0 0 15px ${pColorHex};">
-                <div class="absolute inset-0 rounded-lg z-0" style="background: linear-gradient(45deg, #ff0000, #ff7300, #ffeb00, #47e247, #00bbff, #0055ff, #8800ff, #ff0000); background-size: 400%; animation: rainbowMove 3s linear infinite;"></div>
-                <div class="absolute inset-[3px] rounded-[5px] overflow-hidden bg-[#fcf8f2] dark:bg-gray-800 z-10">
-                    ${innerHTML}
-                </div>
-            </div>`;
-            } else {
-            // 一般角色 (或歷史紀錄的小圖標) 維持原本的邊框
-            return `
-            <div class="${sizeClass} rounded-lg border-2 ${borderColor} shadow-inner bg-[#fcf8f2] dark:bg-gray-800 relative overflow-hidden shrink-0">
-                ${innerHTML}
-            </div>`;
-            }
-            }function getGachaCharIconHTML(charData, isLarge = false, isRateUp = false) {
-            const personalityBorderColors = { "天真": "border-green-500", "冷靜": "border-blue-500", "狂亂": "border-red-500", "活潑": "border-yellow-400", "憂鬱": "border-purple-500" };
-            // 新增性格對應的發光色碼 (HEX)
-            const personalityHexMap = { "天真": "#22c55e", "冷靜": "#3b82f6", "狂亂": "#ef4444", "活潑": "#facc15", "憂鬱": "#a855f7" };
-            const bgClassMap = { "龍族": "sprite-Bg_Dragon", "精靈": "sprite-Bg_Elf", "妖精": "sprite-Bg_Sprite", "獸人": "sprite-Bg_Werebeast", "幽靈": "sprite-Bg_Phantom", "???": "sprite-Bg_Unknown", "unknown": "sprite-Bg_Unknown", "魔靈": "sprite-Bg_Elemental", "魔女": "sprite-Bg_Witch" };
-            const charSpriteBaseMap = { "冷靜": "sprite-char-composed", "憂鬱": "sprite-char-depressed", "天真": "sprite-char-innocence", "狂亂": "sprite-char-madness", "活潑": "sprite-char-vivacious" };
-            
-            const borderColor = personalityBorderColors[charData.personality] || "border-gray-300"; 
-            const pColorHex = personalityHexMap[charData.personality] || "rgba(255,255,255,0.5)"; // 取得性格光暈顏色
-            const raceKey = (charData.race === "???" || !charData.race) ? "unknown" : charData.race; 
-            const bgSprite = bgClassMap[raceKey] || "sprite-Bg_Unknown";
-            const spineName = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charData.name] ? SPINE_MAP[charData.name] : charData.name; 
-            const charSpriteBase = charSpriteBaseMap[charData.personality] || ""; 
-            const charSpriteClass = `sprite-${spineName}`;
-            
-            // 為了適應手機一排 5 個，大圖標寬度微調至 58px
-            const sizeClass = isLarge ? "w-[58px] h-[58px] sm:w-[76px] sm:h-[76px]" : "w-10 h-10"; 
-            const bgScaleClass = isLarge ? "scale-[0.52] sm:scale-[0.6]" : "scale-[0.45]"; 
-            const charScaleClass = isLarge ? "scale-[0.45] sm:scale-[0.55]" : "scale-[0.35]";
-            
-            // 頭像內部的共有結構
-            const innerHTML = `
-            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sprite-base sprite-common ${bgSprite} ${bgScaleClass} z-0 opacity-90"></div>
-            <div class="absolute inset-0 bg-white/20 dark:bg-black/20 backdrop-blur-[1px] z-[5]"></div>
-            <div class="absolute inset-0 flex items-center justify-center z-10"><div class="sprite-base ${charSpriteBase} ${charSpriteClass} shrink-0 ${charScaleClass} origin-center"></div></div>
-            `;
-            
-            // 只有在結算畫面 (isLarge) 且 是特選角色 (isRateUp) 時，才啟用彩虹發光
-            if (isLarge && isRateUp) {
-            return `
-            <div class="${sizeClass} rounded-lg relative shrink-0 p-[3px] z-10" style="box-shadow: 0 0 15px ${pColorHex};">
-                <div class="absolute inset-0 rounded-lg z-0" style="background: linear-gradient(45deg, #ff0000, #ff7300, #ffeb00, #47e247, #00bbff, #0055ff, #8800ff, #ff0000); background-size: 400%; animation: rainbowMove 3s linear infinite;"></div>
-                <div class="absolute inset-[3px] rounded-[5px] overflow-hidden bg-[#fcf8f2] dark:bg-gray-800 z-10">
-                    ${innerHTML}
-                </div>
-            </div>`;
-            } else {
-            // 一般角色 (或歷史紀錄的小圖標) 維持原本的邊框
-            return `
-            <div class="${sizeClass} rounded-lg border-2 ${borderColor} shadow-inner bg-[#fcf8f2] dark:bg-gray-800 relative overflow-hidden shrink-0">
-                ${innerHTML}
-            </div>`;
-            }
+                const personalityBorderColors = { "天真": "border-green-500", "冷靜": "border-blue-500", "狂亂": "border-red-500", "活潑": "border-yellow-400", "憂鬱": "border-purple-500" };
+                const personalityHexMap = { "天真": "#22c55e", "冷靜": "#3b82f6", "狂亂": "#ef4444", "活潑": "#facc15", "憂鬱": "#a855f7" };
+                const bgClassMap = { "龍族": "sprite-Bg_Dragon", "精靈": "sprite-Bg_Elf", "妖精": "sprite-Bg_Sprite", "獸人": "sprite-Bg_Werebeast", "幽靈": "sprite-Bg_Phantom", "???": "sprite-Bg_Unknown", "unknown": "sprite-Bg_Unknown", "魔靈": "sprite-Bg_Elemental", "魔女": "sprite-Bg_Witch" };
+                const charSpriteBaseMap = { "冷靜": "sprite-char-composed", "憂鬱": "sprite-char-depressed", "天真": "sprite-char-innocence", "狂亂": "sprite-char-madness", "活潑": "sprite-char-vivacious" };
+                
+                const borderColor = personalityBorderColors[charData.personality] || "border-gray-300"; 
+                const pColorHex = personalityHexMap[charData.personality] || "rgba(255,255,255,0.5)"; 
+                const raceKey = (charData.race === "???" || !charData.race) ? "unknown" : charData.race; 
+                const bgSprite = bgClassMap[raceKey] || "sprite-Bg_Unknown";
+                const spineName = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charData.name] ? SPINE_MAP[charData.name] : charData.name; 
+                const charSpriteBase = charSpriteBaseMap[charData.personality] || ""; 
+                const charSpriteClass = `sprite-${spineName}`;
+                
+                const sizeClass = isLarge ? "w-[58px] h-[58px] sm:w-[76px] sm:h-[76px]" : "w-10 h-10"; 
+                const bgScaleClass = isLarge ? "scale-[0.52] sm:scale-[0.6]" : "scale-[0.45]"; 
+                const charScaleClass = isLarge ? "scale-[0.45] sm:scale-[0.55]" : "scale-[0.35]";
+                
+                const innerHTML = `
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sprite-base sprite-common ${bgSprite} ${bgScaleClass} z-0 opacity-90"></div>
+                    <div class="absolute inset-0 bg-white/20 dark:bg-black/20 backdrop-blur-[1px] z-[5]"></div>
+                    <div class="absolute inset-0 flex items-center justify-center z-10"><div class="sprite-base ${charSpriteBase} ${charSpriteClass} shrink-0 ${charScaleClass} origin-center"></div></div>
+                `;
+
+                if (isLarge && isRateUp) {
+                    return `
+                        <div class="${sizeClass} rounded-lg relative shrink-0 p-[3px] z-10" style="box-shadow: 0 0 15px ${pColorHex};">
+                            <div class="absolute inset-0 rounded-lg z-0" style="background: linear-gradient(45deg, #ff0000, #ff7300, #ffeb00, #47e247, #00bbff, #0055ff, #8800ff, #ff0000); background-size: 400%; animation: rainbowMove 3s linear infinite;"></div>
+                            <div class="absolute inset-[3px] rounded-[5px] overflow-hidden bg-[#fcf8f2] dark:bg-gray-800 z-10">
+                                ${innerHTML}
+                            </div>
+                        </div>`;
+                } else {
+                    return `
+                        <div class="${sizeClass} rounded-lg border-2 ${borderColor} shadow-inner bg-[#fcf8f2] dark:bg-gray-800 relative overflow-hidden shrink-0">
+                            ${innerHTML}
+                        </div>`;
+                }
             }
             
             function showRealGachaResults() {
-            const resultArea = document.getElementById('resultArea');
-            
-            // 🌟 十連抽時啟用 Grid(5欄)佈局，單抽則保持置中
-            let gridClass = pendingGachaTimes > 1 
-            ? "grid grid-cols-5 gap-x-1 gap-y-3 sm:gap-x-4 sm:gap-y-4 w-full max-w-3xl mx-auto justify-items-center" 
-            : "flex justify-center w-full";
-            
-            resultArea.innerHTML = `
-            <h3 class="text-xl sm:text-2xl font-bold text-amber-900 dark:text-amber-400 mt-2 sm:mt-0 mb-4 w-full text-center drop-shadow-sm">🎉 招募結果 🎉</h3>
-            <div id="gachaResultsGrid" class="${gridClass}"></div>
-            `;
-            
-            const container = document.getElementById('gachaResultsGrid');
-            
-            pendingGachaResults.forEach((result, idx) => {
-            const charData = result.char; 
-            const isNew = result.isNew; 
-            const is3Star = charData.star === 3; 
-            const isRateUp = result.isRateUp;
-            const card = document.createElement('div');
-            
-            // 🌟 移除外方格背景與框線，將間距 gap 改為 0，高度大幅壓縮
-            card.className = `relative flex flex-col items-center gap-0 w-[58px] sm:w-[76px] transition-transform hover:scale-105`;
-            
-            // 傳入 isRateUp 參數給圖標生成器
-            const iconHTML = getGachaCharIconHTML(charData, true, isRateUp); 
-            const displayName = typeof t === 'function' ? t(charData.name) : charData.name;
-            
-            // 排版優化：如果是 3星且「不是」特選，保留一點黃金光暈給圖標；文字取消行高(leading-none)來節省空間
-            card.innerHTML = `
-            ${isNew ? '<div class="absolute -top-2 -right-2 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow-md z-20 animate-pulse">NEW</div>' : ''}
-            <div class="relative ${is3Star && !isRateUp ? 'shadow-[0_0_12px_rgba(250,204,21,0.6)] rounded-lg' : ''}">
-                ${iconHTML}
-            </div>
-            <div class="flex flex-col items-center w-full mt-1.5">
-                <div class="text-yellow-400 text-[10px] sm:text-xs tracking-widest drop-shadow-sm leading-none mb-1 h-3">${'★'.repeat(charData.star)}</div>
-                <div class="text-[10px] sm:text-xs font-bold text-gray-800 dark:text-gray-200 text-center w-full truncate px-0.5 leading-none">${displayName}</div>
-            </div>
-            `;
-            
-            card.style.opacity = '0'; 
-            card.style.transform = 'translateY(20px)'; 
-            container.appendChild(card);
-            
-            setTimeout(() => { 
-            card.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'; 
-            card.style.opacity = '1'; 
-            card.style.transform = 'translateY(0)'; 
-            }, 100 * idx);
-            });
+                const resultArea = document.getElementById('resultArea');
+                
+                let gridClass = pendingGachaTimes > 1 
+                    ? "grid grid-cols-5 gap-x-1 gap-y-3 sm:gap-x-4 sm:gap-y-4 w-full max-w-3xl mx-auto justify-items-center" 
+                    : "flex justify-center w-full";
+
+                resultArea.innerHTML = `
+                    <h3 class="text-xl sm:text-2xl font-bold text-amber-900 dark:text-amber-400 mt-2 sm:mt-0 mb-4 w-full text-center drop-shadow-sm">🎉 招募結果 🎉</h3>
+                    <div id="gachaResultsGrid" class="${gridClass}"></div>
+                `;
+                
+                const container = document.getElementById('gachaResultsGrid');
+                
+                pendingGachaResults.forEach((result, idx) => {
+                    const charData = result.char; 
+                    const isNew = result.isNew; 
+                    const is3Star = charData.star === 3; 
+                    const isRateUp = result.isRateUp;
+                    const card = document.createElement('div');
+                    
+                    card.className = `relative flex flex-col items-center gap-0 w-[58px] sm:w-[76px] transition-transform hover:scale-105`;
+                    
+                    const iconHTML = getGachaCharIconHTML(charData, true, isRateUp); 
+                    const displayName = typeof t === 'function' ? t(charData.name) : charData.name;
+                    
+                    card.innerHTML = `
+                        ${isNew ? '<div class="absolute -top-2 -right-2 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow-md z-20 animate-pulse">NEW</div>' : ''}
+                        <div class="relative ${is3Star && !isRateUp ? 'shadow-[0_0_12px_rgba(250,204,21,0.6)] rounded-lg' : ''}">
+                            ${iconHTML}
+                        </div>
+                        <div class="flex flex-col items-center w-full mt-1.5">
+                            <div class="text-yellow-400 text-[10px] sm:text-xs tracking-widest drop-shadow-sm leading-none mb-1 h-3">${'★'.repeat(charData.star)}</div>
+                            <div class="text-[10px] sm:text-xs font-bold text-gray-800 dark:text-gray-200 text-center w-full truncate px-0.5 leading-none">${displayName}</div>
+                        </div>
+                    `;
+                    
+                    card.style.opacity = '0'; 
+                    card.style.transform = 'translateY(20px)'; 
+                    container.appendChild(card);
+                    
+                    setTimeout(() => { 
+                        card.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'; 
+                        card.style.opacity = '1'; 
+                        card.style.transform = 'translateY(0)'; 
+                    }, 100 * idx);
+                });
             }
             
             function addToHistory(results, poolName) {
@@ -436,7 +414,7 @@
                 // 1. 強制讓大頭 Spine 的 Canvas 消失
                 const closeupBox = document.getElementById('gachaSpineContainerCloseup');
                 closeupBox.style.display = 'none'; 
-                closeupBox.style.visibility = 'hidden'; // 加上 visibility
+                closeupBox.style.visibility = 'hidden';
                 
                 reactionLightTimers.forEach(t => clearTimeout(t)); reactionLightTimers = [];
                 const glowLayer = document.getElementById('closeupTableGlow'); glowLayer.className = 'table-glow-container'; glowLayer.innerHTML = '';
@@ -494,43 +472,41 @@
                     success: function(player) {
                         player.animationState.data.defaultMix = 0; const origDocsUpdate = player.skeleton.updateWorldTransform;
                         player.skeleton.updateWorldTransform = function () {
-            origDocsUpdate.call(this); 
-            
-            let pulse = 1.0;
-            if (showGlowingBooks) {
-            const BREATH_SPEED = 400; // 數字越大越慢，越小越快
-            let sinVal = 0.5 + 0.5 * Math.sin(Date.now() / BREATH_SPEED);
-            pulse = 1.0 + (sinVal * 0.8); 
-            }
-            
-            pendingGachaResults.forEach((result, idx) => {
-            let slotName = (pendingGachaTimes === 1) ? 'Book_Drop_1' : `Book_Drop_${idx + 1}`;
-            
-            // 🌟 核心修正：必須同時符合「是3星」且「落地時間已到 (showGlowingBooks 為 true)」才准換彩書！
-            if (result.char.star === 3 && showGlowingBooks) {
-            try { 
-                this.setAttachment(slotName, `${slotName}_3star`);
-                let slot = this.findSlot(slotName);
-                if (slot) {
-                    slot.color.r = pulse; 
-                    slot.color.g = pulse;
-                    slot.color.b = pulse;
-                }
-            } catch(e) {}
-            } else {
-            // 🌟 關鍵防線：只要不是3星，或者「還沒落地」，一律強制鎖死在「普通書本」貼圖
-            try {
-                this.setAttachment(slotName, slotName); // 強制設為普通書本貼圖 (沒有 _3star)
-                let slot = this.findSlot(slotName);
-                if (slot) { 
-                    slot.color.r = 1; 
-                    slot.color.g = 1; 
-                    slot.color.b = 1; 
-                }
-            } catch(e) {}
-            }
-            });
-            };
+                            origDocsUpdate.call(this); 
+                            
+                            let pulse = 1.0;
+                            if (showGlowingBooks) {
+                                const BREATH_SPEED = 400; 
+                                let sinVal = 0.5 + 0.5 * Math.sin(Date.now() / BREATH_SPEED);
+                                pulse = 1.0 + (sinVal * 0.8); 
+                            }
+                            
+                            pendingGachaResults.forEach((result, idx) => {
+                                let slotName = (pendingGachaTimes === 1) ? 'Book_Drop_1' : `Book_Drop_${idx + 1}`;
+                                
+                                if (result.char.star === 3 && showGlowingBooks) {
+                                    try { 
+                                        this.setAttachment(slotName, `${slotName}_3star`);
+                                        let slot = this.findSlot(slotName);
+                                        if (slot) {
+                                            slot.color.r = pulse; 
+                                            slot.color.g = pulse;
+                                            slot.color.b = pulse;
+                                        }
+                                    } catch(e) {}
+                                } else {
+                                    try {
+                                        this.setAttachment(slotName, slotName); 
+                                        let slot = this.findSlot(slotName);
+                                        if (slot) { 
+                                            slot.color.r = 1; 
+                                            slot.color.g = 1; 
+                                            slot.color.b = 1; 
+                                        }
+                                    } catch(e) {}
+                                }
+                            });
+                        };
                     }
                 });
             
@@ -544,37 +520,32 @@
             }
             
             function triggerDropAndEnd1() {
-            currentGachaState = GachaState.END1_DROP;
+                currentGachaState = GachaState.END1_DROP;
             
-            // 1. 【時序保險】在動畫播放的同時，確保所有書本被強制重置為普通版
-            // 使用 requestAnimationFrame 確保 Spine 引擎已經進入下落狀態
-            requestAnimationFrame(() => {
-            if (gachaPlayerDocs && gachaPlayerDocs.skeleton) {
-            for (let i = 1; i <= 10; i++) {
-            try { gachaPlayerDocs.skeleton.setAttachment(`Book_Drop_${i}`, `Book_Drop_${i}`); } catch(e) {}
-            }
-            gachaPlayerDocs.skeleton.updateWorldTransform();
-            }
-            });
+                requestAnimationFrame(() => {
+                    if (gachaPlayerDocs && gachaPlayerDocs.skeleton) {
+                        for (let i = 1; i <= 10; i++) {
+                            try { gachaPlayerDocs.skeleton.setAttachment(`Book_Drop_${i}`, `Book_Drop_${i}`); } catch(e) {}
+                        }
+                        gachaPlayerDocs.skeleton.updateWorldTransform();
+                    }
+                });
             
-            // 2. 播放下落動畫
-            let dropAnimName = (pendingGachaTimes === 1) ? "Drop_1" : "Drop_10_1";
-            if (gachaPlayerDocs) gachaPlayerDocs.animationState.setAnimation(0, dropAnimName, false);
-            
-            // 3. 【顏色鎖定】只有在動畫播放 4.5 秒後 (接近落地)，才允許 showGlowingBooks 變為 true
-            // 這樣在跌落過程中，書本絕對不會變成彩書
-            bookChangeTimer = setTimeout(() => {
-            if (currentGachaState !== GachaState.SHOW_RESULT) {
-            showGlowingBooks = true;
-            }
-            }, 4500); 
-            
-            if (gachaPlayerErpin) {
-            gachaPlayerErpin.animationState.setAnimation(0, "End_1", false);
-            gachaPlayerErpin.animationState.addListener({
-            complete: function(entry) { if (entry.animation.name === "End_1") enterEnd2WaitState(); }
-            });
-            } else { enterEnd2WaitState(); }
+                let dropAnimName = (pendingGachaTimes === 1) ? "Drop_1" : "Drop_10_1";
+                if (gachaPlayerDocs) gachaPlayerDocs.animationState.setAnimation(0, dropAnimName, false);
+                
+                bookChangeTimer = setTimeout(() => {
+                    if (currentGachaState !== GachaState.SHOW_RESULT) {
+                        showGlowingBooks = true;
+                    }
+                }, 4500); 
+                
+                if (gachaPlayerErpin) {
+                    gachaPlayerErpin.animationState.setAnimation(0, "End_1", false);
+                    gachaPlayerErpin.animationState.addListener({
+                        complete: function(entry) { if (entry.animation.name === "End_1") enterEnd2WaitState(); }
+                    });
+                } else { enterEnd2WaitState(); }
             }
             
             function enterEnd2WaitState() {
@@ -592,12 +563,10 @@
                 
                 const closeupBox = document.getElementById('gachaSpineContainerCloseup');
                 
-                // 🌟 當前場景已經就緒，將大頭的物理顯示開啟 (解除 display: none)
                 closeupBox.style.visibility = 'visible';
                 closeupBox.style.display = 'block';
                 closeupBox.style.pointerEvents = "auto";
                 
-                // 讓瀏覽器消化完 display block 屬性後，再執行 opacity 淡入，保證平滑不閃現
                 requestAnimationFrame(() => {
                     closeupBox.style.opacity = '1';
                     if (gachaPlayerCloseup) gachaPlayerCloseup.skeleton.color.a = 1;
@@ -638,7 +607,6 @@
                 clearTimeout(bookChangeTimer); 
             
                 const closeupBox = document.getElementById('gachaSpineContainerCloseup');
-                // 🌟 結算瞬間，強制關閉大頭顯示，連透明過渡都不用等，直接消失！
                 closeupBox.style.transition = 'none';
                 closeupBox.style.display = 'none';
                 closeupBox.style.opacity = '0';
