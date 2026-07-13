@@ -696,6 +696,7 @@
             document.getElementById('gachaSpineContainerErpin').classList.remove('opacity-0');
             document.getElementById('gachaSpineContainerDocs').classList.remove('opacity-0');
             const closeupBox = document.getElementById('gachaSpineContainerCloseup');
+            closeupBox.classList.remove('is-visible'); // 確保一開始移除這 class
             closeupBox.classList.add('opacity-0');
             closeupBox.style.pointerEvents = 'none'; 
             
@@ -903,7 +904,8 @@
                 
                 // 1. 開始淡入大頭
             const closeupBox = document.getElementById('gachaSpineContainerCloseup');
-            closeupBox.classList.remove('opacity-0');
+            closeupBox.classList.add('is-visible');
+            // closeupBox.classList.remove('opacity-0');
             closeupBox.style.pointerEvents = "auto";
             
             // 🌟 核心：1星 ➡️ 2星 ➡️ 3星 漸進式反應燈光序列！
