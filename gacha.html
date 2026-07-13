@@ -234,10 +234,22 @@
                         else { allEldains.forEach(c => weightedPool.push({ char: c, weight: eldainBase, isRateUp: false })); }
                         let currentTotal3Weight = weightedPool.filter(p => p.char.star === 3).reduce((sum, p) => sum + p.weight, 0); let remaining3Prob = p3 - currentTotal3Weight;
                         if (normal3s.length > 0) {
-                            if (rateUpNormals.length > 0) {
-                                let baseNormalWeight = remaining3Prob / normal3s.length; let targetRateUpWeight = baseNormalWeight * 2; let totalRateUpWeight = targetRateUpWeight * rateUpNormals.length;
-                                let otherNormalWeight = Math.max(0, (remaining3Prob - totalRateUpWeight) / (normal3s.length - rateUpNormals.length));
-                                normal3s.forEach(c => { if (currentPool.rateUpChars.includes(c.name)) { weightedPool.push({ char: c, weight: targetRateUpWeight, isRateUp: true }); } else { weightedPool.push({ char: c, weight: otherNormalWeight, isRateUp: false }); } });
+                           if (rateUpNormals.length > 0) {
+    // 🌟 修正點：將特選角色機率強制設定為 0.8% (0.008)
+    let targetRateUpWeight = 0.008; 
+    let totalRateUpWeight = targetRateUpWeight * rateUpNormals.length;
+    
+    // 剩下的 3 星機率扣除艾爾丁與特選後，由其他常規 3 星平分
+    let otherNormalWeight = Math.max(0, (remaining3Prob - totalRateUpWeight) / (normal3s.length - rateUpNormals.length));
+    
+    normal3s.forEach(c => { 
+        if (currentPool.rateUpChars.includes(c.name)) { 
+            weightedPool.push({ char: c, weight: targetRateUpWeight, isRateUp: true }); 
+        } else { 
+            weightedPool.push({ char: c, weight: otherNormalWeight, isRateUp: false }); 
+        } 
+    });
+}
                             } else { let w = remaining3Prob / normal3s.length; normal3s.forEach(c => weightedPool.push({ char: c, weight: w, isRateUp: false })); }
                         }
                     }
