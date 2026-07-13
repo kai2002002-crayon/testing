@@ -76,30 +76,28 @@
             }
             //* 🌟 3星書本躺平式發光特效 */
             /* 🌟 3星書本「墊底」發光光暈 (橢圓形放射，完美模擬打在桌面上的光) */
-/* 🌟 3星書本「墊底」發光光暈 (強化版) */
-.book-star-glow {
-    position: absolute;
-    width: 200px;  /* 🌟 加大尺寸，確保光暈範圍超出書本 */
-    height: 100px; /* 🌟 加大尺寸 */
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    z-index: 28;   /* 🌟 直接在這裡鎖定層級 */
-    border-radius: 50%;
-    
-    /* 🌟 移除 mix-blend-mode: screen，避免被 WebGL 畫布吃掉透明度 */
-    /* 改用高純度白光與金光直接硬疊 */
-    background: radial-gradient(ellipse at center, 
-                rgba(255, 255, 255, 1) 0%, 
-                rgba(255, 215, 0, 0.95) 25%, 
-                rgba(255, 100, 200, 0.6) 55%, 
-                rgba(0, 200, 255, 0) 80%);
-    animation: pulseBookSurround 0.8s infinite alternate ease-in-out;
-}
-
-@keyframes pulseBookSurround {
-    0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.9; }
-    100% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; filter: brightness(1.3); }
-}
+            /* 🌟 3星書本「墊底」發光光暈 (強化版) */
+            .book-star-glow {
+            position: absolute;
+            width: 200px;  /* 🌟 加大尺寸，確保光暈範圍超出書本 */
+            height: 100px; /* 🌟 加大尺寸 */
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 28;   /* 🌟 直接在這裡鎖定層級 */
+            border-radius: 50%;
+            /* 🌟 移除 mix-blend-mode: screen，避免被 WebGL 畫布吃掉透明度 */
+            /* 改用高純度白光與金光直接硬疊 */
+            background: radial-gradient(ellipse at center, 
+            rgba(255, 255, 255, 1) 0%, 
+            rgba(255, 215, 0, 0.95) 25%, 
+            rgba(255, 100, 200, 0.6) 55%, 
+            rgba(0, 200, 255, 0) 80%);
+            animation: pulseBookSurround 0.8s infinite alternate ease-in-out;
+            }
+            @keyframes pulseBookSurround {
+            0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.9; }
+            100% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; filter: brightness(1.3); }
+            }
             /* 🌟 大頭檯面發光容器 (加高高度，讓光能往上暈染) */
             .table-glow-container {
             position: absolute;
@@ -179,21 +177,26 @@
                     <span class="ml-10">10次招募</span>
                 </button>
             </section>
-            <section id="gachaStage" class="hidden w-full max-w-4xl mx-auto mb-6 relative aspect-video bg-black rounded-2xl overflow-hidden shadow-xl border-4 border-amber-300 dark:border-gray-600">
-    <div id="gachaSpineContainerErpin" class="absolute inset-0 w-full h-full z-10 cursor-pointer transition-opacity duration-300"></div>
-    <div id="gachaSpineContainerCloseup" class="absolute inset-0 w-full h-full z-20 pointer-events-none opacity-0 transition-opacity duration-700"></div>
-    <div id="closeupTableGlow" class="table-glow-container"></div>
-    <!-- 🌟 把 bookGlowContainer 移到這裡，設定 style="z-index: 28" 讓它墊在書本底下 -->
-    <div id="bookGlowContainer" class="absolute inset-0 w-full h-full pointer-events-none" style="z-index: 28;"></div>
-    <div id="gachaSpineContainerDocs" class="absolute inset-0 w-full h-full z-30 pointer-events-none transition-opacity duration-300"></div>
-</section>
-            <section id="resultArea" class="bg-gradient-to-b from-white/95 to-amber-50/95 dark:from-gray-800/95 dark:to-gray-900/95 backdrop-blur-md rounded-2xl p-6 shadow-xl border-4 border-amber-300 dark:border-gray-600 min-h-[250px] flex flex-col items-center justify-center transition-all duration-300">
-                <p class="text-gray-400 dark:text-gray-500 font-bold mb-2">等待招募中...</p>
-            </section>
-            <section class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-2xl p-4 shadow border-2 border-gray-200/80 dark:border-gray-700">
-                <h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">📜 招募紀錄</h3>
-                <div id="historyArea" class="space-y-4 max-h-[500px] overflow-y-auto pr-2"></div>
-            </section>
+            <!-- ========================================================== -->
+            <!-- 全螢幕轉蛋動畫舞台與結果重疊區塊 -->
+            <!-- ========================================================== -->
+            <div class="relative w-full max-w-4xl mx-auto mb-6 aspect-video bg-white/90 dark:bg-gray-800/90 rounded-2xl shadow-xl border-4 border-amber-300 dark:border-gray-600 overflow-hidden">
+                <!-- 招募動畫舞台 (預設隱藏，開始時浮現) -->
+                <section id="gachaStage" class="absolute inset-0 w-full h-full bg-black transition-opacity duration-500 z-10 opacity-0 pointer-events-none">
+                    <div id="gachaSpineContainerErpin" class="absolute inset-0 w-full h-full z-10 cursor-pointer"></div>
+                    <div id="gachaSpineContainerCloseup" class="absolute inset-0 w-full h-full z-20 pointer-events-none opacity-0"></div>
+                    <div id="closeupTableGlow" class="table-glow-container z-[25]"></div>
+                    <!-- 書本底層發光容器 (z-28 墊在書本下方) -->
+                    <div id="bookGlowContainer" class="absolute inset-0 w-full h-full pointer-events-none z-[28]"></div>
+                    <div id="gachaSpineContainerDocs" class="absolute inset-0 w-full h-full z-30 pointer-events-none"></div>
+                </section>
+                <!-- 招募結果區塊 (預設顯示，用來放「等待招募中...」或最終結果) -->
+                <section id="resultArea" class="absolute inset-0 w-full h-full bg-gradient-to-b from-white/95 to-amber-50/95 dark:from-gray-800/95 dark:to-gray-900/95 backdrop-blur-md p-6 flex flex-col items-center justify-start overflow-y-auto transition-opacity duration-500 z-20">
+                    <div class="h-full w-full flex items-center justify-center min-h-[250px]">
+                        <p class="text-gray-400 dark:text-gray-500 font-bold">等待招募中...</p>
+                    </div>
+                </section>
+            </div>
         </div>
         <script>
             // ==========================
@@ -450,24 +453,33 @@
             let has3Star = false;
             let has2Star = false;
             let hasRateUp = false;
+            let isGachaRunning = false;
             
             function performGacha(times) {
-                pendingGachaTimes = times;
-                pendingGachaResults = [];
-                has3Star = false;
-                has2Star = false;
-                hasRateUp = false;
-                
-                for (let i = 0; i < times; i++) {
-                    let isGuaranteed = (times === 10 && i === 9);
-                    let result = pullOne(isGuaranteed);
-                    pendingGachaResults.push(result);
-                    
-                    if (result.char.star === 3) has3Star = true;
-                    if (result.char.star === 2) has2Star = true;
-                    if (result.isRateUp) hasRateUp = true;
-                }
-                startGachaAnimation();
+            if (isGachaRunning) return; // 🌟 如果動畫還在跑，直接阻擋點擊！
+            isGachaRunning = true;
+            
+            // 🌟 改變按鈕外觀，讓玩家知道按鈕鎖定了
+            document.querySelectorAll('.btn-gacha').forEach(btn => {
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+            });
+            
+            pendingGachaTimes = times;
+            pendingGachaResults = [];
+            has3Star = false;
+            has2Star = false;
+            hasRateUp = false;
+            
+            for (let i = 0; i < times; i++) {
+            let isGuaranteed = (times === 10 && i === 9);
+            let result = pullOne(isGuaranteed);
+            pendingGachaResults.push(result);
+            
+            if (result.char.star === 3) has3Star = true;
+            if (result.char.star === 2) has2Star = true;
+            if (result.isRateUp) hasRateUp = true;
+            }
+            startGachaAnimation();
             }
             // 🌟 專門用來生成「性格外框 + 種族背景 + 角色精靈圖」的 Icon
             function getGachaCharIconHTML(charData, isLarge = false) {
@@ -661,37 +673,36 @@
             
             function startGachaAnimation() {
             showGlowingBooks = false; 
-                clearTimeout(bookChangeTimer);
+            clearTimeout(bookChangeTimer); 
             
-            // 🌟 清除書本光效
             document.getElementById('bookGlowContainer').innerHTML = '';
             bookGlowElements = {};
             
-            // 🌟 1. 放在這裡：抽卡開始時，徹底清空大頭特效與計時器
             reactionLightTimers.forEach(t => clearTimeout(t));
             reactionLightTimers = [];
             const glowLayer = document.getElementById('closeupTableGlow');
-            glowLayer.className = 'table-glow-container';
+            glowLayer.className = 'table-glow-container z-[25]';
             glowLayer.innerHTML = '';
             
-            // 以下是原本的重置動畫舞台邏輯維持不變
-            document.getElementById('resultArea').classList.add('hidden');
             const stage = document.getElementById('gachaStage');
-            stage.classList.remove('hidden');
-            stage.style.display = 'block'; 
+            const resultArea = document.getElementById('resultArea');
+            
+            // 🌟 將動畫舞台調到最上層並淡入
+            stage.classList.remove('opacity-0', 'pointer-events-none', 'z-10');
+            stage.classList.add('opacity-100', 'pointer-events-auto', 'z-20');
+            
+            // 🌟 將結果區塊調到下層並淡出
+            resultArea.classList.remove('opacity-100', 'z-20');
+            resultArea.classList.add('opacity-0', 'pointer-events-none', 'z-10');
             
             document.getElementById('gachaSpineContainerErpin').classList.remove('opacity-0');
             document.getElementById('gachaSpineContainerDocs').classList.remove('opacity-0');
-            
             const closeupBox = document.getElementById('gachaSpineContainerCloseup');
             closeupBox.classList.add('opacity-0');
             closeupBox.style.pointerEvents = 'none'; 
             
-            stage.getBoundingClientRect(); 
-            
-            // 🌟 直接呼叫，啟動 Spine 載入與動畫
             initSpineStages();
-            stage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            stage.parentElement.scrollIntoView({ behavior: 'smooth', block: 'center' }); // 捲動到重疊容器
             }
             
             async function initSpineStages() {
@@ -770,45 +781,49 @@
                         player.skeleton.updateWorldTransform = function () {
                             origDocsUpdate.call(this); 
                             
-                            if (showGlowingBooks) {
-                                const vp = SPINE_CONFIG.viewport;
-                                const canvas = document.querySelector('#gachaSpineContainerDocs canvas');
-                                const glowContainer = document.getElementById('bookGlowContainer');
-                                if (!canvas) return;
-                                const rect = canvas.getBoundingClientRect();
-                                
-                                pendingGachaResults.forEach((result, idx) => {
-                                    if (result.char.star === 3) {
-                                        let slotName = (pendingGachaTimes === 1) ? 'Book_Drop_1' : `Book_Drop_${idx + 1}`;
-                                        try { this.setAttachment(slotName, `${slotName}_3star`); } catch(e) {}
-                                        
-                                        // 🌟 取得書本骨骼座標並映射
-                                        // 🌟 取得書本骨骼座標並映射
+                            // ...
+            if (showGlowingBooks) {
+            const vp = SPINE_CONFIG.viewport;
+            const canvas = document.querySelector('#gachaSpineContainerDocs canvas');
+            const glowContainer = document.getElementById('bookGlowContainer');
+            if (!canvas) return;
+            
+            // 🌟 改用 offsetWidth/Height 獲取穩定的畫布長寬
+            const canvasW = canvas.offsetWidth;
+            const canvasH = canvas.offsetHeight;
+            
+            pendingGachaResults.forEach((result, idx) => {
+            if (result.char.star === 3) {
+            let slotName = (pendingGachaTimes === 1) ? 'Book_Drop_1' : `Book_Drop_${idx + 1}`;
+            try { this.setAttachment(slotName, `${slotName}_3star`); } catch(e) {}
+            
             let slot = this.findSlot(slotName);
             if (slot && slot.bone) {
-            let bx = slot.bone.worldX;
-            let by = slot.bone.worldY;
-            
-            let percentX = (bx - vp.x) / vp.width;
-            let percentY = (by - vp.y) / vp.height;
-            
-            // 🌟 加入偏移量：往右推 35px，往上推 45px (教主可依視覺微調這兩個數字)
-            let pixelX = (percentX * rect.width) + 35; 
-            let pixelY = ((1 - percentY) * rect.height) - 45; 
-            
-            let glowDiv = bookGlowElements[idx];
-            if (!glowDiv) {
-            glowDiv = document.createElement('div');
-            glowDiv.className = 'book-star-glow';
-            glowContainer.appendChild(glowDiv);
-            bookGlowElements[idx] = glowDiv;
+                let bx = slot.bone.worldX;
+                let by = slot.bone.worldY;
+                
+                let percentX = (bx - vp.x) / vp.width;
+                let percentY = (by - vp.y) / vp.height;
+                
+                // 🌟 使用穩定的長寬計算
+                let pixelX = (percentX * canvasW) + 20; 
+                let pixelY = ((1 - percentY) * canvasH) - 10; 
+                
+                let glowDiv = bookGlowElements[idx];
+                if (!glowDiv) {
+                    glowDiv = document.createElement('div');
+                    // 🌟 強制賦予行內樣式確保不會失效
+                    glowDiv.style.cssText = `position: absolute; width: 140px; height: 80px; transform: translate(-50%, -50%); border-radius: 50%; pointer-events: none; mix-blend-mode: normal; background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.9) 0%, rgba(255, 215, 0, 0.8) 30%, rgba(255, 100, 200, 0.5) 60%, rgba(0, 200, 255, 0) 80%); z-index: 28; animation: pulseBookSurround 0.8s infinite alternate ease-in-out;`;
+                    glowContainer.appendChild(glowDiv);
+                    bookGlowElements[idx] = glowDiv;
+                }
+                glowDiv.style.left = pixelX + 'px';
+                glowDiv.style.top = pixelY + 'px';
             }
-            glowDiv.style.left = pixelX + 'px';
-            glowDiv.style.top = pixelY + 'px';
             }
-                                    }
-                                });
-                            }
+            });
+            }
+            // ...
                         };
                     }
                 });
@@ -833,48 +848,48 @@
             
             
             function triggerDropAndEnd1() {
-    currentGachaState = GachaState.END1_DROP;
-    let dropAnimName = (pendingGachaTimes === 1) ? "Drop_1" : "Drop_10_1";
-    if (gachaPlayerDocs) {
-        gachaPlayerDocs.animationState.setAnimation(0, dropAnimName, false);
-    }
-
-    // 🌟 核心修改：利用計時器讓書本在掉落途中提早變色！
-    bookChangeTimer = setTimeout(() => {
-        if (currentGachaState !== GachaState.SHOW_RESULT) {
+            currentGachaState = GachaState.END1_DROP;
+            let dropAnimName = (pendingGachaTimes === 1) ? "Drop_1" : "Drop_10_1";
+            if (gachaPlayerDocs) {
+            gachaPlayerDocs.animationState.setAnimation(0, dropAnimName, false);
+            }
+            
+            // 🌟 核心修改：利用計時器讓書本在掉落途中提早變色！
+            bookChangeTimer = setTimeout(() => {
+            if (currentGachaState !== GachaState.SHOW_RESULT) {
             showGlowingBooks = true;
             if (has3Star) {
                 document.getElementById('gachaSpineContainerDocs').classList.add('book-glow-3star');
             }
-        }
-    }, 3500); 
-
-    if (gachaPlayerErpin) {
-        gachaPlayerErpin.animationState.setAnimation(0, "End_1", false);
-        gachaPlayerErpin.animationState.addListener({
+            }
+            }, 3500); 
+            
+            if (gachaPlayerErpin) {
+            gachaPlayerErpin.animationState.setAnimation(0, "End_1", false);
+            gachaPlayerErpin.animationState.addListener({
             complete: function(entry) {
                 if (entry.animation.name === "End_1") {
                     enterEnd2WaitState();
                 }
             }
-        });
-    } else {
-        enterEnd2WaitState();
-    }
-}
+            });
+            } else {
+            enterEnd2WaitState();
+            }
+            }
             
-           function enterEnd2WaitState() {
-    currentGachaState = GachaState.END2_WAIT;
-    
-    if (gachaPlayerErpin) {
-        gachaPlayerErpin.animationState.clearTracks(); 
-        gachaPlayerErpin.animationState.setAnimation(0, "End_2", true);
-    }
-
-    const stage = document.getElementById('gachaStage');
-    activeEnd3Handler = onStageClickForEnd3;
-    stage.addEventListener('click', activeEnd3Handler);
-}
+            function enterEnd2WaitState() {
+            currentGachaState = GachaState.END2_WAIT;
+            
+            if (gachaPlayerErpin) {
+            gachaPlayerErpin.animationState.clearTracks(); 
+            gachaPlayerErpin.animationState.setAnimation(0, "End_2", true);
+            }
+            
+            const stage = document.getElementById('gachaStage');
+            activeEnd3Handler = onStageClickForEnd3;
+            stage.addEventListener('click', activeEnd3Handler);
+            }
             
             function onStageClickForEnd3() {
                 if (currentGachaState !== GachaState.END2_WAIT) return;
@@ -968,44 +983,43 @@
             }
             
                         function finishGachaAnimation() {
-    // 🌟 修正 Bug 關鍵 1：如果已經在展示結果狀態，就直接返回，絕對不執行第二次！
-    if (currentGachaState === GachaState.SHOW_RESULT) return;
-    
-    currentGachaState = GachaState.SHOW_RESULT;
-                            clearTimeout(bookChangeTimer);
-
-    // 🌟 修正 Bug 關鍵 2：徹底強制停止大頭動畫，並清除它的播放完畢監聽器
-    if (gachaPlayerCloseup && gachaPlayerCloseup.animationState) {
-        gachaPlayerCloseup.animationState.timeScale = 0;
-        gachaPlayerCloseup.animationState.clearListeners();
-    }
-
-    // 🌟 玩家跳過動畫時，掐斷所有還在等時間的發光特效
-    reactionLightTimers.forEach(t => clearTimeout(t));
-    reactionLightTimers = [];
-    const glowLayer = document.getElementById('closeupTableGlow');
-    glowLayer.className = 'table-glow-container';
-    glowLayer.innerHTML = '';
-
-    const stage = document.getElementById('gachaStage');
-    
-    if (activeEnd3Handler) {
-        stage.removeEventListener('click', activeEnd3Handler);
-        activeEnd3Handler = null;
-    }
-    if (activeSkipHandler) {
-        stage.removeEventListener('click', activeSkipHandler);
-        activeSkipHandler = null;
-    }
-    
-    // 隱藏舞台，顯示結果
-    stage.classList.add('hidden');
-    document.getElementById('resultArea').classList.remove('hidden');
-    
-    // 顯示結果與寫入歷史
-    showRealGachaResults();
-    addToHistory(pendingGachaResults, currentPool.name);
-}
+            if (currentGachaState === GachaState.SHOW_RESULT) return;
+            currentGachaState = GachaState.SHOW_RESULT;
+            
+            clearTimeout(bookChangeTimer); 
+            if (gachaPlayerCloseup && gachaPlayerCloseup.animationState) {
+            gachaPlayerCloseup.animationState.timeScale = 0;
+            gachaPlayerCloseup.animationState.clearListeners();
+            }
+            reactionLightTimers.forEach(t => clearTimeout(t));
+            reactionLightTimers = [];
+            
+            const glowLayer = document.getElementById('closeupTableGlow');
+            glowLayer.className = 'table-glow-container z-[25]';
+            glowLayer.innerHTML = '';
+            
+            const stage = document.getElementById('gachaStage');
+            const resultArea = document.getElementById('resultArea');
+            
+            if (activeEnd3Handler) { stage.removeEventListener('click', activeEnd3Handler); activeEnd3Handler = null; }
+            if (activeSkipHandler) { stage.removeEventListener('click', activeSkipHandler); activeSkipHandler = null; }
+            
+            // 🌟 動畫結束，顯示結果區塊 (拉回上層)
+            stage.classList.remove('opacity-100', 'pointer-events-auto', 'z-20');
+            stage.classList.add('opacity-0', 'pointer-events-none', 'z-10');
+            
+            resultArea.classList.remove('opacity-0', 'pointer-events-none', 'z-10');
+            resultArea.classList.add('opacity-100', 'z-20');
+            
+            showRealGachaResults();
+            addToHistory(pendingGachaResults, currentPool.name);
+            
+            // 🌟 結算完畢，解鎖招募按鈕！
+            isGachaRunning = false;
+            document.querySelectorAll('.btn-gacha').forEach(btn => {
+            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            });
+            }
             
             
             function setupCheekDragInteraction(player) {
