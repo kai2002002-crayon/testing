@@ -74,61 +74,55 @@
             animation: popInExaggerated 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
             opacity: 0; 
             }
-            /* 🌟 1. 3星書本「四周包圍式」發光特效 */
+            //* 🌟 3星書本躺平式發光特效 */
 .book-star-glow {
     position: absolute;
-    width: 70px;  /* 模擬書本的寬度 */
-    height: 95px; /* 模擬書本的高度 */
-    /* 將原點設為正中心，方便對準 */
-    transform: translate(-50%, -50%);
-    border-radius: 8px;
+    width: 60px;  
+    height: 85px; 
+    /* 利用 perspective 和 rotate 把它「壓扁並傾斜」，貼合桌面透視 */
+    transform: translate(-50%, -50%) perspective(300px) rotateX(60deg) rotateZ(-30deg);
+    border-radius: 4px;
     pointer-events: none;
     mix-blend-mode: screen;
-    /* 核心：利用四重 box-shadow 創造由內到外、包圍四周的強烈彩色光環！ */
     box-shadow: 0 0 15px 6px rgba(255, 215, 0, 0.95), 
                 0 0 30px 15px rgba(255, 100, 200, 0.7),
-                0 0 50px 25px rgba(0, 200, 255, 0.5),
-                inset 0 0 15px rgba(255, 255, 255, 0.9);
-    border: 2px solid rgba(255, 255, 255, 0.9);
+                0 0 50px 25px rgba(0, 200, 255, 0.5);
     animation: pulseBookSurround 0.8s infinite alternate ease-in-out;
 }
 @keyframes pulseBookSurround {
-    0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.8; }
-    100% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; filter: brightness(1.3); }
+    0% { opacity: 0.8; filter: brightness(1); }
+    100% { opacity: 1; filter: brightness(1.3); }
 }
 
-/* 🌟 2. 檯面發光防禦容器 (限制在下半部，絕不擋臉) */
+/* 🌟 大頭檯面發光容器 (加高高度，讓光能往上暈染) */
 .table-glow-container {
     position: absolute;
-    bottom: 0; left: 0; width: 100%; height: 45%;
+    bottom: 0; left: 0; width: 100%; height: 75%;
     overflow: hidden; pointer-events: none;
     mix-blend-mode: screen; opacity: 0;
-    transform: scaleY(0.4); transform-origin: bottom center;
-    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: opacity 0.4s ease;
     z-index: 25;
 }
 .table-glow-container.active {
-    opacity: 1; transform: scaleY(1);
+    opacity: 1; 
 }
 
-/* 2星 金黃打光 */
+/* 2星 底部向上放射金光 */
 .table-glow-2star {
     width: 100%; height: 100%;
-    background: radial-gradient(circle at 50% 100%, rgba(255, 215, 0, 1) 0%, rgba(255, 140, 0, 0.6) 50%, transparent 80%);
+    /* 半橢圓形：底部中心最強，向外與向上漸變成透明 */
+    background: radial-gradient(ellipse at bottom center, rgba(255, 215, 0, 1) 0%, rgba(255, 160, 0, 0.6) 40%, transparent 75%);
 }
 
-/* 3星 彩虹放射旋轉光 */
+/* 3星 彩色流動光 */
 .table-glow-3star {
-    position: absolute; bottom: -50%; left: -50%; width: 200%; height: 200%;
-    background: conic-gradient(from 0deg at 50% 50%, 
-        rgba(255,0,0,0.6), rgba(255,165,0,0.6), rgba(255,255,0,0.6), 
-        rgba(0,128,0,0.6), rgba(0,0,255,0.6), rgba(168,85,247,0.6), rgba(255,0,0,0.6));
-    -webkit-mask-image: radial-gradient(circle at 50% 50%, black 20%, transparent 70%);
-    animation: spinRainbow 8s linear infinite;
+    width: 100%; height: 100%;
+    background: radial-gradient(ellipse at bottom center, rgba(255, 50, 50, 0.9) 0%, rgba(255, 215, 0, 0.7) 30%, rgba(50, 255, 255, 0.4) 55%, transparent 75%);
+    animation: magicHue 3s linear infinite;
 }
-@keyframes spinRainbow {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+@keyframes magicHue {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
 }
 
             .btn-gacha { transition: transform 0.1s; }
@@ -898,32 +892,24 @@ if (slot && slot.bone) {
     reactionLightTimers = [];
 
     if (has3Star) {
-        // 【第一階段：1星反應】(0 ~ 650ms)：沒發光
-        
-        // 【第二階段：2星反應】(650ms 時)：亮起黃光！
+        // 【3星反應】: 一開始不亮 ➡️ 1秒時亮金光 ➡️ 2.5秒時轉彩光
         let t1 = setTimeout(() => {
             glowLayer.innerHTML = '<div class="table-glow-2star"></div>';
             glowLayer.classList.add('active');
-        }, 650);
+        }, 1000); 
         
-        // 【第三階段：3星反應】(1450ms 時)：狂暴切換成彩虹旋轉光！
         let t2 = setTimeout(() => {
             glowLayer.innerHTML = '<div class="table-glow-3star"></div>';
-            // 瞬間縮小再彈出，做出「光芒進化」的頓挫感
-            glowLayer.classList.remove('active');
-            setTimeout(() => glowLayer.classList.add('active'), 50);
-        }, 1450);
+        }, 2500); 
 
         reactionLightTimers.push(t1, t2);
 
     } else if (has2Star) {
-        // 【第一階段：1星反應】(0 ~ 650ms)：沒發光
-        
-        // 【第二階段：2星反應】(650ms 時)：亮起黃光並維持到結束！
+        // 【2星反應】: 一開始不亮 ➡️ 1秒時亮金光
         let t1 = setTimeout(() => {
             glowLayer.innerHTML = '<div class="table-glow-2star"></div>';
             glowLayer.classList.add('active');
-        }, 650);
+        }, 1000);
         
         reactionLightTimers.push(t1);
     }
@@ -945,6 +931,8 @@ if (slot && slot.bone) {
                 if (gachaPlayerCloseup) {
                     gachaPlayerCloseup.animationState.timeScale = 1; // 恢復播放
                     gachaPlayerCloseup.animationState.setAnimation(0, animName, false);
+
+                    gachaPlayerCloseup.animationState.clearListeners();
                     
                     // 播完大頭動作就進結算
                     gachaPlayerCloseup.animationState.addListener({
