@@ -312,6 +312,11 @@
 
             function startGachaAnimation() {
                 showGlowingBooks = false; clearTimeout(bookChangeTimer); 
+                // 1. 強制讓大頭 Spine 的 Canvas 消失
+    const closeupBox = document.getElementById('gachaSpineContainerCloseup');
+    closeupBox.style.display = 'none'; 
+    closeupBox.style.visibility = 'hidden'; // 加上 visibility
+
                 reactionLightTimers.forEach(t => clearTimeout(t)); reactionLightTimers = [];
                 const glowLayer = document.getElementById('closeupTableGlow'); glowLayer.className = 'table-glow-container'; glowLayer.innerHTML = '';
                 
@@ -415,16 +420,24 @@
                 isSpineInitialized = true; 
             }
 
-            function triggerDropAndEnd1() {
-                currentGachaState = GachaState.END1_DROP;
-                let dropAnimName = (pendingGachaTimes === 1) ? "Drop_1" : "Drop_10_1";
-                if (gachaPlayerDocs) gachaPlayerDocs.animationState.setAnimation(0, dropAnimName, false);
-                
-                bookChangeTimer = setTimeout(() => {
-                    if (currentGachaState !== GachaState.SHOW_RESULT) {
-                        showGlowingBooks = true; // 開啟 Spine 內部的原生呼吸燈運算
-                    }
-                }, 4500); 
+           function triggerDropAndEnd1() {
+    currentGachaState = GachaState.END1_DROP;
+    
+    // 🌟 強制重置所有書本為普通版
+    if (gachaPlayerDocs) {
+        pendingGachaResults.forEach((_, idx) => {
+            try { gachaPlayerDocs.skeleton.setAttachment(`Book_Drop_${idx + 1}`, `Book_Drop_${idx + 1}`); } catch(e) {}
+        });
+    }
+
+    let dropAnimName = (pendingGachaTimes === 1) ? "Drop_1" : "Drop_10_1";
+    if (gachaPlayerDocs) gachaPlayerDocs.animationState.setAnimation(0, dropAnimName, false);
+    
+    bookChangeTimer = setTimeout(() => {
+        if (currentGachaState !== GachaState.SHOW_RESULT) {
+            showGlowingBooks = true; // 這才開啟呼吸燈邏輯
+        }
+    }, 4500); 
 
                 if (gachaPlayerErpin) {
                     gachaPlayerErpin.animationState.setAnimation(0, "End_1", false);
@@ -450,13 +463,15 @@
                 const closeupBox = document.getElementById('gachaSpineContainerCloseup');
                 
                 // 🌟 當前場景已經就緒，將大頭的物理顯示開啟 (解除 display: none)
+                closeupBox.style.visibility = 'visible';
                 closeupBox.style.display = 'block';
                 closeupBox.style.pointerEvents = "auto";
                 
                 // 讓瀏覽器消化完 display block 屬性後，再執行 opacity 淡入，保證平滑不閃現
                 requestAnimationFrame(() => {
-                    closeupBox.style.transition = 'opacity 0.3s ease-in';
                     closeupBox.style.opacity = '1';
+                    if (gachaPlayerCloseup) gachaPlayerCloseup.skeleton.color.a = 1;
+                });
                 });
 
                 const glowLayer = document.getElementById('closeupTableGlow'); glowLayer.className = 'table-glow-container'; glowLayer.innerHTML = '';
