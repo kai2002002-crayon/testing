@@ -111,26 +111,26 @@
     <body class="p-3 sm:p-6 md:p-8 text-gray-800 dark:text-gray-100">
         <div class="max-w-4xl mx-auto space-y-6">
             <header class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-2xl p-4 sm:p-6 shadow border-2 border-amber-200/80 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
-    <h1 class="text-2xl sm:text-3xl font-bold text-amber-900 dark:text-amber-400 flex items-center gap-2">
-        <div class="sprite-base sprite-common sprite-Title_Rim shrink-0 scale-[0.5] sm:scale-[0.6] origin-left -ml-1"></div>
-        <span id="ui_title" class="-ml-2">嘟嘟臉角色招募模擬器</span>
-    </h1>
-    <div class="flex gap-2">
-        <select id="langSelect" onchange="changeLang(this.value)" class="px-3 py-1.5 bg-gray-200 dark:bg-gray-700 rounded-lg text-sm font-bold">
-            <option value="zh-TW">繁中</option>
-            <option value="ja">日本語</option>
-            <option value="en">English</option>
-        </select>
-        <button onclick="window.close()" id="ui_back" class="px-4 py-1.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg text-sm font-bold transition-colors">
-            返回記事本
-        </button>
-    </div>
-</header>
+                <h1 class="text-2xl sm:text-3xl font-bold text-amber-900 dark:text-amber-400 flex items-center gap-2">
+                    <div class="sprite-base sprite-common sprite-Title_Rim shrink-0 scale-[0.5] sm:scale-[0.6] origin-left -ml-1"></div>
+                    <span id="ui_title" class="-ml-2">嘟嘟臉角色招募模擬器</span>
+                </h1>
+                <div class="flex gap-2">
+                    <select id="langSelect" onchange="changeLang(this.value)" class="px-3 py-1.5 bg-gray-200 dark:bg-gray-700 rounded-lg text-sm font-bold border-none outline-none cursor-pointer">
+                        <option value="zh-TW">繁中</option>
+                        <option value="ja">日本語</option>
+                        <option value="en">English</option>
+                    </select>
+                    <button onclick="window.close()" id="ui_back" class="px-4 py-1.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg text-sm font-bold transition-colors shrink-0">
+                    返回記事本
+                    </button>
+                </div>
+            </header>
             <section class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-2xl p-4 shadow border-2 border-amber-200/80 dark:border-gray-700">
-                <h2 class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-3">📍 選擇招募池</h2>
+                <h2 id="ui_select_pool" class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-3">📍 選擇招募池</h2>
                 <div id="poolButtons" class="flex flex-wrap gap-2 mb-3"></div>
                 <div id="personalitySubMenu" class="hidden border-t border-dashed border-gray-300 dark:border-gray-600 pt-3 mt-1">
-                    <span class="text-xs font-bold text-gray-500 dark:text-gray-400 mr-2">🔮 指定性格：</span>
+                    <span id="ui_personality_hint" class="text-xs font-bold text-gray-500 dark:text-gray-400 mr-2">🔮 指定性格：</span>
                     <div class="inline-flex flex-wrap gap-2" id="personalityButtons"></div>
                 </div>
             </section>
@@ -139,13 +139,13 @@
                     <div class="absolute left-3 flex items-center justify-center pointer-events-none">
                         <span id="iconGacha1" class="sprite-base sprite-common sprite-Icon_GachaTicketHero scale-[0.4] origin-center"></span>
                     </div>
-                    <span class="ml-10">1次招募</span>
+                    <span id="ui_pull_1" class="ml-10">1次招募</span>
                 </button>
                 <button onclick="performGacha(10)" class="btn-gacha px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-lg border-b-4 border-amber-700 flex items-center gap-2 relative h-[50px]">
                     <div class="absolute left-3 flex items-center justify-center pointer-events-none">
                         <span id="iconGacha10" class="sprite-base sprite-common sprite-Icon_GachaTicketHero_10 scale-[0.4] origin-center"></span>
                     </div>
-                    <span class="ml-10">10次招募</span>
+                    <span id="ui_pull_10" class="ml-10">10次招募</span>
                 </button>
             </section>
             <div class="relative w-full max-w-4xl mx-auto mb-6 aspect-video bg-white/90 dark:bg-gray-800/90 rounded-2xl shadow-xl border-4 border-amber-300 dark:border-gray-600 overflow-hidden">
@@ -157,37 +157,36 @@
                 </section>
                 <section id="resultArea" class="absolute inset-0 w-full h-full bg-gradient-to-b from-white/95 to-amber-50/95 dark:from-gray-800/95 dark:to-gray-900/95 backdrop-blur-md p-2 sm:p-6 flex flex-col items-center justify-start overflow-y-auto transition-opacity duration-500 z-20">
                     <div class="h-full w-full flex items-center justify-center min-h-[250px]">
-                        <p class="text-gray-400 dark:text-gray-500 font-bold">等待招募中...</p>
+                        <p id="ui_waiting" class="text-gray-400 dark:text-gray-500 font-bold">等待招募中...</p>
                     </div>
                 </section>
             </div>
             <section class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-2xl p-4 shadow border-2 border-gray-200/80 dark:border-gray-700">
-                <h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">📜 招募紀錄</h3>
+                <h3 id="ui_history_title" class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">📜 招募紀錄</h3>
                 <div id="historyArea" class="space-y-4 max-h-[500px] overflow-y-auto pr-2"></div>
             </section>
         </div>
         <script>
             // 🌟 處理語言切換
-function changeLang(lang) {
-    localStorage.setItem('user_lang', lang);
-    location.reload(); // 簡單粗暴地重新載入以套用所有翻譯
-}
-
-// 頁面載入時自動設定預設語系
-window.addEventListener('load', () => {
-    const lang = localStorage.getItem('user_lang') || 'zh-TW';
-    document.getElementById('langSelect').value = lang;
-    
-    // 翻譯 UI 元素
-    document.getElementById('ui_title').innerText = t('menu_gacha');
-    document.getElementById('ui_back').innerText = t('ui_back');
-    document.getElementById('ui_select_pool').innerText = '📍 ' + t('ui_select_char').replace('👥', ''); // 可自訂
-    document.getElementById('ui_pull_1').innerText = '1' + t('quick_action_own'); // 依據字典調整
-    document.getElementById('ui_pull_10').innerText = '10' + t('quick_action_own');
-    document.getElementById('ui_history_title').innerText = '📜 ' + t('stats_stat');
-    
-    initUI();
-});
+            function changeLang(lang) {
+            localStorage.setItem('user_lang', lang);
+            location.reload();
+            }
+            
+            // 初始化多語系 UI
+            function initLangUI() {
+            const lang = localStorage.getItem('user_lang') || 'zh-TW';
+            document.getElementById('langSelect').value = lang;
+            document.title = t('gacha_simulator');
+            document.getElementById('ui_title').innerText = t('gacha_simulator');
+            document.getElementById('ui_back').innerText = t('ui_back');
+            document.getElementById('ui_select_pool').innerText = t('gacha_select_pool');
+            document.getElementById('ui_personality_hint').innerText = t('gacha_personality_hint');
+            document.getElementById('ui_pull_1').innerText = t('gacha_1_pull');
+            document.getElementById('ui_pull_10').innerText = t('gacha_10_pull');
+            document.getElementById('ui_waiting').innerText = t('gacha_waiting');
+            document.getElementById('ui_history_title').innerText = t('gacha_history');
+            }
             // ==========================
             // 系統與 Firebase 初始化
             // ==========================
@@ -232,25 +231,30 @@ window.addEventListener('load', () => {
                     currentRateUps = [...new Set(currentRateUps)];
                 }
                 let firstBtn = null;
-                currentRateUps.forEach(charName => {
-                    const btn = document.createElement('button'); btn.className = 'pool-btn px-3 py-1.5 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 font-bold text-sm text-gray-700 dark:text-gray-200';
-                    btn.innerText = `🎯 特選招募 - ${charName}`; btn.onclick = () => setPool('rateup', [charName], null, btn.innerText, btn);
-                    poolBtnContainer.appendChild(btn); if (!firstBtn) firstBtn = { btn, type: 'rateup', args: [[charName], null, btn.innerText] };
-                });
-                const normalBtn = document.createElement('button'); normalBtn.className = 'pool-btn px-3 py-1.5 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 font-bold text-sm text-gray-700 dark:text-gray-200';
-                normalBtn.innerText = `🌟 普通招募`; normalBtn.onclick = () => setPool('normal', [], null, normalBtn.innerText, normalBtn);
-                poolBtnContainer.appendChild(normalBtn); if (!firstBtn) firstBtn = { btn: normalBtn, type: 'normal', args: [[], null, normalBtn.innerText] };
-                
-                const pPoolBtn = document.createElement('button'); pPoolBtn.className = 'pool-btn px-3 py-1.5 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 font-bold text-sm text-gray-700 dark:text-gray-200';
-                pPoolBtn.innerText = `🔮 性格選擇招募`;
-                pPoolBtn.onclick = () => { document.getElementById('personalitySubMenu').classList.remove('hidden'); setPool('personality', [], personalities[0], `🔮 性格選擇招募 - ${personalities[0]}`, pPoolBtn); updatePersonalityBtns(personalities[0]); };
-                poolBtnContainer.appendChild(pPoolBtn);
-                personalities.forEach(p => {
-                    const btn = document.createElement('button'); btn.className = 'p-sub-btn px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-xs font-bold';
-                    btn.innerText = p; btn.onclick = () => { setPool('personality', [], p, `🔮 性格選擇招募 - ${p}`, pPoolBtn); updatePersonalityBtns(p); };
-                    pBtnContainer.appendChild(btn);
-                });
-                if (firstBtn) { setPool(firstBtn.type, firstBtn.args[0], firstBtn.args[1], firstBtn.args[2], firstBtn.btn); }
+            currentRateUps.forEach(charName => {
+            const btn = document.createElement('button'); btn.className = 'pool-btn px-3 py-1.5 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 font-bold text-sm text-gray-700 dark:text-gray-200';
+            btn.innerText = `${t('gacha_rate_up')} - ${t(charName)}`; 
+            btn.onclick = () => setPool('rateup', [charName], null, btn.innerText, btn);
+            poolBtnContainer.appendChild(btn); if (!firstBtn) firstBtn = { btn, type: 'rateup', args: [[charName], null, btn.innerText] };
+            });
+            
+            const normalBtn = document.createElement('button'); normalBtn.className = 'pool-btn px-3 py-1.5 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 font-bold text-sm text-gray-700 dark:text-gray-200';
+            normalBtn.innerText = t('gacha_normal'); 
+            normalBtn.onclick = () => setPool('normal', [], null, normalBtn.innerText, normalBtn);
+            poolBtnContainer.appendChild(normalBtn); if (!firstBtn) firstBtn = { btn: normalBtn, type: 'normal', args: [[], null, normalBtn.innerText] };
+            
+            const pPoolBtn = document.createElement('button'); pPoolBtn.className = 'pool-btn px-3 py-1.5 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 font-bold text-sm text-gray-700 dark:text-gray-200';
+            pPoolBtn.innerText = t('gacha_personality_pool');
+            pPoolBtn.onclick = () => { document.getElementById('personalitySubMenu').classList.remove('hidden'); setPool('personality', [], personalities[0], `${t('gacha_personality_pool')} - ${t(personalities[0])}`, pPoolBtn); updatePersonalityBtns(personalities[0]); };
+            poolBtnContainer.appendChild(pPoolBtn);
+            
+            personalities.forEach(p => {
+            const btn = document.createElement('button'); btn.className = 'p-sub-btn px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-xs font-bold';
+            btn.innerText = t(p); // 翻譯性格名稱
+            btn.onclick = () => { setPool('personality', [], p, `${t('gacha_personality_pool')} - ${t(p)}`, pPoolBtn); updatePersonalityBtns(p); };
+            pBtnContainer.appendChild(btn);
+            });
+            if (firstBtn) { setPool(firstBtn.type, firstBtn.args[0], firstBtn.args[1], firstBtn.args[2], firstBtn.btn); }
             }
             
             function setPool(type, rateUpChars, personality, poolName, activeElement) {
@@ -386,10 +390,10 @@ window.addEventListener('load', () => {
                     ? "grid grid-cols-5 gap-x-1 gap-y-3 sm:gap-x-4 sm:gap-y-4 w-full max-w-3xl mx-auto justify-items-center" 
                     : "flex justify-center w-full";
             
-                resultArea.innerHTML = `
-                    <h3 class="text-xl sm:text-2xl font-bold text-amber-900 dark:text-amber-400 mt-2 sm:mt-0 mb-4 w-full text-center drop-shadow-sm">🎉 招募結果 🎉</h3>
-                    <div id="gachaResultsGrid" class="${gridClass}"></div>
-                `;
+               resultArea.innerHTML = `
+            <h3 class="text-xl sm:text-2xl font-bold text-amber-900 dark:text-amber-400 mt-2 sm:mt-0 mb-4 w-full text-center drop-shadow-sm">${t('gacha_result_title')}</h3>
+            <div id="gachaResultsGrid" class="${gridClass}"></div>
+            `;
                 
                 const container = document.getElementById('gachaResultsGrid');
                 pendingGachaResults.forEach((result, idx) => {
@@ -475,10 +479,11 @@ window.addEventListener('load', () => {
             const paginationDiv = document.createElement('div');
             paginationDiv.className = 'flex justify-center items-center gap-4 mt-4 py-2 border-t border-gray-200 dark:border-gray-700';
             
+            let pageText = t('gacha_page').replace('{current}', currentHistoryPage).replace('{total}', totalPages);
             paginationDiv.innerHTML = `
-            <button onclick="changePage(-1)" ${currentHistoryPage === 1 ? 'disabled' : ''} class="px-3 py-1 bg-amber-500 text-white rounded disabled:opacity-30 transition-opacity">上一頁</button>
-            <span class="text-sm font-bold text-gray-600 dark:text-gray-300">第 ${currentHistoryPage} / ${totalPages} 頁</span>
-            <button onclick="changePage(1)" ${currentHistoryPage === totalPages ? 'disabled' : ''} class="px-3 py-1 bg-amber-500 text-white rounded disabled:opacity-30 transition-opacity">下一頁</button>
+            <button onclick="changePage(-1)" ${currentHistoryPage === 1 ? 'disabled' : ''} class="px-3 py-1 bg-amber-500 text-white rounded disabled:opacity-30 transition-opacity">${t('gacha_prev_page')}</button>
+            <span class="text-sm font-bold text-gray-600 dark:text-gray-300">${pageText}</span>
+            <button onclick="changePage(1)" ${currentHistoryPage === totalPages ? 'disabled' : ''} class="px-3 py-1 bg-amber-500 text-white rounded disabled:opacity-30 transition-opacity">${t('gacha_next_page')}</button>
             `;
             historyArea.appendChild(paginationDiv);
             }
@@ -499,8 +504,8 @@ window.addEventListener('load', () => {
             const poolBadge = document.createElement('div');
             poolBadge.className = 'text-[10px] font-bold text-white bg-gray-500 rounded px-1.5 py-0.5 self-start shadow-sm';
             
-            let timeStr = record.timestamp ? new Date(record.timestamp).toLocaleString() : (record.time || "未知時間");
-            let pName = record.poolName || record.pool || "未知招募";
+            let timeStr = record.timestamp ? new Date(record.timestamp).toLocaleString() : (record.time || t('gacha_unknown_time'));
+            let pName = record.poolName || record.pool || t('gacha_unknown_pool');
             poolBadge.innerText = `${timeStr} - ${pName}`;
             
             const iconRow = document.createElement('div');
@@ -827,7 +832,9 @@ window.addEventListener('load', () => {
                 }; canvas.addEventListener('pointerup', stopDrag); canvas.addEventListener('pointercancel', stopDrag);
             }
             
-            window.addEventListener('load', () => { initUI(); });
+            window.addEventListener('load', () => {
+                initLangUI(); 
+                initUI();
             window.onscroll = function() {
                 const btn = document.getElementById("backToTop");
                 if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) btn.style.display = "flex"; else btn.style.display = "none";
