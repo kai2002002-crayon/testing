@@ -280,7 +280,7 @@
                         
                         if (normal3s.length > 0) {
                             if (rateUpNormals.length > 0) {
-                                let targetRateUpWeight = 0.03 // 修正特選為精準 0.8%
+                                let targetRateUpWeight = 0.026 // 修正特選為精準 0.8%
                                 let totalRateUpWeight = targetRateUpWeight * rateUpNormals.length;
                                 let otherNormalWeight = Math.max(0, (remaining3Prob - totalRateUpWeight) / (normal3s.length - rateUpNormals.length));
                                 normal3s.forEach(c => { 
