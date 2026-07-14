@@ -111,14 +111,21 @@
     <body class="p-3 sm:p-6 md:p-8 text-gray-800 dark:text-gray-100">
         <div class="max-w-4xl mx-auto space-y-6">
             <header class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-2xl p-4 sm:p-6 shadow border-2 border-amber-200/80 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
-                <h1 class="text-2xl sm:text-3xl font-bold text-amber-900 dark:text-amber-400 flex items-center gap-2">
-                    <div class="sprite-base sprite-common sprite-Title_Rim shrink-0 scale-[0.5] sm:scale-[0.6] origin-left -ml-1"></div>
-                    <span class="-ml-2">嘟嘟臉角色招募模擬器</span>
-                </h1>
-                <button onclick="window.close()" class="px-4 py-1.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg text-sm font-bold transition-colors shrink-0">
-                返回記事本
-                </button>
-            </header>
+    <h1 class="text-2xl sm:text-3xl font-bold text-amber-900 dark:text-amber-400 flex items-center gap-2">
+        <div class="sprite-base sprite-common sprite-Title_Rim shrink-0 scale-[0.5] sm:scale-[0.6] origin-left -ml-1"></div>
+        <span id="ui_title" class="-ml-2">嘟嘟臉角色招募模擬器</span>
+    </h1>
+    <div class="flex gap-2">
+        <select id="langSelect" onchange="changeLang(this.value)" class="px-3 py-1.5 bg-gray-200 dark:bg-gray-700 rounded-lg text-sm font-bold">
+            <option value="zh-TW">繁中</option>
+            <option value="ja">日本語</option>
+            <option value="en">English</option>
+        </select>
+        <button onclick="window.close()" id="ui_back" class="px-4 py-1.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg text-sm font-bold transition-colors">
+            返回記事本
+        </button>
+    </div>
+</header>
             <section class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-2xl p-4 shadow border-2 border-amber-200/80 dark:border-gray-700">
                 <h2 class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-3">📍 選擇招募池</h2>
                 <div id="poolButtons" class="flex flex-wrap gap-2 mb-3"></div>
@@ -160,6 +167,27 @@
             </section>
         </div>
         <script>
+            // 🌟 處理語言切換
+function changeLang(lang) {
+    localStorage.setItem('user_lang', lang);
+    location.reload(); // 簡單粗暴地重新載入以套用所有翻譯
+}
+
+// 頁面載入時自動設定預設語系
+window.addEventListener('load', () => {
+    const lang = localStorage.getItem('user_lang') || 'zh-TW';
+    document.getElementById('langSelect').value = lang;
+    
+    // 翻譯 UI 元素
+    document.getElementById('ui_title').innerText = t('menu_gacha');
+    document.getElementById('ui_back').innerText = t('ui_back');
+    document.getElementById('ui_select_pool').innerText = '📍 ' + t('ui_select_char').replace('👥', ''); // 可自訂
+    document.getElementById('ui_pull_1').innerText = '1' + t('quick_action_own'); // 依據字典調整
+    document.getElementById('ui_pull_10').innerText = '10' + t('quick_action_own');
+    document.getElementById('ui_history_title').innerText = '📜 ' + t('stats_stat');
+    
+    initUI();
+});
             // ==========================
             // 系統與 Firebase 初始化
             // ==========================
