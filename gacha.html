@@ -90,20 +90,27 @@
             0% { background-position: 0 0; }
             100% { background-position: 400% 0; }
             }
+            /* 🌈 流動彩虹邊框動畫 */
             .rainbow-wrapper {
             position: relative;
             padding: 4px; /* 控制邊框粗細 */
-            border-radius: 12px;
+            border-radius: 12px; /* 🌟 圓角加大，對應 Tailwind 的 rounded-xl */
             background: linear-gradient(45deg, #ff0000, #ff7300, #ffeb00, #47e247, #00bbff, #0055ff, #8800ff, #ff0000);
             background-size: 400%;
             animation: rainbowMove 5s linear infinite;
-            display: inline-block;
+            /* 🌟 改用 Flex，確保內容在各裝置上完美置中且不被擠壓 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
             filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
             }
             .rainbow-content {
             display: block;
-            border-radius: 8px; /* 內層圓角 */
+            width: 100%;
+            height: 100%;
+            border-radius: 8px; /* 🌟 內層圓角縮小，完美貼合邊框不突出 (相當於 rounded-lg) */
             overflow: hidden;
+            position: relative;
             }
             #backToTop:hover { background-color: #d97706; transform: translateY(-5px); }
         </style>
@@ -369,10 +376,10 @@
                 // 在 getGachaCharIconHTML 函數內
             if (isLarge && isRateUp) {
             return `
-            <div class="rainbow-wrapper ${sizeClass} shadow-lg" style="filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));">
-            <div class="rainbow-content w-full h-full bg-[#fcf8f2] dark:bg-gray-800">
-                ${innerHTML}
-            </div>
+            <div class="rainbow-wrapper shrink-0 ${sizeClass} shadow-lg rounded-xl" style="filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));">
+                <div class="rainbow-content w-full h-full bg-[#fcf8f2] dark:bg-gray-800 rounded-lg relative overflow-hidden">
+                    ${innerHTML}
+                </div>
             </div>`;
             } else {
             // 一般角色的外框
@@ -779,57 +786,78 @@
             }
             
             function setupCheekDragInteraction(player) {
-                const canvas = document.querySelector('#gachaSpineContainerErpin canvas'); if (!canvas) return;
-                canvas.style.touchAction = 'none';
-                let activeInteractBone = null; let initialBoneX = 0, initialBoneY = 0; let initialBoneWorldX = 0, initialBoneWorldY = 0;
-                let isDragging = false; let startX = 0, startY = 0, lastMouseX = 0, lastMouseY = 0, dragDistance = 0; let hasTriggeredPull = false;
-                player._customDragTargetX = null; player._customDragTargetY = null; player._bouncingBone = null; player._bounceX = null; player._bounceY = null;
-                const origUpdateWorldTransform = player.skeleton.updateWorldTransform;
-                player.skeleton.updateWorldTransform = function () {
-                    if (activeInteractBone && player._customDragTargetX !== null) { activeInteractBone.x = player._customDragTargetX; activeInteractBone.y = player._customDragTargetY; }
-                    else if (player._bouncingBone) { player._bouncingBone.x = player._bounceX; player._bouncingBone.y = player._bounceY; }
-                    origUpdateWorldTransform.call(this);
-                };
-                function checkHitCheek(mouseX, mouseY) {
-                    const rect = canvas.getBoundingClientRect(); const camera = player.camera || (player.sceneRenderer && player.sceneRenderer.camera);
-                    let camX = camera ? camera.position.x - (camera.viewportWidth * camera.zoom) / 2 : SPINE_CONFIG.viewport.x;
-                    let camY = camera ? camera.position.y - (camera.viewportHeight * camera.zoom) / 2 : SPINE_CONFIG.viewport.y;
-                    let camW = camera ? camera.viewportWidth * camera.zoom : SPINE_CONFIG.viewport.width; let camH = camera ? camera.viewportHeight * camera.zoom : SPINE_CONFIG.viewport.height;
-                    const bone = player.skeleton.findBone("Character_Ball_Move");
-                    if (bone) {
-                        const boneCanvasX = ((bone.worldX - camX) / camW) * rect.width; const boneCanvasY = rect.height - ((bone.worldY - camY) / camH) * rect.height;
-                        if (Math.hypot(mouseX - boneCanvasX, mouseY - boneCanvasY) < 150) return bone;
-                    } return null;
-                }
-                canvas.addEventListener('pointerdown', (e) => {
-                    if (currentGachaState !== GachaState.ERPIN_IDLE) return;
-                    const rect = canvas.getBoundingClientRect(); const hitBone = checkHitCheek(e.clientX - rect.left, e.clientY - rect.top);
-                    if (hitBone) {
-                        isDragging = true; activeInteractBone = hitBone; startX = lastMouseX = e.clientX; startY = lastMouseY = e.clientY;
-                        dragDistance = 0; hasTriggeredPull = false; initialBoneX = activeInteractBone.x; initialBoneY = activeInteractBone.y;
-                        initialBoneWorldX = activeInteractBone.worldX; initialBoneWorldY = activeInteractBone.worldY; canvas.setPointerCapture(e.pointerId);
-                        playGachaSound('SFX_Gacha_PullCheek');
-                        const animNames = player.skeleton.data.animations.map(a => a.name); if (animNames.includes("Touch")) player.animationState.setAnimation(0, "Touch", true);
-                    }
-                });
-                canvas.addEventListener('pointermove', (e) => {
-                    if (!isDragging || !player.skeleton || !activeInteractBone) return;
-                    const rect = canvas.getBoundingClientRect(); const dx = e.clientX - lastMouseX; const dy = e.clientY - lastMouseY; dragDistance += Math.hypot(dx, dy);
-                    const camera = player.camera || (player.sceneRenderer && player.sceneRenderer.camera);
-                    let camW = camera ? camera.viewportWidth * camera.zoom : SPINE_CONFIG.viewport.width; let camH = camera ? camera.viewportHeight * camera.zoom : SPINE_CONFIG.viewport.height;
-                    let worldDx = (e.clientX - startX) * (camW / rect.width) * 1.3; let worldDy = -(e.clientY - startY) * (camH / rect.height) * 1.3; if (worldDx > 0) worldDx *= 0.1;
-                    let targetWorld = { x: initialBoneWorldX + worldDx, y: initialBoneWorldY + worldDy }; if (activeInteractBone.parent) activeInteractBone.parent.worldToLocal(targetWorld);
-                    let localDx = targetWorld.x - initialBoneX; let localDy = targetWorld.y - initialBoneY; let rawDistance = Math.hypot(localDx, localDy); const MAX_RADIUS = 55;
-                    if (rawDistance > 0) { let elasticDist = MAX_RADIUS * (1 - Math.exp(-rawDistance / (MAX_RADIUS * 1.2))); localDx = (localDx / rawDistance) * elasticDist; localDy = (localDy / rawDistance) * elasticDist; }
-                    player._customDragTargetX = initialBoneX + localDx; player._customDragTargetY = initialBoneY + localDy;
-                    if (dragDistance > 30) hasTriggeredPull = true; lastMouseX = e.clientX; lastMouseY = e.clientY;
-                });
-                const stopDrag = (e) => {
-                    if (!isDragging) return; isDragging = false; canvas.releasePointerCapture(e.pointerId);
-                    playGachaSound('SFX_Gacha_PullCheekEnd');
-                    if (hasTriggeredPull) { triggerDropAndEnd1(); } else { player._bouncingBone = activeInteractBone; player.animationState.setAnimation(0, "Idle", true); }
-                    activeInteractBone = null;
-                }; canvas.addEventListener('pointerup', stopDrag); canvas.addEventListener('pointercancel', stopDrag);
+            const canvas = document.querySelector('#gachaSpineContainerErpin canvas'); if (!canvas) return;
+            canvas.style.touchAction = 'none';
+            let activeInteractBone = null; let initialBoneX = 0, initialBoneY = 0; let initialBoneWorldX = 0, initialBoneWorldY = 0;
+            let isDragging = false; let startX = 0, startY = 0, lastMouseX = 0, lastMouseY = 0, dragDistance = 0; let hasTriggeredPull = false;
+            
+            // 初始化自訂目標
+            player._customDragTargetX = null; player._customDragTargetY = null; player._bouncingBone = null;
+            
+            const origUpdateWorldTransform = player.skeleton.updateWorldTransform;
+            player.skeleton.updateWorldTransform = function () {
+            if (activeInteractBone && player._customDragTargetX !== null) { 
+            activeInteractBone.x = player._customDragTargetX; 
+            activeInteractBone.y = player._customDragTargetY; 
+            }
+            origUpdateWorldTransform.call(this);
+            };
+            
+            function checkHitCheek(mouseX, mouseY) {
+            const rect = canvas.getBoundingClientRect(); const camera = player.camera || (player.sceneRenderer && player.sceneRenderer.camera);
+            let camX = camera ? camera.position.x - (camera.viewportWidth * camera.zoom) / 2 : SPINE_CONFIG.viewport.x;
+            let camY = camera ? camera.position.y - (camera.viewportHeight * camera.zoom) / 2 : SPINE_CONFIG.viewport.y;
+            let camW = camera ? camera.viewportWidth * camera.zoom : SPINE_CONFIG.viewport.width; let camH = camera ? camera.viewportHeight * camera.zoom : SPINE_CONFIG.viewport.height;
+            const bone = player.skeleton.findBone("Character_Ball_Move");
+            if (bone) {
+            const boneCanvasX = ((bone.worldX - camX) / camW) * rect.width; 
+            const boneCanvasY = rect.height - ((bone.worldY - camY) / camH) * rect.height;
+            // 🌟 修正 1：將判定半徑從 150 大幅縮小到 80，精準鎖定臉頰
+            if (Math.hypot(mouseX - boneCanvasX, mouseY - boneCanvasY) < 80) return bone;
+            } return null;
+            }
+            
+            canvas.addEventListener('pointerdown', (e) => {
+            if (currentGachaState !== GachaState.ERPIN_IDLE) return;
+            const rect = canvas.getBoundingClientRect(); const hitBone = checkHitCheek(e.clientX - rect.left, e.clientY - rect.top);
+            if (hitBone) {
+            isDragging = true; activeInteractBone = hitBone; startX = lastMouseX = e.clientX; startY = lastMouseY = e.clientY;
+            dragDistance = 0; hasTriggeredPull = false; initialBoneX = activeInteractBone.x; initialBoneY = activeInteractBone.y;
+            initialBoneWorldX = activeInteractBone.worldX; initialBoneWorldY = activeInteractBone.worldY; canvas.setPointerCapture(e.pointerId);
+            
+            // 🌟 修正 2：每次點擊時，強制清空殘留的拉扯目標，防止臉頰無故掉落
+            player._customDragTargetX = null; player._customDragTargetY = null;
+            
+            playGachaSound('SFX_Gacha_PullCheek');
+            const animNames = player.skeleton.data.animations.map(a => a.name); 
+            if (animNames.includes("Touch")) player.animationState.setAnimation(0, "Touch", true);
+            }
+            });
+            
+            canvas.addEventListener('pointermove', (e) => {
+            if (!isDragging || !player.skeleton || !activeInteractBone) return;
+            const rect = canvas.getBoundingClientRect(); const dx = e.clientX - lastMouseX; const dy = e.clientY - lastMouseY; dragDistance += Math.hypot(dx, dy);
+            const camera = player.camera || (player.sceneRenderer && player.sceneRenderer.camera);
+            let camW = camera ? camera.viewportWidth * camera.zoom : SPINE_CONFIG.viewport.width; let camH = camera ? camera.viewportHeight * camera.zoom : SPINE_CONFIG.viewport.height;
+            let worldDx = (e.clientX - startX) * (camW / rect.width) * 1.3; let worldDy = -(e.clientY - startY) * (camH / rect.height) * 1.3; if (worldDx > 0) worldDx *= 0.1;
+            let targetWorld = { x: initialBoneWorldX + worldDx, y: initialBoneWorldY + worldDy }; if (activeInteractBone.parent) activeInteractBone.parent.worldToLocal(targetWorld);
+            let localDx = targetWorld.x - initialBoneX; let localDy = targetWorld.y - initialBoneY; let rawDistance = Math.hypot(localDx, localDy); const MAX_RADIUS = 55;
+            if (rawDistance > 0) { let elasticDist = MAX_RADIUS * (1 - Math.exp(-rawDistance / (MAX_RADIUS * 1.2))); localDx = (localDx / rawDistance) * elasticDist; localDy = (localDy / rawDistance) * elasticDist; }
+            
+            player._customDragTargetX = initialBoneX + localDx; player._customDragTargetY = initialBoneY + localDy;
+            if (dragDistance > 30) hasTriggeredPull = true; lastMouseX = e.clientX; lastMouseY = e.clientY;
+            });
+            
+            const stopDrag = (e) => {
+            if (!isDragging) return; isDragging = false; canvas.releasePointerCapture(e.pointerId);
+            playGachaSound('SFX_Gacha_PullCheekEnd');
+            if (hasTriggeredPull) { triggerDropAndEnd1(); } else { player._bouncingBone = activeInteractBone; player.animationState.setAnimation(0, "Idle", true); }
+            
+            // 🌟 修正 3：放開臉頰時，也確保清空目標
+            player._customDragTargetX = null; player._customDragTargetY = null;
+            activeInteractBone = null;
+            }; 
+            canvas.addEventListener('pointerup', stopDrag); canvas.addEventListener('pointercancel', stopDrag);
             }
             
             window.addEventListener('load', () => { 
