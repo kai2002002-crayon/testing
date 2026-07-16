@@ -21,8 +21,8 @@ const characterSkills = [
     "skills": {
       "zh-TW": {
         "normalAttack": {
-          "basic": " []",
-          "enhanced": " []"
+          "basic": "對目標快速揮動雙劍、造成2次物理傷害,第二次攻擊造成更高額的傷害。 [物理傷害:40%] [第2擊物理傷害:60%]",
+          "enhanced": "每三次攻擊後,對目標擊敲雙劍向周圍揮舞,造成範圍物理傷害並恢復SP,最後一次攻擊造成更高額的傷害。 [物理傷害:60%] [第2次物理傷害:90%] [每命中1名敵人的SP恢復量:120]"
         },
         "normalSkill": {
           "name": "音速斬擊",
@@ -36,8 +36,8 @@ const characterSkills = [
           "cooldown": "20秒"
         },
         "passiveSkill": {
-          "desc": "",
-          "stats": [""]
+          "desc": "提升攻擊速度。",
+          "stats": ["攻擊速度提升:42%"]
         }
       },
       "ja": {
