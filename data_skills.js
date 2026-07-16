@@ -94,15 +94,15 @@ const characterSkills = [
           "enhanced": " []"
         },
         "normalSkill": {
-          "name": "",
-          "desc": "",
-          "stats": [""]
+          "name": "鑽石穿刺",
+          "desc": "對3名敵人突起尖銳的鑽石，造成魔法傷害並給予灼痛效果。",
+          "stats": ["灼痛:每秒受到傷害，並使恢復量減少。", "魔法傷害:475%", "灼痛持續時間:8秒。"]
         },
         "ultimateSkill": {
-          "name": "",
-          "desc": "",
-          "stats": [""],
-          "cooldown": "秒"
+          "name": "達雅哈……………………哈啾!",
+          "desc": "對敵人打噴哩,造成範圍魔法傷害。",
+          "stats": ["魔法傷害:1050%。"],
+          "cooldown": "40秒"
         },
         "passiveSkill": {
           "desc": "",
