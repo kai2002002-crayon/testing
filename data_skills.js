@@ -16,6 +16,75 @@ const CHAR_BACKGROUNDS = {
 
 const characterSkills = [
   {
+    "name": "提格",
+    "attribute": "物理",
+    "skills": {
+      "zh-TW": {
+        "normalAttack": {
+          "basic": " []",
+          "enhanced": " []"
+        },
+        "normalSkill": {
+          "name": "音速斬擊",
+          "desc": "瞬間向前突進並造成範圍物理傷害後，回到原位。 若目標為使者，則追加依最大HP比例計算的額外傷害。",
+          "stats": ["物理傷害:672%", "使者最大HP比例傷害:最大HP的20%"]
+        },
+        "ultimateSkill": {
+          "name": "超載",
+          "desc": "對敵人揮出劍氣,造成範圍物理傷害。在一定時間內，攻擊速度與普通攻擊的傷害增加。此效果無法解除。",
+          "stats": ["物理傷害:1260%", "攻擊速度提升:150%", "普通攻擊傷害增加:100%", "攻擊速度提升持續時間:10秒""],
+          "cooldown": "20秒"
+        },
+        "passiveSkill": {
+          "desc": "",
+          "stats": [""]
+        }
+      },
+      "ja": {
+        "normalAttack": {
+          "basic": " []",
+          "enhanced": "[]"
+        },
+        "normalSkill": {
+          "name": "",
+          "desc": "",
+          "stats": [""]
+        },
+        "ultimateSkill": {
+          "name": "",
+          "desc": "",
+          "stats": [""],
+          "cooldown": "s"
+        },
+        "passiveSkill": {
+          "desc": "ウ",
+          "stats": [""]
+        }
+      },
+      "en": {
+        "normalAttack": {
+          "basic": " []",
+          "enhanced": " []"
+        },
+        "normalSkill": {
+          "name": "",
+          "desc": "",
+          "stats": [""]
+        },
+        "ultimateSkill": {
+          "name": "",
+          "desc": "",
+          "stats": [""],
+          "cooldown": "s"
+        },
+        "passiveSkill": {
+          "desc": "",
+          "stats": [""]
+        }
+      },
+    }
+  },
+  {
     "name": "達雅",
     "attribute": "魔法",
     "skills": {
