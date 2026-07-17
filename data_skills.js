@@ -63,23 +63,23 @@ const characterSkills = [
       },
       "en": {
         "normalAttack": {
-          "basic": " []",
-          "enhanced": " []"
+          "basic": "Swiftly swings her dual swords and deals Physical Damage to an enemy. [Physical DMG: 40%] [Two-Hit Physical DMG: 60%]",
+          "enhanced": "Strikes down with her dual swords, swings them around her, and deals AoE Physical Damage. Recovers SP proportionally to the number of enemies that have taken damage. [Physical DMG: 60%] [Two-Hit Physical DMG: 90%] [SP Recovery per Enemy: 120]"
         },
         "normalSkill": {
-          "name": "",
-          "desc": "",
-          "stats": [""]
+          "name": "Sonic Blade",
+          "desc": "Instantly advances forward, deals AoE Physical Damage, then returns to her original position.",
+          "stats": ["Physical DMG: 672%"]
         },
         "ultimateSkill": {
-          "name": "",
-          "desc": "",
-          "stats": [""],
-          "cooldown": "s"
+          "name": "Overdrive",
+          "desc": "Unleashes sword energy to the enemy, deals AoE Physical Damage nearby, and increases Attack Speed, Normal Attack, and Enhanced Attack Damage for a set period of time. This effect cannot be removed.",
+          "stats": ["Physical DMG: 1260%", "ATK SPD Increase: 150%", "Normal Attack DMG: 100%", "ATK SPD Increase Duration: 10s"],
+          "cooldown": "20s"
         },
         "passiveSkill": {
-          "desc": "",
-          "stats": [""]
+          "desc": "ATK SPD Increase",
+          "stats": ["ATK SPD Increase: 42%"]
         }
       },
     }
