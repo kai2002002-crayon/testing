@@ -114,7 +114,7 @@ const ASIDE_DATA = {
             },
             2: { 
                 icon: "", 
-                name: { zh: "", ja: "ダイヤ･･････くちゅ!", en: "Daya-choo!" }, 
+                name: { zh: "鑽石･･････啾！", ja: "ダイヤ･･････くちゅ!", en: "Daya-choo!" }, 
                 desc: { zh: "普通技能命中時恢復100%SP。(最多觸發2次) 高級技能冷卻時間減少，並追加昏迷效果。", ja: "低学年スキルが命中すると、SPを100%回復する。(最大連続使用回数:2回)高学年スキルのクールタイムが減少し、気絶効果が追加される。", en: "Recovers 100% SP when Freshman Skill hits. (Max repeat uses: 2) Reduces Senior Skill Cooldown and adds Stun," }, 
                 effects: { zh: ["昏迷:無法進行任何行動。", "冷卻時間減少:10秒", "昏迷持續時間:2.5秒"], ja: ["気絕:行動不能状態になる。", "クールタイム減少:10秒", "気絶の持続時間:2.5秒"], en: ["Stun: Becomes unable to act.", "Cooldown Reduction: 10s", "Stun Duration: 2.5s"] } 
             },
