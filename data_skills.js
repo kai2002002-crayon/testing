@@ -132,23 +132,23 @@ const characterSkills = [
       },
       "en": {
         "normalAttack": {
-          "basic": " []",
-          "enhanced": " []"
+          "basic": "Throws 3 diamonds, dealing Magical Damage to the enemy. The final hit deals greater damage. [Magical DMG: 72%] [Final Hit Magical DMG: 48%]",
+          "enhanced": "At a set chance, throws a big diamond, dealing Magical Damage to the enemy and applying the Stinging debuff on them. [Stinging: Reduces Recovery Amount and applies damage every second] [Magical DMG: 240%] [Stinging Duration: 4s]"
         },
         "normalSkill": {
-          "name": "",
-          "desc": "",
-          "stats": [""]
+          "name": "Diamond Pierce",
+          "desc": "Calls forth sharp diamonds targeting 3 enemies, deals Magical Damage and applies the Stinging debuff on them.",
+          "stats": ["Stinging: Reduces Recovery Amount and applies damage every second.", "Magical DMG: 475%", "Stinging Duration: 8s"]
         },
         "ultimateSkill": {
-          "name": "",
-          "desc": "",
-          "stats": [""],
-          "cooldown": "s"
+          "name": "Daya-choo!",
+          "desc": "Sneezes and deals AoE Magical Damage to enemies,",
+          "stats": ["Magical DMG: 1050%"],
+          "cooldown": "40s"
         },
         "passiveSkill": {
-          "desc": "",
-          "stats": [""]
+          "desc": "Increase Skill Damage of Back Row allies",
+          "stats": ["Increase Skill Damage: 34%"]
         }
       },
     }
