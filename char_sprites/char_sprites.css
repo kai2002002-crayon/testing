@@ -24,6 +24,7 @@
 [class*="_Chloe"] { background-image: url('Chloesheet.png'); }
 [class*="_Chopi"] { background-image: url('Chopisheet.png'); }
 [class*="_Cuee"] { background-image: url('Cueesheet.png'); }
+[class*="_Daya"] { background-image: url('Dayasheet.png'); }
 [class*="_Diana"] { background-image: url('Dianasheet.png'); }
 [class*="_Ed"] { background-image: url('Edsheet.png'); }
 [class*="_Elena"] { background-image: url('Elenasheet.png'); }
@@ -73,11 +74,12 @@
 [class*="_Speaki"] { background-image: url('Speakisheet.png'); }
 [class*="_Sylla"] { background-image: url('Syllasheet.png'); }
 [class*="_Taida"] { background-image: url('Taidasheet.png'); }
+[class*="_Tig"] { background-image: url('Tigsheet.png'); }
 [class*="_Ui"] { background-image: url('Uisheet.png'); }
 [class*="_Velvet"] { background-image: url('Velvetsheet.png'); }
 [class*="_Veroo"] { background-image: url('Veroosheet.png'); }
 /* 修正大小寫通用 */
-[class*="_Vivi"], [class*="_vivi"] { background-image: url('Vivisheet.png'); }
+[class*="_Vivi"] { background-image: url('Vivisheet.png'); }
 [class*="_xXionx"] { background-image: url('xXionxsheet.png'); }
 [class*="_Yomi"] { background-image: url('Yomisheet.png'); }
 [class*="_Yumimi"] { background-image: url('Yumimisheet.png'); }
@@ -225,14 +227,24 @@
 .sprite-Icon_PassiveSkill_Cuee { width: 64px; height: 64px; background-position: -5px -79px; }
 
 /* --- Diana --- */
+.sprite-AsideIcon_Daya { width: 256px; height: 256px; background-position: -5px -5px; }
+.sprite-Aside_Skill_Daya_1 { width: 64px; height: 64px; background-position: -5px -271px; }
+.sprite-Aside_Skill_Daya_2 { width: 64px; height: 64px; background-position: -5px -345px; }
+.sprite-Aside_Skill_Daya_3 { width: 64px; height: 64px; background-position: -5px -419px; }
+.sprite-CG_Schedule_Daya { width: 1020px; height: 510px; background-position: -5px -493px; }
+.sprite-Icon_NormalSkill_Daya { width: 64px; height: 64px; background-position: -5px -1013px; }
+.sprite-Icon_PassiveSkill_Daya { width: 64px; height: 64px; background-position: -5px -1087px; }
+.sprite-PresentList_Daya { width: 201px; height: 220px; background-position: -5px -1161px; }
+
+/* --- Daya --- */
 .sprite-AsideIcon_Diana { width: 256px; height: 256px; background-position: -5px -5px; }
 .sprite-Aside_Skill_Diana_1 { width: 64px; height: 64px; background-position: -5px -271px; }
 .sprite-Aside_Skill_Diana_2 { width: 64px; height: 64px; background-position: -5px -345px; }
 .sprite-Aside_Skill_Diana_3 { width: 64px; height: 64px; background-position: -5px -419px; }
-.sprite-CG_Schedule_Diana { width: 1020px; height: 510px; background-position: -5px -493px; }
-.sprite-Icon_NormalSkill_Diana { width: 64px; height: 64px; background-position: -5px -1013px; }
-.sprite-Icon_PassiveSkill_Diana { width: 64px; height: 64px; background-position: -5px -1087px; }
-.sprite-PresentList_Diana { width: 201px; height: 220px; background-position: -5px -1161px; }
+.sprite-CG_Schedule_Diana { width: 1024px; height: 512px; background-position: -5px -493px; }
+.sprite-Icon_NormalSkill_Diana { width: 64px; height: 64px; background-position: -5px -1015px; }
+.sprite-Icon_PassiveSkill_Diana { width: 64px; height: 64px; background-position: -5px -1089px; }
+.sprite-PresentList_Diana { width: 164px; height: 240px; background-position: -5px -1163px; }
 
 /* --- Ed --- */
 .sprite-AsideIcon_Ed { width: 256px; height: 256px; background-position: -5px -5px; }
@@ -637,6 +649,16 @@
 .sprite-Icon_NormalSkill_Taida { width: 64px; height: 64px; background-position: -5px -525px; }
 .sprite-Icon_PassiveSkill_Taida { width: 64px; height: 64px; background-position: -5px -599px; }
 .sprite-PresentList_Taida { width: 235px; height: 217px; background-position: -5px -673px; }
+
+/* --- Tig --- */
+.sprite-AsideIcon_Tig { width: 256px; height: 256px; background-position: -5px -5px; }
+.sprite-Aside_Skill_Tig_1 { width: 64px; height: 64px; background-position: -5px -271px; }
+.sprite-Aside_Skill_Tig_2 { width: 64px; height: 64px; background-position: -5px -345px; }
+.sprite-Aside_Skill_Tig_3 { width: 64px; height: 64px; background-position: -5px -419px; }
+.sprite-CG_Schedule_Tig { width: 1024px; height: 512px; background-position: -5px -493px; }
+.sprite-Icon_NormalSkill_Tig { width: 64px; height: 64px; background-position: -5px -1015px; }
+.sprite-Icon_PassiveSkill_Tig { width: 64px; height: 64px; background-position: -5px -1089px; }
+.sprite-PresentList_Tig { width: 239px; height: 142px; background-position: -5px -1163px; }
 
 /* --- Ui --- */
 .sprite-AsideIcon_Ui { width: 256px; height: 256px; background-position: -5px -5px; }
