@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <meta name="referrer" content="no-referrer-when-downgrade">
-
+        
         <title>嘟嘟臉金蠟筆記事本</title>
         <meta name="description" content="《Trickcal: Chibi Go》嘟嘟臉金蠟筆記事本！提供最新的《嘟嘟臉惡作劇》(Trickcal Revive / トリカル) 角色圖鑑、金蠟筆與技能資料。The best Trickcal Revive Crayon Planner & Character Database. トリカル 最強キャラ・クレヨン攻略データベース。">
         <link rel="icon" href="https://i.postimg.cc/mkfSTq5k/Favicon.png" type="image/png">
@@ -361,7 +361,7 @@
         <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-[2999] hidden backdrop-blur-sm transition-opacity opacity-0" onclick="toggleSidebar()"></div>
         <div id="sidebarMenu" class="fixed top-0 left-0 h-full w-[25vw] min-w-[240px] max-w-[320px] bg-[#fcf8f2] dark:bg-gray-900 z-[3000] shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out border-r border-amber-200 dark:border-gray-700 flex flex-col pt-14 sm:pt-16">
             <div class="px-5 pb-4 mb-2 border-b border-amber-200 dark:border-gray-700 flex justify-between items-center">
-                <span class="font-bold text-lg text-amber-900 dark:text-amber-400">系統選單</span>
+                <span class="font-bold text-lg text-amber-900 dark:text-amber-400" data-lang-key="menu_system_title">系統選單</span>
                 <button onclick="toggleSidebar()" class="text-gray-400 hover:text-red-500 transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -497,37 +497,36 @@
                             <button id="btn_disp_3" onclick="setDisplayMode('3')" class="whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-medium transition bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600" data-lang-key="filter_btn_show_3">僅第三層</button>
                         </div>
                     </div>
-                    <div class="flex flex-col sm:flex-row items-start gap-2 border-t border-dashed border-gray-100 dark:border-gray-700 pt-2 w-full">
-                        <span class="font-bold text-blue-700 dark:text-blue-400 shrink-0 pt-1 flex items-center gap-0.5 whitespace-nowrap" data-lang-key="filter_display_mode">👁️ 版面顯示：</span>
-                        <div id="filter_displayMode" class="flex flex-wrap gap-1.5 flex-1 w-full">
-                            </div>
-                    </div>
-
                     <div class="flex flex-col sm:flex-row items-start gap-2 border-t border-dashed border-gray-100 dark:border-gray-700 pt-3 w-full mt-1">
-                        <span class="font-bold text-red-700 dark:text-red-400 shrink-0 pt-1 flex items-center gap-0.5 whitespace-nowrap">⚡ 快捷操作：</span>
-                        <div class="flex flex-col gap-2 flex-1 w-full">
+                        <span class="font-bold text-red-700 dark:text-red-400 shrink-0 pt-1 flex items-center gap-0.5 whitespace-nowrap cursor-pointer select-none" onclick="toggleQuickAction()">
+                        <span data-lang-key="quick_action_title">⚡ 快捷操作</span> <span id="quickActionToggleIcon" class="text-[10px] ml-1 opacity-80">▶</span>
+                        </span>
+                        <div id="quickActionBody" class="hidden flex-col gap-2 flex-1 w-full">
+                            <!-- 全體角色 -->
                             <div class="flex flex-wrap items-center gap-1.5 w-full">
-                                <span class="text-[11px] text-gray-400 dark:text-gray-500 font-medium bg-gray-50 dark:bg-gray-700 px-1 rounded whitespace-nowrap mt-0.5">全體角色:</span>
-                                <button onclick="toggleAllCharacters(true)" class="whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-bold transition bg-green-500 text-white border-green-600 hover:bg-green-600 shadow-sm">一鍵全部擁有</button>
-                                <button onclick="toggleAllCharacters(false)" class="whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-bold transition bg-gray-400 text-white border-gray-500 hover:bg-gray-500 shadow-sm">一鍵全部取消</button>
+                                <span class="text-[11px] text-gray-400 dark:text-gray-500 font-medium bg-gray-50 dark:bg-gray-700 px-1 rounded whitespace-nowrap mt-0.5" data-lang-key="quick_action_all_chars">全體角色:</span>
+                                <button onclick="toggleAllCharacters(true)" class="whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-bold transition bg-green-500 text-white border-green-600 hover:bg-green-600 shadow-sm" data-lang-key="quick_action_own_all">一鍵全部擁有</button>
+                                <button onclick="toggleAllCharacters(false)" class="whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-bold transition bg-gray-400 text-white border-gray-500 hover:bg-gray-500 shadow-sm" data-lang-key="quick_action_cancel_all">一鍵全部取消</button>
                             </div>
+                            <!-- 填滿蠟筆 -->
                             <div class="flex flex-wrap items-center gap-1.5 w-full">
-                                <span class="text-[11px] text-gray-400 dark:text-gray-500 font-medium bg-gray-50 dark:bg-gray-700 px-1 rounded whitespace-nowrap mt-0.5">填滿蠟筆:</span>
-                                <button onclick="toggleAllGrids('all', true)" class="whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-bold transition bg-amber-500 text-white border-amber-600 hover:bg-amber-600 shadow-sm">填滿全層</button>
-                                <button onclick="toggleAllGrids(1, true)" class="whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-bold transition bg-amber-100 text-amber-800 border-amber-300 hover:bg-amber-200 shadow-sm">第一層</button>
-                                <button onclick="toggleAllGrids(2, true)" class="whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-bold transition bg-orange-100 text-orange-800 border-orange-300 hover:bg-orange-200 shadow-sm">第二層</button>
-                                <button onclick="toggleAllGrids(3, true)" class="whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-bold transition bg-red-100 text-red-800 border-red-300 hover:bg-red-200 shadow-sm">第三層</button>
+                                <span class="text-[11px] text-gray-400 dark:text-gray-500 font-medium bg-gray-50 dark:bg-gray-700 px-1 rounded whitespace-nowrap mt-0.5" data-lang-key="quick_action_fill_crayons">填滿蠟筆:</span>
+                                <button onclick="toggleAllGrids('all', true)" class="whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-bold transition bg-amber-500 text-white border-amber-600 hover:bg-amber-600 shadow-sm" data-lang-key="quick_action_fill_all">填滿全層</button>
+                                <button onclick="toggleAllGrids(1, true)" class="whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-bold transition bg-amber-100 text-amber-800 border-amber-300 hover:bg-amber-200 shadow-sm" data-lang-key="quick_action_layer_1">第一層</button>
+                                <button onclick="toggleAllGrids(2, true)" class="whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-bold transition bg-orange-100 text-orange-800 border-orange-300 hover:bg-orange-200 shadow-sm" data-lang-key="quick_action_layer_2">第二層</button>
+                                <button onclick="toggleAllGrids(3, true)" class="whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-bold transition bg-red-100 text-red-800 border-red-300 hover:bg-red-200 shadow-sm" data-lang-key="quick_action_layer_3">第三層</button>
                             </div>
+                            <!-- 清空蠟筆 -->
                             <div class="flex flex-wrap items-center gap-1.5 w-full mt-1">
-                                <span class="text-[11px] text-gray-400 dark:text-gray-500 font-medium bg-gray-50 dark:bg-gray-700 px-1 rounded whitespace-nowrap mt-0.5">清空蠟筆:</span>
-                                <button onclick="toggleAllGrids('all', false)" class="whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-bold transition bg-gray-500 text-white border-gray-600 hover:bg-gray-600 shadow-sm">清空全層</button>
-                                <button onclick="toggleAllGrids(1, false)" class="whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-medium transition bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600">第一層</button>
-                                <button onclick="toggleAllGrids(2, false)" class="whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-medium transition bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600">第二層</button>
-                                <button onclick="toggleAllGrids(3, false)" class="whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-medium transition bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600">第三層</button>
+                                <span class="text-[11px] text-gray-400 dark:text-gray-500 font-medium bg-gray-50 dark:bg-gray-700 px-1 rounded whitespace-nowrap mt-0.5" data-lang-key="quick_action_clear_crayons">清空蠟筆:</span>
+                                <button onclick="toggleAllGrids('all', false)" class="whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-bold transition bg-gray-500 text-white border-gray-600 hover:bg-gray-600 shadow-sm" data-lang-key="quick_action_clear_all">清空全層</button>
+                                <button onclick="toggleAllGrids(1, false)" class="whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-medium transition bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600" data-lang-key="quick_action_layer_1">第一層</button>
+                                <button onclick="toggleAllGrids(2, false)" class="whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-medium transition bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600" data-lang-key="quick_action_layer_2">第二層</button>
+                                <button onclick="toggleAllGrids(3, false)" class="whitespace-nowrap inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded border text-[11px] sm:text-xs font-medium transition bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600" data-lang-key="quick_action_layer_3">第三層</button>
                             </div>
                         </div>
                     </div>
-                    </div>
+                </div>
             </section>
             <div class="flex justify-between items-center mb-2 px-1 cursor-pointer select-none" onclick="toggleStatsPanel()">
                 <h3 class="font-bold text-amber-955 dark:text-amber-400 text-sm flex items-center gap-1 drop-shadow-md">
@@ -596,10 +595,10 @@
                 <button class="absolute -top-3 -right-3 bg-red-500 hover:bg-red-600 transition-colors text-white rounded-full w-6 h-6 font-bold text-xs border-2 border-white shadow-md flex items-center justify-center z-50" onclick="closePathImage()">X</button>
                 <div class="overflow-hidden rounded-lg bg-white dark:bg-gray-900 flex items-center justify-center min-w-[100px] min-h-[100px]">
                     <img id="pathImageEl" 
-     src="" 
-     class="max-w-[180px] sm:max-w-[220px] max-h-[50vh] object-contain hidden" 
-     onload="this.classList.remove('hidden'); document.getElementById('pathImageLoading').classList.add('hidden');"
-     onerror="this.onerror=null; this.src='https://i.postimg.cc/qvjNxZzg/golden-crayon.png'; this.classList.remove('hidden'); document.getElementById('pathImageLoading').classList.add('hidden');">
+                        src="" 
+                        class="max-w-[180px] sm:max-w-[220px] max-h-[50vh] object-contain hidden" 
+                        onload="this.classList.remove('hidden'); document.getElementById('pathImageLoading').classList.add('hidden');"
+                        onerror="this.onerror=null; this.src='https://i.postimg.cc/qvjNxZzg/golden-crayon.png'; this.classList.remove('hidden'); document.getElementById('pathImageLoading').classList.add('hidden');">
                     <div id="pathImageLoading" class="absolute inset-0 flex flex-col items-center justify-center text-amber-600 dark:text-amber-400 font-bold gap-1 text-[10px]">
                         <img src="https://i.postimg.cc/qvjNxZzg/golden-crayon.png" class="animate-bounce w-5 h-5">
                         <span>載入中...</span>
@@ -968,6 +967,7 @@
             
             container.appendChild(iconWrapper);
         });
+
             }
             
             function getActiveEvents() {
@@ -1251,7 +1251,24 @@
                 isFilterOpen = !isFilterOpen; const body = document.getElementById("filterPanelBody"); const icon = document.getElementById("filterToggleIcon");
                 if(isFilterOpen) { body.classList.remove("hidden"); icon.innerText = "▼"; } else { body.classList.add("hidden"); icon.innerText = "▶"; }
             }
+            // ⚡ 控制「快捷操作」面板的開關狀態 (預設 false = 收起)
+            let isQuickActionOpen = false;
             
+            function toggleQuickAction() {
+                isQuickActionOpen = !isQuickActionOpen; 
+                const body = document.getElementById("quickActionBody"); 
+                const icon = document.getElementById("quickActionToggleIcon");
+            
+                if(isQuickActionOpen) { 
+                    body.classList.remove("hidden"); 
+                    body.classList.add("flex"); // 展開時恢復原本的 flex 排版
+                    icon.innerText = "▼"; 
+                } else { 
+                    body.classList.add("hidden"); 
+                    body.classList.remove("flex"); 
+                    icon.innerText = "▶"; 
+                }
+            }
             function handleSearch() { activeFilters.search = document.getElementById("searchInput").value.trim().toLowerCase(); applyFilterUI(); }
             function setDisplayMode(mode) { activeFilters.displayMode = mode; ["all", "1", "2", "3"].forEach(m => { const btn = document.getElementById(`btn_disp_${m}`); if(btn) btn.className = (mode === m) ? btnDispActiveStyle : btnInactiveStyle; }); applyFilterUI(); }
             
@@ -1349,51 +1366,56 @@
                 selectFilter("personality", ""); selectFilter("race", ""); selectFilter("position", ""); selectFilter("job", ""); selectFilter("type", ""); selectGridLayerFilter("all"); selectGridTypeFilter(""); selectGridStatusFilter("all");
                 document.getElementById("searchInput").value = ""; activeFilters.search = ""; setDisplayMode('all');
             }
-            // ------------------------------------------------------------
-            // 🌟 資深玩家：一鍵快捷操作邏輯 (含全面防呆機制)
-            // ------------------------------------------------------------
             function toggleAllCharacters(own) {
-                // 角色狀態防呆
-                const actionName = own ? '擁有' : '取消擁有';
-                if (!confirm(`確定要一鍵「${actionName}」所有角色嗎？\n(此操作會覆蓋所有角色的擁有狀態！)`)) return;
-                
-                INITIAL_DATA.forEach(char => {
-                    savedStates['owned_' + char.name] = own;
-                    updateOwnershipUI(char.name); // 更新單一角色的頭像暗化狀態
-                });
-                calculateStats(); // 重新計算全體屬性並自動觸發存檔
+            // 角色狀態防呆 - 加入多國語系處理
+            const actionName = own ? (t('quick_action_own') || '擁有') : (t('quick_action_cancel') || '取消擁有');
+            
+            // 從字典讀取模板後，將 {action} 替換掉
+            let confirmMsg = t('quick_action_confirm_chars') || `確定要一鍵「{action}」所有角色嗎？\n(此操作會覆蓋所有角色的擁有狀態！)`;
+            confirmMsg = confirmMsg.replace('{action}', actionName);
+            
+            if (!confirm(confirmMsg)) return;
+            
+            INITIAL_DATA.forEach(char => {
+            savedStates['owned_' + char.name] = own;
+            updateOwnershipUI(char.name); // 更新單一角色的頭像暗化狀態
+            });
+            calculateStats(); // 重新計算全體屬性並自動觸發存檔
             }
-
+            
             function toggleAllGrids(layer, open) {
-                // 蠟筆狀態全面防呆 (填滿與清空都詢問)
-                const actionName = open ? '填滿' : '清空';
-                const layerName = layer === 'all' ? '所有層數' : `第 ${layer} 層`;
-                
-                if (!confirm(`確定要「${actionName}」全體角色【${layerName}】的蠟筆格子嗎？\n(⚠️ 警告：此操作會直接覆蓋目前的紀錄，且無法復原！)`)) {
-                    return;
-                }
-                
-                const targetLayers = layer === 'all' ? [1, 2, 3] : [parseInt(layer)];
-                
-                INITIAL_DATA.forEach(char => {
-                    targetLayers.forEach(l => {
-                        const layerData = char[`layer${l}`] || [];
-                        layerData.forEach((attr, idx) => {
-                            const key = `${char.name}_l${l}_${attr}_${idx}`;
-                            savedStates[key] = open; // 寫入開啟或關閉狀態
-                            
-                            // 如果是開啟格子，且角色尚未擁有，自動將該角色設為已擁有
-                            if (open && !savedStates['owned_' + char.name]) {
-                                savedStates['owned_' + char.name] = true;
-                            }
-                        });
-                    });
-                });
-                
-                renderMatrix();   // 重新渲染整個卡片網格 (重置所有按鈕外觀)
-                calculateStats(); // 重新計算全體屬性並自動觸發存檔
+            // 蠟筆狀態全面防呆 - 加入多國語系處理
+            const actionName = open ? (t('quick_action_fill') || '填滿') : (t('quick_action_clear') || '清空');
+            let layerName = layer === 'all' 
+            ? (t('quick_action_all_layers') || '所有層數') 
+            : (t('quick_action_layer_n') || '第 {n} 層').replace('{n}', layer);
+            
+            let confirmMsg = t('quick_action_confirm_grids') || `確定要「{action}」全體角色【{layer}】的蠟筆格子嗎？\n(⚠️ 警告：此操作會直接覆蓋目前的紀錄，且無法復原！)`;
+            confirmMsg = confirmMsg.replace('{action}', actionName).replace('{layer}', layerName);
+            
+            if (!confirm(confirmMsg)) {
+            return;
             }
-
+            
+            const targetLayers = layer === 'all' ? [1, 2, 3] : [parseInt(layer)];
+            
+            INITIAL_DATA.forEach(char => {
+            targetLayers.forEach(l => {
+            const layerData = char[`layer${l}`] || [];
+            layerData.forEach((attr, idx) => {
+                const key = `${char.name}_l${l}_${attr}_${idx}`;
+                savedStates[key] = open; 
+                if (open && !savedStates['owned_' + char.name]) {
+                    savedStates['owned_' + char.name] = true;
+                }
+            });
+            });
+            });
+            
+            renderMatrix();   
+            calculateStats(); 
+            }
+            
             function applyFilterUI() {
                 INITIAL_DATA.forEach(char => {
                     const matchP = activeFilters.personality.length === 0 || activeFilters.personality.includes(char.personality);
@@ -1466,12 +1488,16 @@
                             charCard.setAttribute('onmouseleave', 'checkMarquee(this, false)');
                         }
                         
-                        // 🌟 準備 Sprite 類別
-                        const spineName = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[char.name] ? SPINE_MAP[char.name] : char.name;
-                        const charSpriteBase = CHAR_SPRITE_MAP[char.personality] || "";
-                        const ultSpriteBase = ULT_SPRITE_MAP[char.personality] || "";
-                        const charSpriteClass = `sprite-${spineName}`;
-                        const ultSpriteClass = `sprite-Icon_UltimateSkill_${spineName}`;
+                        // 🌟 準備 Sprite 類別與底圖
+// 🌟 準備 Sprite 類別
+const spineName = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[char.name] ? SPINE_MAP[char.name] : char.name;
+
+// 👇 刪掉原本的字串組合，改回用你原本寫好的 Map 來抓取對應的英文 Class
+const charSpriteBase = CHAR_SPRITE_MAP[char.personality] || "";
+const ultSpriteBase = ULT_SPRITE_MAP[char.personality] || "";
+
+const charSpriteClass = `sprite-${spineName}`;
+const ultSpriteClass = `sprite-Icon_UltimateSkill_${spineName}`;
             
                         let raceIconName = char.race; if (char.race === "???") raceIconName = "unknown";
                         const pSprite = SPRITE_CLASS_MAP[`personality_${char.personality}`] || "";
@@ -1516,25 +1542,35 @@
                             </div>`;
             
                         nameCol.innerHTML = `
-                            <div class="relative shrink-0 w-12 h-12" ${isUnreleased ? '' : `onclick="toggleOwnership('${char.name}')"`}>
-                                <div id="avatar_container_${char.name}" class="char-avatar-container w-12 h-12 rounded-lg border-2 ${borderColorClass} shadow-inner ${avatarClass} ${isUnreleased ? 'pointer-events-none' : ''} bg-[#fcf8f2] dark:bg-gray-800 relative overflow-hidden">
-                                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sprite-base sprite-common ${bgSprite} scale-[0.45] z-0 opacity-90"></div>
-                                    <div class="absolute inset-0 bg-white/20 dark:bg-black/20 backdrop-blur-[1px] z-[5]"></div>
-                                    <div class="absolute inset-0 flex items-center justify-center z-10 ${isUnreleased ? 'silhouette-mode' : ''}">
-                                        <div class="sprite-base ${charSpriteBase} ${charSpriteClass} shrink-0 scale-[0.375] origin-center"></div>
-                                    </div>
-                                    ${isUnreleased ? '' : `
-                                    <div class="avatar-alt absolute inset-0 z-20 flex items-center justify-center bg-[#fcf8f2] dark:bg-gray-800 transition-opacity duration-300">
-                                        <div class="sprite-base ${ultSpriteBase} ${ultSpriteClass} shrink-0 scale-[0.75] origin-center"></div>
-                                    </div>`}
-                                </div>
-                                <div id="fall_av_${char.name}" class="hidden char-avatar-container w-12 h-12 rounded-lg border-2 ${borderColorClass} shadow-sm flex items-center justify-center font-bold text-amber-900 text-lg ${avatarClass} ${isUnreleased ? 'silhouette-mode' : ''}">${isUnreleased ? '?' : t(char.name).charAt(0)}</div>
-                            </div>
-                            <div class="flex flex-col gap-0.5 w-full overflow-hidden">
-                                <div class="marquee-box text-sm sm:text-base font-bold text-gray-900 dark:text-gray-100" title="${displayName}"><span class="marquee-content">${displayName}</span></div>
-                                ${traitsHtml}
-                            </div>
-                        `;
+    <div class="relative shrink-0 w-12 h-12" ${isUnreleased ? '' : `onclick="toggleOwnership('${char.name}')"`}>
+        <div id="avatar_container_${char.name}" class="char-avatar-container w-12 h-12 rounded-lg border-2 ${borderColorClass} shadow-inner ${avatarClass} ${isUnreleased ? 'pointer-events-none' : ''} bg-[#fcf8f2] dark:bg-gray-800 relative overflow-hidden">
+            
+            <!-- 背景特效 -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sprite-base sprite-common ${bgSprite} scale-[0.45] z-0 opacity-90 block bg-no-repeat"></div>
+            <div class="absolute inset-0 bg-white/20 dark:bg-black/20 backdrop-blur-[1px] z-[5]"></div>
+            
+            <!-- 👇 1. 普通頭像：放棄 flex，改用絕對定位死釘在正中央，再縮放 0.38 倍 -->
+            <div class="absolute inset-0 z-10 ${isUnreleased ? 'silhouette-mode' : ''}">
+                <div class="${charSpriteBase} ${charSpriteClass} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-[0.38] bg-no-repeat origin-center block"></div>
+            </div>
+            
+            ${isUnreleased ? '' : `
+            <!-- 👇 2. 大絕頭像輪播：同樣改用絕對定位死釘在正中央，再縮放 0.75 倍 -->
+            <!-- 👇 改這裡：確保將 性格類別 與 角色圖示類別 分開 -->
+<div class="avatar-alt absolute inset-0 z-20 bg-[#fcf8f2] dark:bg-gray-800 transition-opacity duration-300">
+    <div class="${ULT_SPRITE_MAP[char.personality]} sprite-Icon_UltimateSkill_${spineName} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-[0.75] bg-no-repeat origin-center block"></div>
+</div>`}
+            
+        </div>
+        
+        <!-- 備用文字頭像 -->
+        <div id="fall_av_${char.name}" class="hidden char-avatar-container w-12 h-12 rounded-lg border-2 ${borderColorClass} shadow-sm flex items-center justify-center font-bold text-amber-900 text-lg ${avatarClass} ${isUnreleased ? 'silhouette-mode' : ''}">${isUnreleased ? '?' : t(char.name).charAt(0)}</div>
+    </div>
+    <div class="flex flex-col gap-0.5 w-full overflow-hidden">
+        <div class="marquee-box text-sm sm:text-base font-bold text-gray-900 dark:text-gray-100" title="${displayName}"><span class="marquee-content">${displayName}</span></div>
+        ${traitsHtml}
+    </div>
+`;
                         cardInner.appendChild(nameCol);
             
                         const layersContainer = document.createElement('div'); layersContainer.className = "flex flex-col sm:flex-row gap-3 w-full md:flex-1 relative";
@@ -1567,34 +1603,34 @@
                                 layerBox.style.flex = flexWeight; 
                                 
                                 let pathBtnHTML = '';
-
-if (char.race && char.pathVersion) {
-    // 有資料時顯示正常按鈕
-    pathBtnHTML = `
-        <div onclick="showPathImage('${char.race}', '${char.pathVersion}', ${l}, event)" 
+            
+            if (char.race && char.pathVersion) {
+            // 有資料時顯示正常按鈕
+            pathBtnHTML = `
+            <div onclick="showPathImage('${char.race}', '${char.pathVersion}', ${l}, event)" 
              class="path-btn cursor-pointer hover:scale-125 transition-transform flex items-center justify-center shrink-0 w-5 h-5 group" 
              data-lang-key="path_image_hint"
              title="${t('path_image_hint')}">
             <div class="sprite-base sprite-common sprite-Album_Icon_Info shrink-0 scale-[0.35] origin-center opacity-60 group-hover:opacity-100 drop-shadow-sm"></div>
-        </div>
-    `;
-} else {
-    // 缺乏資料時顯示反灰不可點擊的按鈕
-    pathBtnHTML = `
-        <div class="path-btn flex items-center justify-center shrink-0 w-5 h-5 cursor-not-allowed opacity-30" 
+            </div>
+            `;
+            } else {
+            // 缺乏資料時顯示反灰不可點擊的按鈕
+            pathBtnHTML = `
+            <div class="path-btn flex items-center justify-center shrink-0 w-5 h-5 cursor-not-allowed opacity-30" 
              data-lang-key="path_unknown"
              title="${t('path_unknown') || '未知路徑'}">
             <div class="sprite-base sprite-common sprite-Album_Icon_Info shrink-0 scale-[0.35] origin-center drop-shadow-sm"></div>
-        </div>
-    `;
-}
-
-layerBox.innerHTML = `
-    <div class="flex items-center gap-1.5 mb-1">
-        <span class="text-[10px] font-bold opacity-70 whitespace-nowrap">${badgeText}</span>
-        ${pathBtnHTML}
-    </div>
-`;
+            </div>
+            `;
+            }
+            
+            layerBox.innerHTML = `
+            <div class="flex items-center gap-1.5 mb-1">
+            <span class="text-[10px] font-bold opacity-70 whitespace-nowrap">${badgeText}</span>
+            ${pathBtnHTML}
+            </div>
+            `;
             
                                 const btnGroup = document.createElement('div'); 
                                 btnGroup.className = `grid ${gridCols} gap-1.5 h-full content-start`;
@@ -2099,17 +2135,39 @@ layerBox.innerHTML = `
             }
             
             function initRimLive2D() {
-                if (typeof spine === 'undefined') return;
-                const rimContainer = document.getElementById("rim-live-container"); const loader = document.createElement('div'); loader.className = 'spine-loader-crayon'; rimContainer.appendChild(loader);
-                new spine.SpinePlayer("rim-live-container", { skelUrl: "./spine_assets/Rim/RimSkin2.skel.bytes", atlasUrl: "./spine_assets/Rim/RimSkin2.atlas.txt", alpha: true, backgroundColor: "#00000000", showControls: false, premultipliedAlpha: true, skin: "Normal", animation: "Happy_4", showLoading: false, viewport: { transitionTime: 0 },
-                    success: function (player) {
-                        loader.remove(); const animations = ["Happy_4", "Pat_End", "Tickle_Idle_2"]; let currentIndex = 1; 
-                        function playNextAnimation() { const nextAnim = animations[currentIndex % animations.length]; player.skeleton.setToSetupPose(); player.animationState.setAnimation(0, nextAnim, true); currentIndex++; }
-                        
-                        if (window.rimInterval) clearInterval(window.rimInterval); 
-                        window.rimInterval = setInterval(playNextAnimation, 5000);
-                    } 
-                }); 
+            if (typeof spine === 'undefined') return;
+            const rimContainer = document.getElementById("rim-live-container"); 
+            const loader = document.createElement('div'); 
+            loader.className = 'spine-loader-crayon'; 
+            rimContainer.appendChild(loader);
+            
+            new spine.SpinePlayer("rim-live-container", { 
+            // 🌟 這裡改成 ./spine_assets/Rim/
+            skelUrl: "./spine_assets/Rim/RimSkin2.skel.bytes", 
+            atlasUrl: "./spine_assets/Rim/RimSkin2.atlas.txt", 
+            alpha: true, 
+            backgroundColor: "#00000000", 
+            showControls: false, 
+            premultipliedAlpha: true, 
+            skin: "Normal", 
+            animation: "Happy_4", 
+            showLoading: false, 
+            viewport: { transitionTime: 0 },
+            success: function (player) {
+            loader.remove(); 
+            const animations = ["Happy_4", "Pat_End", "Tickle_Idle_2"]; 
+            let currentIndex = 1; 
+            function playNextAnimation() { 
+                const nextAnim = animations[currentIndex % animations.length]; 
+                player.skeleton.setToSetupPose(); 
+                player.animationState.setAnimation(0, nextAnim, true); 
+                currentIndex++; 
+            }
+            
+            if (window.rimInterval) clearInterval(window.rimInterval); 
+            window.rimInterval = setInterval(playNextAnimation, 5000);
+            } 
+            }); 
             }
             
             // 🌟 合併所有 Load 事件，交錯延遲載入 (Staggered Loading) 大幅提升體感速度
