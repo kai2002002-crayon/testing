@@ -104,26 +104,26 @@ const ASIDE_DATA = {
     },
     "Daya": { 
         asideIcon: "", 
-        totalName: { zh: "", ja: "", en: "" }, 
+        totalName: { zh: "鑽石戒指", ja: "", en: "" }, 
         stars: {
             1: { 
                 icon: "", 
-                name: { zh: "", ja: "", en: "" }, 
-                desc: { zh: "", ja: "", en: "" }, 
-                effects: { zh: [""], ja: [""], en: [""] } 
+                name: { zh: "鑽石的閃耀", ja: "", en: "" }, 
+                desc: { zh: "穿戴者的最大HP、魔法攻擊力、爆擊、爆擊傷害增加。", ja: "", en: "" }, 
+                effects: { zh: ["最大HP增加:6%", "魔法攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: [""], en: [""] } 
             },
             2: { 
                 icon: "", 
                 name: { zh: "", ja: "", en: "" }, 
-                desc: { zh: "", ja: "", en: "" }, 
-                effects: { zh: [""], ja: [""], en: [""] } 
+                desc: { zh: "普通技能命中時恢復100%SP。(最多觸發2次) 高級技能冷卻時間減少，並追加昏迷效果。", ja: "", en: "" }, 
+                effects: { zh: ["昏迷:無法進行任何行動。", "冷卻時間減少:10秒", "昏迷持續時間:2.5秒"], ja: [""], en: [""] } 
             },
             3: { 
                 icon: "", 
-                name: { zh: "", ja: "", en: "" }, 
-                desc: { zh: "", ja: "", en: "" }, 
-                effects: { zh: [""], ja: [""], en: [""] }, 
-                globalEffects: { zh: ["全體 %", "全體 %"], ja: ["全体 %", "全体 %"], en: ["All %", "All %"] } 
+                name: { zh: "魔戒遠征隊", ja: "", en: "" }, 
+                desc: { zh: "所有友軍對敵人造成的傷害量增加。", ja: "", en: "" }, 
+                effects: { zh: ["造成的傷害量增加:15%"], ja: [""], en: [""] }, 
+                globalEffects: { zh: ["全體魔法攻擊力 3%", "全體爆擊 3%"], ja: ["全体 %", "全体 %"], en: ["All %", "All %"] } 
             }
         }
     },
