@@ -256,8 +256,8 @@ const INITIAL_DATA = [
     { name: "莉絲蒂", personality: "憂鬱", race: "精靈", position: "後排", job: "輸出", pathVersion: "V3" },
     { name: "雷內瓦", personality: "狂亂", race: "精靈", position: "中排", job: "輸出", pathVersion: "V3", releaseDate: "2026-06-18T17:00:00+09:00" },
     { name: "芭瓏", personality: "冷靜", race: "幽靈", position: "前排", job: "輸出", pathVersion: "V3", releaseDate: "2026-07-02T17:00:00+09:00" },
-	{ name: "達雅", personality: "天真", race: "龍族", position: "後排", job: "輸出", pathVersion: "V2", releaseDate: "2026-07-16T17:00:00+09:00" },
-	{ name: "提格", personality: "活潑", race: "獸人", position: "前排", job: "輸出", pathVersion: "V2", releaseDate: "2026-07-16T17:00:00+09:00" }
+	{ name: "達雅", personality: "天真", race: "龍族", position: "後排", job: "輸出", pathVersion: "V2", releaseDate: "2026-07-16T19:00:00+09:00" },
+	{ name: "提格", personality: "活潑", race: "獸人", position: "前排", job: "輸出", pathVersion: "V2", releaseDate: "2026-07-16T19:00:00+09:00" }
 ];
 
 const CRAYON_PATH_CONFIG = {
@@ -488,7 +488,7 @@ const REWARD_MAP = {
     "Chloe": ["麵粉", "柔軟的棉花", "巧克力"],
     "Chopi": ["巧克力", "軟棉棉的樹木", "巧克力米"],
     "Cuee": [],
-	"Daya": [],
+	"Daya": ["回收塑膠", "家禽肉", "彩虹花汁"],
     "Diana": ["家禽肉", "起司", "尖銳的針"],
     "Ed": ["槭樹樹液", "濕潤的紙漿", "蜂蜜"],
     "Elena": ["尖銳的針", "家禽肉", "皮革樹葉"],
@@ -538,7 +538,7 @@ const REWARD_MAP = {
     "Speaki": ["回收塑膠", "牛奶", "彩虹花汁"],
     "Sylla": ["軟棉棉的樹木", "蜂蜜", "牛肉"],
     "Taida": ["蜂蜜", "糖", "軟棉棉的樹木", "睡眠眼罩", "蔬菜"],
-    "Tig": [],
+    "Tig": ["彩虹花汁", "各式穀物", "黏膩的黏土"],
 	"Ui": ["蔬菜", "麵粉", "各式穀物"],
     "Velvet": ["堅硬的石頭", "眨眼墨水", "細膩的鐵粉"],
     "Veroo": [],
@@ -721,8 +721,9 @@ const IMAGE_MAP = {
     "avatar_寧琉": "https://i.postimg.cc/9DT27xPZ/Ner.png", 
     "avatar_莉絲蒂": "https://i.postimg.cc/1gQQcpMM/Risty.png", 
     "avatar_雷內瓦": "https://i.postimg.cc/bGhhHQLg/Renewa-Awaken.png", 
-    "avatar_芭瓏": "https://i.postimg.cc/cg1GP0p8/barong.png"
-    //新坨坨備用https://i.postimg.cc/YG2BTM5N/Arco.png, https://i.postimg.cc/xJjVBnwy/Arnet.png, https://i.postimg.cc/G83n6dWj/Bana.png, https://i.postimg.cc/ftWQ1DG5/Barie.png, https://i.postimg.cc/BLhf0R3c/Beni-Beni.png, https://i.postimg.cc/tZrGj8bD/Canta.png, https://i.postimg.cc/1nW1QbSC/Crepe.png, https://i.postimg.cc/34LQTzhq/Daya.png, https://i.postimg.cc/LYyFpGSc/Delia.png, https://i.postimg.cc/MMsJSgx8/Diana-Yester.png, https://i.postimg.cc/XG26bt3b/Eisia.png, https://i.postimg.cc/D48ky5yh/Goldy.png, https://i.postimg.cc/4HmkNwNs/Guin.png, https://i.postimg.cc/m1tf2V2r/Joanne.png, https://i.postimg.cc/Fk75sGsk/Kommy-Swim.png, https://i.postimg.cc/Mfv2KtKQ/Laika.png, https://i.postimg.cc/mhDGwZ3X/Lethe.png, https://i.postimg.cc/yWdzP6hr/Lil1li.png, https://i.postimg.cc/pyTtZVQ3/Lion.png, https://i.postimg.cc/NKTtHN8M/Makasha.png, https://i.postimg.cc/87WG6ydj/Mayo-Cool.png, https://i.postimg.cc/21vYZHdx/Neti.png, https://i.postimg.cc/FYcvLPbV/Opal.png, https://i.postimg.cc/PCZHw6b4/Orr.png, https://i.postimg.cc/t1jjthDW/Pira.png, https://i.postimg.cc/LqppBzvf/Polan.png, https://i.postimg.cc/yJHHXFnX/Ran.png, https://i.postimg.cc/qtTTX8Qx/Renewa.png, https://i.postimg.cc/2qDDF4Tc/Ricota.png, https://i.postimg.cc/xk22yKg6/Rim-Chaos.png, https://i.postimg.cc/qtTTX8Q5/Rohne-Mayor.png, https://i.postimg.cc/gwWWqv47/Rollett.png, https://i.postimg.cc/3yFHLdbc/Shady-Twisted.png, https://i.postimg.cc/wtQdW7br/Shasha.png, https://i.postimg.cc/3yFHLdcM/Sherum.png, https://i.postimg.cc/4KQT8mSx/Speaki-Maid.png, https://i.postimg.cc/QBJr6Hyx/Suro.png, https://i.postimg.cc/Jy5WTG2t/Tig.png, https://i.postimg.cc/yJyzfkbD/Uros.png, https://i.postimg.cc/3yFHLdc0/Vela.png
+    "avatar_芭瓏": "https://i.postimg.cc/cg1GP0p8/barong.png",
+	"avatar_達雅": "https://i.postimg.cc/34LQTzhq/Daya.png"
+    //新坨坨備用https://i.postimg.cc/YG2BTM5N/Arco.png, https://i.postimg.cc/xJjVBnwy/Arnet.png, https://i.postimg.cc/G83n6dWj/Bana.png, https://i.postimg.cc/ftWQ1DG5/Barie.png, https://i.postimg.cc/BLhf0R3c/Beni-Beni.png, https://i.postimg.cc/tZrGj8bD/Canta.png, https://i.postimg.cc/1nW1QbSC/Crepe.png, https://i.postimg.cc/LYyFpGSc/Delia.png, https://i.postimg.cc/MMsJSgx8/Diana-Yester.png, https://i.postimg.cc/XG26bt3b/Eisia.png, https://i.postimg.cc/D48ky5yh/Goldy.png, https://i.postimg.cc/4HmkNwNs/Guin.png, https://i.postimg.cc/m1tf2V2r/Joanne.png, https://i.postimg.cc/Fk75sGsk/Kommy-Swim.png, https://i.postimg.cc/Mfv2KtKQ/Laika.png, https://i.postimg.cc/mhDGwZ3X/Lethe.png, https://i.postimg.cc/yWdzP6hr/Lil1li.png, https://i.postimg.cc/pyTtZVQ3/Lion.png, https://i.postimg.cc/NKTtHN8M/Makasha.png, https://i.postimg.cc/87WG6ydj/Mayo-Cool.png, https://i.postimg.cc/21vYZHdx/Neti.png, https://i.postimg.cc/FYcvLPbV/Opal.png, https://i.postimg.cc/PCZHw6b4/Orr.png, https://i.postimg.cc/t1jjthDW/Pira.png, https://i.postimg.cc/LqppBzvf/Polan.png, https://i.postimg.cc/yJHHXFnX/Ran.png, https://i.postimg.cc/qtTTX8Qx/Renewa.png, https://i.postimg.cc/2qDDF4Tc/Ricota.png, https://i.postimg.cc/xk22yKg6/Rim-Chaos.png, https://i.postimg.cc/qtTTX8Q5/Rohne-Mayor.png, https://i.postimg.cc/gwWWqv47/Rollett.png, https://i.postimg.cc/3yFHLdbc/Shady-Twisted.png, https://i.postimg.cc/wtQdW7br/Shasha.png, https://i.postimg.cc/3yFHLdcM/Sherum.png, https://i.postimg.cc/4KQT8mSx/Speaki-Maid.png, https://i.postimg.cc/QBJr6Hyx/Suro.png, https://i.postimg.cc/Jy5WTG2t/Tig.png, https://i.postimg.cc/yJyzfkbD/Uros.png, https://i.postimg.cc/3yFHLdc0/Vela.png
 };
 
 const SKILL_ICONS = {
@@ -923,47 +924,19 @@ const PICKUP_SCHEDULE = [
 // 🎪 遊戲內活動排程表
 const EVENT_SCHEDULE = [
     {
-        start: "2026-06-18T17:00:00+09:00",
-        end: "2026-07-02T10:59:59+09:00",
-        eventId: "Theme017" 
-    },
-    {
-        start: "2026-06-18T17:00:00+09:00",
-        end: "2026-07-16T10:59:59+09:00",
-        eventId: "SelectPickPersonality" 
-    },
-	    {
-        start: "2026-07-02T17:00:00+09:00",
-        end: "2026-07-16T10:59:59+09:00",
-        eventId: "Theme020" 
+        start: "2026-07-16T17:00:00+09:00",
+        end: "2026-07-30T10:59:59+09:00",
+        eventId: "Theme002" 
     }
 ];
 
 // 🃏 特選卡片排程表
 const CARD_SCHEDULE = [
     {
-        start: "2026-06-18T17:00:00+09:00",
-        end: "2026-07-02T10:59:59+09:00",
-        id: "Rune17",
-        type: "Rune"
-    },
-		{
-        start: "2026-06-25T04:00:00+09:00",
-        end: "2026-07-02T10:59:59+09:00",
-        id: "Artifact90",
+        start: "2026-07-16T18:00:00+09:00",
+        end: "2026-07-30T10:59:59+09:00",
+        id: "Artifact21",
         type: "Artifact"
-    },
-	{
-        start: "2026-07-02T17:00:00+09:00",
-        end: "2026-07-16T10:59:59+09:00",
-        id: "Artifact20",
-        type: "Artifact"
-    },
-			{
-        start: "2026-07-09T04:00:00+09:00",
-        end: "2026-07-16T10:59:59+09:00",
-        id: "Rune52",
-        type: "Rune"
     }
 ];
 console.log("LANG_DICT 內容:", LANG_DICT);
