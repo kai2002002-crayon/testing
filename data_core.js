@@ -411,7 +411,7 @@ const FOOD_MAP = {
     "Chloe": { super: "愛心扭結麵包", special: ["扭結麵包", "檸檬茶", "有機檸檬茶"] },
     "Chopi": { super: "烤海賊漫畫肉", special: ["烤漫畫肉", "獸糧罐頭", "高級獸糧罐頭"] },
     "Cuee": "無",
-	"Daya": "無",
+	"Daya": { super: "寶石蛋塔", special: ["寶石塔", "檸檬茶", "有機檸檬茶"] },
     "Diana": { super: "烤海賊漫畫肉", special: ["烤漫畫肉", "扭結麵包", "愛心扭結麵包"] },
     "Ed": { super: "一級祕密葡萄汁", special: ["祕密葡萄汁", "UFC炸胡蘿蔔", "UFC炸蔬菜"] },
     "Elena": { super: "滾燙的冰美式咖啡", special: ["溫熱的冰美式咖啡", "太空食品", "ANSA太空食品"] },
@@ -452,7 +452,7 @@ const FOOD_MAP = {
     "Rude": { super: "927穀麵茶", special: ["麵茶", "太空食品", "ANSA太空食品"] },
     "Rufo": { super: "皇家蜂蜜大蒜鮭魚", special: ["蜂蜜大蒜鮭魚", "哈密瓜博孔奇尼起司", "麝香甜瓜博孔奇尼起司"] },
     "Sari": { super: "皇家蜂蜜大蒜鮭魚", special: ["蜂蜜大蒜鮭魚", "焦糖布丁", "軟軟焦糖布丁"] },
-    "Selline": { super: "惡靈布丁", special: ["幽靈布丁", "祕密葡萄汁", "一級祕密葡萄汁"] },
+    "Selline": { super: "惡靈布丁", special: ["幽靈布丁", , "一級祕密葡萄汁"] },
     "Shady": { super: "惡靈布丁", special: ["幽靈布丁", "石榴果實", "石榴甜茶"] },
     "Shoupan": { super: "ANSA太空食品", special: ["太空食品", "巧克力冰淇淋", "深黑巧克力冰淇淋"] },
     "Silphir": { super: "白金糖葫蘆", special: ["金糖葫蘆", "幽靈布丁", "惡靈布丁"] },
@@ -461,7 +461,7 @@ const FOOD_MAP = {
     "Speaki": { super: "肉桂口味健康糖球", special: ["肉桂口味糖球", "石榴果實", "石榴甜茶"] },
     "Sylla": { super: "氫氣炸豬排", special: ["空氣炸豬排", "蜂蜜罐", "甜甜蜂蜜罐"] },
     "Taida": { super: "滾燙的冰美式咖啡", special: ["溫熱的冰美式咖啡", "金糖葫蘆", "白金糖葫蘆"] },
-    "Tig": "無",
+    "Tig": {super: "烤海賊漫畫肉", special: ["烤漫畫肉", "祕密葡萄汁", "一級祕密葡萄汁"]},
 	"Ui": { super: "夏威夷海藻蓋飯", special: ["海藻沙拉", "烤漫畫肉", "烤海賊漫畫肉"] },
     "Velvet": { super: "兩口草生菜包", special: ["一口草生菜包", "椰子松針粥", "椰子萬能青汁"] },
     "Veroo": "無",
@@ -612,7 +612,7 @@ const WORK_URL = {
     "Sylla": "",
     "Taida": "https://youtu.be/ZAJztHqI7uA",
     "Tig": "",
-	"Ui": "",
+	"Ui": "https://youtu.be/sen1414Z3Rw",
     "Velvet": "",
     "Vivi": "https://youtu.be/Bi_Hi3PfTjU",
     "xXionx": "https://youtu.be/1VLD414k_kk",
@@ -927,6 +927,21 @@ const EVENT_SCHEDULE = [
         start: "2026-07-16T17:00:00+09:00",
         end: "2026-07-30T10:59:59+09:00",
         eventId: "Theme002" 
+    },
+	{
+        start: "2026-07-07T12:00:00+09:00",
+        end: "2026-07-10T03:59:59+09:00",
+        eventId: "TowerBattle" 
+    },
+	{
+        start: "2026-07-07T12:00:00+09:00",
+        end: "2026-07-10T03:59:59+09:00",
+        eventId: "Playground" 
+    },
+	{
+        start: "2026-07-17T12:00:00+09:00",
+        end: "2026-07-20T03:59:59+09:00",
+        eventId: "WWE" 
     }
 ];
 
