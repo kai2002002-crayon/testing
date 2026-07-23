@@ -26,7 +26,7 @@ const LANG_DICT = {
         stats_toggle_hint: "點擊展開 / 收起", stats_layer_1_title: "🥇 第一層統計", stats_layer_2_title: "🥈 第二層統計", stats_layer_3_title: "🥉 第三層統計",
         stats_layer_1_rule: "(每格+3%, 蠟筆×2)", stats_layer_2_rule: "(每格+4%, 蠟筆×4)", stats_layer_3_rule: "(每格+5%, 蠟筆×6)",
         stats_global_bonus: "📊 全體屬性加成", stats_need_more_prefix: "尚要 ", stats_need_more_suffix: " 根蠟筆",
-		menu_system_title: "系統選單", menu_gacha: "前往招募模擬器", menu_viewer: "前往動態展示器", menu_toggle_anim: "開關頂部跑酷動畫",
+		menu_system_title: "系統選單", menu_gacha: "前往招募模擬器", menu_viewer: "前往動態展示器", menu_tier_maker: "前往排行榜生成器", menu_toggle_anim: "開關頂部跑酷動畫",
 		quick_action_title: "⚡ 快捷操作", quick_action_all_chars: "全體坨坨:", quick_action_own_all: "一鍵全部擁有", quick_action_cancel_all: "一鍵全部取消", quick_action_fill_crayons: "填滿蠟筆:", quick_action_clear_crayons: "清空蠟筆:", quick_action_fill_all: "填滿全層", quick_action_clear_all: "清空全層", quick_action_layer_1: "第一層", quick_action_layer_2: "第二層", quick_action_layer_3: "第三層", quick_action_own: "擁有", quick_action_cancel: "取消擁有", quick_action_fill: "填滿", quick_action_clear: "清空", quick_action_all_layers: "所有層數", quick_action_layer_n: "第 {n} 層", quick_action_confirm_chars: "確定要一鍵「{action}」所有坨坨嗎？\n(此操作會覆蓋所有坨坨的擁有狀態！)", quick_action_confirm_grids: "確定要「{action}」全體坨坨【{layer}】的蠟筆格子嗎？\n(⚠️ 警告：此操作會直接覆蓋目前的紀錄，且無法復原！)",
 		path_image_hint: "查看路徑圖",
 		info_job_reward: "💰 打工獎勵", info_food: "🍲 喜好料理", aside_title: "願像", aside_loading: "願像資料載入中...",
@@ -46,6 +46,7 @@ const LANG_DICT = {
         "艾斯皮": "艾斯皮", "艾琳娜": "艾琳娜", "艾皮卡": "艾皮卡", "艾舒爾": "艾舒爾", "艾蜜莉雅": "艾蜜莉雅", "芙莉可": "芙莉可", "茱蜜": "茱蜜", "莉茲": "莉茲",
         "莎莉": "莎莉", "萊薇": "萊薇", "蒂亞娜": "蒂亞娜", "謝蒂": "謝蒂", "貝魯": "貝魯", "貝麗塔": "貝麗塔", "路德": "路德", "路易": "路易",
         "阿萊特": "阿萊特", "雷吉": "雷吉", "馬爾": "馬爾", "泰達": "泰達", "寧琉": "寧琉", "莉絲蒂": "莉絲蒂", "雷內瓦": "雷內瓦", "芭瓏": "芭瓏", "達雅": "達雅", "提格": "提格",
+		"克魯布魯斯": "克魯布魯斯", "蠟筆勇士": "蠟筆勇士", "R41雷內瓦": "R41雷內瓦", "莉1莉": "莉1莉", "M.E.O.W.": "M.E.O.W.", "雷內瓦(NPC)": "雷內瓦", "榮春": "榮春", "高蒂": "高蒂", "可麗餅": "可麗餅",
         page_title_char_detail: "坨坨詳細資料", btn_close_page: "⬅️ 關閉此頁", loading: "載入中...",
         crayon_detail_title: "🖍️ 金蠟筆分佈詳情", layer_1_stats: "🥇 第一層屬性", layer_2_stats: "🥈 第二層屬性", layer_3_stats: "🥉 第三層屬性",
         present_title: "坨坨珍藏品", present_loading: "寶箱開啟中...", btn_letter: "坨坨情信", btn_thought: "教主感想",
@@ -63,6 +64,7 @@ const LANG_DICT = {
         alert_comment_too_long: "評價內容太長囉，請縮減至 500 字以內！", alert_comment_failed: "留言失敗，請稍後再試！", error_load_comment: "讀取留言失敗，請確認資料庫權限設定。",
 		ui_title: "坨坨動態展示器", ui_back: "⬅️ 返回", ui_select_char: "👥 選擇坨坨", ui_show_all: "顯示全部", ui_hide_all: "隱藏全部", ui_please_select: "請先選擇坨坨", ui_camera: "🔄 重置", ui_waiting: "等待載入...", ui_mode_lobby: "🔄 模式: 大廳", ui_mode_battle: "⚔️ 模式: 戰鬥", ui_ar_open: "📷 開啟AR", ui_ar_close: "❌ 關閉AR", ui_ar_panel: "📷 相機面板", ui_ar_flip: "🔄 翻轉鏡頭", ui_ar_capture: "📸 拍照儲存", ui_costume: "服裝", ui_default_costume: "預設服裝", ui_default_model: "預設模型", ui_select_anim: "選擇動作", ui_slots: "🧩 外觀插槽", ui_show_slots: "全顯", ui_hide_slots: "全隱", ui_loading_data: "讀取資料中...",
 		gacha_simulator: "嘟嘟臉角色招募模擬器", gacha_select_pool: "📍 選擇招募池", gacha_personality_hint: "🔮 指定性格：", gacha_1_pull: "1次招募", gacha_10_pull: "10次招募", gacha_waiting: "等待招募中...", gacha_history: "📜 招募紀錄", gacha_rate_up: "🎯 特選招募", gacha_normal: "🌟 普通招募", gacha_personality_pool: "🔮 性格選擇招募", gacha_result_title: "🎉 招募結果 🎉", gacha_prev_page: "上一頁", gacha_next_page: "下一頁", gacha_page: "第 {current} / {total} 頁", gacha_unknown_time: "未知時間", gacha_unknown_pool: "未知招募",
+		ui_tier_title: "排行榜生成器", ui_tier_add_row: "新增級別", ui_tier_reset: "全部重置", ui_tier_export: "輸出圖片", ui_tier_pool_title: "選擇角色 (拖曳至上方排行榜)", ui_tier_default_title: "我的最愛排行榜", ui_tier_reset_confirm: "確定要重置整個排行榜並將所有角色放回角色池嗎？", ui_tier_export_error: "匯出圖片失敗",
     },
     "ja": {
         app_title: "トリッカル特級クレヨンノート", app_subtitle: "教主が毎日特級クレヨンを受け取れますように", stats_title: "📊 統計とボーナス情報",
@@ -83,7 +85,7 @@ const LANG_DICT = {
         stats_toggle_hint: "クリックで展開 / 折りたたみ", stats_layer_1_title: "🥇 1段階目の統計", stats_layer_2_title: "🥈 2段階目の統計", stats_layer_3_title: "🥉 3段階目の統計",
         stats_layer_1_rule: "(各マス+3%, クレヨン×2)", stats_layer_2_rule: "(各マス+4%, クレヨン×4)", stats_layer_3_rule: "(各マス+5%, クレヨン×6)",
         stats_global_bonus: "📊 全体ステータスバフ", stats_need_more_prefix: "必要クレヨン数: ", stats_need_more_suffix: " 本",
-		menu_system_title: "システムメニュー", menu_gacha: "ガチャシミュレーターへ", menu_viewer: "アニメーション展示へ", menu_toggle_anim: "ランニングアニメーション切替",
+		menu_system_title: "システムメニュー", menu_gacha: "ガチャシミュレーターへ", menu_viewer: "アニメーション展示へ", menu_tier_maker: "ティアメーカーへ", menu_toggle_anim: "ランニングアニメーション切替",
 		quick_action_title: "⚡ クイック操作", quick_action_all_chars: "全使徒:", quick_action_own_all: "一括所有する", quick_action_cancel_all: "一括解除する", quick_action_fill_crayons: "クレヨンを埋める:", quick_action_clear_crayons: "クレヨンをクリア:", quick_action_fill_all: "全層を埋める", quick_action_clear_all: "全層をクリア", quick_action_layer_1: "1段階目", quick_action_layer_2: "2段階目", quick_action_layer_3: "3段階目", quick_action_own: "所有する", quick_action_cancel: "所有を解除", quick_action_fill: "埋める", quick_action_clear: "クリア", quick_action_all_layers: "すべての層", quick_action_layer_n: "{n} 段階目", quick_action_confirm_chars: "全使徒を「{action}」してもよろしいですか？\n(この操作はすべての使徒の所有状態を上書きします！)", quick_action_confirm_grids: "全使徒の【{layer}】のクレヨンマスを「{action}」してもよろしいですか？\n(⚠️ 警告: この操作は現在の記録を上書きし、元に戻すことはできません！)",
 		path_image_hint: "ルート図を見る",
 		info_job_reward: "💰 獲得報酬", info_food: "🍲 食べ物の好み", aside_title: "アサイド", aside_loading: "アサイドデータ読み込み中...",
@@ -103,6 +105,7 @@ const LANG_DICT = {
         "艾斯皮": "エスピー", "艾琳娜": "エレナ", "艾皮卡": "エピカ", "艾舒爾": "エシュール", "艾蜜莉雅": "アメリア", "芙莉可": "フリックル", "茱蜜": "ジュビー", "莉茲": "リッツ",
         "莎莉": "サリー", "萊薇": "レヴィ", "蒂亞娜": "ディアナ", "謝蒂": "シェイディ", "貝魯": "ベル", "貝麗塔": "ベリータ", "路德": "ルード", "路易": "キュウイ",
         "阿萊特": "アレット", "雷吉": "レイジー", "馬爾": "マーゴ", "泰達": "タイダー", "寧琉": "ネル", "莉絲蒂": "リスティ", "雷內瓦": "リニュア", "芭瓏": "バロン", "達雅": "ダーヤ", "提格": "提格",
+		"克魯布魯斯": "ケルベロス", "蠟筆勇士": "イサムレヨン", "R41雷內瓦": "R41 リニュア", "莉1莉": "リリー", "M.E.O.W.": "M.E.O.W.", "雷內瓦(NPC)": "リニュア", "榮春": "ブルミ", "高蒂": "ゴールディ", "可麗餅": "クレープ",
         page_title_char_detail: "使徒詳細データ", btn_close_page: "⬅️ 閉じる", loading: "読み込み中...",
         crayon_detail_title: "🖍️ 特級クレヨン分布詳細", layer_1_stats: "🥇 1段階目ステータス", layer_2_stats: "🥈 2段階目ステータス", layer_3_stats: "🥉 3段階目ステータス",
         present_title: "使徒の愛用品", present_loading: "宝箱を開封中...", btn_letter: "使徒からの手紙", btn_thought: "教主の感想",
@@ -120,6 +123,7 @@ const LANG_DICT = {
         alert_comment_too_long: "評価内容が長すぎます。500文字以内に短縮してください！", alert_comment_failed: "送信に失敗しました。後でもう一度お試しください！", error_load_comment: "コメントの読み込みに失敗しました。データベースの権限設定を確認してください。",
 		ui_title: "使徒ビューアー", ui_back: "⬅️ 戻る", ui_select_char: "👥 使徒選択", ui_show_all: "全て表示", ui_hide_all: "全て隠す", ui_please_select: "先に選択してください", ui_camera: "🔄 リセット", ui_waiting: "ロード中...", ui_mode_lobby: "🔄 モード: ロビー", ui_mode_battle: "⚔️ モード: バトル", ui_ar_open: "📷 ARオン", ui_ar_close: "❌ ARオフ", ui_ar_panel: "📷 カメラパネル", ui_ar_flip: "🔄 反転", ui_ar_capture: "📸 撮影", ui_costume: "衣装", ui_default_costume: "デフォルト", ui_default_model: "基本モデル", ui_select_anim: "モーション", ui_slots: "🧩 スロット", ui_show_slots: "全表示", ui_hide_slots: "全非表示", ui_loading_data: "読み込み中...",
 		gacha_simulator: "使徒ガチャシミュレーター", gacha_select_pool: "📍 ガチャ選択", gacha_personality_hint: "🔮 指定性格：", gacha_1_pull: "1回募集", gacha_10_pull: "10回募集", gacha_waiting: "結果待ち...", gacha_history: "📜 ガチャ履歴", gacha_rate_up: "🎯 ピックアップ募集", gacha_normal: "🌟 一般募集", gacha_personality_pool: "🔮 性格選択募集", gacha_result_title: "🎉 ガチャ結果 🎉", gacha_prev_page: "前へ", gacha_next_page: "次へ", gacha_page: "{current} / {total} ページ", gacha_unknown_time: "不明な時間", gacha_unknown_pool: "不明なガチャ",
+		ui_tier_title: "ティアメーカー", ui_tier_add_row: "ランク追加", ui_tier_reset: "すべてリセット", ui_tier_export: "画像として保存", ui_tier_pool_title: "キャラクター一覧 (上のランクへドラッグ)", ui_tier_default_title: "私の最強ランキング", ui_tier_reset_confirm: "本当にすべてリセットしてキャラクターを一覧に戻しますか？", ui_tier_export_error: "画像の出力に失敗しました。",
     },
     "en": {
         app_title: "Trickcal Crayon Notepad", app_subtitle: "May the Master get Ultra Crayons daily", stats_title: "📊 Stats & Bonus Info",
@@ -140,7 +144,7 @@ const LANG_DICT = {
         stats_toggle_hint: "Click to Expand / Collapse", stats_layer_1_title: "🥇 Board 1 Stats", stats_layer_2_title: "🥈 Board 2 Stats", stats_layer_3_title: "🥉 Board 3 Stats",
         stats_layer_1_rule: "(Node+3%, Crayon×2)", stats_layer_2_rule: "(Node+4%, Crayon×4)", stats_layer_3_rule: "(Node+5%, Crayon×6)",
         stats_global_bonus: "📊 Global Stat Bonus", stats_need_more_prefix: "Need ", stats_need_more_suffix: " Crayons",
-		menu_system_title: "System Menu", menu_gacha: "Gacha Simulator", menu_viewer: "Apostle Viewer", menu_toggle_anim: "Toggle Running Animation",
+		menu_system_title: "System Menu", menu_gacha: "Gacha Simulator", menu_viewer: "Apostle Viewer", menu_tier_maker: "Tier List Maker", menu_toggle_anim: "Toggle Running Animation",
 		quick_action_title: "⚡ Quick Actions", quick_action_all_chars: "All Apostles:", quick_action_own_all: "Own All", quick_action_cancel_all: "Cancel All", quick_action_fill_crayons: "Fill Crayons:", quick_action_clear_crayons: "Clear Crayons:", quick_action_fill_all: "Fill All Layers", quick_action_clear_all: "Clear All Layers", quick_action_layer_1: "Layer 1", quick_action_layer_2: "Layer 2", quick_action_layer_3: "Layer 3", quick_action_own: "Own", quick_action_cancel: "Cancel", quick_action_fill: "Fill", quick_action_clear: "Clear", quick_action_all_layers: "All Layers", quick_action_layer_n: "Layer {n}", quick_action_confirm_chars: "Are you sure you want to '{action}' all Apostles?\n(This will overwrite the ownership status of all Apostles!)", quick_action_confirm_grids: "Are you sure you want to '{action}' the crayon grids for all Apostles in [{layer}]?\n(⚠️ Warning: This will overwrite current records and cannot be undone!)",
 		path_image_hint: "View Path Chart",
 		info_job_reward: "💰 Acquired Rewards", info_food: "🍲 Favorite Food", aside_title: "Aside", aside_loading: "Loading Aside data...",
@@ -160,7 +164,8 @@ const LANG_DICT = {
         "艾斯皮": "Espi", "艾琳娜": "Elena", "艾皮卡": "Epica", "艾舒爾": "Ashur", "艾蜜莉雅": "Amelia", "芙莉可": "Fricle", "茱蜜": "Jubee", "莉茲": "Leets",
         "莎莉": "Sari", "萊薇": "Levi", "蒂亞娜": "Diana", "謝蒂": "Shaydi", "貝魯": "Veroo", "貝麗塔": "Belita", "路德": "Rudd", "路易": "Kyuri",
         "阿萊特": "Allet", "雷吉": "Layze", "馬爾": "Mago", "泰達": "Taida", "寧琉": "Ner", "莉絲蒂": "Risty", "雷內瓦": "Renewa", "芭瓏": "Barong", "達雅": "Daya", "提格": "Tig",
-        page_title_char_detail: "Apostle Details", btn_close_page: "⬅️ Close", loading: "Loading...",
+        "克魯布魯斯": "Cerberus", "蠟筆勇士": "Super Crayon", "R41雷內瓦": "R41 Renewa", "莉1莉": "L1ly", "M.E.O.W.": "M.E.O.W.", "雷內瓦(NPC)": "Renewa", "榮春": "Youngchun", "高蒂": "Goldy", "可麗餅": "Crepe",
+		page_title_char_detail: "Apostle Details", btn_close_page: "⬅️ Close", loading: "Loading...",
         crayon_detail_title: "🖍️ Ultra Crayon Details", layer_1_stats: "🥇 Board 1 Stats", layer_2_stats: "🥈 Board 2 Stats", layer_3_stats: "🥉 Board 3 Stats",
         present_title: "Apostle's Cherished Items", present_loading: "Opening chest...", btn_letter: "Apostle's Letter", btn_thought: "Master's Thoughts",
         present_select_hint: "Please select content to display...", no_letter_hint: "(This Apostle hasn't written a letter to you yet...)", no_thought_hint: "(The Master hasn't shared their thoughts on this item yet...)",
@@ -177,6 +182,7 @@ const LANG_DICT = {
         alert_comment_too_long: "Review content is too long. Please keep it under 500 characters!", alert_comment_failed: "Failed to submit. Please try again later!", error_load_comment: "Failed to load comments. Please check database permissions.",
 		ui_title: "Apostle Viewer", ui_back: "⬅️ Back", ui_select_char: "👥 Select Apostle", ui_show_all: "Show All", ui_hide_all: "Hide All", ui_please_select: "Please select first", ui_camera: "🔄 Reset", ui_waiting: "Loading...", ui_mode_lobby: "🔄 Mode: Lobby", ui_mode_battle: "⚔️ Mode: Battle", ui_ar_open: "📷 AR On", ui_ar_close: "❌ AR Off", ui_ar_panel: "📷 Camera UI", ui_ar_flip: "🔄 Flip", ui_ar_capture: "📸 Capture", ui_costume: "Costume", ui_default_costume: "Default", ui_default_model: "Base Model", ui_select_anim: "Animation", ui_slots: "🧩 Slots", ui_show_slots: "Show All", ui_hide_slots: "Hide All", ui_loading_data: "Loading...",
 		gacha_simulator: "Apostle Gacha Simulator", gacha_select_pool: "📍 Select Pool", gacha_personality_hint: "🔮 Personality:", gacha_1_pull: "1 Pull", gacha_10_pull: "10 Pulls", gacha_waiting: "Waiting...", gacha_history: "📜 Gacha History", gacha_rate_up: "🎯 Rate Up", gacha_normal: "🌟 Normal Gacha", gacha_personality_pool: "🔮 Personality Gacha", gacha_result_title: "🎉 Gacha Results 🎉", gacha_prev_page: "Prev", gacha_next_page: "Next", gacha_page: "Page {current} / {total}", gacha_unknown_time: "Unknown Time", gacha_unknown_pool: "Unknown Pool",
+		ui_tier_title: "Tier List Maker", ui_tier_add_row: "Add Rank", ui_tier_reset: "Reset All", ui_tier_export: "Export Image", ui_tier_pool_title: "Character Pool (Drag to Rank)", ui_tier_default_title: "My Ultimate Tier List", ui_tier_reset_confirm: "Are you sure you want to reset the board and return all characters to the pool?", ui_tier_export_error: "Failed to export image.",
     }
 };
 
@@ -315,7 +321,7 @@ const CRAYON_PATH_CONFIG = {
 
 const PATH_IMAGES = {
     "幽靈": {
-        "V1": { 1: "https://i.postimg.cc/nMb6P1wY/PHANTOM-V1-L1.png", 2: "https://i.postimg.cc/dDPzx9S6/PHANTOM-V1-L2.png", 3: "https://i.postimg.cc/vDFpNvSt/PHANTOM-V1-L3.png" },
+        "V1": { 1: "https://i.postimg.cc/nMb6P1wY/PHANTOM-V1-L1.png", 2: "https://i.postimg.cc/0ytjmZqp/PHANTOM-V1-L2.png", 3: "https://i.postimg.cc/vDFpNvSt/PHANTOM-V1-L3.png" },
         "V2": { 1: "https://i.postimg.cc/PNsBRMF2/PHANTOM-V2-L1.png", 2: "https://i.postimg.cc/z3Z9ckPP/PHANTOM-V2-L2.png", 3: "https://i.postimg.cc/V5Q3VFHZ/PHANTOM-V2-L3.png" },
         "V3": { 1: "https://i.postimg.cc/pybg6B1S/PHANTOM-V3-L1.png", 2: "https://i.postimg.cc/23RPKxXK/PHANTOM-V3-L2.png", 3: "https://i.postimg.cc/qBhqWM5V/PHANTOM-V3-L3.png" },
         "V4": { 1: "https://i.postimg.cc/FFdzwsBm/PHANTOM-V4-L1.png", 2: "https://i.postimg.cc/WpFzxbHc/PHANTOM-V4-L2.png", 3: "https://i.postimg.cc/J7D0S428/PHANTOM-V4-L3.png" }
@@ -389,8 +395,6 @@ const GRADE_MAP = {
     "莎莉": "2", "萊薇": "3", "蒂亞娜": "3", "謝蒂": "3", "貝魯": "1", "貝麗塔": "3", "路德": "3", "路易": "1",
     "阿萊特": "2", "雷吉": "2", "馬爾": "3", "泰達": "2", "寧琉": "3", "莉絲蒂": "3", "雷內瓦": "3", "芭瓏": "3", "達雅": "3", "提格": "3"
 };
-
-const BOSS_LIST = ['R41雷內瓦', '蠟筆勇士-天真', '蠟筆勇士-冷靜', '蠟筆勇士-狂亂', '蠟筆勇士-活潑', '蠟筆勇士-憂鬱', '莉1莉', '克魯布魯斯'];
 
 const ELDAIN_LIST = ['綾', '庫洛艾', '艾皮卡', '伊德', '羽伊', '薇薇', 'x乂錫安乂x', '優米', '雷內瓦'];
 
@@ -568,11 +572,11 @@ const WORK_URL = {
     "Diana": "",
     "Ed": "https://youtu.be/HFj4FtrvjqI",
     "Elena": "",
-    "Epica": "",
+    "Epica": "https://youtu.be/6dxpDLKWzJI",
     "Erpin": "https://youtu.be/rgbOtvbLdB0",
     "Espi": "https://youtu.be/hTyUw7ZfI28",
     "Festa": "",
-    "Fricle": "",
+    "Fricle": "https://youtu.be/6dxpDLKWzJI",
     "Gabia": "",
     "Haley": "https://youtu.be/u6mmhB-zY3Y",
     "Hilde": "https://youtu.be/rLfss0AWKtA",
@@ -613,7 +617,7 @@ const WORK_URL = {
     "Taida": "https://youtu.be/ZAJztHqI7uA",
     "Tig": "",
 	"Ui": "https://youtu.be/sen1414Z3Rw",
-    "Velvet": "",
+    "Velvet": "https://youtu.be/uiyfp0lMa7E",
     "Vivi": "https://youtu.be/Bi_Hi3PfTjU",
     "xXionx": "https://youtu.be/1VLD414k_kk",
     "Yomi": "https://youtu.be/nBco3aJoSUw",
@@ -635,7 +639,8 @@ const SPINE_BACKGROUNDS = {
 "幽靈":"https://i.postimg.cc/ygSTzvP0/Gacha-Pattern-Bg-Ghost.png",
 "???":"https://i.postimg.cc/kR3vMK1D/Gacha-Pattern-Bg-Mystic.png",
 "魔靈":"https://i.postimg.cc/BP9BZHYb/Gacha-Pattern-Bg-Spirit.png",
-"魔女":"https://i.postimg.cc/zHZFDKtL/Gacha-Pattern-Bg-Witch.png"
+"魔女":"https://i.postimg.cc/zHZFDKtL/Gacha-Pattern-Bg-Witch.png",
+"NPC":"https://i.postimg.cc/q703FkG3/Gacha-Characterpattern.png"
 }; 
 const ICON_MAP = {
     "personality_天真": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/personality%2FPickUpPersonality_Naive.webp?alt=media&token=5439c0fb-4c8e-4097-a868-5534180db07f", "personality_活潑": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/personality%2FPickUpPersonality_Jolly.webp?alt=media&token=701ad789-557c-4de7-ac4d-fc42e6b82cfb", "personality_冷靜": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/personality%2FPickUpPersonality_Cool.webp?alt=media&token=d93be2cb-d36b-4923-badd-5c16557cb844", "personality_狂亂": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/personality%2FPickUpPersonality_Mad.webp?alt=media&token=47f62ae9-38a3-489d-92fc-f034b6249cbe", "personality_憂鬱": "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/personality%2FPickUpPersonality_Gloomy.webp?alt=media&token=e22b91ef-4364-4055-986b-bad568c484c2",
@@ -951,6 +956,12 @@ const CARD_SCHEDULE = [
         start: "2026-07-16T18:00:00+09:00",
         end: "2026-07-30T10:59:59+09:00",
         id: "Artifact21",
+        type: "Artifact"
+    },
+	{
+        start: "2026-07-23T11:30:00+09:00",
+        end: "2026-07-30T10:59:59+09:00",
+        id: "Artifact24",
         type: "Artifact"
     }
 ];
