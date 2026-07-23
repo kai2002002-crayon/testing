@@ -716,25 +716,23 @@
                 );
             };
             
-            // 🌟 3. 改寫背景更新函式，同時接收 種族 與 性格
             const updateRaceBackground = (raceName, personalityName) => {
                 const bgDiv = document.getElementById('raceBackground');
                 if (!bgDiv) return;
 
                 let bgImages = [];
-                
-                // 【注意】CSS 多重背景中，先寫的會在「最上層」
-                // 所以要把帶有透明區域的性格背景放前面，種族背景放後面打底
-                if (personalityName && PERSONALITY_BACKGROUNDS[personalityName]) {
-                    bgImages.push(`url('${PERSONALITY_BACKGROUNDS[personalityName]}')`);
-                }
-                
+
+                // 1. 先放種族圖 (在上層)
                 if (raceName && CHAR_BACKGROUNDS[raceName]) {
                     bgImages.push(`url('${CHAR_BACKGROUNDS[raceName]}')`);
                 }
+                
+                // 2. 再放性格圖 (在下層打底)
+                if (personalityName && PERSONALITY_BACKGROUNDS[personalityName]) {
+                    bgImages.push(`url('${PERSONALITY_BACKGROUNDS[personalityName]}')`);
+                }
 
                 if (bgImages.length > 0) {
-                    // 使用逗號將兩張圖片組合成多重背景
                     bgDiv.style.backgroundImage = bgImages.join(', ');
                 } else {
                     bgDiv.style.backgroundImage = "none";
@@ -1446,14 +1444,14 @@
                     // 🌟 加入未知願像的顯示
                     const unknownMsg = {
                         zh: "未知的願像...",
-                        ja: "未知の願像...",
-                        en: "Unknown Yearning..."
+                        ja: "未知のアサイド...",
+                        en: "Unknown Aside..."
                     };
                     
                     asideContainer.innerHTML = `
                     <div class="py-8 px-4 bg-gray-50/80 dark:bg-slate-800/50 text-gray-500 dark:text-gray-400 font-bold border border-dashed border-gray-300 dark:border-slate-600 rounded-xl text-center shadow-sm flex flex-col items-center justify-center gap-3">
                         <div class="flex justify-center items-center h-[100px]">
-                            <div class="sprite-base sprite-common sprite-no_aside drop-shadow-sm opacity-50 grayscale" style="transform: scale(0.6);"></div>
+                            <div class="sprite-base sprite-common sprite-no_aside drop-shadow-sm opacity-50" style="transform: scale(0.6);"></div>
                         </div>
                         <span class="text-sm tracking-widest">${unknownMsg[lang] || unknownMsg['zh']}</span>
                     </div>`;
@@ -1925,7 +1923,7 @@
             updateTag('charPosition', posLabel, currentCharData.position, 'position');
             updateTag('charJob', jLabel, currentCharData.job, 'job');
             updateTag('charAttribute', aLabel, currentAttribute, 'attribute');
-            updateRaceBackground(currentCharData.race, currentCharData.personality);
+            updateRaceBackground(currentCharData.race);
                 
                 renderStars(currentTargetName);
                 renderExtraInfo(currentTargetName);
