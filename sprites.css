@@ -14,7 +14,8 @@
 .sprite-ult-innocence { background-image: url('char_sprites/ultimate_innocence.png')!important; }
 .sprite-ult-madness { background-image: url('char_sprites/ultimate_madness.png')!important; }
 .sprite-ult-vivacious { background-image: url('char_sprites/ultimate_vivacious.png')!important; }
-
+.sprite-boss { background-image: url('char_sprites/bosssheet.png'); }
+.sprite-NPC { background-image: url('char_sprites/NPCsheet.png'); }
 /* =======================================
    🌟 通用圖示 (common_icon.png)
    ======================================= */
@@ -34,6 +35,7 @@
 .sprite-Bg_Unknown { width: 114px; height: 114px; background-position: -5px -416px; }
 .sprite-Bg_Werebeast { width: 114px; height: 114px; background-position: -129px -416px; }
 .sprite-Bg_Witch { width: 114px; height: 114px; background-position: -253px -416px; }
+.sprite-Bg_NPC { width: 114px; height: 114px; background-position: -369px -292px; }
 .sprite-GachaButton { width: 72px; height: 72px; background-position: -377px -416px; }
 .sprite-Icon_GachaPersonality { width: 64px; height: 64px; background-position: -459px -416px; }
 .sprite-Icon_GachaPersonality_10 { width: 72px; height: 72px; background-position: -533px -416px; }
@@ -244,3 +246,20 @@
 .sprite-Icon_UltimateSkill_Taida { width: 64px; height: 64px; background-position: -5px -967px; }
 .sprite-Icon_UltimateSkill_Ui { width: 64px; height: 64px; background-position: -5px -1041px; }
 .sprite-Icon_UltimateSkill_Tig { width: 64px; height: 64px; background-position: -5px -1115px; }
+
+/* =======================================
+   🌟 Boss圖示 (bosssheet.png)
+   ======================================= */
+.sprite-Icon_CrayonKnight { width: 126px; height: 126px; background-position: -5px -5px; }
+.sprite-Icon_Curburus { width: 126px; height: 126px; background-position: -5px -141px; }
+.sprite-Icon_Lil1li { width: 126px; height: 126px; background-position: -5px -277px; }
+.sprite-Icon_MEOW { width: 126px; height: 126px; background-position: -5px -413px; }
+.sprite-Icon_R41_Renewa { width: 126px; height: 126px; background-position: -5px -549px; }
+
+/* =======================================
+   🌟 NPC圖示 (NPCsheet.png)
+   ======================================= */
+.sprite-Crepe { width: 126px; height: 126px; background-position: -5px -5px; }
+.sprite-Goldy { width: 126px; height: 126px; background-position: -5px -141px; }
+.sprite-RenewaNPC { width: 126px; height: 126px; background-position: -5px -277px; }
+.sprite-Youngchun { width: 126px; height: 126px; background-position: -5px -413px; }
