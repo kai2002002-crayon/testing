@@ -716,13 +716,28 @@
                 );
             };
             
-            const updateRaceBackground = (raceName) => {
+            // 🌟 3. 改寫背景更新函式，同時接收 種族 與 性格
+            const updateRaceBackground = (raceName, personalityName) => {
                 const bgDiv = document.getElementById('raceBackground');
-                if (bgDiv && typeof CHAR_BACKGROUNDS !== 'undefined' && CHAR_BACKGROUNDS[raceName]) {
-                    const bgUrl = CHAR_BACKGROUNDS[raceName];
-                    bgDiv.style.backgroundImage = "url('" + bgUrl + "')";
+                if (!bgDiv) return;
+
+                let bgImages = [];
+                
+                // 【注意】CSS 多重背景中，先寫的會在「最上層」
+                // 所以要把帶有透明區域的性格背景放前面，種族背景放後面打底
+                if (personalityName && PERSONALITY_BACKGROUNDS[personalityName]) {
+                    bgImages.push(`url('${PERSONALITY_BACKGROUNDS[personalityName]}')`);
+                }
+                
+                if (raceName && CHAR_BACKGROUNDS[raceName]) {
+                    bgImages.push(`url('${CHAR_BACKGROUNDS[raceName]}')`);
+                }
+
+                if (bgImages.length > 0) {
+                    // 使用逗號將兩張圖片組合成多重背景
+                    bgDiv.style.backgroundImage = bgImages.join(', ');
                 } else {
-                    if(bgDiv) bgDiv.style.backgroundImage = "none";
+                    bgDiv.style.backgroundImage = "none";
                 }
             };
             
@@ -1910,7 +1925,7 @@
             updateTag('charPosition', posLabel, currentCharData.position, 'position');
             updateTag('charJob', jLabel, currentCharData.job, 'job');
             updateTag('charAttribute', aLabel, currentAttribute, 'attribute');
-            updateRaceBackground(currentCharData.race);
+            updateRaceBackground(currentCharData.race, currentCharData.personality);
                 
                 renderStars(currentTargetName);
                 renderExtraInfo(currentTargetName);
