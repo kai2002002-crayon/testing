@@ -2,7 +2,7 @@
 // トリッカル特級クレヨンノート - スキルデータベース (data_skills.js)
 // 役割: 使徒の全言語（中・日・英）のスキルデータを一元管理
 // ==========================================
-// 🌟 1. 新的種族專屬背景 MAP
+// 🌟 1. 新的種族專屬背景 MAP (含透明度)
             const CHAR_BACKGROUNDS = {
                 "龍族": "https://i.postimg.cc/SNvZjtmR/Popup-Gacha-Event-Pattern-Tribe-Dragon.png",
                 "魔靈": "https://i.postimg.cc/5tMSFhGq/Popup-Gacha-Event-Pattern-Tribe-Elemental.png",
@@ -14,7 +14,7 @@
                 "魔女": "https://i.postimg.cc/C1r8JXPw/Popup-Gacha-Event-Pattern-Tribe-Witch.png"
             };
 
-            // 🌟 2. 新增的性格背景 MAP (含透明度)
+            // 🌟 2. 新增的性格背景 MAP
             const PERSONALITY_BACKGROUNDS = {
                 "冷靜": "https://i.postimg.cc/HkNfDkrZ/Motion-Experience-Pattern-Bg-Composed.png",
                 "憂鬱": "https://i.postimg.cc/4x0rkxY2/Motion-Experience-Pattern-Bg-Depressed.png",
