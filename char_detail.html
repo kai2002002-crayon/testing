@@ -1925,7 +1925,16 @@
             updateTag('charPosition', posLabel, currentCharData.position, 'position');
             updateTag('charJob', jLabel, currentCharData.job, 'job');
             updateTag('charAttribute', aLabel, currentAttribute, 'attribute');
-            updateRaceBackground(currentCharData.race);
+            
+            // 1. 直接從網址列解析出所有的參數
+            const urlParams = new URLSearchParams(window.location.search);
+
+            // 2. 抓取種族與性格（如果網址沒有，就從 currentCharData 拿來當備用）
+            const currentRace = currentCharData.race || urlParams.get('race');
+            const currentPersonality = urlParams.get('personality') || currentCharData.personality;
+
+            // 3. 傳入這兩個確定有值的變數！
+            updateRaceBackground(currentRace, currentPersonality);
                 
                 renderStars(currentTargetName);
                 renderExtraInfo(currentTargetName);
