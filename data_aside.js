@@ -327,6 +327,31 @@ const ASIDE_DATA = {
             }
         }
     },
+    "Pira": { 
+        asideIcon: "", 
+        totalName: { zh: "", ja: "", en: "" }, 
+        stars: {
+            1: { 
+                icon: "", 
+                name: { zh: "", ja: "", en: "" }, 
+                desc: { zh: "", ja: "", en: "" }, 
+                effects: { zh: [""], ja: [""], en: [""] } 
+            },
+            2: { 
+                icon: "", 
+                name: { zh: "", ja: "", en: "" }, 
+                desc: { zh: "", ja: "", en: "" }, 
+                effects: { zh: [""], ja: [""], en: [""] } 
+            },
+            3: { 
+                icon: "", 
+                name: { zh: "", ja: "", en: "" }, 
+                desc: { zh: "", ja: "", en: "" }, 
+                effects: { zh: [""], ja: [""], en: [""] }, 
+                globalEffects: { zh: ["全體 %", "全體 %"], ja: ["全体%", "全体%"], en: ["All%"] } 
+            }
+        }
+    },
     "Posher": { 
         asideIcon: "https://i.postimg.cc/QHvVdy3B/Aside-Icon-Posher.png", 
         totalName: { zh: "大家的藥水", ja: "みんなのポーション", en: "A Potion for All" }, 
@@ -424,6 +449,31 @@ const ASIDE_DATA = {
                 desc: { zh: "增加後排友軍的每秒SP恢復量。", ja: "後列の味方の1秒ごとのSP回復量を増加させる。", en: "Increases SP Recovery per second for Back Row allies." }, 
                 effects: { zh: ["每秒SP恢復量:4"], ja: ["1秒ごとのSP回復量: 4"], en: ["SP Recovery per second: 4"] }, 
                 globalEffects: { zh: ["全體爆擊傷害 3%", "全體物理防禦力 3%"], ja: ["全体 会心ダメージ 3%", "全体 物理防御力 3%"], en: ["All CRIT DMG 3%", "All Physical DEF 3%"] } 
+            }
+        }
+    },
+    "Rollett": { 
+        asideIcon: "", 
+        totalName: { zh: "", ja: "", en: "" }, 
+        stars: {
+            1: { 
+                icon: "", 
+                name: { zh: "", ja: "", en: "" }, 
+                desc: { zh: "", ja: "", en: "" }, 
+                effects: { zh: [""], ja: [""], en: [""] } 
+            },
+            2: { 
+                icon: "", 
+                name: { zh: "", ja: "", en: "" }, 
+                desc: { zh: "", ja: "", en: "" }, 
+                effects: { zh: [""], ja: [""], en: [""] } 
+            },
+            3: { 
+                icon: "", 
+                name: { zh: "", ja: "", en: "" }, 
+                desc: { zh: "", ja: "", en: "" }, 
+                effects: { zh: [""], ja: [""], en: [""] }, 
+                globalEffects: { zh: ["全體 %", "全體 %"], ja: ["全体%", "全体%"], en: ["All%"] } 
             }
         }
     },
