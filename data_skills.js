@@ -2,41 +2,178 @@
 // トリッカル特級クレヨンノート - スキルデータベース (data_skills.js)
 // 役割: 使徒の全言語（中・日・英）のスキルデータを一元管理
 // ==========================================
-// 🌟 1. 新的種族專屬背景 MAP (含透明度)
-            const CHAR_BACKGROUNDS = {
-                "龍族": "https://i.postimg.cc/SNvZjtmR/Popup-Gacha-Event-Pattern-Tribe-Dragon.png",
-                "魔靈": "https://i.postimg.cc/5tMSFhGq/Popup-Gacha-Event-Pattern-Tribe-Elemental.png",
-                "精靈": "https://i.postimg.cc/X7z2XDnX/Popup-Gacha-Event-Pattern-Tribe-Elf.png",
-                "???": "https://i.postimg.cc/jSfh2x8F/Popup-Gacha-Event-Pattern-Tribe-Mystic.png",
-                "幽靈": "https://i.postimg.cc/13FKXmWY/Popup-Gacha-Event-Pattern-Tribe-Phantom.png",
-                "妖精": "https://i.postimg.cc/pX60y1Pm/Popup-Gacha-Event-Pattern-Tribe-Sprite.png",
-                "獸人": "https://i.postimg.cc/L8PV59yC/Popup-Gacha-Event-Pattern-Tribe-Werebeast.png",
-                "魔女": "https://i.postimg.cc/C1r8JXPw/Popup-Gacha-Event-Pattern-Tribe-Witch.png"
-            };
 
-            // 🌟 2. 新增的性格背景 MAP
-            const PERSONALITY_BACKGROUNDS = {
-                "冷靜": "https://i.postimg.cc/HkNfDkrZ/Motion-Experience-Pattern-Bg-Composed.png",
-                "憂鬱": "https://i.postimg.cc/4x0rkxY2/Motion-Experience-Pattern-Bg-Depressed.png",
-                "狂亂": "https://i.postimg.cc/5tFDxWzq/Motion-Experience-Pattern-Bg-Madness.png",
-                "活潑": "https://i.postimg.cc/q7CWkHKG/Motion-Experience-Pattern-Bg-Vivacious.png",
-                "天真": "https://i.postimg.cc/BQVhtwJ6/Motion-Experience-Pattern-Bg-Innocence.png"
-            };
+const CHAR_BACKGROUNDS = {
+    "龍族": "https://i.postimg.cc/SNvZjtmR/Popup-Gacha-Event-Pattern-Tribe-Dragon.png",
+    "魔靈": "https://i.postimg.cc/5tMSFhGq/Popup-Gacha-Event-Pattern-Tribe-Elemental.png",
+    "精靈": "https://i.postimg.cc/X7z2XDnX/Popup-Gacha-Event-Pattern-Tribe-Elf.png",
+    "???": "https://i.postimg.cc/jSfh2x8F/Popup-Gacha-Event-Pattern-Tribe-Mystic.png",
+    "幽靈": "https://i.postimg.cc/13FKXmWY/Popup-Gacha-Event-Pattern-Tribe-Phantom.png",
+    "妖精": "https://i.postimg.cc/pX60y1Pm/Popup-Gacha-Event-Pattern-Tribe-Sprite.png",
+    "獸人": "https://i.postimg.cc/L8PV59yC/Popup-Gacha-Event-Pattern-Tribe-Werebeast.png",
+    "魔女": "https://i.postimg.cc/C1r8JXPw/Popup-Gacha-Event-Pattern-Tribe-Witch.png"
+};
+
+const PERSONALITY_BACKGROUNDS = {
+    "冷靜": "https://i.postimg.cc/HkNfDkrZ/Motion-Experience-Pattern-Bg-Composed.png",
+    "憂鬱": "https://i.postimg.cc/4x0rkxY2/Motion-Experience-Pattern-Bg-Depressed.png",
+    "狂亂": "https://i.postimg.cc/5tFDxWzq/Motion-Experience-Pattern-Bg-Madness.png",
+    "活潑": "https://i.postimg.cc/q7CWkHKG/Motion-Experience-Pattern-Bg-Vivacious.png",
+    "天真": "https://i.postimg.cc/BQVhtwJ6/Motion-Experience-Pattern-Bg-Innocence.png"
+};
 
 
 const characterSkills = [
-  {
+    {
+    "name": "羅蕾特",
+    "attribute": "魔法",
+    "skills": {
+      "zh-TW": {
+        "normalAttack": {
+          "basic": " []",
+          "enhanced": " []"
+        },
+        "normalSkill": {
+          "name": "",
+          "desc": "",
+          "stats": [""]
+        },
+        "ultimateSkill": {
+          "name": "",
+          "desc": "",
+          "stats": [""],
+          "cooldown": "秒"
+        },
+        "passiveSkill": {
+          "desc": "",
+          "stats": [""]
+        }
+      },
+      "ja": {
+        "normalAttack": {
+          "basic": "[]",
+          "enhanced": "[]"
+        },
+        "normalSkill": {
+          "name": "",
+          "desc": "",
+          "stats": [""]
+        },
+        "ultimateSkill": {
+          "name": "",
+          "desc": "",
+          "stats": [""],
+          "cooldown": "秒"
+        },
+        "passiveSkill": {
+          "desc": "",
+          "stats": [""]
+        }
+      },
+      "en": {
+        "normalAttack": {
+          "basic": "[]",
+          "enhanced": "[]"
+        },
+        "normalSkill": {
+          "name": "",
+          "desc": "",
+          "stats": [""]
+        },
+        "ultimateSkill": {
+          "name": "",
+          "desc": "",
+          "stats": [""],
+          "cooldown": "s"
+        },
+        "passiveSkill": {
+          "desc": "",
+          "stats": ["%"]
+        }
+      },
+    }
+  },
+    {
+    "name": "琵拉",
+    "attribute": "物理",
+    "skills": {
+      "zh-TW": {
+        "normalAttack": {
+          "basic": " []",
+          "enhanced": " []"
+        },
+        "normalSkill": {
+          "name": "",
+          "desc": "",
+          "stats": [""]
+        },
+        "ultimateSkill": {
+          "name": "",
+          "desc": "",
+          "stats": [""],
+          "cooldown": "秒"
+        },
+        "passiveSkill": {
+          "desc": "",
+          "stats": [""]
+        }
+      },
+      "ja": {
+        "normalAttack": {
+          "basic": "[]",
+          "enhanced": "[]"
+        },
+        "normalSkill": {
+          "name": "",
+          "desc": "",
+          "stats": [""]
+        },
+        "ultimateSkill": {
+          "name": "",
+          "desc": "",
+          "stats": [""],
+          "cooldown": "秒"
+        },
+        "passiveSkill": {
+          "desc": "",
+          "stats": [""]
+        }
+      },
+      "en": {
+        "normalAttack": {
+          "basic": "[]",
+          "enhanced": "[]"
+        },
+        "normalSkill": {
+          "name": "",
+          "desc": "",
+          "stats": [""]
+        },
+        "ultimateSkill": {
+          "name": "",
+          "desc": "",
+          "stats": [""],
+          "cooldown": "s"
+        },
+        "passiveSkill": {
+          "desc": "",
+          "stats": ["%"]
+        }
+      },
+    }
+  },
+    {
     "name": "提格",
     "attribute": "物理",
     "skills": {
       "zh-TW": {
         "normalAttack": {
           "basic": "對目標快速揮動雙劍、造成2次物理傷害，第二次攻擊造成更高額的傷害。 [物理傷害:40%] [第2擊物理傷害:60%]",
-          "enhanced": "每三次攻擊後，對目標擊敲雙劍向周圍揮舞，造成範圍物理傷害並恢復SP,最後一次攻擊造成更高額的傷害。 [物理傷害:60%] [第2次物理傷害:90%] [每命中1名敵人的SP恢復量:120]"
+          "enhanced": "每三次攻擊後，對目標擊敲雙劍向周圍揮舞，造成範圍物理傷害並恢復SP，最後一次攻擊造成更高額的傷害。 [物理傷害:60%] [第2次物理傷害:90%] [每命中1名敵人的SP恢復量:120]"
         },
         "normalSkill": {
           "name": "音速斬擊",
-          "desc": "瞬間向前突進並造成範圍物理傷害後，回到原位。 若目標為使者，則追加依最大HP比例計算的額外傷害。",
+          "desc": "瞬間向前突進並造成範圍物理傷害後，回到原位。若目標為使者，則追加依最大HP比例計算的額外傷害。",
           "stats": ["物理傷害:672%", "使者最大HP比例傷害:最大HP的20%"]
         },
         "ultimateSkill": {
@@ -68,7 +205,7 @@ const characterSkills = [
         },
         "passiveSkill": {
           "desc": "攻撃速度が増加する。",
-          "stats": ["攻撃速度:42%"]
+          "stats": ["攻撃速度増加:42%"]
         }
       },
       "en": {
@@ -88,7 +225,7 @@ const characterSkills = [
           "cooldown": "20s"
         },
         "passiveSkill": {
-          "desc": "ATK SPD Increase",
+          "desc": "Increases Attack Speed.",
           "stats": ["ATK SPD Increase: 42%"]
         }
       },
@@ -100,7 +237,7 @@ const characterSkills = [
     "skills": {
       "zh-TW": {
         "normalAttack": {
-          "basic": "對敵人投擲3顆鑽石造成魔法傷害,最後一擊將造成更大的傷害。 [魔法傷害:72%] [最後一擊魔法傷害:48%]",
+          "basic": "對敵人投擲3顆鑽石造成魔法傷害，最後一擊將造成更大的傷害。 [魔法傷害:72%] [最後一擊魔法傷害:48%]",
           "enhanced": "以一定機率對敵人投擲巨型鑽石，造成魔法傷害並給予灼痛效果。 [灼痛:每秒受到傷害，並使恢復量減少。] [魔法傷害:240%] [灼痛持續時間:4秒。]"
         },
         "normalSkill": {
@@ -132,12 +269,12 @@ const characterSkills = [
         "ultimateSkill": {
           "name": "ダイヤブレ･･･くちゅ!",
           "desc": "くしゃみで敵に範囲魔法ダメージを与える。",
-          "stats": ["魔法ダメージ: 1050%"],
+          "stats": ["魔法ダメージ:1050%"],
           "cooldown": "40秒"
         },
         "passiveSkill": {
-          "desc": "味方後列の使徒へスキルダメージ量が増加する。",
-          "stats": ["スキルダメージ量が増加:34%"]
+          "desc": "味方の後列使徒のスキルダメージ量を増加させる",
+          "stats": ["スキルダメージ量増加:34%"]
         }
       },
       "en": {
@@ -157,13 +294,13 @@ const characterSkills = [
           "cooldown": "40s"
         },
         "passiveSkill": {
-          "desc": "Increase Skill Damage of Back Row allies",
-          "stats": ["Increase Skill Damage: 34%"]
+          "desc": "Increases Skill Damage of allied back row Apostles. (This effect activates even if Daya is not on the field.)",
+          "stats": ["Skill DMG Increase: 34%"]
         }
       },
     }
   },
-  {
+   {
     "name": "芭瓏",
     "attribute": "魔法",
     "skills": {
@@ -185,7 +322,7 @@ const characterSkills = [
         },
         "passiveSkill": {
           "desc": "回合開始時,一定時間內對自身生成護霜。使用普通技能後，一定時間內增加自身的攻擊速度。",
-          "stats": ["讓店:最大HP的68%", "護盾持續時間:10秒", "攻擊速度增加:63%", "攻擊速度增加持續時間:10秒"]
+          "stats": ["護盾:最大HP的68%", "護盾持續時間:10秒", "攻擊速度增加:63%", "攻擊速度增加持續時間:10秒"]
         }
       },
       "ja": {
@@ -221,7 +358,7 @@ const characterSkills = [
         },
         "ultimateSkill": {
           "name": "Summon Will-o'-wisp",
-          "desc": "Deals AoE Magical Damage around self, applying Curse. Reduces Incoming Damage for a set period of time,",
+          "desc": "Deals AoE Magical Damage around self, applying Curse. Reduces Incoming Damage for a set period of time.",
           "stats": ["Curse: Ratio of Damage Received by the target is dealt as Magical Damage to a random target.", "Magical DMG: 930%", "Curse Duration: 15s", "Incoming DMG Reduction: 25%", "Incoming DMG Reduction Duration: 8s"],
           "cooldown": "40s"
         },
