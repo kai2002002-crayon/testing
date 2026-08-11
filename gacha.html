@@ -241,13 +241,30 @@
                 }
 
                 // 🌟 新增：2. 檢查 EVENT_SCHEDULE 是否有開放性格招募
+                // 🌟 2. 檢查 EVENT_SCHEDULE 是否有開放性格招募 (支援 eventId 與指定性格)
                 let isPersonalityOpen = false;
+                let activePersonality = null; // 記錄當前開放的特定性格 (若無指定則全開)
+                
                 if (typeof EVENT_SCHEDULE !== 'undefined') {
-                    isPersonalityOpen = EVENT_SCHEDULE.some(e => 
-                        (e.type === 'personality' || e.type === 'personality_gacha') && 
-                        now >= new Date(e.start).getTime() && 
-                        now <= new Date(e.end).getTime()
-                    );
+                    const activeEvent = EVENT_SCHEDULE.find(e => {
+                        const isTimeMatch = now >= new Date(e.start).getTime() && now <= new Date(e.end).getTime();
+                        if (!isTimeMatch) return false;
+                        
+                        const isTypeMatch = (e.type === 'personality' || e.type === 'personality_gacha');
+                        const isIdMatch = e.eventId && (e.eventId.startsWith('Gacha_PickPersonality') || e.eventId.includes('Personality'));
+                        return isTypeMatch || isIdMatch;
+                    });
+                    if (activeEvent) {
+                        isPersonalityOpen = true;
+                        // 依據 eventId 判斷是哪種性格
+                        if (activeEvent.eventId) {
+                            if (activeEvent.eventId.includes('Cool')) activePersonality = "冷靜";
+                            else if (activeEvent.eventId.includes('Naive')) activePersonality = "天真";
+                            else if (activeEvent.eventId.includes('Mad')) activePersonality = "狂亂";
+                            else if (activeEvent.eventId.includes('Jolly')) activePersonality = "活潑";
+                            else if (activeEvent.eventId.includes('Gloomy')) activePersonality = "憂鬱";
+                        }
+                    }
                 }
 
                 // 🌟 判斷當前語言並轉換為圖片後綴 (ZH, JA, EN)
@@ -284,31 +301,44 @@
                 poolBtnContainer.appendChild(normalBtn); 
                 if (!firstBtn) firstBtn = { btn: normalBtn, type: 'normal', args: [[], null, normalBtn.innerText] };
                 
-                // --- 🌟 生成性格招募按鈕 (只有在 isPersonalityOpen 為 true 時才執行) ---
+                // --- 🌟 生成性格招募按鈕 ---
                 if (isPersonalityOpen) {
                     const pPoolBtn = document.createElement('button'); 
                     pPoolBtn.className = 'pool-btn rounded-xl border-4 border-transparent hover:border-amber-400 overflow-hidden transition-all p-0 h-[45px] bg-white dark:bg-gray-800 flex items-center justify-center min-w-[120px] shadow-sm';
-                    const pPoolTitle = t('gacha_personality_pool');
+                    // 如果有指定單一性格，預設就選該性格；如果沒有，預設選第一個
+                    const defaultP = activePersonality || personalities[0];
+                    const pPoolTitle = activePersonality 
+                        ? `${t('gacha_personality_pool')} - ${t(activePersonality)}` 
+                        : t('gacha_personality_pool');
                     
                     pPoolBtn.innerHTML = `
-                        <img src="event/SelectPickPersonality_${langSuffix}.png" class="h-full w-auto object-contain" alt="${pPoolTitle}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                        <span style="display:none;" class="px-3 font-bold text-sm text-gray-700 dark:text-gray-200">${pPoolTitle}</span>
+                    <img src="event/SelectPickPersonality_${langSuffix}.png" class="h-full w-auto object-contain" alt="${pPoolTitle}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <span style="display:none;" class="px-3 font-bold text-sm text-gray-700 dark:text-gray-200">${pPoolTitle}</span>
                     `;
                     pPoolBtn.onclick = () => { 
-                        document.getElementById('personalitySubMenu').classList.remove('hidden'); 
-                        setPool('personality', [], personalities[0], `${pPoolTitle} - ${t(personalities[0])}`, pPoolBtn); 
-                        updatePersonalityBtns(personalities[0]); 
+                        if (!activePersonality) {
+                            // 如果是全性格自選，才展開子選單
+                            document.getElementById('personalitySubMenu').classList.remove('hidden'); 
+                        }
+                        setPool('personality', [], defaultP, `${t('gacha_personality_pool')} - ${t(defaultP)}`, pPoolBtn); 
+                        updatePersonalityBtns(defaultP); 
                     };
                     poolBtnContainer.appendChild(pPoolBtn);
-                
-                    personalities.forEach(p => {
-                        const btn = document.createElement('button'); btn.className = 'p-sub-btn px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-xs font-bold';
-                        btn.innerText = t(p);
-                        btn.onclick = () => { setPool('personality', [], p, `${t('gacha_personality_pool')} - ${t(p)}`, pPoolBtn); updatePersonalityBtns(p); };
-                        pBtnContainer.appendChild(btn);
-                    });
+                    
+                    // 如果沒有特定鎖定性格，產生 5 種性格切換按鈕供選擇
+                    if (!activePersonality) {
+                        personalities.forEach(p => {
+                            const btn = document.createElement('button'); 
+                            btn.className = 'p-sub-btn px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-xs font-bold';
+                            btn.innerText = t(p);
+                            btn.onclick = () => { 
+                                setPool('personality', [], p, `${t('gacha_personality_pool')} - ${t(p)}`, pPoolBtn); 
+                                updatePersonalityBtns(p); 
+                            };
+                            pBtnContainer.appendChild(btn);
+                        });
+                    }
                 }
-
                 // 預設選中第一個可用的按鈕
                 if (firstBtn) { setPool(firstBtn.type, firstBtn.args[0], firstBtn.args[1], firstBtn.args[2], firstBtn.btn); }
             }
