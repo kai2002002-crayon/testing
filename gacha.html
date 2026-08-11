@@ -240,9 +240,10 @@
                     currentRateUps = [...new Set(currentRateUps)];
                 }
 
-                // 🌟 新增：2. 檢查 EVENT_SCHEDULE 是否有開放性格招募，並自動判斷開放哪幾種性格
+                // 🌟 新增：2. 檢查 EVENT_SCHEDULE 是否有開放性格招募，並自動判斷開放哪幾種性格與對應 Banner
                 let isPersonalityOpen = false;
-                let activePersonalities = []; // 用來存放當期開放的性格
+                let activePersonalities = []; 
+                let personalityBannerName = "SelectPickPersonality"; // 預設 Banner 名稱
 
                 if (typeof EVENT_SCHEDULE !== 'undefined') {
                     EVENT_SCHEDULE.forEach(e => {
@@ -250,20 +251,19 @@
                             if (e.type === 'personality' || e.type === 'personality_gacha' || (e.eventId && e.eventId.includes('PickPersonality'))) {
                                 isPersonalityOpen = true;
                                 
-                                // 根據 eventId 內的英文字眼判斷性格
+                                // 根據 eventId 內的精確英文字眼判斷性格與對應的 Banner 檔名
                                 if (e.eventId) {
                                     const idLower = e.eventId.toLowerCase();
                                     
-                                    // 判斷是否為「自選性格招募」(例如 SelectPickPersonality)
                                     if (idLower.includes('selectpick') || idLower.includes('selectpersonality')) {
                                         activePersonalities.push("天真", "冷靜", "狂亂", "活潑", "憂鬱");
+                                        personalityBannerName = "SelectPickPersonality";
                                     } else {
-                                        // 否則判斷是哪一種單一性格招募
-                                        if (idLower.includes('composed')) activePersonalities.push("冷靜");
-                                        if (idLower.includes('vivacious')) activePersonalities.push("活潑");
-                                        if (idLower.includes('depressed')) activePersonalities.push("憂鬱");
-                                        if (idLower.includes('madness')) activePersonalities.push("狂亂");
-                                        if (idLower.includes('innocence')) activePersonalities.push("天真");
+                                        if (idLower.includes('composed')) { activePersonalities.push("冷靜"); personalityBannerName = "PickPersonalityComposed"; }
+                                        if (idLower.includes('vivacious')) { activePersonalities.push("活潑"); personalityBannerName = "PickPersonalityVivacious"; }
+                                        if (idLower.includes('depressed')) { activePersonalities.push("憂鬱"); personalityBannerName = "PickPersonalityDepressed"; }
+                                        if (idLower.includes('madness')) { activePersonalities.push("狂亂"); personalityBannerName = "PickPersonalityMadness"; }
+                                        if (idLower.includes('innocence')) { activePersonalities.push("天真"); personalityBannerName = "PickPersonalityInnocence"; }
                                     }
                                 }
                             }
@@ -271,12 +271,13 @@
                     });
                 }
 
-                // 過濾重複的性格。
+                // 過濾重複的性格
                 activePersonalities = [...new Set(activePersonalities)];
                 
-                // 保險機制：如果設定了開放，但字眼都不符合(可能是舊版資料異常)，才作為防呆機制全開
-                if (isPersonalityOpen && activePersonalities.length === 0) {
-                    activePersonalities = ["天真", "冷靜", "狂亂", "活潑", "憂鬱"];
+                // 如果同時抓到超過1種性格(或是防呆機制觸發)，強制將 Banner 設回自選池的圖片
+                if (activePersonalities.length > 1 || (isPersonalityOpen && activePersonalities.length === 0)) {
+                    personalityBannerName = "SelectPickPersonality";
+                    if (activePersonalities.length === 0) activePersonalities = ["天真", "冷靜", "狂亂", "活潑", "憂鬱"];
                 }
 
                 // 🌟 判斷當前語言並轉換為圖片後綴 (ZH, JA, EN)
@@ -313,31 +314,30 @@
                 poolBtnContainer.appendChild(normalBtn); 
                 if (!firstBtn) firstBtn = { btn: normalBtn, type: 'normal', args: [[], null, normalBtn.innerText] };
                 
+                // 🌟 生成性格招募按鈕 (動態渲染開放的性格與 Banner)
                 if (isPersonalityOpen) {
                     const pPoolBtn = document.createElement('button'); 
                     pPoolBtn.className = 'pool-btn rounded-xl border-4 border-transparent hover:border-amber-400 overflow-hidden transition-all p-0 h-[45px] bg-white dark:bg-gray-800 flex items-center justify-center min-w-[120px] shadow-sm';
                     const pPoolTitle = t('gacha_personality_pool');
                     
+                    // 🌟 這裡使用動態變數 personalityBannerName 組合圖片路徑
                     pPoolBtn.innerHTML = `
-                        <img src="event/SelectPickPersonality_${langSuffix}.png" class="h-full w-auto object-contain" alt="${pPoolTitle}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <img src="event/${personalityBannerName}_${langSuffix}.png" class="h-full w-auto object-contain" alt="${pPoolTitle}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                         <span style="display:none;" class="px-3 font-bold text-sm text-gray-700 dark:text-gray-200">${pPoolTitle}</span>
                     `;
                     
                     pPoolBtn.onclick = () => { 
-                        // 如果開放超過 1 種性格才顯示次選單
                         if (activePersonalities.length > 1) {
                             document.getElementById('personalitySubMenu').classList.remove('hidden'); 
                         } else {
                             document.getElementById('personalitySubMenu').classList.add('hidden'); 
                         }
                         
-                        // 點擊主按鈕時，預設帶入開放陣列中的第一個性格
                         setPool('personality', [], activePersonalities[0], `${pPoolTitle} - ${t(activePersonalities[0])}`, pPoolBtn); 
                         updatePersonalityBtns(activePersonalities[0]); 
                     };
                     poolBtnContainer.appendChild(pPoolBtn);
                 
-                    // 只生成「當期有開放」的性格按鈕
                     activePersonalities.forEach(p => {
                         const btn = document.createElement('button'); 
                         btn.className = 'p-sub-btn px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-xs font-bold';
