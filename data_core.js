@@ -941,7 +941,7 @@ const EVENT_SCHEDULE = [
 	{
         start: "2026-08-11T17:00:00+09:00",
         end: "2026-08-27T10:59:59+09:00",
-        eventId: "PickComposed" 
+        eventId: "PickPersonalityComposed" 
     },
 	{
         start: "2026-07-07T12:00:00+09:00",
