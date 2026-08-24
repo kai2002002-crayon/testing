@@ -2,6 +2,31 @@
 // 🔮 願像系統 (Aside) 資料庫 - 多語系版本 (zh: 中文, ja: 日文, en: 英文)
 
 const ASIDE_DATA = {
+    "": { 
+        asideIcon: "", 
+        totalName: { zh: "", ja: "", en: "" }, 
+        stars: {
+            1: { 
+                icon: "", 
+                name: { zh: "", ja: "", en: "" }, 
+                desc: { zh: "", ja: "", en: "." }, 
+                effects: { zh: [""], ja: [""], en: [""] } 
+            },
+            2: { 
+                icon: "", 
+                name: { zh: "", ja: "", en: "" }, 
+                desc: { zh: "", ja: "", en: "" }, 
+                effects: { zh: [""], ja: [""], en: [""] } 
+            },
+            3: { 
+                icon: "", 
+                name: { zh: "", ja: "", en: "" }, 
+                desc: { zh: "", ja: "", en: "" }, 
+                effects: { zh: [""], ja: [""], en: ["%"] }, 
+                globalEffects: { zh: ["全體 %", "全體 %"], ja: ["全体 %", "全体 %"], en: ["All %", "All %"] } 
+            }
+        }
+    },
     "Alice": { 
         asideIcon: "", 
         totalName: { zh: "最強幸運卡", ja: "最高の吉のカード", en: "The Ultimate Lucky Card" }, 
@@ -52,6 +77,31 @@ const ASIDE_DATA = {
             }
         }
     },
+    "Aya": { 
+        asideIcon: "",
+        totalName: { zh: "試煉中的雪花", ja: "試練の中の雪の花", en: "Trial's Snowflake" }, 
+        stars: {
+            1: { 
+                icon: "", 
+                name: { zh: "潔白的雪花", ja: "真っ白な雪の結晶", en: "Pure White Snowflake" }, 
+                desc: { zh: "穿戴者的最大HP、魔法攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、魔法攻撃力、会心、会心夕メージが増加する。", en: "Increases bearer's Max HP, Magical ATK, CRIT, and CRIT DMG." }, 
+                effects: { zh: ["最大HP增加:6%", "魔法攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP增加:6%", "魔法攻擊力增加:6%", "会心增加:6%", "会心ダメージ増加:6%"], en: ["Max HP Increase: 6%", "Magical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
+            },
+            2: { 
+                icon: "",
+                name: { zh: "雪花紛飛", ja: "雪の花が舞い散り", en: "Fluttering Snowflake" }, 
+                desc: { zh: "每4秒充能一次雪花盛開效果。充能完成時，下一次普通攻擊將追加範圍魔法傷害，並給予昏迷效果。普通技能的蝴蝶撞擊敵人時將給予凍傷效果。蝴蝶飛回時、恢復自身HP。", ja: "4秒ごとに雪の花満開の効果がチャージされる。チャージ完了時、次の普通攻撃に追加で範囲魔法ダメージを与え、気絶を付与する。低学年スキルの蝶が敵に衝突すると凍傷を付与する、蝶が戻ってくると、自身のHPを回復する。", en: "Charges Snowflake Blossom Effect every 4 seconds. When fully charged, the next Normal Attack additionally deals AoE Magical Damage and applies Stun. When the butterfly from the Freshman Skill collides with an enemy, it applies Freeze. The butterfly returns and recovers her own HP." }, 
+                effects: { zh: ["凍傷:每秒造成傷害，且受到冷靜性格使者的傷客量增加。", "昏迷:無法進行任何行動。", "雪花盛開魔法傷害:650%", "昏迷持續時間:1.5秒", "凍傷時受到冷靜性格使者傷害量增加:8%", "凍傷持續時間:10秒", "HP恢復:最大HP的20%"], ja: ["凍傷:1秒ごとにダメージを受け、性格が冷静の使徒からの被ダメージ量が増加する。", "気絕:行動不能状態になる。", "雪の花満開のダメージ: 650%", "気絶の持続時間:1.5秒", "凍傷時、冷静の使徒から受けるダメージ増加:8%", "凍傷の持続時間:10秒", "HP回復:最大HPの20%"], en: ["Freeze: Applies Damage every second and increases Incoming Damage from Composed Apostles.", "Stun: Becomes unable to act.", "Snowflake Blossom Magical DMG: 650%", "Stun Duration: 1.5s", "Incoming DMG Increase from Composed Apostles while Frozen: 8%", "Freeze Duration: 10s", "HP Recovery: 20% of Max HP"] } 
+            },
+            3: { 
+                icon: "", 
+                name: { zh: "萬年雪的賢者!", ja: "万年雪の賢者様!", en: "Sage of Perpetual Snow!" }, 
+                desc: { zh: "增加中排友軍對敵人造成的傷害量，並減少中排友軍受到的傷害量。", ja: "中列の味方の敵への与えるダメージ量を増加させ、中列の味方の敵からの被ダメージ量を減少させる。", en: "Increases Outgoing Damage and reduces Incoming Damage for Middle Row allies." }, 
+                effects: { zh: ["傷害量增加:19.5%", "受到的傷害量減少:8.8%"], ja: ["ダメージ量増加:19.5%", "被ダメージ量減少:8.8%"], en: ["DMG Increase: 19.5%", "Incoming DMG Reduction: 8.8%"] }, 
+                globalEffects: { zh: ["全體HP 4%", "全體爆擊傷害 4%"], ja: ["全体HP 4%", "全体会心ダメージ 4%"], en: ["All HP 4%", "All CRIT DMG 4%"] } 
+            }
+        }
+    },
     "Barong": { 
         asideIcon: "https://i.postimg.cc/9D2LGRq7/Aside-Icon-Barong.png", 
         totalName: { zh: "備受喜愛的幽靈芭瓏", ja: "愛され幽霊バロン", en: "Beloved Phantom Barong" }, 
@@ -74,6 +124,56 @@ const ASIDE_DATA = {
                 desc: { zh: "增加前排友軍對敵人造成的傷害量,並減少前排友軍受到敵人的傷害量。", ja: "前列の味方の敵への与ダメージ量を増加させ、 前列の味方の敵からの被ダメージ量を減少させる。", en: "Increases Outgoing Damage and reduces Incoming Damage of Front Row allies." }, 
                 effects: { zh: ["傷害量增加:13.6%", "受到的傷害量減少:5.9%"], ja: ["ダメージ量増加:13.6%", "被ダメージ量減少:5,9%"], en: ["DMG Increase: 13,6%", "Incoming DMG Reduction: 5.9%"] }, 
                 globalEffects: { zh: ["全體魔法攻擊力 3%", "全體魔法防禦力 3%"], ja: ["全体魔法攻撃力 3%", "全体魔法防御力 3%"], en: ["All Magical ATK 3%", "All Magical DEF3%"] } 
+            }
+        }
+    },
+    "Blanchet": { 
+        asideIcon: "", 
+        totalName: { zh: "百萬朵藍玫瑰", ja: "百万本の青い薔薇", en: "A Million Blue Roses" }, 
+        stars: {
+            1: { 
+                icon: "", 
+                name: { zh: "盛開的藍玫瑰", ja: "満開の青い薔薇", en: "A Blue Rose in Full Bloom" }, 
+                desc: { zh: "穿戴者的最大HP、魔法攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、魔法攻撃力、会心、会心ダメージが増加する。", en: "Increases bearer's Max HP, Magical ATK, CRIT, and CRIT DMG." }, 
+                effects: { zh: ["最大HP增加:6%", "魔法攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP增加:6%", "魔法攻擊力增加:6%", "会心增加:6%", "会心ダメージ増加:6%"], en: ["Max HP Increase: 6%", "Magical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
+            },
+            2: { 
+                icon: "", 
+                name: { zh: "百萬繁花綻放", ja: "咲きほこる百万本の花", en: "A Million in Bloom" }, 
+                desc: { zh: "強化攻擊傷害量增加，且強化攻擊的目標將追加一名隨機敵人。高級技能變更。同步玫瑰會留下標記，於最後一擊時爆炸造成魔法傷害。根據疊加的標記數量將追加爆炸傷害。", ja: "強化攻撃のダメージ量が増加し、強化攻撃の目標対象にランダムな敵が追加される。高学年スキルが変化する。シンクローズがマークを付与し、最後の一撃時に爆発して魔法ダメージを与える。スタックしたマーク敵に応じて爆発ダメージが追加される。", en: "Increases Enhanced Attack Damage, and targets one additional random enemy. Senior Skill is changed. Sync Rose leaves a Mark, which explodes on the final hit to deal Magical Damage. Additional explosive Damage is added based on the number of stacked Marks." }, 
+                effects: { zh: ["強化攻擊傷害量增加:240%", "標記爆炸傷害:700%", "標記最大疊加密數:10個", "每要加1層標記追加傷害:16%"], ja: ["強化攻撃のダメージ量増加: 240%", "マーク爆発ダメージ: 700%", "マークの最大スタック数:10個", "マークスタックごとのダメージ追加:16%"], en: ["Enhanced ATK DMG Increase: 240%", "Mark Explosion DMG: 700%", "Max Mark Stacks: 10", "Additional DMG per Mark Stack: 16%"] } 
+            },
+            3: { 
+                icon: "", 
+                name: { zh: "藍色花香的力量", ja: "青い花の香りのカ", en: "Power of the Blue Floral Scent" }, 
+                desc: { zh: "使所有友軍爆擊及爆擊傷害增加。", ja: "味方全員の会心と会心ダメージを増加させる。", en: "Increases Critical Hit and Critical Damage of all allies." }, 
+                effects: { zh: ["爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["会心增加:6%", "会心ダメージ増加:6%"], en: ["CRIT Increase: 6%", "CRIT DMG Increase: 6%"] }, 
+                globalEffects: { zh: ["全體魔法攻擊力 3%", "全體爆擊傷害抵抗 3%"], ja: ["全体魔法攻擊力 3%", "全体会ダメージ抵抗 3%"], en: ["All Magical ATK 3%", "All CRIT DMG RES 3%"] } 
+            }
+        }
+    },
+    "Canna": { 
+        asideIcon: "", 
+        totalName: { zh: "日光浴康娜", ja: "日光浴カンナ", en: "Sunbathing Canna" }, 
+        stars: {
+            1: { 
+                icon: "", 
+                name: { zh: "完美休假", ja: "完璧な休暇", en: "Perfect Vacation" }, 
+                desc: { zh: "穿戴使者的最大 HP、物理攻擊力、爆擊、爆擊傷害增加", ja: "着用者の最大HP、物理攻撃力、会心、会心ダメージが増加する。", en: "Increases the bearer's Max HP, Physical ATK, CRIT Hit, and CRIT DMG." }, 
+                effects: { zh: ["最大HP增加：6%", "物理攻擊力增加：6%", "爆擊增加：6%", "爆擊傷害增加：6%"], ja: ["最大HP增加:6%", "物理攻擊力增加:6%", "会心增加:6%", "会ダメージ增加:6%"], en: ["Max HP Increase: 6%", "Physical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
+            },
+            2: { 
+                icon: "", 
+                name: { zh: "神射手康娜", ja: "腕利き砲手のカンナ", en: "Canna, the Sharpshooter" }, 
+                desc: { zh: "強化攻擊施放機率增加。使用普通技能後，攻擊速度提升", ja: "強化攻撃発動確率が増加する。 低学年スキル使用後、攻撃速度が増加する。", en: "Increases Enhanced Attack Cast Rate. After using Freshman Skill, increases Attack Speed." }, 
+                effects: { zh: ["強化攻擊施放機率增加：15%", "攻擊速度提升：60%", "攻擊速度提升持續時間：8秒"], ja: ["強化攻撃発動確率增加:15%", "攻擊速度增加:60%", "攻撃速度増加の持続時間:8秒"], en: ["Chance of Enhanced Attack Increase: 15%", "ATK SPD Increase: 60%", "ATK SPD Increase Duration: 8s"] } 
+            },
+            3: { 
+                icon: "", 
+                name: { zh: "請求後援隊支援", ja: "後衛隊援護要請", en: "Rear Guard, Help me!" }, 
+                desc: { zh: "敵人對後排友軍造成的傷害量減少", ja: "後列の味方の敵からの被ダメージ量を減少させる。", en: "Reduces Incoming Damage for Back Row allies." }, 
+                effects: { zh: ["受到的傷害量減少：9.7%"], ja: ["被ダメージ屋減少:9.7%"], en: ["Incoming DMG Reduction: 9.7%"] }, 
+                globalEffects: { zh: ["全體HP 3%", "全體爆擊傷害 3%"], ja: ["全体HP 3%", "全体会心ダメージ 3%"], en: ["All HP 3%", "All CRIT DMG 3%"] } 
             }
         }
     },
@@ -177,6 +277,31 @@ const ASIDE_DATA = {
             }
         }
     },
+    "Fricle": { 
+        asideIcon: "", 
+        totalName: { zh: "高階魔女皮可蒞", ja: "上位魔女ピコラ", en: "High Witch Picora" },
+        stars: {
+            1: { 
+                icon: "", 
+                name: { zh: "我的愛徒皮可菈", ja: "我が愛弟子ピコラ", en: "My Beloved Disciple Picora" }, 
+                desc: { zh: "穿戴者的最大HP、魔法攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、魔法攻撃力、会心、会心ダメージが増加する。", en: "Increases bearer's Max HP, Magical ATK, CRIT, and CRIT DMG." }, 
+                effects: { zh: ["最大HP增加:6%", "魔法攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP增加:6%", "魔法攻擊力增加:6%", "会心增加:6%", "会心ダメージ増加:6%"], en: ["Max HP Increase: 6%", "Magical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
+            },
+            2: { 
+                icon: "", 
+                name: { zh: "魔女的力量非同凡響!", ja: "魔女の力はすごかった!", en: "The Witch's Power Was Incredible" }, 
+                desc: { zh: "強化攻擊召喚出的觸手傷害變為2倍，且施放機率增加。高級技能將追加減少防禦力效果。", ja: "強化攻撃で召喚した触手のダメージが2倍になり、発動確率が増加する。高学年スキルに防御力減少効果が追加される。", en: "The Damage of the tentacles summoned by an Enhanced Attack doubles and Cast Chance Increases, A Defense Reduction effect is added to Senior Skill." }, 
+                effects: { zh: ["強化攻擊施展機率增加:7.5%", "防禦力減少:30%", "防禦力減少持續時間:7秒"], ja: ["強化攻撃発動確率增加:7.5%", "防御力減少:30%", "防御力減少の持続時間:7秒"], en: ["Enhanced Attack Cast Chance Increase: 7.5%", "DEF Reduction: 30%", "DEF Reduction Duration: 7s"] } 
+            },
+            3: { 
+                icon: "", 
+                name: { zh: "師父芙莉可的教誨", ja: "師匠フリックルの教え", en: "The Teachings of Master Fricle" }, 
+                desc: { zh: "增加中排友軍的每秒SP恢復量。", ja: "中列の味方の1秒ごとのSP回復量を増加させる。", en: "Increases SP Recovery per second for Middle Row allies." }, 
+                effects: { zh: ["每秒SP恢復量:4"], ja: ["1秒ごとのSP回復量:4"], en: ["SP Recovery per second: 4"] }, 
+                globalEffects: { zh: ["全體爆擊傷害 3%", "全體爆擊抵抗 3%"], ja: ["全体会心ダメージ 3%", "全体会心抵抗 3%"], en: ["All CRIT DMG 3%", "All CRIT Resistance 3%"] } 
+            }
+        }
+    },
     "Haley": { 
         asideIcon: "https://i.postimg.cc/BXRtnV0J/Aside-Icon-Haley.png", 
         totalName: { zh: "宇宙戰艦", ja: "宇宙船艦", en: "Space Warship" }, 
@@ -227,6 +352,31 @@ const ASIDE_DATA = {
             }
         }
     },
+    "Kidian": { 
+        asideIcon: "", 
+        totalName: { zh: "", ja: "", en: "" }, 
+        stars: {
+            1: { 
+                icon: "", 
+                name: { zh: "", ja: "", en: "" }, 
+                desc: { zh: "", ja: "", en: "." }, 
+                effects: { zh: [""], ja: [""], en: [""] } 
+            },
+            2: { 
+                icon: "", 
+                name: { zh: "", ja: "", en: "" }, 
+                desc: { zh: "", ja: "", en: "" }, 
+                effects: { zh: [""], ja: [""], en: [""] } 
+            },
+            3: { 
+                icon: "", 
+                name: { zh: "", ja: "", en: "" }, 
+                desc: { zh: "", ja: "", en: "" }, 
+                effects: { zh: [""], ja: [""], en: ["%"] }, 
+                globalEffects: { zh: ["全體 %", "全體 %"], ja: ["全体 %", "全体 %"], en: ["All %", "All %"] } 
+            }
+        }
+    },
     "Kyarot": { 
         asideIcon: "https://i.postimg.cc/pp3yL6HW/Aside-Icon-Kyarot.png", 
         totalName: { zh: "小太陽", ja: "おひさま", en: "Sunny" }, 
@@ -274,6 +424,31 @@ const ASIDE_DATA = {
                 desc: { zh: "所有友軍對敵人造成的傷害量增加。敵人對所有友軍造成的傷害量減少。", ja: "味方全員の敵への与ダメージ量が増加し、味方全員の敵からの被ダメージ量が減少する。", en: "Increases Outgoing Damage to enemies for all allies. Reduces Incoming Damage from enemies for all allies." }, 
                 effects: { zh: ["傷害量增加:10.5%", "受到的傷害量減少:4.5%"], ja: ["ダメージ量増加: 10.5%", "被ダメージ量減少: 4.5%"], en: ["DMG Increase: 10.5%", "Incoming DMG Reduction: 4.5%"] }, 
                 globalEffects: { zh: ["全體魔法攻撃力 3%", "全體爆擊傷害 3%"], ja: ["全体魔法攻撃力 3%", "全体会心ダメージ: 3%"], en: ["All Magical ATK 3%", "All CRIT DMG 3%"] } 
+            }
+        }
+    },
+    "Naia": { 
+        asideIcon: "", 
+        totalName: { zh: "碎碎念龍族希菲爾", ja: "説教の竜族シルフィール", en: "Silphir, the Dragon of Nagging" }, 
+        stars: {
+            1: { 
+                icon: "", 
+                name: { zh: "只聽見你碎碎念", ja: "あなたの説教だけ聞こえる", en: "All I Hear Is Your Nagging" }, 
+                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、 会心抵抗、会心ダメージ抵抗が増加する。", en: "Increases the bearer's Max HP, Physical Defense, Magical Defense, Critical Hit Resistance, and Critical Damage Resistance." }, 
+                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["最大HP增加:6%", "物理防御力增加:6%", "魔法防御力增加:6%", "会心抵抗增加:6%", "会心ダメージ抵抗增加:6%"], en: ["Max HP Increase: 6%", "Physical DEF Increase: 6%", "Magical DEF Increase: 6%", "CRIT Resistance Increase: 6%", "CRIT DMG Resistance Increase: 6%"] } 
+            },
+            2: { 
+                icon: "", 
+                name: { zh: "洗洗刷刷", ja: "キュッキュッと洗うよ", en: "Let's Wash Up, Scrub-a-dub-dub!" }, 
+                desc: { zh: "對昏迷與擊退免疫。召喚2次高級技能的前進波浪。", ja: "気絶とノックバックに免疫を持つ。 高学年スキルの前進する液を2回召喚する。", en: "Grants Immunity to Stun and Knockback. Summons the Senior Skill's advancing wave twice." }, 
+                effects: { zh: ["昏迷:無法進行任何行動。", "擊退:進入無法行動的狀態並被向後推。"], ja: ["気絕:行動不能状態になる。", "ノックバック: 行動不能状態になり後ろへ押し戻される。"], en: ["Stun: Becomes unable to act.", "Knockback: Is pushed back, becoming unable to act."] } 
+            },
+            3: { 
+                icon: "", 
+                name: { zh: "來自水的訊息", ja: "水が伝えるメッセージ", en: "Message from the Water" }, 
+                desc: { zh: "增加所有友軍的最大HP，並減少所有友軍受到敵人的傷害量", ja: "味方全員の最大HPを増加させ、味方全員の敵からの被ダメージ量を減少させる。", en: "Increases all allies' Max HP and reduces all allies Incoming Damage from enemies." }, 
+                effects: { zh: ["最大 HP 增加：7.2%", "受到傷害量減少：4.5%"], ja: ["最大HP增加:7.2%", "被ダメージ量減少:4.5%"], en: ["Max HP Increase: 7.2%", "Incoming DMG Reduction: 4.5%"] }, 
+                globalEffects: { zh: ["全體爆擊傷害 3%", "全體爆擊抵抗 3%"], ja: ["全体会ダメージ 3%", "全体会心抵抗 3%"], en: ["All CRIT DMG 3%", "All CRIT Resistance 3%"] } 
             }
         }
     },
@@ -329,7 +504,7 @@ const ASIDE_DATA = {
     },
     "Pira": { 
         asideIcon: "", 
-        totalName: { zh: "", ja: "", en: "" }, 
+        totalName: { zh: "閃亮亮友情項鍊", ja: "キラキラ友情首飾り", en: "Spakling Friendship Necklace" }, 
         stars: {
             1: { 
                 icon: "", 
@@ -454,26 +629,26 @@ const ASIDE_DATA = {
     },
     "Rollett": { 
         asideIcon: "", 
-        totalName: { zh: "", ja: "", en: "" }, 
+        totalName: { zh: "羅蕾特的黃金門票", ja: "ロレットの黄金チケット", en: "Rollett's Golden Ticket" }, 
         stars: {
             1: { 
                 icon: "", 
-                name: { zh: "", ja: "", en: "" }, 
-                desc: { zh: "", ja: "", en: "" }, 
-                effects: { zh: [""], ja: [""], en: [""] } 
+                name: { zh: "最棒的娛樂", ja: "最高のエンターテインメント", en: "The Greatest Entertainment" }, 
+                desc: { zh: "穿戴者的最大HP、魔法攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、魔法攻擊力、会心、会心ダメージが増加する。", en: "Increases bearer's Max HP, Magical ATK, CRIT, and CRIT DMG." }, 
+                effects: { zh: ["最大HP增加:6%", "魔法攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP增加:6%", "魔法攻擊力增加:6%", "会心增加:6%", "会やダメージ増加:6%"], en: ["Max HP Increase: 6%", "Magical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
             },
             2: { 
                 icon: "", 
-                name: { zh: "", ja: "", en: "" }, 
-                desc: { zh: "", ja: "", en: "" }, 
-                effects: { zh: [""], ja: [""], en: [""] } 
+                name: { zh: "掌控舞台的幻術師", ja: "舞台を掌握するイリュージョニスト", en: "The Stage-Dominating Illusionist" }, 
+                desc: { zh: "技能傷害量增加。回合開始時，恢復自身SP。對被普通技能命中的敵人，發動以下其中一項效果。- 給予2名隨機敵人變異效果。- 暫停其每秒SP恢復。- 減少其攻擊力。", ja: "スキルダメージ量が増加する。 ウェーブ開始時、自身のSPを回復する。低学年スキルが命中した敵へ以下の効果のうち一つを発動する。- ランダムな敵2体に変異を付与する。-1秒ごとのSP回復を中断させる。- 攻撃力を減少させる。", en: "Increases Skill Damage. At the start of a wave, recovers own SP. Triggers one of the following effects on enemies hit by Freshman Skill. Applies Mutate to 2 random enemies. Halts SP Recovery per second. Reduces Attack." }, 
+                effects: { zh: ["變異:使目標變成物品並且無法進行任何行動。", "技能傷害量增加:50%", "SP恢復:100%", "變異持續時間:3秒", "暂停每秒SP恢復持續時間:10秒", "攻擊力減少:30%", "攻擊力減少持續時間:10秒"], ja: ["変異:物体に変化し、行動不能になる。", "スキルダメージ量増加:50%", "SP回復:100%", "変異の持続時間:3秒", "1種ごとのSP回復中断の持続時間:10秒", "攻擊力減少:30%", "攻撃力減少の持続時間:10秒"], en: ["Mutate: Turns into an inanimate object and becomes unable to act.", "Skill DMG Increase: 50%", "SP Recovery: 100%", "Mutate Duration: 3s", "SP Recovery per second Halt Duration: 10s", "Reduced ATK: 30%", "ATK Reduction Duration: 10s"] } 
             },
             3: { 
                 icon: "", 
-                name: { zh: "", ja: "", en: "" }, 
-                desc: { zh: "", ja: "", en: "" }, 
-                effects: { zh: [""], ja: [""], en: [""] }, 
-                globalEffects: { zh: ["全體 %", "全體 %"], ja: ["全体%", "全体%"], en: ["All%"] } 
+                name: { zh: "謝幕演出", ja: "フィナーレ", en: "Finale" }, 
+                desc: { zh: "提升後排友軍對敵人造成的傷害量,並減少後排友軍受到的傷害量。", ja: "後列の味方の敵への与ダメージ量を増加させ、 後列の味方の敵からの被ダメージ量を減少させる。", en: "Increases Outgoing Damage and reduces Incoming Damage of Back Row allies." }, 
+                effects: { zh: ["傷害量增加:13.6%", "受到的傷害量減少:5.9%"], ja: ["ダメージ量増加:13.6%", "被ダメージ量減少:5.9%"], en: ["DMG Increase: 13,6%", "Incoming DMG Reduction: 5.9%"] }, 
+                globalEffects: { zh: ["全體魔法攻擊力 3%", "全體魔法防禦力 3%"], ja: ["全体魔法攻撃力 3%", "全体魔法防御力 3%"], en: ["All Magical ATK 3%", "All Magical DEF 3%"] } 
             }
         }
     },
