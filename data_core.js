@@ -32,7 +32,7 @@ const LANG_DICT = {
 		info_job_reward: "💰 打工獎勵", info_food: "🍲 喜好料理", aside_title: "願像", aside_loading: "願像資料載入中...",
 		stats_attribute: "攻擊類型", 物理: "物理", 魔法: "魔法", 艾爾丁: "艾爾丁", 普通坨坨: "普通坨坨", 身份: "身份",
 		x_label: "台港澳服官方X", official_x_url: "https://x.com/trickcal_TW",
-        footer_author: "📝 記事本製作者: 冷笑話幽靈", footer_copyright: "© 遊戲版權: EpidGames & Bilibili", footer_lastupdate: "最後更新日期：18/06/2026",
+        footer_author: "📝 記事本製作者: 冷笑話幽靈", footer_copyright: "© 遊戲版權: EpidGames & Bilibili", footer_lastupdate: "最後更新日期：23/07/2026",
         "天真": "天真", "冷靜": "冷靜", "狂亂": "狂亂", "活潑": "活潑", "憂鬱": "憂鬱",
         "魔女": "魔女", "獸人": "獸人", "龍族": "龍族", "魔靈": "魔靈", "妖精": "妖精", "精靈": "精靈", "幽靈": "幽靈", "???": "???",
         "前排": "前排", "中排": "中排", "後排": "後排", "輸出": "輸出", "肉盾": "肉盾", "輔助": "輔助",
@@ -92,7 +92,7 @@ const LANG_DICT = {
 		info_job_reward: "💰 獲得報酬", info_food: "🍲 食べ物の好み", aside_title: "アサイド", aside_loading: "アサイドデータ読み込み中...",
 		stats_attribute: "攻撃タイプ", 物理: "物理", 魔法: "魔法", 艾爾丁: "エルダイン", 普通坨坨: "ノーマル使徒", 身份: "身分",
         x_label: "公式 X", official_x_url: "https://x.com/trickcal_jp",
-        footer_author: "📝 ノート作成者: 冷笑話幽靈", footer_copyright: "© ゲーム著作権: EpidGames & Bilibili", footer_lastupdate: "最終更新日：18/06/2026",
+        footer_author: "📝 ノート作成者: 冷笑話幽靈", footer_copyright: "© ゲーム著作権: EpidGames & Bilibili", footer_lastupdate: "最終更新日：23/07/2026",
         "天真": "純粋", "冷靜": "冷静", "狂亂": "狂気", "活潑": "活発", "憂鬱": "憂鬱",
         "魔女": "魔女", "獸人": "獣人", "龍族": "竜族", "魔靈": "精霊", "妖精": "妖精", "精靈": "エルフ", "幽靈": "幽霊", "???": "???",
         "前排": "前列", "中排": "中列", "後排": "後列", "輸出": "攻撃", "肉盾": "守備", "輔助": "支援",
@@ -152,7 +152,7 @@ const LANG_DICT = {
 		info_job_reward: "💰 Acquired Rewards", info_food: "🍲 Favorite Food", aside_title: "Aside", aside_loading: "Loading Aside data...",
 		stats_attribute: "Attack Type", 物理: "Physical", 魔法: "Magical", 艾爾丁: "Eldain", 普通坨坨: "Normal Apostle", 身份: "Identity",
         x_label: "Official Global X", official_x_url: "https://x.com/trickcal_en",
-        footer_author: "📝 Author: 冷笑話幽靈", footer_copyright: "© Copyright: EpidGames & Bilibili", footer_lastupdate: "last updated on: 18/06/2026",
+        footer_author: "📝 Author: 冷笑話幽靈", footer_copyright: "© Copyright: EpidGames & Bilibili", footer_lastupdate: "last updated on: 23/07/2026",
         "天真": "Innocence", "冷靜": "Composed", "狂亂": "Madness", "活潑": "Vivacious", "憂鬱": "Depressed",
         "魔女": "Witch", "獸人": "Werebeast", "龍族": "Dragon", "魔靈": "Elemental", "妖精": "Sprite", "精靈": "Elf", "幽靈": "Phantom", "???": "???",
         "前排": "Front", "中排": "Middle", "後排": "Back", "輸出": "DPS", "肉盾": "Tank", "輔助": "Support",
@@ -193,8 +193,8 @@ const currentLang = localStorage.getItem('user_lang') || 'zh-TW';
 function t(key) { return LANG_DICT[currentLang][key] || key; }
 
 const INITIAL_DATA = [
-	{ name: "羅蕾特", personality: "狂亂", race: "魔女", position: "後排", job: "輸出", pathVersion: "V4", releaseDate: "2026-07-30T17:00:00+09:00" },
-	// { name: "琵拉", personality: "狂亂", race: "龍族", position: "後排", job: "輔助", pathVersion: "V3", releaseDate: "2026-07-30T17:00:00+09:00" }, //
+	{ name: "琵拉", personality: "狂亂", race: "龍族", position: "後排", job: "輔助", pathVersion: "V3", releaseDate: "2026-08-27T17:00:00+09:00" },
+	{ name: "羅蕾特", personality: "狂亂", race: "魔女", position: "後排", job: "輸出", pathVersion: "V1", releaseDate: "2026-07-30T17:00:00+09:00" },
     { name: "洛涅", personality: "天真", race: "精靈", position: "前排", job: "肉盾", pathVersion: "V4" },
     { name: "薇薇", personality: "天真", race: "龍族", position: "前排", job: "肉盾", pathVersion: "V4" },
     { name: "卡洛特", personality: "天真", race: "妖精", position: "後排", job: "輔助", pathVersion: "V3" },
@@ -387,7 +387,7 @@ const CV_MAP = {
     "艾斯皮": "內海まり", "艾琳娜": "塚田悠衣", "艾皮卡": "日高里菜", "艾舒爾": "長尾玲奈", "艾蜜莉雅": "中林新夏", "芙莉可": "百瀨帆南", "茱蜜": "山田聖奈", "莉茲": "藤本侑里",
     "莎莉": "漆山ゆうき", "萊薇": "上永紗也華", "蒂亞娜": "立花日菜", "謝蒂": "山城リアン", "貝魯": "若山なつみ", "貝麗塔": "松岡美里", "路德": "渡部惠子", "路易": "兼田めぐみ",
     "阿萊特": "若山なつみ", "雷吉": "大園朱花子", "馬爾": "花咲心優", "泰達": "赤堀実華琉", "寧琉": "アンデルソンゆり子", "莉絲蒂": "黒沢ともよ", "雷內瓦": "花守ゆみり", "芭瓏": "橋本千波", "達雅": "羊宮妃那", "提格": "篠田南",
-	"羅蕾特": "日野麻里", "琵拉": ""
+	"羅蕾特": "日野麻里", "琵拉": "菱川花菜"
 };
 
 const GRADE_MAP = {
@@ -460,7 +460,7 @@ const FOOD_MAP = {
     "Rim": { super: "燉南瓜", special: ["南瓜濃湯", "祕密葡萄汁", "一級祕密葡萄汁"] },
     "Risty": { super: "石榴甜茶", special: ["石榴果實", "溫熱的冰美式咖啡", "滾燙的冰美式咖啡"] },
     "Rohne": { super: "白金糖葫蘆", special: ["金糖葫蘆", "巧克力冰淇淋", "深黑巧克力冰淇淋"] },
-	"Rollett": "無",
+	"Rollett": {super: "軟軟焦糖布丁", special: ["焦糖布丁", "哈密瓜博孔奇尼起司", "麝香甜瓜博孔奇尼起司"] },
     "Rude": { super: "927穀麵茶", special: ["麵茶", "太空食品", "ANSA太空食品"] },
     "Rufo": { super: "皇家蜂蜜大蒜鮭魚", special: ["蜂蜜大蒜鮭魚", "哈密瓜博孔奇尼起司", "麝香甜瓜博孔奇尼起司"] },
     "Sari": { super: "皇家蜂蜜大蒜鮭魚", special: ["蜂蜜大蒜鮭魚", "焦糖布丁", "軟軟焦糖布丁"] },
@@ -539,7 +539,7 @@ const REWARD_MAP = {
     "Rim": ["黏膩的黏土", "軟棉棉的樹木", "柔軟的棉花"],
     "Risty": ["銅湯匙", "柔軟的棉花", "堅硬的黑色果實"],
     "Rohne": ["黏膩的黏土", "巧克力米", "柔軟的棉花"],
-	"Rollett": [],
+	"Rollett": ["閃亮的玻璃", "堅硬的碎布", "魚"],
     "Rude": ["巧克力米", "彩虹花汁", "米"],
     "Rufo": ["細膩的鐵粉", "蜂蜜", "閃亮的玻璃"],
     "Sari": ["彩虹花汁", "回收塑膠", "黏膩的黏土"],
@@ -566,42 +566,42 @@ const WORK_URL = {
     "Alice": "https://youtu.be/JY58FJxViTA",
     "Allet": "https://youtu.be/ktkGgvXn-ME",
     "Amelia": "",
-    "Ashur": "",
+    "Ashur": "https://youtu.be/0DhptkL3r1c",
     "Aya": "https://youtu.be/2VlyNDZ28Mc",
     "Barong": "https://youtu.be/riScYcKvJvE",
     "Belita": "",
-    "Beni": "",
+    "Beni": "https://youtu.be/rqTyjkBImFg",
     "BigWood": "https://youtu.be/tU7HeiZoPkc",
     "Blanchet": "https://youtu.be/iTCr6Gd0ArY",
     "Butter": "https://youtu.be/oapwQXy4f1g",
-    "Canna": "",
-    "Carren": "",
+    "Canna": "https://youtu.be/vfvP9HGL2Fs",
+    "Carren": "https://youtu.be/79y4iBON3WY",
     "Chloe": "https://youtu.be/2bqGr1UlJ_w",
     "Chopi": "https://youtu.be/3pcHOeayiuI",
-	"Daya": "",
-    "Diana": "",
+	"Daya": "https://youtu.be/B-oalCgpSOs",
+    "Diana": "https://youtu.be/btX9W6V8PrU",
     "Ed": "https://youtu.be/HFj4FtrvjqI",
-    "Elena": "",
+    "Elena": "https://youtu.be/eyxQQ3LSL1A",
     "Epica": "https://youtu.be/6dxpDLKWzJI",
     "Erpin": "https://youtu.be/rgbOtvbLdB0",
     "Espi": "https://youtu.be/hTyUw7ZfI28",
     "Festa": "",
     "Fricle": "https://youtu.be/6dxpDLKWzJI",
-    "Gabia": "",
+    "Gabia": "https://youtu.be/cu80mqXBiew",
     "Haley": "https://youtu.be/u6mmhB-zY3Y",
     "Hilde": "https://youtu.be/rLfss0AWKtA",
     "Ifrit": "https://youtu.be/ANWq6bxvkBo",
-    "Jade": "",
-    "Jubee": "",
+    "Jade": "https://youtu.be/9zc4o0jcU8g",
+    "Jubee": "https://youtu.be/GQNFRFORdB0",
     "Kidian": "",
     "Kommy": "https://youtu.be/2qZbcsuXL9U",
-    "Kyarot": "",
+    "Kyarot": "https://youtu.be/jDl4YWvYp-U",
     "Lazy": "https://youtu.be/83peJu7yMEU",
     "Leets": "https://youtu.be/5FtyGwPgt1Q",
     "Levi": "https://youtu.be/79nJ7h2hnc0",
     "MaestroMK2": "https://youtu.be/IDJxotfwcx8",
     "Mago": "https://youtu.be/S8HF0T-C8gc",
-    "Marie": "",
+    "Marie": "https://youtu.be/WhHGJSMyc1c",
     "Mayo": "https://youtu.be/7InY25WhPd0",
     "Meluna": "https://youtu.be/-ea50ioN8Gw",
     "Momo": "https://youtu.be/0sjEHtYM_Cg",
@@ -609,12 +609,12 @@ const WORK_URL = {
     "Ner": "https://youtu.be/yDeHfWHSUt8",
     "Picora": "https://youtu.be/rd9O8naEQZ8",
 	"Pira": "",
-    "Posher": "",
+    "Posher": "https://youtu.be/f00ZKS1IE-g",
     "RenewaAwaken": "https://youtu.be/AXm1PhUQmjE",
     "Rim": "https://youtu.be/0dde_RrWSGE",
-    "Risty": "",
+    "Risty": "https://youtu.be/aATZTJcM5q4",
     "Rohne": "",
-	"Rollett": "",
+	"Rollett": "https://youtu.be/wa7nDhnh9O0",
     "Rude": "https://youtu.be/mh-UMouGGcs",
     "Rufo": "https://youtu.be/LVocNQWYRuM",
     "Sari": "https://youtu.be/mRU5nRoA3g0",
@@ -625,9 +625,9 @@ const WORK_URL = {
     "Sist": "https://youtu.be/j3QVWfLrJUo",
     "Snorky": "https://youtu.be/A6kjEYeavNM",
     "Speaki": "https://youtu.be/N1tmPLmZoXQ",
-    "Sylla": "",
+    "Sylla": "https://youtu.be/cSu06V-8GKY",
     "Taida": "https://youtu.be/ZAJztHqI7uA",
-    "Tig": "",
+    "Tig": "https://youtu.be/Xb3_b3sjcm0",
 	"Ui": "https://youtu.be/sen1414Z3Rw",
     "Velvet": "https://youtu.be/uiyfp0lMa7E",
     "Vivi": "https://youtu.be/Bi_Hi3PfTjU",
@@ -887,8 +887,8 @@ const SPINE_MAP = {
 const COSTUME_MAP = {
     "劉美美": ["Yumimi"], "卡蓮": ["Carren"], "喬菲": ["Chopi"], "帕特拉": ["Patula"], "梅森": ["Maison"], "瑪麗": ["Marie"], "米雪": ["Mynx"], "茱蜜": ["Jubee"], "莎莉": ["Sari"], "貝魯": ["Veroo"], "路易": ["Cuee"], "阿萊特": ["Allet"], "雷吉": ["Lazy"], "泰達": ["Taida"],
     "艾舒爾": ["Ashur", "AshurSkin1"], "貝麗塔": ["Belita", "BelitaSkin1"], "班尼": ["Beni", "BeniSkin1"], "大木頭": ["BigWood", "BigWoodSkin1"], "艾斯皮": ["Espi", "EspiSkin1"], "佩斯塔": ["Festa", "FestaSkin1"], "伊弗利特": ["Ifrit", "IfritSkin1"], "傑德": ["Jade", "JadeSkin1"], "莉茲": ["Leets", "LeetsSkin1"], "萊薇": ["Levi", "LeviSkin1"], "大師2號": ["MaestroMK2", "MaestroMK2Skin1"], "馬爾": ["Mago", "MagoSkin1"], "瑪約": ["Mayo", "MayoSkin1"], "梅露娜": ["Meluna", "MelunaSkin1"], "路德": ["Rude", "RudeSkin1"], "盧波": ["Rufo", "RufoSkin1"], "修帕": ["Shoupan", "ShoupanSkin1"], "希菲爾": ["Silphir", "SilphirSkin1"], "斯諾奇": ["Snorky", "SnorkySkin1"], "斯皮奇": ["Speaki", "SpeakiSkin1"], "佩佩": ["Velvet", "VelvetSkin1"],
-    "布蘭切": ["Blanchet", "BlanchetSkin1", "BlanchetSkin2"], "奶油": ["Butter", "ButterSkin1", "ButterSkin2"], "康娜": ["Canna", "CannaSkin1", "CannaSkin2"], "伊德": ["Ed", "EdSkin1", "EdSkin2"], "艾琳娜": ["Elena", "ElenaSkin1", "ElenaSkin2"], "艾皮卡": ["Epica", "EpicaSkin1", "EpicaSkin2"], "芙莉可": ["Fricle", "FricleSkin1", "FricleSkin2"], "加薇雅": ["Gabia", "GabiaSkin1", "GabiaSkin2"], "海莉": ["Haley", "HaleySkin1", "HaleySkin2"], "希爾德": ["Hilde", "HildeSkin1", "HildeSkin2"], "基狄恩": ["Kidian", "KidianSkin1", "KidianSkin2"], "柯米": ["Kommy", "KommySkin1", "KommySkin2"], "卡洛特": ["Kyarot", "KyarotSkin1", "KyarotSkin2"], "奈雅": ["Naia", "NaiaSkin1", "NaiaSkin2"], "寧琉": ["Ner", "NerSkin1", "NerSkin2"], "皮可菈": ["Picora", "PicoraSkin1", "PicoraSkin2"], "珀榭": ["Posher", "PosherSkin1", "PosherSkin2", "PosherSkin3"], "琳": ["Rim", "RimSkin1", "RimSkin2"], "洛涅": ["Rohne", "RohneSkin1", "RohneSkin2"], "謝蒂": ["Shady", "ShadySkin1", "ShadySkin2"], "希瑟圖": ["Sist", "SistSkin1", "SistSkin2"], "希拉": ["Sylla", "SyllaSkin1", "SyllaSkin2"], "優米": ["Yomi", "YomiSkin1", "YomiSkin2"],
-    "愛麗絲": ["Alice", "AliceSkin1", "AliceSkin2", "AliceSkin3"], "艾蜜莉雅": ["Amelia", "AmeliaSkin1", "AmeliaSkin2", "AmeliaSkin3"], "綾": ["Aya", "AyaSkin1", "AyaSkin2", "AyaSkin3"], "庫洛艾": ["Chloe", "ChloeSkin1", "ChloeSkin2", "ChloeSkin3"], "蒂亞娜": ["Diana", "DianaSkin1", "DianaSkin2", "DianaSkin3"], "桃桃": ["Momo", "MomoSkin1", "MomoSkin2", "MomoSkin3"], "瑟琳娜": ["Selline", "SellineSkin1", "SellineSkin2", "SellineSkin3"], "羽伊": ["Ui", "UiSkin1", "UiSkin2", "UiSkin3"], "薇薇": ["Vivi", "ViviSkin1", "ViviSkin2", "ViviSkin3"], "x乂錫安乂x": ["xXionx", "xXionxSkin1", "xXionxSkin2", "xXionxSkin3"],
+    "布蘭切": ["Blanchet", "BlanchetSkin1", "BlanchetSkin2"], "奶油": ["Butter", "ButterSkin1", "ButterSkin2"], "康娜": ["Canna", "CannaSkin1", "CannaSkin2"], "伊德": ["Ed", "EdSkin1", "EdSkin2", "EdSkin3"], "艾琳娜": ["Elena", "ElenaSkin1", "ElenaSkin2"], "艾皮卡": ["Epica", "EpicaSkin1", "EpicaSkin2", "EpicaSkin3"], "芙莉可": ["Fricle", "FricleSkin1", "FricleSkin2"], "加薇雅": ["Gabia", "GabiaSkin1", "GabiaSkin2"], "海莉": ["Haley", "HaleySkin1", "HaleySkin2"], "希爾德": ["Hilde", "HildeSkin1", "HildeSkin2"], "基狄恩": ["Kidian", "KidianSkin1", "KidianSkin2"], "柯米": ["Kommy", "KommySkin1", "KommySkin2"], "卡洛特": ["Kyarot", "KyarotSkin1", "KyarotSkin2"], "奈雅": ["Naia", "NaiaSkin1", "NaiaSkin2"], "寧琉": ["Ner", "NerSkin1", "NerSkin2"], "皮可菈": ["Picora", "PicoraSkin1", "PicoraSkin2"], "珀榭": ["Posher", "PosherSkin1", "PosherSkin2", "PosherSkin3"], "琳": ["Rim", "RimSkin1", "RimSkin2"], "洛涅": ["Rohne", "RohneSkin1", "RohneSkin2"], "謝蒂": ["Shady", "ShadySkin1", "ShadySkin2"], "希瑟圖": ["Sist", "SistSkin1", "SistSkin2"], "希拉": ["Sylla", "SyllaSkin1", "SyllaSkin2"], "優米": ["Yomi", "YomiSkin1", "YomiSkin2"],
+    "愛麗絲": ["Alice", "AliceSkin1", "AliceSkin2", "AliceSkin3"], "艾蜜莉雅": ["Amelia", "AmeliaSkin1", "AmeliaSkin2", "AmeliaSkin3"], "綾": ["Aya", "AyaSkin1", "AyaSkin2", "AyaSkin3", "AyaSkin4"], "庫洛艾": ["Chloe", "ChloeSkin1", "ChloeSkin2", "ChloeSkin3", "ChloeSkin4"], "蒂亞娜": ["Diana", "DianaSkin1", "DianaSkin2", "DianaSkin3"], "桃桃": ["Momo", "MomoSkin1", "MomoSkin2", "MomoSkin3"], "瑟琳娜": ["Selline", "SellineSkin1", "SellineSkin2", "SellineSkin3"], "羽伊": ["Ui", "UiSkin1", "UiSkin2", "UiSkin3", "UiSkin4"], "薇薇": ["Vivi", "ViviSkin1", "ViviSkin2", "ViviSkin3", "ViviSkin4"], "x乂錫安乂x": ["xXionx", "xXionxSkin1", "xXionxSkin2", "xXionxSkin3", "xXionxSkin4"],
     "艾爾芬": ["Erpin", "ErpinSkin1", "ErpinSkin2", "ErpinSkin3", "ErpinSkin4"], "莉絲蒂": ["Risty", "RistySkin1", "RistySkin2"], "雷內瓦": ["RenewaAwaken", "RenewaAwakenSkin1", "RenewaAwakenSkin2"],
 	"芭瓏": ["Barong", "BarongSkin1", "BarongSkin2", "BarongSkin3"], "達雅": ["Daya", "DayaSkin1", "DayaSkin2"], "提格": ["Tig", "TigSkin1", "TigSkin2"],
 	"羅蕾特": ["Rollett", "RollettSkin2"], "琵拉": ["Pira", "PiraSkin1", "PiraSkin2"]
@@ -897,8 +897,8 @@ const COSTUME_MAP = {
 const SD_COSTUME = {
     "劉美美": ["Yumimi"], "卡蓮": ["Carren"], "喬菲": ["Chopi"], "帕特拉": ["Patula"], "梅森": ["Maison"], "瑪麗": ["Marie"], "米雪": ["Mynx"], "茱蜜": ["Jubee"], "莎莉": ["Sari"], "貝魯": ["Veroo"], "路易": ["Cuee"], "阿萊特": ["Allet"], "雷吉": ["Lazy"], "泰達": ["Taida"],
     "艾舒爾": ["Ashur", "AshurSkin1"], "貝麗塔": ["Belita", "BelitaSkin1"], "班尼": ["Beni", "BeniSkin1"], "大木頭": ["BigWood", "BigWoodSkin1"], "艾斯皮": ["Espi", "EspiSkin1"], "佩斯塔": ["Festa", "FestaSkin1"], "伊弗利特": ["Ifrit", "IfritSkin1"], "傑德": ["Jade", "JadeSkin1"], "莉茲": ["Leets", "LeetsSkin1"], "萊薇": ["Levi", "LeviSkin1"], "大師2號": ["MaestroMK2", "MaestroMK2Skin1"], "馬爾": ["Mago", "MagoSkin1"], "瑪約": ["Mayo", "MayoSkin1"], "梅露娜": ["Meluna", "MelunaSkin1"], "路德": ["Rude", "RudeSkin1"], "盧波": ["Rufo", "RufoSkin1"], "修帕": ["Shoupan", "ShoupanSkin1"], "希菲爾": ["Silphir", "SilphirSkin1"], "斯諾奇": ["Snorky", "SnorkySkin1"], "斯皮奇": ["Speaki", "SpeakiSkin1"], "佩佩": ["Velvet", "VelvetSkin1"],
-    "布蘭切": ["Blanchet", "BlanchetSkin1", "BlanchetSkin2"], "奶油": ["Butter", "ButterSkin1"], "康娜": ["Canna", "CannaSkin1", "CannaSkin2"], "伊德": ["Ed", "EdSkin1", "EdSkin2"], "艾琳娜": ["Elena", "ElenaSkin1"], "艾皮卡": ["Epica", "EpicaSkin1", "EpicaSkin2", "EpicaSkin3"], "芙莉可": ["Fricle", "FricleSkin1"], "加薇雅": ["Gabia", "GabiaSkin1", "GabiaSkin2"], "海莉": ["Haley", "HaleySkin1", "HaleySkin2"], "希爾德": ["Hilde", "HildeSkin1"], "基狄恩": ["Kidian", "KidianSkin1"], "柯米": ["Kommy", "KommySkin1", "KommySkin2"], "卡洛特": ["Kyarot", "KyarotSkin1", "KyarotSkin2"], "奈雅": ["Naia", "NaiaSkin1"], "寧琉": ["Ner", "NerSkin1", "NerSkin2"], "皮可菈": ["Picora", "PicoraSkin1", "PicoraSkin3"], "珀榭": ["Posher", "PosherSkin1", "PosherSkin2", "PosherSkin3"], "琳": ["Rim", "RimSkin1", "RimSkin2"], "洛涅": ["Rohne", "RohneSkin2"], "謝蒂": ["Shady", "ShadySkin1", "ShadySkin2"], "希瑟圖": ["Sist", "SistSkin1", "SistSkin2"], "希拉": ["Sylla", "SyllaSkin1", "SyllaSkin2"], "優米": ["Yomi", "YomiSkin1", "YomiSkin2"],
-    "愛麗絲": ["Alice", "AliceSkin1", "AliceSkin2"], "艾蜜莉雅": ["Amelia", "AmeliaSkin1", "AmeliaSkin2"], "綾": ["Aya", "AyaSkin1", "AyaSkin2", "AyaSkin3"], "庫洛艾": ["Chloe", "ChloeSkin1", "ChloeSkin2", "ChloeSkin3", "ChloeSkin4"], "蒂亞娜": ["Diana", "DianaSkin1", "DianaSkin2", "DianaSkin3"], "桃桃": ["Momo", "MomoSkin1", "MomoSkin3"], "瑟琳娜": ["Selline", "SellineSkin1", "SellineSkin2"], "羽伊": ["Ui", "UiSkin1", "UiSkin2", "UiSkin3", "UiSkin4"], "薇薇": ["Vivi", "ViviSkin1", "ViviSkin2", "ViviSkin3", "ViviSkin4"], "x乂錫安乂x": ["xXionx", "xXionxSkin1", "xXionxSkin2", "xXionxSkin3", "xXionxSkin4"],
+    "布蘭切": ["Blanchet", "BlanchetSkin1", "BlanchetSkin2"], "奶油": ["Butter", "ButterSkin1"], "康娜": ["Canna", "CannaSkin1", "CannaSkin2"], "伊德": ["Ed", "EdSkin1", "EdSkin2", "EdSkin3"], "艾琳娜": ["Elena", "ElenaSkin1"], "艾皮卡": ["Epica", "EpicaSkin1", "EpicaSkin2", "EpicaSkin3"], "芙莉可": ["Fricle", "FricleSkin1"], "加薇雅": ["Gabia", "GabiaSkin1", "GabiaSkin2"], "海莉": ["Haley", "HaleySkin1", "HaleySkin2"], "希爾德": ["Hilde", "HildeSkin1"], "基狄恩": ["Kidian", "KidianSkin1"], "柯米": ["Kommy", "KommySkin1", "KommySkin2"], "卡洛特": ["Kyarot", "KyarotSkin1", "KyarotSkin2"], "奈雅": ["Naia", "NaiaSkin1"], "寧琉": ["Ner", "NerSkin1", "NerSkin2"], "皮可菈": ["Picora", "PicoraSkin1", "PicoraSkin3"], "珀榭": ["Posher", "PosherSkin1", "PosherSkin2", "PosherSkin3"], "琳": ["Rim", "RimSkin1", "RimSkin2"], "洛涅": ["Rohne", "RohneSkin2"], "謝蒂": ["Shady", "ShadySkin1", "ShadySkin2"], "希瑟圖": ["Sist", "SistSkin1", "SistSkin2"], "希拉": ["Sylla", "SyllaSkin1", "SyllaSkin2"], "優米": ["Yomi", "YomiSkin1", "YomiSkin2"],
+    "愛麗絲": ["Alice", "AliceSkin1", "AliceSkin2"], "艾蜜莉雅": ["Amelia", "AmeliaSkin1", "AmeliaSkin2"], "綾": ["Aya", "AyaSkin1", "AyaSkin2", "AyaSkin3", "AyaSkin4"], "庫洛艾": ["Chloe", "ChloeSkin1", "ChloeSkin2", "ChloeSkin3", "ChloeSkin4"], "蒂亞娜": ["Diana", "DianaSkin1", "DianaSkin2", "DianaSkin3"], "桃桃": ["Momo", "MomoSkin1", "MomoSkin3"], "瑟琳娜": ["Selline", "SellineSkin1", "SellineSkin2"], "羽伊": ["Ui", "UiSkin1", "UiSkin2", "UiSkin3", "UiSkin4"], "薇薇": ["Vivi", "ViviSkin1", "ViviSkin2", "ViviSkin3", "ViviSkin4"], "x乂錫安乂x": ["xXionx", "xXionxSkin1", "xXionxSkin2", "xXionxSkin3", "xXionxSkin4"],
     "艾爾芬": ["Erpin", "ErpinSkin1", "ErpinSkin2", "ErpinSkin3"], "莉絲蒂": ["Risty", "RistySkin1"], "雷內瓦": ["RenewaAwaken", "RenewaAwakenSkin1", "RenewaAwakenSkin2"],
 	"芭瓏": ["Barong", "BarongSkin1", "BarongSkin2", "BarongSkin3"], "達雅": ["Daya", "DayaSkin1"], "提格": ["Tig", "TigSkin1"],
 	"羅蕾特": ["Rollett", "RollettSkin2"], "琵拉": ["Pira", "PiraSkin1", "PiraSkin2"]
@@ -923,34 +923,50 @@ const MINI_SPINE = {
 
 const PICKUP_SCHEDULE = [
 	{
-        start: "2026-07-16T17:00:00+09:00",
-        end: "2026-07-30T10:59:59+09:00",
-        chars: ["達雅", "提格", "路德"],
-        note: "Daya, Tig"
+        start: "2026-08-13T17:00:00+09:00",
+        end: "2026-08-20T03:59:59+09:00",
+        chars: ["綾"],
+        note: "坨格"
     },
 	{
-        start: "2026-07-30T17:00:00+09:00",
-        end: "2026-07-13T10:59:59+09:00",
-        chars: ["羅蕾特", "琵拉"],
-        note: "Rollett, Pira"
-    }
+        start: "2026-08-20T04:00:00+09:00",
+        end: "2026-08-27T10:59:59+09:00",
+        chars: ["綾", "芙莉可", "布蘭切"],
+        note: "坨格"
+    },
+	{
+        start: "2026-08-06T04:00:00+09:00",
+        end: "2026-08-13T10:59:59+09:00",
+        chars: ["羅蕾特", "康娜", "奈雅"],
+        note: "康娜、奈雅坨格"
+    },
 ];
 
 // 🎪 遊戲內活動排程表
 const EVENT_SCHEDULE = [
+    {
+        start: "2026-08-13T17:00:00+09:00",
+        end: "2026-08-27T10:59:59+09:00",
+        eventId: "Theme012" 
+    },
 	{
-        start: "2026-08-11T17:00:00+09:00",
+        start: "2026-08-13T17:00:00+09:00",
         end: "2026-08-27T10:59:59+09:00",
         eventId: "PickPersonalityComposed" 
     },
 	{
-        start: "2026-07-07T12:00:00+09:00",
-        end: "2026-07-10T03:59:59+09:00",
+        start: "2026-08-20T17:00:00+09:00",
+        end: "2026-08-27T10:59:59+09:00",
+        eventId: "GachaOnceSelectPickHero1" 
+    },
+	{
+        start: "2026-07-31T12:00:00+09:00",
+        end: "2026-08-03T03:59:59+09:00",
         eventId: "TowerBattle" 
     },
 	{
-        start: "2026-07-07T12:00:00+09:00",
-        end: "2026-07-10T03:59:59+09:00",
+        start: "2026-08-14T12:00:00+09:00",
+        end: "2026-08-17T03:59:59+09:00",
         eventId: "Playground" 
     },
 	{
@@ -962,16 +978,22 @@ const EVENT_SCHEDULE = [
 
 // 🃏 特選卡片排程表
 const CARD_SCHEDULE = [
-    {
-        start: "2026-07-16T18:00:00+09:00",
-        end: "2026-07-30T10:59:59+09:00",
-        id: "Artifact21",
+	{
+        start: "2026-08-20T04:00:00+09:00",
+        end: "2026-08-27T10:59:59+09:00",
+        id: "Artifact95",
         type: "Artifact"
     },
 	{
-        start: "2026-07-23T11:30:00+09:00",
-        end: "2026-07-30T10:59:59+09:00",
-        id: "Artifact24",
+        start: "2026-08-13T17:00:00+09:00",
+        end: "2026-08-27T10:59:59+09:00",
+        id: "Rune12",
+        type: "Rune"
+    },
+	{
+        start: "2026-08-06T04:00:00+09:00",
+        end: "2026-08-13T10:59:59+09:00",
+        id: "Artifact97",
         type: "Artifact"
     }
 ];
