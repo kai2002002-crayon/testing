@@ -284,7 +284,7 @@
                     🔮 <span data-i18n="aside_title">願像</span>
                 </h2>
                 <div id="asideContainer" class="space-y-4">
-                    <div class="text-sm text-gray-500" data-i18n="aside_loading">願像資料載入中...</div>
+                    <div class="text-sm text-gray-500" data-i18n="aside_loading">看起來思念還不夠深</div>
                 </div>
             </div>
             <div class="mt-8 pt-8 border-t-4 border-dashed border-amber-200 dark:border-slate-700">
@@ -394,7 +394,7 @@
                 window.ICON_MAP['attribute_Magic'] = 'sprite-base sprite-common sprite-Type_Magic';
             
                 // 性格
-                const personalities = { '冷靜': 'Composed', '憂鬱': 'Depressed', '天真': 'Innocence', '狂亂': 'Madness', '活潑': 'Vivacious' };
+                const personalities = { '冷靜': 'Composed', '憂鬱': 'Depressed', '天真': 'Innocence', '狂亂': 'Madness', '活潑': 'Vivacious', '共鳴': 'Resonance' };
                 Object.entries(personalities).forEach(([zh, en]) => {
                     const cls = `sprite-base sprite-common sprite-Personality_${en}`;
                     window.ICON_MAP[`personality_${zh}`] = cls;
@@ -410,7 +410,7 @@
                 });
             
                 // 站位
-                const positions = { '後排': 'Back', '前排': 'Front', '中排': 'Middle' };
+                const positions = { '後排': 'Back', '前排': 'Front', '中排': 'Middle', '全能': 'All' };
                 Object.entries(positions).forEach(([zh, en]) => {
                     const cls = `sprite-base sprite-common sprite-Position_${en}`;
                     window.ICON_MAP[`position_${zh}`] = cls;
@@ -1317,7 +1317,8 @@
                         const pKey = currentCharData.personality || "冷靜";
                         const personalityMap = {
                             "冷靜": "ultimate_composed", "憂鬱": "ultimate_depressed", "天真": "ultimate_innocence", "狂亂": "ultimate_madness", "活潑": "ultimate_vivacious",
-                            "Composed": "ultimate_composed", "Depressed": "ultimate_depressed", "Innocence": "ultimate_innocence", "Madness": "ultimate_madness", "Vivacious": "ultimate_vivacious"
+                            "Composed": "ultimate_composed", "Depressed": "ultimate_depressed", "Innocence": "ultimate_innocence", "Madness": "ultimate_madness", "Vivacious": "ultimate_vivacious",
+                            "共鳴": "ultimate_resonance", "Resonance": "ultimate_resonance" // <-- 新增
                         };
                         const ultFileName = personalityMap[pKey] || "ultimate_composed";
             
@@ -1433,7 +1434,7 @@
                     return arrObj[lang] || arrObj['zh'] || []; 
                 };
                 
-                const isUpcoming = ['Rude'].includes(charName) || ['Rude'].includes(spineKey);
+                const isUpcoming = ['Canna', 'Naia'].includes(charName) || ['Canna', 'Naia'].includes(spineKey);
                 const releaseTime = new Date('2026-07-23T04:00:00+09:00').getTime(); 
                 const now = new Date().getTime();
                 
@@ -1443,9 +1444,9 @@
                 if (!data && !isUpcoming) {
                     // 🌟 加入未知願像的顯示
                     const unknownMsg = {
-                        zh: "未知的願像...",
-                        ja: "未知のアサイド...",
-                        en: "Unknown Aside..."
+                        zh: "看起來思念還不夠深",
+                        ja: "まだ思念が深くなさそう",
+                        en: "The thoughts don't seem deep enough yet"
                     };
                     
                     asideContainer.innerHTML = `
@@ -1464,7 +1465,7 @@
                     const upcomingMsg = {
                         zh: "此坨坨的願像系統將於 2026/07/23 04:00 (JST) 實裝解鎖",
                         ja: "この使徒のアサイドシステムは 2026/07/23 04:00 (JST) に実装されます",
-                        en: "This Apostle's Yearning system will be unlocked on 2026/07/23 04:00 (JST)"
+                        en: "This Apostle's Yearning system will be unlocked on 2026/08/06 04:00 (JST)"
                     };
                     
                     asideContainer.innerHTML = `
@@ -2064,7 +2065,6 @@ presentContainer.innerHTML = `
                     }
                 }
             
-                // 🌟 新增：透過種族與 pathVersion 查詢對應的蠟筆設定
                 let crayonConfig = { layer1: [], layer2: [], layer3: [] };
                 if (typeof CRAYON_PATH_CONFIG !== 'undefined' && 
                     CRAYON_PATH_CONFIG[currentCharData.race] && 
@@ -2074,7 +2074,7 @@ presentContainer.innerHTML = `
 
                 const renderCrayonList = (elementId, array) => {
                     const ul = document.getElementById(elementId);
-                    const safeArray = array || []; // 終極防呆，確保絕對不會出現 undefined 錯誤
+                    const safeArray = array || [];
                     ul.innerHTML = safeArray.map(attr => `<li>${t(attr)}</li>`).join('');
                 };
                 
@@ -2317,7 +2317,7 @@ presentContainer.innerHTML = `
             <div class="flex flex-col gap-1 text-[11px] text-gray-500 dark:text-gray-400 opacity-80">
                 <p data-i18n="footer_author">📝 記事本製作者: 冷笑話幽靈</p>
                 <p data-i18n="footer_copyright">© 遊戲版權: EpidGames & Bilibili</p>
-                <p data-i18n="footer_lastupdate">最後更新日期：02/07/2026</p>
+                <p data-i18n="footer_lastupdate">最後更新日期：30/07/2026</p>
             </div>
         </footer>
         <button id="backToTop" onclick="scrollToTop()" title="回頂部"> ▲ </button>
