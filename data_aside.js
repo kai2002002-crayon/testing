@@ -352,7 +352,32 @@ const ASIDE_DATA = {
             }
         }
     },
-    "Kidian": { 
+    "Jade": { 
+        asideIcon: "", 
+        totalName: { zh: "完美", ja: "完璧", en: "Perfection" }, 
+        stars: {
+            1: { 
+                icon: "", 
+                name: { zh: "", ja: "", en: "" }, 
+                desc: { zh: "", ja: "", en: "." }, 
+                effects: { zh: [""], ja: [""], en: [""] } 
+            },
+            2: { 
+                icon: "", 
+                name: { zh: "", ja: "", en: "" }, 
+                desc: { zh: "", ja: "", en: "" }, 
+                effects: { zh: [""], ja: [""], en: [""] } 
+            },
+            3: { 
+                icon: "", 
+                name: { zh: "", ja: "", en: "" }, 
+                desc: { zh: "", ja: "", en: "" }, 
+                effects: { zh: [""], ja: [""], en: ["%"] }, 
+                globalEffects: { zh: ["全體 %", "全體 %"], ja: ["全体 %", "全体 %"], en: ["All %", "All %"] } 
+            }
+        }
+    },
+    "Joanne": { 
         asideIcon: "", 
         totalName: { zh: "", ja: "", en: "" }, 
         stars: {
@@ -374,6 +399,31 @@ const ASIDE_DATA = {
                 desc: { zh: "", ja: "", en: "" }, 
                 effects: { zh: [""], ja: [""], en: ["%"] }, 
                 globalEffects: { zh: ["全體 %", "全體 %"], ja: ["全体 %", "全体 %"], en: ["All %", "All %"] } 
+            }
+        }
+    },
+    "Kidian": { 
+        asideIcon: "", 
+        totalName: { zh: "教主的星座", ja: "教主の星座", en: "Master's Constellation" }, 
+        stars: {
+            1: { 
+                icon: "", 
+                name: { zh: "夜空的星座", ja: "夜空の星座", en: "Night Sky Constellation" }, 
+                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、物理攻撃力、会心、会心ダメージが増加する。", en: "Increases the bearer's Max HP, Physical ATK, CRIT Hit, and CRIT DMG." }, 
+                effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP增加:6%", "物理攻擊力增加:6%", "会心增加:6%", "会心ダメージ増加:6%"], en: ["Max HP Increase: 6%", "Physical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
+            },
+            2: { 
+                icon: "", 
+                name: { zh: "邊緣人頭槌", ja: "異分子ヘディング", en: "Outcast Headbutt" }, 
+                desc: { zh: "普通技能基本攻擊次數增加。當HP低於50%時，給予自身障眼法效果並恢復SP。", ja: "低学年スキルの基本攻撃回数が増加する。 HPが50%以下になると、自身に目くらましを付与し、SPを回復する。", en: "Increases Freshman Skill Basic Attack count. When HP drops to 50% or less, applies Trickery to herself and recovers SP." }, 
+                effects: { zh: ["障眼法:不會成為敵人的攻擊目標，沒有友軍時不會觸發。", "普通技能基本攻擊次數:4次", "障眼法持續時間:5秒", "SP恢復:60%", "障眼法、SP恢復冷卻時間:8秒"], ja: ["目くらまし:敵の目標にならない。他の味方がいない時は発動しない。", "低学年スキルの基本攻撃回数: 4回", "目くらましの持続時間:5秒", "SP回復:60%", "目くらまし、SP回復クールタイム:8秒"], en: ["Trickery: Cannot be targeted by enemies. Does not trigger when no allies are present.", "Freshman Skill Basic Attack Count: 4", "Trickery Duration: 5s", "SP Recovery: 60%", "Trickery, SP Recovery Cooldown: 8s"] } 
+            },
+            3: { 
+                icon: "", 
+                name: { zh: "我會讓你閃閃發光的……", ja: "ボクが輝かせてあげるよ･･････。", en: "I'll make you shine..." }, 
+                desc: { zh: "增加所有友軍對敵人造成的傷害量，並減少所有友軍受到敵人的傷害量。", ja: "味方全員の敵への与ダメージ量を増加させ、味方全員の敵からの被ダメージ量を減少させる。", en: "Increases all allies Outgoing Damage and reduces Incoming Damage from enemies for all allies." }, 
+                effects: { zh: ["傷害量增加:10.5%", "受到的傷害量減少:4.5%"], ja: ["ダメージ量増加:10.5%", "被ダメージ量減少:4.5%"], en: ["DMG Increase: 10.5%", "Incoming DMG Reduction: 4.5%"] }, 
+                globalEffects: { zh: ["全體HP 3%", "全體物理攻擊力 3%"], ja: ["全体HP 3%", "全体物理攻擊力 3%"], en: ["All HP 3%", "All Physical ATK 3%"] } 
             }
         }
     },
@@ -504,26 +554,34 @@ const ASIDE_DATA = {
     },
     "Pira": { 
         asideIcon: "", 
-        totalName: { zh: "閃亮亮友情項鍊", ja: "キラキラ友情首飾り", en: "Spakling Friendship Necklace" }, 
+        totalName: { zh: "閃亮亮友情項鍊", ja: "キラキラ友情首飾り", en: "Sparkling Friendship Necklace" }, 
         stars: {
             1: { 
                 icon: "", 
-                name: { zh: "", ja: "", en: "" }, 
-                desc: { zh: "", ja: "", en: "" }, 
-                effects: { zh: [""], ja: [""], en: [""] } 
+                name: { zh: "友情的信物", ja: "友情の証", en: "Token of Friendship" }, 
+                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "Increases the bearer's Max HP, Physical DEF, Magical DEF, CRIT Resistance, and CRIT DMG Resistance." }, 
+                effects: { 
+                    zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], 
+                    ja: ["最大HP増加:6%", "物理防御力増加:6%", "魔法防御力増加:6%", "会心抵抗増加:6%", "会心ダメージ抵抗増加:6%"], 
+                    en: ["Max HP Increase: 6%", "Physical DEF Increase: 6%", "Magical DEF Increase: 6%", "CRIT Resistance Increase: 6%", "CRIT DMG Resistance Increase: 6%"] 
+                } 
             },
             2: { 
                 icon: "", 
-                name: { zh: "", ja: "", en: "" }, 
-                desc: { zh: "", ja: "", en: "" }, 
-                effects: { zh: [""], ja: [""], en: [""] } 
+                name: { zh: "在陽光下", ja: "太陽の下で", en: "Under the Sunshine" }, 
+                desc: { zh: "普通技能命中時，減少被攻擊敵人的爆擊抵抗。高級技能冷卻時間減少。使用高級技能後，向剩餘HP比例最低的3名友軍撒出獎品。恢復獲得獎品友軍的HP，並增加其爆擊傷害。", ja: "低学年スキルが命中すると、攻撃した敵の会心抵抗を減少させる。高学年スキルのクールタイムが減少する。高学年スキル使用後、残りHP割合が最も低い味方3名に景品を配る。景品を受け取った味方のHPを回復させ、会心ダメージを増加させる。", en: "When Freshman Skill hits, reduces the CRIT Resistance of the targeted enemy. Reduces Senior Skill Cooldown. After using Senior Skill, distributes prizes to the 3 allies with the lowest remaining HP Ratio. Recovers HP and Increases CRIT DMG of allies who receive prizes." }, 
+                effects: { 
+                    zh: ["爆擊抵抗減少:15%", "爆擊抵抗減少持續時間:8秒", "高級技能冷卻時間減少:12秒", "HP恢復:最大HP的45%", "爆擊傷害增加:35%", "爆擊傷害增加持續時間:15秒"], 
+                    ja: ["会心抵抗減少: 15%", "会心抵抗減少の持続時間:8秒", "高学年スキルのクールタイム減少:12秒", "HP回復:最大HPの45%", "会心ダメージ増加:35%", "会心ダメージ増加の持続時間:15秒"], 
+                    en: ["CRIT Resistance Reduction: 15%", "CRIT Resistance Reduction Duration: 8s", "Senior Skill Cooldown Reduction: 12s", "HP Recovery: 45% of Max HP", "CRIT DMG Increase: 35%", "CRIT DMG Increase Duration: 15s"] 
+                } 
             },
             3: { 
                 icon: "", 
-                name: { zh: "", ja: "", en: "" }, 
-                desc: { zh: "", ja: "", en: "" }, 
-                effects: { zh: [""], ja: [""], en: [""] }, 
-                globalEffects: { zh: ["全體 %", "全體 %"], ja: ["全体%", "全体%"], en: ["All%"] } 
+                name: { zh: "閃閃發光的我們", ja: "キラキラなウチらの仲", en: "Sparkling Friendship" }, 
+                desc: { zh: "使所有友軍爆擊及爆擊傷害增加。", ja: "味方全員の会心と会心ダメージを増加させる。", en: "Increases Critical Hit and Critical Damage of all allies." }, 
+                effects: { zh: ["爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["会心増加:6%", "会心ダメージ増加:6%"], en: ["CRIT Increase: 6%", "CRIT DMG Increase: 6%"] }, 
+                globalEffects: { zh: ["全體爆擊傷害 3%", "全體爆擊抵抗 3%"], ja: ["全体会心ダメージ 3%", "全体会心抵抗 3%"], en: ["All CRIT DMG 3%", "All CRIT Resistance 3%"] } 
             }
         }
     },
@@ -727,6 +785,31 @@ const ASIDE_DATA = {
             }
         }
     },
+    "Silphir": { 
+        asideIcon: "", 
+        totalName: { zh: "藍寶石勳章", ja: "メダル・オブ・サファイア", en: "Medal of Saphhire" }, 
+        stars: {
+            1: { 
+                icon: "", 
+                name: { zh: "專屬我的藍寶石勳章", ja: "私だけのサファイアメダル", en: "My Very Own Sapphire Medal" }, 
+                desc: { zh: "穿載者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、物理攻撃力、会心、会心ダメージが増加する。", en: "Increases the bearer's Max HP, Physical ATK, CRIT Hit, and CRIT DMG." }, 
+                effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP增加:6%", "物理攻擊力增加:6%", "会心增加:6%", "会心ダメージ増加:6%"], en: ["Max HP Increase: 6%", "Physical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
+            },
+            2: { 
+                icon: "", 
+                name: { zh: "萬年老三希菲爾", ja: "万年3番手のシルフィール", en: "Silphir, Eternal Third Place" }, 
+                desc: { zh: "回合開始時、攻擊速度提升。使用普通技能後，攻擊速度提升。普通攻撃命中敵人4次時，將於一定時間內增加攻擊力。", ja: "ウェーブ開始時に攻撃速度が増加する。低学年スキル使用後、攻撃速度が増加する。普通攻撃が敵に4回命中すると一定時間、攻撃力が増加する。", en: "At the start of a wave, increases Attack Speed. After using Freshman Skill, increases Attack Speed. When Normal Attacks hit an enemy 4 times, increases Attack for a set period of time," }, 
+                effects: { zh: ["回合開始時攻撃速度提升:110%", "回合開始時攻擊速度提升持續時間:8秒", "攻擊速度提升:110%", "攻擊速度提升持續時間:8秒", "攻擊力增加:33%", "攻擊力增加持續時間:6秒"], ja: ["ウェーブ開始時の攻撃連度増加: 110%", "ウェーブ開始時の攻撃連度増加の持続時間:8秒", "攻擊速度增加:110%", "攻撃速度増加の持続時間:8秒", "攻擊力增加:33%", "攻撃力増加の持続時間:6秒"], en: ["ATK SPD Increase at Wave Start: 110%", "ATK SPD Increase Duration at Wave Start: 8s", "ATK SPD Increase: 110%", "ATK SPD Increase Duration: 8s", "ATK Increase: 33%", "ATK Increase Duration: 6s"] } 
+            },
+            3: { 
+                icon: "", 
+                name: { zh: "依舊自豪的我", ja: "それでも誇らしい私", en: "Still Proud of Myself" }, 
+                desc: { zh: "所有友軍受到敵人的傷害量減少。所有友軍的攻擊速度提升。", ja: "味方全員の敵からの被ダメージ量を減少させる。味方全員の攻撃速度を増加させる。", en: "Reduces Incoming Damage from enemies for all allies, Increases all allies Attack Speed." }, 
+                effects: { zh: ["受到的傷害量減少:4.5%", "攻擊速度提升:3.5%"], ja: ["被ダメージ量減少:4.5%", "攻擊速度增加:3.5%"], en: ["Incoming DMG Reduction: 4.5%", "ATK SPD Increase: 3.5%"] }, 
+                globalEffects: { zh: ["全體物理攻擊力 3%", "全體物理防禦力 3%"], ja: ["全体物理攻擊力 3%", "全体物理防御力 3%"], en: ["All Physical ATK 3%", "All Physical DEF 3%"] } 
+            }
+        }
+    },
     "Sist": { 
         asideIcon: "https://i.postimg.cc/9rDrVjvj/Aside-Icon-Sist.png", 
         totalName: { zh: "名牌包", ja: "ブランドバック", en: "Luxury Bag" }, 
@@ -749,6 +832,39 @@ const ASIDE_DATA = {
                 desc: { zh: "使所有友軍爆擊及爆擊傷害增加。", ja: "味方全員の会心と会心ダメージを増加させる。", en: "Increase CRIT Hit and CRIT DMG of all allies." }, 
                 effects: { zh: ["爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["会心増加: 6%", "会心ダメージ増加: 6%"], en: ["CRIT Increase: 6%", "CRIT DMG Increase: 6%"] }, 
                 globalEffects: { zh: ["全體物理攻擊力 3%", "全體爆擊 3%"], ja: ["全体物理攻撃力 3%", "全体会心 3%"], en: ["All Physical ATK 3%", "All CRIT Hit 3%"] } 
+            }
+        }
+    },
+    "Sherum": { 
+        asideIcon: "", 
+        totalName: { zh: "艾利亞斯紀錄", ja: "エーリアスレコード", en: "Records of Elias" }, 
+        stars: {
+            1: { 
+                icon: "", 
+                name: { zh: "書記官的記錄法", ja: "書記官の記録法", en: "Scribe's Craft" }, 
+                desc: { zh: "穿戴者的最大HP、魔法攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、魔法攻撃力、会心、会心ダメージが増加する。", en: "Increases the bearer's Max HP, Magical Attack, Critical Hit, and Critical Damage." }, 
+                effects: { 
+                    zh: ["最大HP增加:6%", "魔法攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加:6%", "魔法攻撃力増加:6%", "会心増加:6%", "会心ダメージ増加:6%"], en: ["Max HP Increase: 6%", "Magical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] 
+                } 
+            },
+            2: { 
+                icon: "", 
+                name: { zh: "艾利亞斯實錄", ja: "エーリアス実録", en: "Annals of Elias" }, 
+                desc: { zh: "高級技能的冷卻時間減少。使用高級技能時，恢復自身SP，並使首次受到高級技能傷害的所有敵人受到的傷害增加。", ja: "高学年スキルのクールタイムが減少する。高学年スキル使用時、自身のSPを回復し、高学年スキルの最初のダメージを受けた敵全員の被ダメージ量を増加させる。", en: "Reduces Senior Skill Cooldown. When Senior Skill is used, recovers her SP and increases Incoming Damage taken by all enemies hit by the first strike of the Senior Skill." }, 
+                effects: { 
+                    zh: ["冷卻時間減少:8秒", "SP恢復量:60", "受到的傷害量增加:25%", "受到的傷害量增加持續時間:6秒"], ja: ["クールタイム減少:8秒", "SP回復量:60", "被ダメージ量増加:25%", "被ダメージ量増加の持続時間:6秒"], en: ["Cooldown Reduction: 8s", "SP Recovery: 60", "Incoming DMG Increase: 25%", "Incoming DMG Increase Duration: 6s"] 
+                } 
+            },
+            3: { 
+                icon: "", 
+                name: { zh: "友軍觀察日誌", ja: "味方観察日誌", en: "Ally Observation Journal" }, 
+                desc: { zh: "使所有友軍爆擊及爆擊傷害增加。", ja: "味方全員の会心と会心ダメージを増加させる。", en: "Increases Critical Hit and Critical Damage of all allies." }, 
+                effects: { 
+                    zh: ["爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["会心増加:6%", "会心ダメージ増加:6%"], en: ["CRIT Increase: 6%", "CRIT DMG Increase: 6%"] 
+                }, 
+                globalEffects: { 
+                    zh: ["全體魔法攻擊力 3%", "全體爆擊傷害 3%"], ja: ["全体魔法攻撃力 3%", "全体会心ダメージ 3%"], en: ["All Magical ATK 3%", "All CRIT DMG 3%"] 
+                } 
             }
         }
     },
