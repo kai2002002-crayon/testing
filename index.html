@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <meta name="referrer" content="no-referrer-when-downgrade">
-        
+
         <title>嘟嘟臉金蠟筆記事本</title>
         <meta name="description" content="《Trickcal: Chibi Go》嘟嘟臉金蠟筆記事本！提供最新的《嘟嘟臉惡作劇》(Trickcal Revive / トリカル) 角色圖鑑、金蠟筆與技能資料。The best Trickcal Revive Crayon Planner & Character Database. トリカル 最強キャラ・クレヨン攻略データベース。">
         <link rel="icon" href="https://i.postimg.cc/mkfSTq5k/Favicon.png" type="image/png">
@@ -316,8 +316,8 @@
                     </svg>
                     <span id="currentLangText" class="text-[11px] sm:text-xs font-bold text-gray-700 dark:text-gray-300">繁中</span>
                     <select id="langSelect" onchange="changeLanguage(this.value)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                        <option value="zh-TW">中</option>
-                        <option value="ja">日</option>
+                        <option value="zh-TW">繁中</option>
+                        <option value="ja">日本語</option>
                         <option value="en">EN</option>
                     </select>
                 </div>
@@ -641,9 +641,11 @@
                 personality_狂亂: "sprite-Personality_Madness",
                 personality_活潑: "sprite-Personality_Vivacious",
                 personality_憂鬱: "sprite-Personality_Depressed",
+                personality_共鳴: "sprite-Personality_All",
                 position_前排: "sprite-Position_Front",
                 position_中排: "sprite-Position_Middle",
                 position_後排: "sprite-Position_Back",
+                position_全能: "sprite-Position_All",
                 job_輸出: "sprite-Job_DPS", job_肉盾: "sprite-Job_Tank", job_輔助: "sprite-Job_Support",
                 type_物理: "sprite-Type_Physic", type_魔法: "sprite-Type_Magic",
                 boardon_攻擊: "sprite-boardon_ATK", boardon_防禦: "sprite-boardon_DEF",
@@ -655,14 +657,16 @@
                 "憂鬱": "sprite-char-depressed",
                 "天真": "sprite-char-innocence",
                 "狂亂": "sprite-char-madness",
-                "活潑": "sprite-char-vivacious"
+                "活潑": "sprite-char-vivacious",
+                "共鳴": "sprite-char-all"
             };
             const ULT_SPRITE_MAP = {
                 "冷靜": "sprite-ult-composed",
                 "憂鬱": "sprite-ult-depressed",
                 "天真": "sprite-ult-innocence",
                 "狂亂": "sprite-ult-madness",
-                "活潑": "sprite-ult-vivacious"
+                "活潑": "sprite-ult-vivacious",
+                "共鳴": "sprite-ult-all"
             };
             
             function toggleSidebar() {
@@ -752,7 +756,7 @@
                 window.currentLang = lang; localStorage.setItem('user_lang', lang);
                 document.documentElement.lang = lang === "ja" ? "ja" : "zh-TW"; 
                 const selectEl = document.getElementById('langSelect'); if (selectEl) selectEl.value = lang;
-                const langTextMap = { "zh-TW": "繁中", "ja": "日文", "en": "EN" };
+                const langTextMap = { "zh-TW": "繁中", "ja": "日本語", "en": "EN" };
                 const langTextEl = document.getElementById('currentLangText');
                 if (langTextEl) langTextEl.innerText = langTextMap[lang] || "繁中";
                 const safeLang = (typeof LANG_DICT !== 'undefined' && LANG_DICT[lang]) ? lang : 'zh-TW';
@@ -864,7 +868,7 @@
                 const localTooltipTexts = { "zh-TW": "特選招募中：", "ja": "ピックアップ中：", "en": "Pickup Rate Up: " };
                 const titleEl = document.getElementById('pickupTitleText');
                 if (titleEl) titleEl.innerText = localRecruitTexts[window.currentLang] || localRecruitTexts["zh-TW"];            
-                const personalityColors = { "天真": "border-green-400 text-green-400", "冷靜": "border-blue-400 text-blue-400", "狂亂": "border-red-400 text-red-400", "活潑": "border-yellow-400 text-yellow-400", "憂鬱": "border-purple-400 text-purple-400" };
+                const personalityColors = { "天真": "border-green-400 text-green-400", "冷靜": "border-blue-400 text-blue-400", "狂亂": "border-red-400 text-red-400", "活潑": "border-yellow-400 text-yellow-400", "憂鬱": "border-purple-400 text-purple-400", "共鳴": "border-rainbow text-rainbow" };
                         activeChars.forEach(charName => {
                             const charData = INITIAL_DATA.find(c => c.name === charName); if (!charData) return;
                             const pColorClass = personalityColors[charData.personality] || "border-gray-400 text-gray-400";
@@ -1141,7 +1145,7 @@
             function setDisplayMode(mode) { activeFilters.displayMode = mode; ["all", "1", "2", "3"].forEach(m => { const btn = document.getElementById(`btn_disp_${m}`); if(btn) btn.className = (mode === m) ? btnDispActiveStyle : btnInactiveStyle; }); applyFilterUI(); }
             
             function buildFilterPanel() {
-                const keys = { personality: ["天真", "冷靜", "狂亂", "活潑", "憂鬱"], race: [], position: ["前排", "中排", "後排"], job: [], type: ["物理", "魔法"] };
+                const keys = { personality: ["天真", "冷靜", "狂亂", "活潑", "憂鬱", "共鳴"], race: [], position: ["前排", "中排", "後排", "全能"], job: [], type: ["物理", "魔法"] };
                 INITIAL_DATA.forEach(c => { if (c.race && !keys.race.includes(c.race)) keys.race.push(c.race); if (c.job && !keys.job.includes(c.job)) keys.job.push(c.job); });
                 Object.keys(keys).forEach(category => {
                     const container = document.getElementById(`filter_${category}`); if(!container) return; container.innerHTML = "";
@@ -1273,9 +1277,10 @@
             
             function applyFilterUI() {
                 INITIAL_DATA.forEach(char => {
-                    const matchP = activeFilters.personality.length === 0 || activeFilters.personality.includes(char.personality);
+                    // 修改：只要該角色是共鳴/全能，無論篩選器選了什麼，皆強制為 True。
+                    const matchP = activeFilters.personality.length === 0 || activeFilters.personality.includes(char.personality) || char.personality === "共鳴";
                     const matchR = activeFilters.race.length === 0 || activeFilters.race.includes(char.race);
-                    const matchPos = activeFilters.position.length === 0 || activeFilters.position.includes(char.position);
+                    const matchPos = activeFilters.position.length === 0 || activeFilters.position.includes(char.position) || char.position === "全能";
                     const matchJ = activeFilters.job.length === 0 || activeFilters.job.includes(char.job);
                     const matchT = activeFilters.type.length === 0 || activeFilters.type.includes(char.type);
                     let matchGrid = true;
@@ -1306,7 +1311,7 @@
                         });
                     }
                 });
-                const personalities = ["天真", "冷靜", "狂亂", "活潑", "憂鬱"];
+                const personalities = ["天真", "冷靜", "狂亂", "活潑", "憂鬱", "共鳴"];
                 personalities.forEach(pName => {
                     const pSection = document.getElementById(`section_p_${pName}`);
                     if (pSection) { const visibleInSec = pSection.querySelectorAll("[id^='char_card_']:not(.hidden)").length; if (visibleInSec === 0) pSection.classList.add("hidden"); else pSection.classList.remove("hidden"); }
@@ -1314,8 +1319,8 @@
             }
             function renderMatrix() {
                 const container = document.getElementById('matrixContainer'); if(!container) return; container.innerHTML = '';
-                const personalities = ["天真", "冷靜", "狂亂", "活潑", "憂鬱"];
-                const personalityBorderColors = { "天真": "border-green-500", "冷靜": "border-blue-500", "狂亂": "border-red-500", "活潑": "border-yellow-400", "憂鬱": "border-purple-500" };
+                const personalities = ["共鳴", "天真", "冷靜", "狂亂", "活潑", "憂鬱"];
+                const personalityBorderColors = { "天真": "border-green-500", "冷靜": "border-blue-500", "狂亂": "border-red-500", "活潑": "border-yellow-400", "憂鬱": "border-purple-500", "共鳴": "border-rainbow" };
                 const nowTime = Date.now();
                 personalities.forEach(pName => {
                     const pChars = INITIAL_DATA.filter(c => c.personality === pName); if (pChars.length === 0) return;
