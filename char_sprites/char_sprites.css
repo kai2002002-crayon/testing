@@ -13,6 +13,7 @@
 [class*="_Amelia"] { background-image: url('Ameliasheet.png'); }
 [class*="_Ashur"] { background-image: url('Ashursheet.png'); }
 [class*="_Aya"] { background-image: url('Ayasheet.png'); }
+[class*="_Barie"] { background-image: url('Bariesheet.png'); }
 [class*="_Barong"] { background-image: url('Barongsheet.png'); }
 [class*="_Belita"] { background-image: url('Belitasheet.png'); }
 [class*="_Beni"] { background-image: url('Benisheet.png'); }
@@ -38,6 +39,7 @@
 [class*="_Hilde"] { background-image: url('Hildesheet.png'); }
 [class*="_Ifrit"] { background-image: url('Ifritsheet.png'); }
 [class*="_Jade"] { background-image: url('Jadesheet.png'); }
+[class*="_Joanne"] { background-image: url('Joannesheet.png'); }
 [class*="_Jubee"] { background-image: url('Jubeesheet.png'); }
 [class*="_Kidian"] { background-image: url('Kidiansheet.png'); }
 [class*="_Kommy"] { background-image: url('Kommysheet.png'); }
@@ -69,6 +71,7 @@
 [class*="_Sari"] { background-image: url('Sarisheet.png'); }
 [class*="_Selline"] { background-image: url('Sellinesheet.png'); }
 [class*="_Shady"] { background-image: url('Shadysheet.png'); }
+[class*="_Sherum"] { background-image: url('Sherumsheet.png'); }
 [class*="_Shoupan"] { background-image: url('Shoupansheet.png'); }
 [class*="_Silphir"] { background-image: url('Silphirsheet.png'); }
 [class*="_Sist"] { background-image: url('Sistsheet.png'); }
@@ -127,10 +130,20 @@
 .sprite-PresentList_Ashur { width: 238px; height: 208px; background-position: -5px -1161px; }
 
 /* --- Aya --- */
-.sprite-CG_Schedule_Aya { width: 1020px; height: 510px; background-position: -5px -5px; }
-.sprite-Icon_NormalSkill_Aya { width: 64px; height: 64px; background-position: -5px -525px; }
-.sprite-Icon_PassiveSkill_Aya { width: 64px; height: 64px; background-position: -5px -599px; }
-.sprite-PresentList_Aya { width: 175px; height: 212px; background-position: -5px -673px; }
+.sprite-AsideIcon_Aya { width: 256px; height: 256px; background-position: -5px -5px; }
+.sprite-Aside_Skill_Aya_1 { width: 64px; height: 64px; background-position: -5px -271px; }
+.sprite-Aside_Skill_Aya_2 { width: 64px; height: 64px; background-position: -5px -345px; }
+.sprite-Aside_Skill_Aya_3 { width: 64px; height: 64px; background-position: -5px -419px; }
+.sprite-CG_Schedule_Aya { width: 1020px; height: 510px; background-position: -5px -493px; }
+.sprite-Icon_NormalSkill_Aya { width: 64px; height: 64px; background-position: -5px -1013px; }
+.sprite-Icon_PassiveSkill_Aya { width: 64px; height: 64px; background-position: -5px -1087px; }
+.sprite-PresentList_Aya { width: 175px; height: 212px; background-position: -5px -1161px; }
+
+/* --- Barie --- */
+.sprite-CG_Schedule_Barie { width: 1024px; height: 512px; background-position: -5px -5px; }
+.sprite-Icon_NormalSkill_Barie { width: 64px; height: 64px; background-position: -5px -527px; }
+.sprite-Icon_PassiveSkill_Barie { width: 64px; height: 64px; background-position: -5px -601px; }
+.sprite-PresentList_Barie { width: 220px; height: 142px; background-position: -5px -675px; }
 
 /* --- Barong --- */
 .sprite-AsideIcon_Barong { width: 256px; height: 256px; background-position: -5px -5px; }
@@ -233,7 +246,7 @@
 .sprite-Aside_Skill_Daya_1 { width: 64px; height: 64px; background-position: -5px -521px; }
 .sprite-Aside_Skill_Daya_2 { width: 64px; height: 64px; background-position: -5px -595px; }
 .sprite-Aside_Skill_Daya_3 { width: 64px; height: 64px; background-position: -5px -669px; }
-.sprite-CG_Schedule_Daya { width: 1020px; height: 510px; background-position: -5px -743px; }
+.sprite-CG_Schedule_Daya { width: 1020px; height: 512px; background-position: -5px -743px; }
 .sprite-Icon_NormalSkill_Daya { width: 64px; height: 64px; background-position: -5px -1265px; }
 .sprite-Icon_PassiveSkill_Daya { width: 64px; height: 64px; background-position: -5px -1339px; }
 .sprite-PresentList_Daya { width: 201px; height: 240px; background-position: -5px -5px; }
@@ -351,10 +364,24 @@
 .sprite-PresentList_Ifrit { width: 247px; height: 180px; background-position: -5px -673px; }
 
 /* --- Jade --- */
-.sprite-CG_Schedule_Jade { width: 1024px; height: 512px; background-position: -5px -5px; }
-.sprite-Icon_NormalSkill_Jade { width: 64px; height: 64px; background-position: -5px -527px; }
-.sprite-Icon_PassiveSkill_Jade { width: 64px; height: 64px; background-position: -5px -601px; }
-.sprite-PresentList_Jade { width: 248px; height: 167px; background-position: -5px -675px; }
+.sprite-AsideIcon_Jade { width: 256px; height: 256px; background-position: -5px -5px; }
+.sprite-Aside_Skill_Jade_1 { width: 64px; height: 64px; background-position: -5px -271px; }
+.sprite-Aside_Skill_Jade_2 { width: 64px; height: 64px; background-position: -5px -345px; }
+.sprite-Aside_Skill_Jade_3 { width: 64px; height: 64px; background-position: -5px -419px; }
+.sprite-CG_Schedule_Jade { width: 1020px; height: 512px; background-position: -5px -493px; }
+.sprite-Icon_NormalSkill_Jade { width: 64px; height: 64px; background-position: -5px -1015px; }
+.sprite-Icon_PassiveSkill_Jade { width: 64px; height: 64px; background-position: -5px -1089px; }
+.sprite-PresentList_Jade { width: 248px; height: 167px; background-position: -5px -1163px; }
+
+/* --- Joanne --- */
+.sprite-AsideIcon_Joanne { width: 256px; height: 256px; background-position: -5px -5px; }
+.sprite-Aside_Skill_Joanne_1 { width: 64px; height: 64px; background-position: -5px -271px; }
+.sprite-Aside_Skill_Joanne_2 { width: 64px; height: 64px; background-position: -5px -345px; }
+.sprite-Aside_Skill_Joanne_3 { width: 64px; height: 64px; background-position: -5px -419px; }
+.sprite-CG_Schedule_Joanne { width: 1024px; height: 512px; background-position: -5px -493px; }
+.sprite-Icon_NormalSkill_Joanne { width: 64px; height: 64px; background-position: -5px -1015px; }
+.sprite-Icon_PassiveSkill_Joanne { width: 64px; height: 64px; background-position: -5px -1089px; }
+.sprite-PresentList_Joanne { width: 177px; height: 216px; background-position: -5px -1163px; }
 
 /* --- Jubee --- */
 .sprite-CG_Schedule_Jubee { width: 1020px; height: 510px; background-position: -5px -5px; }
@@ -509,8 +536,8 @@
 .sprite-Aside_Skill_Pira_3 { width: 64px; height: 64px; background-position: -5px -419px; }
 .sprite-CG_Schedule_Pira { width: 1024px; height: 512px; background-position: -5px -493px; }
 .sprite-Icon_NormalSkill_Pira { width: 64px; height: 64px; background-position: -5px -1015px; }
-.sprite-Icon_PassiveSkill_Pira { width: 64px; height: 64px; background-position: -5px -1089px; }
-.sprite-PresentList_Pira { width: 184px; height: 170px; background-position: -5px -1163px; }
+.sprite-Icon_PassiveSkill_Pira { width: 64px; height: 64px; background-position: -5px -1163px; }
+.sprite-PresentList_Pira { width: 184px; height: 179px; background-position: -5px -1237px; }
 
 /* --- Posher --- */
 .sprite-AsideIcon_Posher { width: 256px; height: 256px; background-position: -5px -5px; }
@@ -614,6 +641,16 @@
 .sprite-Icon_PassiveSkill_Shady { width: 64px; height: 64px; background-position: -5px -1087px; }
 .sprite-PresentList_Shady { width: 235px; height: 236px; background-position: -5px -1161px; }
 
+* --- Sherum --- */
+.sprite-AsideIcon_Sherum { width: 256px; height: 256px; background-position: -5px -5px; }
+.sprite-Aside_Skill_Sherum_1 { width: 64px; height: 64px; background-position: -5px -271px; }
+.sprite-Aside_Skill_Sherum_2 { width: 64px; height: 64px; background-position: -5px -345px; }
+.sprite-Aside_Skill_Sherum_3 { width: 64px; height: 64px; background-position: -5px -419px; }
+.sprite-CG_Schedule_Sherum { width: 1020px; height: 512px; background-position: -5px -493px; }
+.sprite-Icon_NormalSkill_Sherum { width: 64px; height: 64px; background-position: -5px -1015px; }
+.sprite-Icon_PassiveSkill_Sherum { width: 64px; height: 64px; background-position: -5px -1089px; }
+.sprite-PresentList_Sherum { width: 232px; height: 217px; background-position: -5px -1163px; }
+
 /* --- Shoupan --- */
 .sprite-AsideIcon_Shoupan { width: 256px; height: 256px; background-position: -5px -5px; }
 .sprite-Aside_Skill_Shoupan_1 { width: 64px; height: 64px; background-position: -5px -271px; }
@@ -625,10 +662,14 @@
 .sprite-PresentList_Shoupan { width: 206px; height: 188px; background-position: -5px -1163px; }
 
 /* --- Silphir --- */
-.sprite-CG_Schedule_Silphir { width: 1020px; height: 510px; background-position: -5px -5px; }
-.sprite-Icon_NormalSkill_Silphir { width: 64px; height: 64px; background-position: -5px -525px; }
-.sprite-Icon_PassiveSkill_Silphir { width: 64px; height: 64px; background-position: -5px -599px; }
-.sprite-PresentList_Silphir { width: 170px; height: 217px; background-position: -5px -673px; }
+.sprite-AsideIcon_Silphir { width: 256px; height: 256px; background-position: -5px -5px; }
+.sprite-Aside_Skill_Silphir_1 { width: 64px; height: 64px; background-position: -5px -271px; }
+.sprite-Aside_Skill_Silphir_2 { width: 64px; height: 64px; background-position: -5px -345px; }
+.sprite-Aside_Skill_Silphir_3 { width: 64px; height: 64px; background-position: -5px -419px; }
+.sprite-CG_Schedule_Silphir { width: 1020px; height: 510px; background-position: -5px -493px; }
+.sprite-Icon_NormalSkill_Silphir { width: 64px; height: 64px; background-position: -5px -1013px; }
+.sprite-Icon_PassiveSkill_Silphir { width: 64px; height: 64px; background-position: -5px -1087px; }
+.sprite-PresentList_Silphir { width: 170px; height: 217px; background-position: -5px -1161px; }
 
 /* --- Sist --- */
 .sprite-AsideIcon_Sist { width: 256px; height: 256px; background-position: -5px -5px; }
