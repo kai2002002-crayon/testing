@@ -19,7 +19,8 @@ const PERSONALITY_BACKGROUNDS = {
     "憂鬱": "https://i.postimg.cc/4x0rkxY2/Motion-Experience-Pattern-Bg-Depressed.png",
     "狂亂": "https://i.postimg.cc/5tFDxWzq/Motion-Experience-Pattern-Bg-Madness.png",
     "活潑": "https://i.postimg.cc/q7CWkHKG/Motion-Experience-Pattern-Bg-Vivacious.png",
-    "天真": "https://i.postimg.cc/BQVhtwJ6/Motion-Experience-Pattern-Bg-Innocence.png"
+    "天真": "https://i.postimg.cc/BQVhtwJ6/Motion-Experience-Pattern-Bg-Innocence.png",
+    "共鳴": "https://i.postimg.cc/bJwTwLmc/Motion-Experience-Pattern-Bg-Resonance.png"
 };
 
 
@@ -90,7 +91,214 @@ const characterSkills = [
           "desc": "",
           "stats": [""]
         }
+      }
+    }
+  },
+    {
+    "name": "瓊安",
+    "attribute": "魔法",
+    "skills": {
+      "zh-TW": {
+        "normalAttack": {
+          "basic": " []",
+          "enhanced": " []"
+        },
+        "normalSkill": {
+          "name": "",
+          "desc": "",
+          "stats": [""]
+        },
+        "ultimateSkill": {
+          "name": "",
+          "desc": "",
+          "stats": [""],
+          "cooldown": "秒"
+        },
+        "passiveSkill": {
+          "desc": "",
+          "stats": ["秒"]
+        }
       },
+      "ja": {
+        "normalAttack": {
+          "basic": " []",
+          "enhanced": " []"
+        },
+        "normalSkill": {
+          "name": "",
+          "desc": "",
+          "stats": [""]
+        },
+        "ultimateSkill": {
+          "name": "",
+          "desc": "",
+          "stats": [""],
+          "cooldown": "秒"
+        },
+        "passiveSkill": {
+          "desc": "",
+          "stats": [""]
+        }
+      },
+      "en": {
+        "normalAttack": {
+          "basic": " []",
+          "enhanced": " []"
+        },
+        "normalSkill": {
+          "name": "",
+          "desc": "",
+          "stats": [""]
+        },
+        "ultimateSkill": {
+          "name": "",
+          "desc": "",
+          "stats": [""],
+          "cooldown": "s"
+        },
+        "passiveSkill": {
+          "desc": "",
+          "stats": [""]
+        }
+      }
+    }
+  },
+    {
+    "name": "芭莉耶",
+    "attribute": "魔法",
+    "skills": {
+      "zh-TW": {
+        "normalAttack": {
+          "basic": "向敵人發射墨水並對其造成魔法傷害。 [魔法傷害:120%]",
+          "enhanced": ""
+        },
+        "normalSkill": {
+          "name": "請整理書本",
+          "desc": "拖著書車，賦予攻擊力最高的友軍護盾，並使其恢復SP後返回。拖著書車時，移動速度會減少。",
+          "stats": ["護盾:最大HP的42%", "護盾持續時間:3秒", "SP恢復量:60"]
+        },
+        "ultimateSkill": {
+          "name": "請當天還書",
+          "desc": "拿出一本書，借給攻擊力最高的友軍。增加友軍的攻擊力與攻擊速度，該增益可發動4次，亦可疊加。",
+          "stats": ["每層攻擊力增加:15%", "每層攻擊速度提升:9%", "持續時間:15秒"],
+          "cooldown": "30秒"
+        },
+        "passiveSkill": {
+          "desc": "增加所有防禦力。",
+          "stats": ["防禦力增加:42%"]
+        }
+      },
+      "ja": {
+        "normalAttack": {
+          "basic": "インクを発射し、敵に魔法ダメージを与える。 [魔法ダメージ:120%]",
+          "enhanced": ""
+        },
+        "normalSkill": {
+          "name": "本を片付けてください",
+          "desc": "ブックカートを引いて攻撃力が最も高い味方にシールドを付与し、SPを回復させて戻ってくる。ブックカートを引いている間は、移動速度が減少する。",
+          "stats": ["シールド: 最大HPの42%", "シールドの持続時間:3秒", "SP回復量:60"]
+        },
+        "ultimateSkill": {
+          "name": "当日返却ですっ",
+          "desc": "攻撃力が最も高い味方に本を貸し出し、味方の攻撃力と攻撃速度を増加させる。このバフは4回発動し、スタックできる。",
+          "stats": ["スタックごとの攻撃力増加: 15%", "スタックごとの攻撃速度増加:9%", "持続時間:15秒"],
+          "cooldown": "30秒"
+        },
+        "passiveSkill": {
+          "desc": "全ての防御力が増加する。",
+          "stats": ["防御力増加:42%"]
+        }
+      },
+      "en": {
+        "normalAttack": {
+          "basic": "Shoots ink at enemies, dealing Magical Damage. [Magical DMG: 120%]",
+          "enhanced": ""
+        },
+        "normalSkill": {
+          "name": "Please Organize the Books!",
+          "desc": "Pushes a book cart to grant a Shield and recovers SP to the ally with the highest Attack. Movement Speed is reduced while pushing the book cart.",
+          "stats": ["Shield: 42% of Max HP", "Shield Duration: 3s", "SP Recovery: 60"]
+        },
+        "ultimateSkill": {
+          "name": "Please Return Them Today!",
+          "desc": "Lends a book to the ally with the highest Attack, increasing their Attack and Attack Speed. This buff is applied 4 times and can stack.",
+          "stats": ["ATK Increase per Stack: 15%", "ATK SPD Increase per Stack: 9%", "Duration: 15s"],
+          "cooldown": "30s"
+        },
+        "passiveSkill": {
+          "desc": "Increases All Defenses.",
+          "stats": ["DEF Increase: 42%"]
+        }
+      }
+    }
+  },
+  {
+    "name": "雪蘭",
+    "attribute": "魔法",
+    "skills": {
+      "zh-TW": {
+        "normalAttack": {
+          "basic": "對敵人揮舞羽毛筆，造成2次魔法傷害。 [總魔法傷害:80%]",
+          "enhanced": "以一定機率對前方敵人造成範圍魔法傷害，並立即減少自身目前高級技能的冷卻時間。 [魔法傷害:160%] [冷卻時間減少:5秒]"
+        },
+        "normalSkill": {
+          "name": "魔女檔案庫",
+          "desc": "在自身周圍生成持續一定時間的傳承之幕。每秒增加位於傳承之幕上的友軍攻擊力，並對敵人造成7次範圍魔法傷害。若命中的敵人為世界首領怪物，會額外造成魔法傷害。",
+          "stats": ["傳承之幕持續時間:6秒", "攻擊力增加:21%", "攻擊力增加持續時間:8秒", "每秒魔法傷害:160%", "世界首領追加魔法傷害:160%"]
+        },
+        "ultimateSkill": {
+          "name": "歷歷在目的黑歷史",
+          "desc": "在指定範圍內中央敵人的位置生成持續一定時間的悔恨之域。對悔恨之域上的敵人造成9次範圍魔法傷害，並降低其攻擊速度。",
+          "stats": ["悔恨之域持續時間:8秒", "每秒魔法傷害:160%", "攻擊速度降低:37%", "攻擊速度降低持續時間:10秒"],
+          "cooldown": "30秒"
+        },
+        "passiveSkill": {
+          "desc": "HP降至50%以下時，為自身生成護盾。",
+          "stats": ["護盾:最大HP的68%", "護盾持續時間:6秒", "護盾冷卻時間:25秒"]
+        }
+      },
+      "ja": {
+        "normalAttack": {
+          "basic": "羽根ペンを振り回し、敵に魔法ダメージを2回与える。 [総魔法ダメージ: 80%]",
+          "enhanced": "一定確率で前方の敵に範囲魔法ダメージを与え、自身の現在の高学年スキルのクールタイムが即時減少する。 [魔法ダメージ:160%] [クールタイム減少:5秒]"
+        },
+        "normalSkill": {
+          "name": "ウィッチ・アーカイブ",
+          "desc": "自身の周囲に一定時間、伝承のカーテンを生成する。伝承のカーテン内の味方の攻撃力を1秒ごとに増加させ、敵に7回範囲魔法ダメージを与える。命中した敵がワールドボスモンスターの場合、追加で魔法ダメージを与える。",
+          "stats": ["伝承のカーテンの持続時間:6秒", "攻撃力増加:21%", "攻撃力増加の持続時間:8秒", "1秒ごとの魔法ダメージ: 160%", "ワールドボスへの追加魔法ダメージ: 160%"]
+        },
+        "ultimateSkill": {
+          "name": "リアルな黒歴史",
+          "desc": "指定範囲内で真ん中にいる敵の位置に、一定時間悔恨の領域を生成する。悔恨の領域内の敵に範囲魔法ダメージを9回与え、攻撃速度を減少させる。",
+          "stats": ["悔恨の領域の持続時間:8秒", "1秒ごとの魔法ダメージ: 160%", "攻撃速度減少:37%", "攻撃速度減少の持続時間: 10秒"],
+          "cooldown": "30秒"
+        },
+        "passiveSkill": {
+          "desc": "HPが50%以下になると、自分にシールドを生成する。",
+          "stats": ["シールド: 最大HPの68%", "シールドの持続時間:6秒", "シールドのクールタイム: 25秒"]
+        }
+      },
+      "en": {
+        "normalAttack": {
+          "basic": "Swings her Quill, dealing Magical Damage 2 times to the enemy. [Total Magical DMG: 80%]",
+          "enhanced": "At a set chance, deals AoE Magical Damage to enemies in front and instantly reduces the remaining cooldown of her Senior Skill. [Magical DMG: 160%] [Cooldown Reduction: 5s]"
+        },
+        "normalSkill": {
+          "name": "Witch Archive",
+          "desc": "Creates a Curtain of Legacy around herself for a set period of time. Increases the Attack of allies within it every second and deals AoE Magical Damage to enemies within it 7 times. If the enemy hit is a World Boss monster, deals additional Magical Damage.",
+          "stats": ["Curtain of Legacy Duration: 6s", "ATK Increase: 21%", "ATK Increase Duration: 8s", "Magical DMG per Second: 160%", "Additional Magical DMG to World Boss: 160%"]
+        },
+        "ultimateSkill": {
+          "name": "Vivid Embarrassing Past",
+          "desc": "Creates an Area of Remorse around the enemy at the center of the designated range for a set period of time. Deals AoE Magical Damage to enemies inside the Area of Remorse 9 times and reduces their Attack Speed.",
+          "stats": ["Area of Remorse Duration: 8s", "Magical DMG per Second: 160%", "ATK SPD Reduction: 37%", "ATK SPD Reduction Duration: 10s"],
+          "cooldown": "30s"
+        },
+        "passiveSkill": {
+          "desc": "When her HP drops below 50%, she casts a Shield on herself.",
+          "stats": ["Shield: 68% of Max HP", "Shield Duration: 6s", "Shield Cooldown: 25s"]
+        }
+      }
     }
   },
     {
@@ -159,7 +367,7 @@ const characterSkills = [
           "desc": "After using her Freshman Skill to perform a Dove Magic Trick, immediately reducing the current Senior Skill Cooldown of 1 random ally other than herself.",
           "stats": ["Ally Cooldown Instant Reduction: 7.5s"]
         }
-      },
+      }
     }
   },
     {
@@ -168,67 +376,67 @@ const characterSkills = [
     "skills": {
       "zh-TW": {
         "normalAttack": {
-          "basic": " []",
-          "enhanced": " []"
+          "basic": "投擲名片對敵人造成物理傷害，並獲得1層富裕。[富裕:擁有30層時，強化高級技能效果。] [物理傷害:75%]",
+          "enhanced": "每3次攻擊會隨機失去富裕並投擲2張名片。名片會對隨機敵人造成物理傷害，並增加其受到的傷害量。[富裕:擁有30層疊加時，強化高級技能效果。] [富裕最大減少:5] [每次物理傷害:125%] [受到的傷害量增加:22%] [受到的傷害量增加持續時間:6秒]"
         },
         "normalSkill": {
-          "name": "",
-          "desc": "",
-          "stats": [""]
+          "name": "收款時間到!",
+          "desc": "擊碎雕像使碎片飛散，對被碎片擊中的敵人造成範圍物理傷害，並降低其攻擊速度。每命中一名敵人便會獲得一定層數的富裕。",
+          "stats": ["富裕:擁有30層時，強化高級技能效果。", "物理傷害:435%", "攻擊速度降低:37%", "攻擊速度降低持續時間:7秒", "富裕獲得數:10"]
         },
         "ultimateSkill": {
-          "name": "",
-          "desc": "",
-          "stats": [""],
-          "cooldown": "秒"
+          "name": "狂熱☆時間!",
+          "desc": "灑出金珠，對敵人造成9次範圍物理傷害，並增加所有友軍的爆擊。若在擁有30層富裕的狀態下發動技能，將強化物理傷害及爆擊增加效果。技能結束後，隨機失去富裕。",
+          "stats": ["富裕:擁有30層時，強化高級技能效果。", "富裕最大減少:30", "總物理傷害:972%", "爆擊增加:20%", "富裕30層疊加總物理傷害:1944%", "富裕30層疊加爆擊增加:40%", "爆擊增加持續時間:10秒"],
+          "cooldown": "30秒"
         },
         "passiveSkill": {
-          "desc": "",
-          "stats": [""]
+          "desc": "獲得富裕時，增加後排友軍的攻擊力。",
+          "stats": ["攻擊力增加:21%", "攻擊力增加持續時間:5秒"]
         }
       },
       "ja": {
         "normalAttack": {
-          "basic": "[]",
-          "enhanced": "[]"
+          "basic": "名刺を投げつけ、敵に物理ダメージを与え、富豪を1スタック獲得する。[富豪:30スタック保有すると、高学年スキル効果が強化される。] [物理ダメージ:75%]",
+          "enhanced": "3回目の攻撃ごとに富豪をランダムに失い、名刺を2枚投げつける。名刺はランダムな敵に物理ダメージを与え、被ダメージ量を増加させる。[富豪:30スタック保有すると、高学年スキル効果が強化される。] [富豪最大減少:5] [1回あたりの物理ダメージ: 125%] [被ダメージ量増加:22%] [被ダメージ量増加の持続時間:6秒]"
         },
         "normalSkill": {
-          "name": "",
-          "desc": "",
-          "stats": [""]
+          "name": "集金の時間や~!",
+          "desc": "像を破壊し、破片を飛び散らせて、命中した敵に範囲物理ダメージを与え、攻撃速度を減少させる。敵1体に命中するごとに一定数の富豪を獲得する。",
+          "stats": ["富豪:30スタック保有すると、高学年スキル効果が強化される。", "物理ダメージ:435%", "攻撃速度減少:37%", "攻撃速度減少の持続時間:7秒", "富豪獲得数:10"]
         },
         "ultimateSkill": {
-          "name": "",
-          "desc": "",
-          "stats": [""],
-          "cooldown": "秒"
+          "name": "フィーバー☆タイムや~!",
+          "desc": "金の玉を降らせて敵に範囲物理ダメージを9回与え、味方全員の会心を増加させる。富豪を30スタック保有した状態でスキルを発動すると、物理ダメージと会心増加が強化される。スキル終了時、富豪をランダムに失う。",
+          "stats": ["富豪:30スタック保有すると、高学年スキル効果が強化される。", "富豪最大減少:30", "総物理ダメージ: 972%", "会心増加:20%", "富豪30スタック時の総物理ダメージ: 1944%", "富豪30スタック時の会心増加: 40%", "会心増加の持続時間:10秒"],
+          "cooldown": "30秒"
         },
         "passiveSkill": {
-          "desc": "",
-          "stats": [""]
+          "desc": "富豪獲得時、後列の味方の攻撃力を増加させる。",
+          "stats": ["攻撃力増加:21%", "攻撃力増加の持続時間:5秒"]
         }
       },
       "en": {
         "normalAttack": {
-          "basic": "[]",
-          "enhanced": "[]"
+          "basic": "Throws a business card, dealing Physical Damage to an enemy and acquires 1 stack of Wealth. [Wealth: Senior Skill Effects are enhanced when there are 30 Stacks.] [Physical DMG: 75%]",
+          "enhanced": "Every third attack, she loses Wealth at random and throws 2 business cards. The cards deal Physical Damage to random enemies and increase their Incoming Damage. [Wealth: Senior Skill Effects are enhanced when there are 30 Stacks.] [Max Wealth Reduction: 5] [Physical DMG Per Hit: 125%] [Incoming DMG Increase: 22%] [Incoming DMG Increase Duration: 6s]"
         },
         "normalSkill": {
-          "name": "",
-          "desc": "",
-          "stats": [""]
+          "name": "It's Collection Time!",
+          "desc": "Breaks a statue and sends debris flying, dealing AoE Physical Damage to enemies hit and reducing their Attack Speed. Obtain a set number of Wealth stacks for each enemy hit.",
+          "stats": ["Wealth: Senior Skill Effects are enhanced when there are 30 Stacks.", "Physical DMG: 435%", "ATK SPD Reduction: 37%", "ATK SPD Reduction Duration: 7s", "Wealth Acquisition: 10"]
         },
         "ultimateSkill": {
-          "name": "",
-          "desc": "",
-          "stats": [""],
-          "cooldown": "s"
+          "name": "It's Fever Time!",
+          "desc": "Drops a shower of golden spheres, dealing AoE Physical Damage 9 times and increases all allies' Critical Hit rates. If skill is activated with 30 stacks of Wealth, both Physical Damage and Critical Hit rate increases are enhanced. When the skill is finished, lose Wealth at random.",
+          "stats": ["Wealth: Senior Skill Effects are enhanced when there are 30 Stacks.", "Max Wealth Reduction: 30", "Total Physical DMG: 972%", "CRIT Increase: 20%", "Total Physical DMG (30 Wealth Stacks): 1944%", "CRIT Increase (30 Wealth Stacks): 40%", "CRIT Increase Duration: 10s"],
+          "cooldown": "30s"
         },
         "passiveSkill": {
-          "desc": "",
-          "stats": ["%"]
+          "desc": "When gaining Wealth, increases the Attack of Back Row allies.",
+          "stats": ["ATK Increase: 21%", "ATK Increase Duration: 5s"]
         }
-      },
+      }
     }
   },
     {
