@@ -9,11 +9,13 @@
 .sprite-char-innocence { background-image: url('char_sprites/char_innocence.png'); }
 .sprite-char-madness { background-image: url('char_sprites/char_madness.png'); }
 .sprite-char-vivacious { background-image: url('char_sprites/char_vivacious.png'); }
+.sprite-char-resonance { background-image: url('char_sprites/char_resonance.png'); }
 .sprite-ult-composed { background-image: url('char_sprites/ultimate_composed.png')!important; }
 .sprite-ult-depressed { background-image: url('char_sprites/ultimate_depressed.png')!important; }
 .sprite-ult-innocence { background-image: url('char_sprites/ultimate_innocence.png')!important; }
 .sprite-ult-madness { background-image: url('char_sprites/ultimate_madness.png')!important; }
 .sprite-ult-vivacious { background-image: url('char_sprites/ultimate_vivacious.png')!important; }
+.sprite-ult-resonance { background-image: url('char_sprites/ultimate_resonance.png')!important; }
 .sprite-boss { background-image: url('char_sprites/bosssheet.png'); }
 .sprite-NPC { background-image: url('char_sprites/NPCsheet.png'); }
 /* =======================================
@@ -49,11 +51,13 @@
 .sprite-Personality_Innocence { width: 62px; height: 66px; background-position: -297px -572px; }
 .sprite-Personality_Madness { width: 62px; height: 66px; background-position: -369px -572px; }
 .sprite-Personality_Vivacious { width: 62px; height: 66px; background-position: -441px -572px; }
+.sprite-Personality_Resonance { width: 62px; height: 66px; background-position: -741px -537px; }
 .sprite-PickPerconalityIcon_EldainHero { width: 73px; height: 71px; background-position: -513px -572px; }
 .sprite-PickPerconalityIcon_NormalHero { width: 73px; height: 71px; background-position: -596px -572px; }
 .sprite-Position_Back { width: 64px; height: 64px; background-position: -5px -653px; }
 .sprite-Position_Front { width: 64px; height: 64px; background-position: -79px -653px; }
 .sprite-Position_Middle { width: 64px; height: 64px; background-position: -153px -653px; }
+.sprite-Position_All { width: 64px; height: 64px; background-position: -815px -537px; }
 .sprite-Race_Dragon { width: 55px; height: 55px; background-position: -679px -572px; }
 .sprite-Race_Elemental { width: 55px; height: 55px; background-position: -679px -637px; }
 .sprite-Race_Elf { width: 55px; height: 55px; background-position: -749px -5px; }
@@ -114,7 +118,8 @@
 .sprite-Snorky { width: 126px; height: 126px; background-position: -5px -1501px; }
 .sprite-Veroo { width: 126px; height: 126px; background-position: -5px -1637px; }
 .sprite-Yomi { width: 126px; height: 126px; background-position: -5px -1773px; }
-.sprite-xXionx { width: 126px; height: 126px; background-position: -5px -1909px; }
+.sprite-Barie { width: 126px; height: 126px; background-position: -5px -1909px; }
+.sprite-xXionx { width: 126px; height: 126px; background-position: -5px -2045px; }
 /* Innocence */
 .sprite-Allet { width: 126px; height: 126px; background-position: -5px -5px; }
 .sprite-BigWood { width: 126px; height: 126px; background-position: -5px -141px; }
@@ -131,6 +136,7 @@
 .sprite-Speaki { width: 126px; height: 126px; background-position: -5px -1637px; }
 .sprite-Vivi { width: 126px; height: 126px; background-position: -5px -1773px; }
 .sprite-Daya { width: 126px; height: 126px; background-position: -5px -1909px; }
+.sprite-Sherum { width: 126px; height: 126px; background-position: -5px -2045px; }
 /* Madness */
 .sprite-Alice { width: 126px; height: 126px; background-position: -5px -5px; }
 .sprite-Belita { width: 126px; height: 126px; background-position: -5px -141px; }
@@ -165,7 +171,8 @@
 .sprite-Taida { width: 126px; height: 126px; background-position: -5px -1773px; }
 .sprite-Ui { width: 126px; height: 126px; background-position: -5px -1909px; }
 .sprite-Tig { width: 126px; height: 126px; background-position: -5px -2045px; }
-
+/* Resonance */
+.sprite-Joanne { width: 126px; height: 126px; background-position: -5px -5px; }
 /* =======================================
    🌟 角色大絕頭像 (ultimate_*.png)
    ======================================= */
@@ -200,6 +207,7 @@
 .sprite-Icon_UltimateSkill_Veroo { width: 64px; height: 64px; background-position: -5px -893px; }
 .sprite-Icon_UltimateSkill_Yomi { width: 64px; height: 64px; background-position: -5px -967px; }
 .sprite-Icon_UltimateSkill_xXionx { width: 64px; height: 64px; background-position: -5px -1041px; }
+.sprite-Icon_UltimateSkill_Barie { width: 64px; height: 64px; background-position: -5px -1115px; }
 /* Innocence */
 .sprite-Icon_UltimateSkill_Allet { width: 64px; height: 64px; background-position: -5px -5px; }
 .sprite-Icon_UltimateSkill_BigWood { width: 64px; height: 64px; background-position: -5px -79px; }
@@ -216,6 +224,7 @@
 .sprite-Icon_UltimateSkill_Speaki { width: 64px; height: 64px; background-position: -5px -893px; }
 .sprite-Icon_UltimateSkill_Vivi { width: 64px; height: 64px; background-position: -5px -967px; }
 .sprite-Icon_UltimateSkill_Daya { width: 64px; height: 64px; background-position: -5px -1041px;}
+.sprite-Icon_UltimateSkill_Sherum { width: 64px; height: 64px; background-position: -5px -1115px;}
 /* Madness */
 .sprite-Icon_UltimateSkill_Alice { width: 64px; height: 64px; background-position: -5px -5px; }
 .sprite-Icon_UltimateSkill_Belita { width: 64px; height: 64px; background-position: -5px -79px; }
@@ -250,7 +259,8 @@
 .sprite-Icon_UltimateSkill_Taida { width: 64px; height: 64px; background-position: -5px -967px; }
 .sprite-Icon_UltimateSkill_Ui { width: 64px; height: 64px; background-position: -5px -1041px; }
 .sprite-Icon_UltimateSkill_Tig { width: 64px; height: 64px; background-position: -5px -1115px; }
-
+/* Resonance */
+.sprite-Icon_UltimateSkill_Joanne { width: 64px; height: 64px; background-position: -5px -5px; }
 /* =======================================
    🌟 Boss圖示 (bosssheet.png)
    ======================================= */
@@ -267,3 +277,28 @@
 .sprite-Goldy { width: 126px; height: 126px; background-position: -5px -141px; }
 .sprite-RenewaNPC { width: 126px; height: 126px; background-position: -5px -277px; }
 .sprite-Youngchun { width: 126px; height: 126px; background-position: -5px -413px; }
+
+/* 共鳴專屬：五種性格顏色輪迴特效 */
+@keyframes rainbow-border {
+    0%   { border-color: #4ade80; } /* 綠 (天真) */
+    25%  { border-color: #60a5fa; } /* 藍 (冷靜) */
+    50%  { border-color: #f87171; } /* 紅 (狂亂) */
+    75%  { border-color: #facc15; } /* 黃 (活潑) */
+    100% { border-color: #c084fc; } /* 紫 (憂鬱) */
+}
+
+@keyframes rainbow-text {
+    0%   { color: #4ade80; } 
+    25%  { color: #60a5fa; } 
+    50%  { color: #f87171; } 
+    75%  { color: #facc15; } 
+    100% { color: #c084fc; } 
+}
+
+.border-rainbow {
+    animation: rainbow-border 4s linear infinite alternate;
+}
+
+.text-rainbow {
+    animation: rainbow-text 4s linear infinite alternate;
+}
