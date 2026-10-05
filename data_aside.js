@@ -9,7 +9,7 @@ const ASIDE_DATA = {
             1: { 
                 icon: "", 
                 name: { zh: "", ja: "", en: "" }, 
-                desc: { zh: "", ja: "", en: "." }, 
+                desc: { zh: "", ja: "", en: "" }, 
                 effects: { zh: [""], ja: [""], en: [""] } 
             },
             2: { 
@@ -22,11 +22,12 @@ const ASIDE_DATA = {
                 icon: "", 
                 name: { zh: "", ja: "", en: "" }, 
                 desc: { zh: "", ja: "", en: "" }, 
-                effects: { zh: [""], ja: [""], en: ["%"] }, 
+                effects: { zh: [""], ja: [""], en: [""] }, 
                 globalEffects: { zh: ["全體 %", "全體 %"], ja: ["全体 %", "全体 %"], en: ["All %", "All %"] } 
             }
         }
     },
+    
     "Alice": { 
         asideIcon: "", 
         totalName: { zh: "最強幸運卡", ja: "最高の吉のカード", en: "The Ultimate Lucky Card" }, 
@@ -124,6 +125,31 @@ const ASIDE_DATA = {
                 desc: { zh: "增加前排友軍對敵人造成的傷害量,並減少前排友軍受到敵人的傷害量。", ja: "前列の味方の敵への与ダメージ量を増加させ、 前列の味方の敵からの被ダメージ量を減少させる。", en: "Increases Outgoing Damage and reduces Incoming Damage of Front Row allies." }, 
                 effects: { zh: ["傷害量增加:13.6%", "受到的傷害量減少:5.9%"], ja: ["ダメージ量増加:13.6%", "被ダメージ量減少:5,9%"], en: ["DMG Increase: 13,6%", "Incoming DMG Reduction: 5.9%"] }, 
                 globalEffects: { zh: ["全體魔法攻擊力 3%", "全體魔法防禦力 3%"], ja: ["全体魔法攻撃力 3%", "全体魔法防御力 3%"], en: ["All Magical ATK 3%", "All Magical DEF3%"] } 
+            }
+        }
+    },
+    "Belita": { 
+        asideIcon: "", 
+        totalName: { zh: "妾身心中的妹妹", ja: "わらわの心の中の妹", en: "My Little Sister in My Heart" }, 
+        stars: {
+            1: { 
+                icon: "", 
+                name: { zh: "妾身的妹妹艾爾芬", ja: "わらわの妹エルフィン", en: "My Sister Erpin" }, 
+                desc: { zh: "穿戴者的最大HP、魔法攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、魔法攻撃力、会心、会心ダメージが増加する。", en: "Increases the bearer's Max HP, Magical Attack, Critical Hit, and Critical Damage." }, 
+                effects: { zh: ["最大HP增加:6%", "魔法攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加:6%", "魔法攻撃力増加:6%", "会心増加:6%", "会心ダメージ増加:6%"], en: ["Max HP Increase: 6%", "Magical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
+            },
+            2: { 
+                icon: "", 
+                name: { zh: "降下審判", ja: "そなたを裁く", en: "You Shall Be Judged" }, 
+                desc: { zh: "普通攻擊、普通技能命中時，會立即減少目前高級技能的冷卻時間。高級技能會施展2次。", ja: "普通攻撃、低学年スキル命中時、現在の高学年スキルのクールタイムが即時減少する。高学年スキルを2回使用する。", en: "When Normal Attack or Freshman Skill hits, instantly reduces the current Senior Skill Cooldown, Uses Senior Skill twice." }, 
+                effects: { zh: ["普通攻擊命中時冷卻時間立即減少:1秒", "普通技能命中時冷卻時間立即減少:2秒"], ja: ["普通攻撃命中時のクールタイム即時減少:1秒", "低学年スキル命中時のクールタイム即時減少:2秒"], en: ["Instant Cooldown Reduction when Normal ATK hits: 1s", "Instant Cooldown Reduction when Freshman Skill hits: 2s"] } 
+            },
+            3: { 
+                icon: "", 
+                name: { zh: "艾利亞斯守護者", ja: "エーリアスの守護者たち", en: "Guardians of Elias" }, 
+                desc: { zh: "提升後排友軍對敵人造成的傷害，並降低後排友軍受到的傷害。", ja: "後列の味方の敵への与ダメージ量を増加させ、 後列の味方の敵からの被ダメージ量を減少させる。", en: "Increases Outgoing Damage and reduces Incoming Damage of Back Row allies." }, 
+                effects: { zh: ["傷害量增加:13.6%", "受到的傷害量減少:5.9%"], ja: ["ダメージ量増加:13.6%", "被ダメージ量減少:5.9%"], en: ["DMG Increase: 13.6%", "Incoming DMG Reduction: 5.9%"] }, 
+                globalEffects: { zh: ["全體爆擊傷害 3%", "全體爆擊傷害抵抗 3%"], ja: ["全体会心ダメージ 3%", "全体会心ダメージ抵抗 3%"], en: ["All CRIT DMG 3%", "All CRIT DMG RES 3%"] } 
             }
         }
     },
@@ -277,6 +303,56 @@ const ASIDE_DATA = {
             }
         }
     },
+    "Epica": { 
+        asideIcon: "", 
+        totalName: { zh: "艾皮坎", ja: "エピカン", en: "Epikhan" }, 
+        stars: {
+            1: { 
+                icon: "", 
+                name: { zh: "助手艾比康", ja: "助手エピコン", en: "Assistant Epicon" }, 
+                desc: { zh: "穿戴者的最大HP、物理攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、物理攻撃力、会心、会心ダメージが増加する。", en: "Increases the bearer's Max HP, Physical Attack, Critical Hit, and Critical Damage." }, 
+                effects: { zh: ["最大HP增加:6%", "物理攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加:6%", "物理攻撃力増加:6%", "会心増加:6%", "会心ダメージ増加:6%"], en: ["Max HP Increase: 6%", "Physical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
+            },
+            2: { 
+                icon: "", 
+                name: { zh: "艾皮康分身術", ja: "エピコンの分身術", en: "Epicon's Cloning Technique" }, 
+                desc: { zh: "普通攻擊目標額外追加隨機敵人。強化攻擊觸發機率提升，且每次發動強化攻擊時，會立即減少目前高級技能的冷卻時間。使用普通技能時，對自身給予保護效果。該效果在使用普通技能後只會發動1次。", ja: "普通攻撃の目標対象にランダムな敵が追加され強化攻撃の発動確率が増加し、強化攻撃を発動するたびに現在の高学年スキルのクールタイムが即時減少する。低学年スキルを使用すると、自身に保護を付与する。この効果は低学年スキル使用後、1回のみ発動する。", en: "The Normal Attack targets an additional random enemy. Increases Enhanced Attack Cast Rate. Each time Enhanced Attack is triggered, instantly reduces the current Senior Skill Cooldown. When Freshman Skill is used, applies Protection to herself. This effect can only activate once after using Freshman Skill." }, 
+                effects: { zh: ["保護:因直接傷害陷入無法戰鬥狀態時，該傷害將被無效化並賦予護盾。", "直接傷害:指狀態異常傷害、反射傷害以外的直接攻擊傷害。", "強化攻擊施展機率增加:15%", "冷卻時間立即減少:3秒", "保護持續時間:8秒", "護盾:最大HP的46%", "護盾持續時間:8秒"], ja: ["保護:直接ダメージによって戦闘不能になった時、そのダメージを無効化してシールドを付与する。", "直接ダメージ:直接攻撃によるダメージ(状態異常ダメージ、反射ダメージを除く)。", "強化攻撃発動確率増加:15%", "クールタイム即時減少:3秒", "保護の持続時間:8秒", "シールド: 最大HPの46%", "シールドの持続時間:8秒"], en: ["Protection: Negates incapacitating Direct Damage and grants a Shield.", "Direct Damage: Refers to damage caused by Direct Attacks, excluding Status Effect Damage and Damage Reflection.", "Enhanced ATK Cast Rate Increase: 15%", "Instant Cooldown Reduction: 3s", "Protection Duration: 8s", "Shield: 46% of Max HP", "Shield Duration: 8s"] } 
+            },
+            3: { 
+                icon: "", 
+                name: { zh: "獻給友軍", ja: "味方に捧げます", en: "For My Allies" }, 
+                desc: { zh: "提升中排友軍對敵人造成的傷害，並降低中排友軍受到的傷害。", ja: "中列の味方の敵への与ダメージ量を増加させ、 中列の味方の敵からの被ダメージ量を減少させる。", en: "Increases Outgoing Damage and reduces Incoming Damage of Middle Row allies." }, 
+                effects: { zh: ["傷害量增加:19.5%", "受到的傷害量減少:8.8%"], ja: ["ダメージ量増加:19.5%", "被ダメージ量減少:8.8%"], en: ["DMG Increase: 19.5%", "Incoming DMG Reduction: 8.8%"] }, 
+                globalEffects: { zh: ["全體物理攻擊力 4%", "全體物理防禦力 4%"], ja: ["全体物理攻撃力 4%", "全体物理防御力 4%"], en: ["All Physical ATK 4%", "All Physical DEF 4%"] } 
+            }
+        }
+    },
+    "Erpin": { 
+        asideIcon: "", 
+        totalName: { zh: "無限蛋糕", ja: "無限ケーキ", en: "Infinite Cake" }, 
+        stars: {
+            1: { 
+                icon: "", 
+                name: { zh: "甜甜的最棒了!", ja: "甘いもの最高!", en: "Sweets Are The Best!" }, 
+                desc: { zh: "穿戴者的最大HP、魔法攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、魔法攻撃力、会心、会心ダメージが増加する。", en: "Increases bearer's Max HP, Magical ATK, CRIT, and CRIT DMG." }, 
+                effects: { zh: ["最大HP增加:6%", "魔法攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加:6%", "魔法攻撃力増加:6%", "会心増加:6%", "会心ダメージ増加:6%"], en: ["Max HP Increase: 6%", "Magical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
+            },
+            2: { 
+                icon: "", 
+                name: { zh: "大口大口發射!!", ja: "パクパク発射!!", en: "Chomp Chomp Fire!" }, 
+                desc: { zh: "攻擊速度提升。強化攻擊後，恢復自身的HP。使用高級技能時，會進入無敵狀態，技能結束後解除無敵狀態。高級技能命中單一敵人時，傷害增加。", ja: "攻撃速度が増加する。強化攻撃後、自身のHPを回復する。高学年スキル使用時、無敵になり、スキル終了時に無敵を解除する。高学年スキルが単体の敵に命中した場合、ダメージが増加する。", en: "Increases Attack Speed. After an Enhanced Attack, recovers own HP. When using a Senior Skill, becomes Invincible, Invincibility ends when the skill is finished. If the Senior Skill hits a single enemy, its Damage increases." }, 
+                effects: { zh: ["無敵:對所有傷害和減益效果免疫。", "攻擊速度提升:25%", "HP恢復:最大HP的15%", "高級技能傷害增加:50%"], ja: ["無敵: すべてのダメージ及びデバフに免疫を得る。", "攻撃速度増加:25%", "HP回復:最大HPの15%", "高学年スキルダメージ増加: 50%"], en: ["Invincibility: Immune to all damage and debuffs.", "ATK SPD Increase: 25%", "HP Recovery: 15% of Max HP", "Senior Skill DMG Increase: 50%"] } 
+            },
+            3: { 
+                icon: "", 
+                name: { zh: "純正蛋糕攻擊!!!", ja: "純粋なケーキ攻撃!!!", en: "Innocent Cake Attack!" }, 
+                desc: { zh: "增加後排友軍對敵人造成的傷害量，並減少後排友軍受到敵人的傷害量。", ja: "後列の味方の敵への与ダメージ量を増加させ、後列の味方の敵からの被ダメージ量を減少させる。", en: "Increases Outgoing Damage and reduces Incoming Damage for Back Row allies." }, 
+                effects: { zh: ["傷害量增加:13.6%", "受到的傷害量減少:5.9%"], ja: ["ダメージ量増加:13.6%", "被ダメージ量減少:5.9%"], en: ["DMG Increase: 13.6%", "Incoming DMG Reduction: 5.9%"] }, 
+                globalEffects: { zh: ["全體魔法攻擊力 3%", "全體魔法防禦力 3%"], ja: ["全体魔法攻撃力 3%", "全体魔法防御力 3%"], en: ["All Magical ATK 3%", "All Magical DEF 3%"] } 
+            }
+        }
+    },
     "Fricle": { 
         asideIcon: "", 
         totalName: { zh: "高階魔女皮可蒞", ja: "上位魔女ピコラ", en: "High Witch Picora" },
@@ -358,47 +434,47 @@ const ASIDE_DATA = {
         stars: {
             1: { 
                 icon: "", 
-                name: { zh: "", ja: "", en: "" }, 
-                desc: { zh: "", ja: "", en: "." }, 
-                effects: { zh: [""], ja: [""], en: [""] } 
+                name: { zh: "完美翡翠", ja: "完璧な翡翠", en: "Perfect Jade" }, 
+                desc: { zh: "穿戴者的最大HP、魔法攻擊力、爆擊、爆擊傷害增加。", ja: "着用者の最大HP、魔法攻撃力、会心、会心ダメージが増加する。", en: "Increases the bearer's Max HP, Magical Attack, Critical Hit, and Critical Damage." }, 
+                effects: { zh: ["最大HP增加:6%", "魔法攻擊力增加:6%", "爆擊增加:6%", "爆擊傷害增加:6%"], ja: ["最大HP増加:6%", "魔法攻撃力増加:6%", "会心増加:6%", "会心ダメージ増加:6%"], en: ["Max HP Increase: 6%", "Magical ATK Increase: 6%", "CRIT Increase: 6%", "CRIT DMG Increase: 6%"] } 
             },
             2: { 
                 icon: "", 
-                name: { zh: "", ja: "", en: "" }, 
-                desc: { zh: "", ja: "", en: "" }, 
-                effects: { zh: [""], ja: [""], en: [""] } 
+                name: { zh: "錢給你", ja: "私のお金を持ってけ", en: "Take My Money" }, 
+                desc: { zh: "強化攻擊施展機率增加。翡翠玉追加技能傷害量增加、攻擊速度提升、受到的傷害量減少效果。獲得翡翠玉時，若持有的翡翠玉疊加至3層，會召喚魔法書形象，對指定範圍內位於中央的敵人造成範圍魔法傷害。", ja: "強化攻撃の発動確率が増加する。翡翠玉にスキルダメージ量増加、攻撃速度増加、被ダメージ量減少の効果が追加される。翡翠玉を獲得時に所持している翡翠玉が3スタックの場合、魔法書の形象を召喚し、指定範囲内で真ん中にいる敵に範囲魔法ダメージを与える。", en: "Increases Enhanced Attack Cast Rate. JadeForce grants Skill Damage Increase, Attack Speed Increase, and Incoming Damage Reduction. When gaining JadeForce while already at 3 stacks, summons a phantom spellbook to deal AoE Magical Damage to the enemy in the center of the designated range." }, 
+                effects: { zh: ["強化攻擊施展機率增加:9%", "每層疊加時技能傷害量增加:9%", "每層疊加時攻擊速度提升:5%", "每層疊加時受到的傷害量減少:5%", "範圍魔法傷害:250%"], ja: ["強化攻撃の発動確率増加:9%", "1スタック時のスキルダメージ量増加:9%", "1スタック時の攻撃速度増加:5%", "1スタック時の被ダメージ量減少:5%", "範囲魔法ダメージ:250%"], en: ["Enhanced ATK Cast Rate Increase: 9%", "Skill DMG Increase at 1 stack: 9%", "ATK SPD Increase at 1 stack: 5%", "Incoming DMG Reduction at 1 stack: 5%", "AoE Magical DMG: 250%"] } 
             },
             3: { 
                 icon: "", 
-                name: { zh: "", ja: "", en: "" }, 
-                desc: { zh: "", ja: "", en: "" }, 
-                effects: { zh: [""], ja: [""], en: ["%"] }, 
-                globalEffects: { zh: ["全體 %", "全體 %"], ja: ["全体 %", "全体 %"], en: ["All %", "All %"] } 
+                name: { zh: "心靈糧食", ja: "心の糧", en: "Food For Thought" }, 
+                desc: { zh: "提升所有友軍的攻擊速度。", ja: "味方全員の攻撃速度を増加させる。", en: "Increases the Attack Speed of all allies." }, 
+                effects: { zh: ["攻擊速度提升:7%"], ja: ["攻撃速度増加:7%"], en: ["ATK SPD Increase: 7%"] }, 
+                globalEffects: { zh: ["全體魔法攻擊力 3%", "全體魔法防禦力 3%"], ja: ["全体魔法攻撃力 3%", "全体魔法防御力 3%"], en: ["All Magical ATK 3%", "All Magical DEF 3%"] } 
             }
         }
     },
     "Joanne": { 
         asideIcon: "", 
-        totalName: { zh: "", ja: "", en: "" }, 
+        totalName: { zh: "教主的經典著作", ja: "主教の経典", en: "Bishop's Bible" }, 
         stars: {
             1: { 
                 icon: "", 
-                name: { zh: "", ja: "", en: "" }, 
-                desc: { zh: "", ja: "", en: "." }, 
-                effects: { zh: [""], ja: [""], en: [""] } 
+                name: { zh: "教主日記", ja: "教主日誌", en: "Master Journal" }, 
+                desc: { zh: "穿戴者的最大HP、物理防禦力、魔法防禦力、爆擊抵抗、爆擊傷害抵抗增加。", ja: "着用者の最大HP、物理防御力、魔法防御力、会心抵抗、会心ダメージ抵抗が増加する。", en: "Increases the bearer's Max HP, Physical DEF, Magical DEF, CRIT Resistance, and CRIT DMG Resistance." }, 
+                effects: { zh: ["最大HP增加:6%", "物理防禦力增加:6%", "魔法防禦力增加:6%", "爆擊抵抗增加:6%", "爆擊傷害抵抗增加:6%"], ja: ["最大HP増加:6%", "物理防御力増加:6%", "魔法防御力増加:6%", "会心抵抗増加:6%", "会心ダメージ抵抗増加:6%"], en: ["Max HP Increase: 6%", "Physical DEF Increase: 6%", "Magical DEF Increase: 6%", "CRIT Resistance Increase: 6%", "CRIT DMG Resistance Increase: 6%"] } 
             },
             2: { 
                 icon: "", 
-                name: { zh: "", ja: "", en: "" }, 
-                desc: { zh: "", ja: "", en: "" }, 
-                effects: { zh: [""], ja: [""], en: [""] } 
+                name: { zh: "妖精降臨", ja: "妖精降臨", en: "Here's Your Sprite!" }, 
+                desc: { zh: "最大HP增加。強化攻擊的所受傷害減少量、普通攻擊傷害增加量與技能傷害增加量皆變為2倍。分散效果結束時，恢復所有受到分散效果的友軍HP。透過高年級技能進入夢境形象狀態時，增加自身以外所有友軍的傷害量。處於夢境形象狀態時，自身攻擊速度提升。", ja: "最大HPが増加する。強化攻撃の被ダメージ量減少、普通攻撃のダメージ量増加、スキルダメージ量増加値が2倍になる。分散効果終了時、分散効果を受けた味方全員のHPを回復させる。高学年スキルで夢現の姿状態になる時、自身を除く味方全員のダメージ量を増加させる。夢現の姿状態の時、自身の攻撃速度が増加する。", en: "Increases Max HP. Enhanced Attack's Incoming Damage Reduction, Normal Attack Damage Increase, and Skill Damage Increase values are doubled. When the Disperse effect ends, recovers HP of all allies who received the Disperse effect. When entering Dream Form with the Senior Skill, increases Damage for all allies except herself. While in Dream Form, increases own Attack Speed." }, 
+                effects: { zh: ["最大HP增加:30%", "HP恢復:目標最大HP的30%", "傷害量增加:50%", "傷害量增加持續時間:30秒", "攻擊速度提升:125%"], ja: ["最大HP増加:30%", "HP回復:対象の最大HPの30%", "ダメージ量増加:50%", "ダメージ量増加の持続時間:30秒", "攻撃速度増加:125%"], en: ["Max HP Increase: 30%", "HP Recovery: 30% of the target's Max HP", "DMG Increase: 50%", "DMG Increase Duration: 30s", "ATK SPD Increase: 125%"] } 
             },
             3: { 
                 icon: "", 
-                name: { zh: "", ja: "", en: "" }, 
-                desc: { zh: "", ja: "", en: "" }, 
-                effects: { zh: [""], ja: [""], en: ["%"] }, 
-                globalEffects: { zh: ["全體 %", "全體 %"], ja: ["全体 %", "全体 %"], en: ["All %", "All %"] } 
+                name: { zh: "報恩的瓊安", ja: "ジョアンの恩返し", en: "Faithful Joanne" }, 
+                desc: { zh: "所有友軍對敵人造成的傷害量增加，所有友軍受到敵人造成的傷害量減少。", ja: "味方全員の敵への与ダメージ量を増加させ、味方全員の敵からの被ダメージ量を減少させる。", en: "Increases Outgoing Damage and reduces Incoming Damage for all allies." }, 
+                effects: { zh: ["傷害量增加:15%", "受到的傷害量減少:6.7%"], ja: ["ダメージ量増加:15%", "被ダメージ量減少:6.7%"], en: ["DMG Increase: 15%", "Incoming DMG Reduction: 6.7%"] }, 
+                globalEffects: { zh: ["全體HP 4%", "全體物理攻擊力 4%"], ja: ["全体HP 4%", "全体物理攻撃力 4%"], en: ["All HP 4%", "All Physical ATK 4%"] } 
             }
         }
     },
@@ -424,6 +500,31 @@ const ASIDE_DATA = {
                 desc: { zh: "增加所有友軍對敵人造成的傷害量，並減少所有友軍受到敵人的傷害量。", ja: "味方全員の敵への与ダメージ量を増加させ、味方全員の敵からの被ダメージ量を減少させる。", en: "Increases all allies Outgoing Damage and reduces Incoming Damage from enemies for all allies." }, 
                 effects: { zh: ["傷害量增加:10.5%", "受到的傷害量減少:4.5%"], ja: ["ダメージ量増加:10.5%", "被ダメージ量減少:4.5%"], en: ["DMG Increase: 10.5%", "Incoming DMG Reduction: 4.5%"] }, 
                 globalEffects: { zh: ["全體HP 3%", "全體物理攻擊力 3%"], ja: ["全体HP 3%", "全体物理攻擊力 3%"], en: ["All HP 3%", "All Physical ATK 3%"] } 
+            }
+        }
+    },
+    "KommySwim": { 
+        asideIcon: "", 
+        totalName: { zh: "", ja: "", en: "" }, 
+        stars: {
+            1: { 
+                icon: "", 
+                name: { zh: "", ja: "", en: "" }, 
+                desc: { zh: "", ja: "", en: "" }, 
+                effects: { zh: [""], ja: [""], en: [""] } 
+            },
+            2: { 
+                icon: "", 
+                name: { zh: "", ja: "", en: "" }, 
+                desc: { zh: "", ja: "", en: "" }, 
+                effects: { zh: [""], ja: [""], en: [""] } 
+            },
+            3: { 
+                icon: "", 
+                name: { zh: "", ja: "", en: "" }, 
+                desc: { zh: "", ja: "", en: "" }, 
+                effects: { zh: [""], ja: [""], en: [""] }, 
+                globalEffects: { zh: ["全體 %", "全體 %"], ja: ["全体 %", "全体 %"], en: ["All %", "All %"] } 
             }
         }
     },
