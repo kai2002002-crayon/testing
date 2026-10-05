@@ -24,7 +24,7 @@ const PRESENT_MAP = {
     },
 	"Barie": { 
         url: "",
-        name: { "zh-TW": "", "ja": "", "en": "" }
+        name: { "zh-TW": "魔女圖書館金卡", "ja": "魔女図書館ゴールドカード", "en": "Witch Library Gold Card" }
     },
 	"Barong": { 
         url: "",
@@ -122,6 +122,10 @@ const PRESENT_MAP = {
         url: "https://i.postimg.cc/rsg7Dmj1/Present-List-Jade.png",
         name: { "zh-TW": "高級玉石地板", "ja": "高級翡翠マット", "en": "Premium Jade Electric Blanket" }
     },
+	"Joanne": { 
+        url: "",
+        name: { "zh-TW": "", "ja": "", "en": "" }
+    },
     "Jubee": { 
         url: "https://i.postimg.cc/901sDMbL/Present-List-Jubee.png",
         name: { "zh-TW": "皇家蜂蜜", "ja": "ロイヤルハニー", "en": "Royal Honey" }
@@ -134,6 +138,10 @@ const PRESENT_MAP = {
         url: "https://i.postimg.cc/XqxtrJLt/Present-List-Kommy.png",
         name: { "zh-TW": "名牌枕頭", "ja": "高級ブランド枕", "en": "Luxury Pillow" }
     },
+	"KommySwim": { 
+        url: "",
+        name: { "zh-TW": "", "ja": "", "en": "" }
+    },
     "Kyarot": { 
         url: "https://i.postimg.cc/RhG2WFdy/Present-List-Kyarot.png",
         name: { "zh-TW": "優良農業獎盃", "ja": "優良農業トロフィー", "en": "Outstanding Harvest Trophy" }
@@ -145,6 +153,10 @@ const PRESENT_MAP = {
     "Leets": { 
         url: "https://i.postimg.cc/vTXC4BXb/Present-List-Leets.png",
         name: { "zh-TW": "超重鋼鐵盔甲", "ja": "超重量級の鋼鉄アーマー", "en": "Utterly Heavy Steel Armor" }
+    },
+	"Lethe": { 
+        url: "",
+        name: { "zh-TW": "", "ja": "", "en": "" }
     },
     "Levi": { 
         url: "https://i.postimg.cc/QCSvFtSj/Present-List-Levi.png",
@@ -234,6 +246,10 @@ const PRESENT_MAP = {
         url: "https://i.postimg.cc/DyjtFS8F/Present-List-Shady.png",
         name: { "zh-TW": "魔法水晶珠", "ja": "魔法の水晶玉", "en": "Magical Crystal Orb" }
     },
+	"Sherum": { 
+        url: "",
+        name: { "zh-TW": "高級羽毛筆和墨水組", "ja": "高級羽根ペンとインクキット", "en": "High-End Quill and Ink Set" }
+    },
     "Shoupan": { 
         url: "https://i.postimg.cc/J469msG4/Present-List-Shoupan.png",
         name: { "zh-TW": "艾利亞斯英雄勳章", "ja": "エリアス英雄勲章", "en": "Elias Hero Medal" }
@@ -245,10 +261,6 @@ const PRESENT_MAP = {
     "Sist": { 
         url: "https://i.postimg.cc/hPyHgXfh/Present-List-Sist.png",
         name: { "zh-TW": "紫水晶存錢筒", "ja": "アメジストの貯金箱", "en": "Amethyst Coin Bank" }
-    },
-    "Sherum": { 
-        url: "",
-        name: { "zh-TW": "", "ja": "", "en": "" }
     },
     "Snorky": { 
         url: "https://i.postimg.cc/TY7ZGKpW/Present-List-Snorky.png",
@@ -303,7 +315,7 @@ const THOUGHT_MAP = {
             "Amelia": "原以為是一大堆工作，所以感到很茫然。沒想到裡面夾著一張小小的感謝信。",
             "Ashur": "這是她偷偷塞給我的優惠券，說餓了就可以去找她，還說絕對不能讓艾爾芬看到。",
             "Aya": "綾用冰製成的美麗雪花雕像。不知道上面是不是施加了魔法，就算天氣熱也不會融化。",
-			"Barie": "",
+			"Barie": "這是可以隨意進出魔女圖書館各處、可以隨意租借所有書籍的出入證。看起來像是在邀請我隨時來訪。",
 			"Barong": "芭琳一直帶在身上的那個玩偶。她猶豫不決，反覆地把它拿回去又放回來。",
             "Belita": "據說是和艾爾芬一起玩過的玩偶，因為非常珍貴，所以她委託我保管。",
             "Beni": "據說，這是為了和我一起去釣魚，努力存下零用錢買的釣魚套裝。",
@@ -357,7 +369,7 @@ const THOUGHT_MAP = {
             "Sari": "莎莉親手製作的反應卡片。當我用雙手舉起卡片時，莎莉會根據卡片上寫的內容做出相應的反應。",
             "Selline": "不是什麼奇怪的衣服，顧名思義，就是瑟琳娜為了挑釁我分出勝負的服裝。",
             "Shady": "看起來像是一個漂亮的裝飾品，但如果仔細操作，能看到一張謝蒂盯著我的臉。這應該是畫吧？",
-            "Sherum": "",
+            "Sherum": "這是一支高級的羽毛筆和一瓶品質優良的墨水。要是用這個寫修養錄，雪蘭應該會很欣慰。",
 			"Shoupan": "修帕親自為我製作的粗糙勳章。她說她拿到勳章時心情很好，所以才想送我這個。",
             "Silphir": "這是一個和路德微妙相似的稻草人，她好像想跟我一起練武。",
             "Sist": "據說，這是希瑟圖剛創業時，將硬幣一枚一枚存起來的存錢筒。",
@@ -380,7 +392,7 @@ const THOUGHT_MAP = {
             "Amelia": "仕事をたくさん任せられるのかと思って気が重かったが、途中に小さいメモに書かれた感謝の手紙が1枚挟まっている。",
             "Ashur": "お腹が空いたらいつでも訪ねてきてと私にこっそり渡してくれたクーポン。エルフィンには絶対見せないようにと言っていた。",
             "Aya": "アヤが氷で作った美しい雪花の彫刻。魔法が込められているのか暑い時も解けない。",
-			"Barie": "",
+			"Barie": "魔女図書館のどの本にもどんなエリアにも無制限にアクセスできる通行証。気軽に来てという意味のようだ。",
 			"Barong": "バロンが持ち歩いてるあのぬいぐるみ。ぎこちない感じで探しに来たり、またおいて行ったりを繰り返す。",
             "Belita": "エルフィンと一緒に持って遊んでいた人形らしい。大事なものだから私に預けたみたいだ。",
             "Beni": "私と一緒に釣りに行くために、一生懸命お小遣いを貯めて買った釣り具セットらしい。",
@@ -434,7 +446,7 @@ const THOUGHT_MAP = {
             "Sari": "サリー手作りのリアクションカード。両手でカードを持ち上げると、カードに書いてある内容に合わせて反応する。",
             "Selline": "全く変な服ではない。言葉通り、セリーネが私を挑発するための勝負貸衣装。",
             "Shady": "綺麗な飾りみたいだが、あれこれ操作するとシェイディが私を見つめている顔が見える。これ絵なのかな？",
-            "Sherum": "",
+            "Sherum": "高級な羽根ペンと質のいいインクー瓶が入っている。 これで修養録を作成すればシェルムが満足すると思う。",
 			"Shoupan": "シュパンが自ら雑に作った私のための勲章。自分も勲章をもらった時は気分がよかったと言いながら私にプレゼントしてくれた。",
             "Silphir": "ルードと妙に似ているカカシ。私と一緒に武術の修行をしようという意図のようだ。",
             "Sist": "商売を初めてやり出した時、シストがコインを一つ一つ貯めていた貯金箱らしい。",
@@ -456,7 +468,7 @@ const THOUGHT_MAP = {
             "Amelia": "A pile of paperwork that once overwhelmed me, thinking that I had to handle them. But a small note of gratitude was tucked between the documents.",
             "Ashur": "A coupon that she secretly handed to me, telling me to come find her whenever I'm hungry. She also said never to show it to Erpin.",
             "Aya": "A beautiful ice sculpture of a snowflake that Aya made. It never melts, even in summer, perhaps due to her magic.",
-			"Barie": "",
+			"Barie": "A pass that allows you to enter any section and to read any book in the Witch Library without restrictions. It seems like it's Barie's invitation to visit freely.",
 			"Barong": "A doll that Barong carries around. She keeps leaving it with me and coming back to get it again.",
             "Belita": "A doll that her and Erpin used to play with. It seems she entrusted it to me, since it's precious to her.",
             "Beni": "A fishing rod set gifted to me by Beni. She diligently saved up money to buy it to go fishing together.",
@@ -510,7 +522,7 @@ const THOUGHT_MAP = {
             "Sari": "A reaction card crafted by Sari herself. When I hold up the card with both hands, she reacts according to the card.",
             "Selline": "It's not a weird outfit at all, definitely NOT! It's literally a combat outfit that Selene made to taunt me.",
             "Shady": "A decorative ornament, but if I operate it in a certain way, I can see Shaydi's face watching over me. This is just a painting, right?",
-            "Sherum": "",
+            "Sherum": "A set with a luxurious quill and high-quality ink. Sherum would be proud if I used this to write in The Master's Diary.",
 			"Shoupan": "A clumsy medal that Shoupan made herself just for me, but it was crafted with love. She gave it to me, reminiscing about how happy she was when she received her own medal.",
             "Silphir": "A strange scarecrow that uncannily resembles Rudd. It seems that she wants to train martial arts together with me.",
             "Sist": "A coin bank in which Sist had collected coins one by one since she first started her business.",
@@ -535,7 +547,7 @@ const LETTER_MAP = {
             "Amelia": "唉，沒想到我竟然會給人類寫這樣的信。我就不拐彎抹角了。謝謝您，教主。經過長時間的思考，我終於明白無法忽視您恩情的事實。您總是包容我的無禮行為，並持續關照我。身為精靈的我，至今仍無法完全理解您為何這麼做，但我知道，這需要非凡的意志力。這封信就是我對您的回禮。請不要告訴市長，這是我們之間的秘密。",
             "Ashur": "教主大人，您好。這樣給您寫信，感覺有些別扭呢。這段時間，您辛苦了，總是聽我唠叨。不過，那些話可都是為了教主大人著想才說的，您應該能理解吧？畢竟您又不是女王大人，我相信教主大人一定能理解的。嗯……其實，其實我不是想說這些的。我最近試做了一款新麵包，味道還不錯。請品嚐一下，告訴我您的感想。",
             "Aya": "堆積萬年雪的魔靈山雖然安靜，但有時也會讓人感到寂寞。教主認真傾聽我尋找妹妹的故事，還為我擔心，真的讓我心存感激。我真心希望，有一天我們能打破彼此之間的隔閡，心與心真正相通。我會一直等待教主的心。",
-            "Barie": "",
+            "Barie": "教主大人，您好呀~\n這次我找到了一本相當稀有的書。是在精靈村出差時找到的，內容似乎和您的故鄉有關。我一看到這本書，就想起教主大人了。想著您看了應該會喜歡……所以寫了這封信。有空的話，請來圖書館一趟吧~我特地為了教主大人，把這本書列為禁止外借了。那我就等您來囉。",
 			"Barong": "教主~你好啊?我是芭瓏的朋友，兔子玩偶呀。芭瓏拜託我替她寫這個叫作「信」的東西，你可要覺得光榮喔?聽說你上次答應要跟芭瓏去餐廳，怎麼都沒消息呀?該不會只是隨口說說吧?芭瓏一直在等你喔。啊，我說了這些事，要對芭瓏保密喔?謝謝你理解我們複雜的關係。下次再一起玩吧。顆顆。",
 			"Belita": "教主，感謝你一直在旁協助艾爾芬。她雖然正直且充滿感情，但偶爾也讓人擔心她的脆弱面。不過有寧琉和教主在她身邊，我就放心了。雖然有些羞於啟齒，但我有時候也會羨慕她。身為魔女女王，我可以依靠芙莉可，但作為魔女貝麗塔，有時會感到孤獨。不過你也別太放在心上，如果有空能來地下找我聊聊，我會很開心的。知道你很忙，就寫到這裡吧。",
             "Beni": "教主大人，您好！這樣寫應該沒問題吧？嘿嘿！我說想向教主表達感謝之情，村長就建議我寫信！啊，現在村長還在前我呢！欸……她說這種小事不用特別寫也行。不過，還是要感謝您每次在宴會廳裡提供好吃的食物，還陪我聊天！下次如果您來獸人森林，我一定會親手做超級好吃的料理款待您！知道吧？",
@@ -589,7 +601,7 @@ const LETTER_MAP = {
             "Sari": "你好，教主！好久不見！果然，寫信這件事真的很困難，因為看不到對方的話語或行動。因此我現在正想像著腦海中的教主正在和我說話，一邊把這種想像寫下來！喔，現在腦海裡的教主正在和我聊昨天吃到的焦糖布丁。哇，超棒的！一定很好吃吧！教主你連解說都這麼親切、清楚呢！嗯，不過果然還是和腦海中的教主對話有點彆扭。我好想趕快像平時那樣直接和你見面！快來親自講一些有趣的事情給我聽，教主！知道吧？",
             "Selline": "嗨～整理相簿時發現了教主拍得不錯的照片耶？覺得只有我看太可惜了，就發給你一張。別擔心，不是什麼奇怪的照片。看著照片突然想起跟你下棋的時候。雖然一個人玩也不錯，但果然兩個人一起玩才是最棒的。下次再陪我玩一局吧？我保證不會笑你技術爛的。呵呵，我認真的啦～",
             "Shady": "欸……這是什麼？隨便寫點什麼就行嗎？看別人都寫了，我好像也該寫一封……有點壓力啊。我本來不是這種性格的，真是奇怪。我到底為什麼會做這種事？為什麼把自言自語都寫成文字了？嗯？嗯？喂！你到底對我做了什麼？唉～心裡有點不踏實，但又莫名覺得不壞。總之，我以後還是會繼續來宴會廳鬧的，等著我吧！",
-            "Sherum": "",
+            "Sherum": "教主您好。近來一切安好嗎?我平時不太有機會寫信，因此措辭可能會顯得有些生硬，還請您見諒。一直以來，教主也像貝麗塔女王大人一樣，對我的工作十分包容，我始終心懷感激。身為書記官，若有任何能協助教主的地方，我一定會盡心盡力。還請您不必有所顧慮，和我相處時放輕鬆就好。那麼，就此擱筆。雪蘭 敬上",
 			"Shoupan": "咻咻咻咻！啪啪啪啪啪！修帕！教教教教！主主主主！你好！寫字真的太麻煩了！手都跟不上我想像的速度！總之，下次一起去兜風吧！我會特別讓你坐我的後座喔！要去哪裡好呢？去上次說過的外面世界怎麼樣？我會突擊問你的，你要好好想清楚喔～掰掰～",
             "Silphir": "最近那個路德老是催我去運動。哼，她以為只靠肌力訓練就能解決一切。所以，我希望教主能幫助我進行訓練。嗯……才不是因為想見你才這麼說的！只是因為教主對我最有幫助而已，真的啦！我會告訴你我的訓練時間，到時候一定要準時來喔。",
             "Sist": "教主大人您好。不知您最近過得好嗎？我最近在推廣新產品，所以舉辦了付費體驗活動。看在是教主大人的份上，體驗費就只收您2000金幣。隨信附上商品，請使用一週後務必寫下非常滿意的使用心得寄回。期待您的好評喔！",
@@ -611,7 +623,7 @@ const LETTER_MAP = {
             "Amelia": "はあ。まさか人間にこのような手紙を送ることになるなんて。単刀直入に言いましょう。ありがとうごさいます、教主様。長い時間考慮した結果、あなたから受けた恩は無視できないことに気づきました。私が無礼な態度をとっていたにもかかわらず、ずっと気遣ってくださっていたんですね？エルフとしては、いまだ理解できませんが、それがどれほどの意志を必要とするかは理解しております。この手紙は、それに対するお礼です。市長様には内緒にしてください。",
             "Ashur": "教主様、こんにちは。こうして手紙を書くのは少し恥ずかしいですね。今まで私の説教をたくさん聞かされて、大変でしたよね？だけどあれは全て教主様のためを思ってのことです。分かりますよね？女王様じゃあるまいし、教主様なら理解してくれると思います。う〜ん……実はこんなことを書きたかったわけじゃないんです。新作のパンを作ってみたんですけど、なかなか美味しくできました。ぜひ食べて、感想を聞かせてください。",
             "Aya": "万年雪が積もった精霊の山の頂上は静かだけど寂しい時もあるの。妹たちを探しているという話を真剣に聞いてくれ、心から心配してくれるあなたには感謝しかないわ。お互いの壁を取り払って、心を寄せ合える仲になれたらいいなと本気で思っているの。教主さん、あなたはどう思ってるの？",
-            "Barie": "",
+            "Barie": "教主様、こんにちはぁ。\n今回は、かなり珍しい本を手に入れました。エルフの街に出張に行って手に入れたんですが、 教主様の故郷についての記述があるみたいです。読んだらすぐ教主様のことが思い浮かびました。教主様にもきっと喜んでもらえると思って･･････こうして手紙を書いています。お時間があれば図書館にもいらしてくださいねぇ。教主様のために、この本は貸し出し禁止にしておきますから。それでは、お待ちしています。",
 			"Barong": "〞わ~い、教主。私はバロンの友達のウサギのぬいぐるみだよぉ。\n バロンにお願いされて手紙ってものを書いてるのぉ、光栄に思ってねぇ? そういえばぁ、この前バロンとレストランに行く約束をしたって聞いたけどぉ、どうしてまだ連絡がないのぉ? まさかぁ、ただ言ってみただけぇ? バロンは待ってるのよぉ?あっ、こ・の・話はぁ、バロンには内緒だからねぇ?\n私たちの複雑な関係性を理解してくれてありがとぉ。また一緒に遊ぼぉ~。クスクス。〞",
 			"Belita": "教主、いつもエルフィンのそばで力を貸してくれて礼を言う。真っ直ぐで情にもろく甘いところがあり心配だが、ネルと教主が一緒なら安心だろう。恥ずかしい話だがそんなエルフィンがときどき羨ましかった。女王としてはフリックルに助けてもらっているが、一人の魔女ベリータとしては孤独を感じているからな。あまり気を遣う必要はないが、たまには地下にも立ち寄ってくれるとうれしく思う。忙しいだろうからこれで失礼する。",
             "Beni": "どうも、教主様！これで大丈夫でしょうか？へへっ！教主様に感謝の気持ちを伝えたいって言ったら、手紙を書けばいいって村長さんに教えてもらいました！実は今も手伝ってもらってます！って……そこまで書く必要はないって言われちゃいました！とにかく、宴会場ではいつも美味しい料理をくれたり、話しかけてくれたりしてありがとうございます！今度、獣人の森に来た時は、美味しい料理でもてなしますからね！",
@@ -665,7 +677,7 @@ const LETTER_MAP = {
             "Sari": "ハロー、教主様！やっと会えたね！手紙って相手の言葉や行動が見えないから難しいよね。だから今はね、サリーの頭の中にいる教主様がお話してくれるのを想像しながら書いてるの！今は、昨日食べたクレームブリュレのお話をしてくれてるの！わぁ〜、すご〜い！おいしそ〜う！教主様ってね、説明がとっても上手なのよ！う〜ん、でも頭の中の教主様とお話するのってやっぱり変な感じ。早く会いに来て、またおもしろいお話を聞かせてね、教主様！約束だからね！",
             "Selline": "元気？アルバムを整理してたら、教主の写真を見つけたの！一人で見るのはもったいないから、教主にも見せてあげる。変な写真じゃないから安心しなさい。写真を見てたら、ふと、教主とチェスをした時のことを思い出したわ。一人もいいけど、やっぱり二人でやるのが一番ね。今度また一緒にやりたいわ。付き合ってくれる？下手くそだって笑ったりしないから。ふふっ、本当よ？",
             "Shady": "えっ……何これ。適当に書いてもいいよね？他のみんなを見てたら、あたいも書かなきゃいけない気がしてね。元々こんな性格じゃなかったのに、変よね。あたい、なんてこんなことしてるんだろ？なんで独り言を書いてるわけ？ねぇ？ちょっと！あたいになんかした？まったく、なんかモヤモヤするけど悪くない気分ね。まぁ、これからも宴会場へ悪戯しに行くから楽しみにしてなさい。",
-            "Sherum": "",
+            "Sherum": "こんにちは、教主様。\nご健勝でお過ごしでしょうか? 手紙は普段あまり作成することがない文書ですから、少し堅苦しい文面になることを、ご容赦くださいませ。\n教主様にもおかれましても、ベリータ女王様と同じく、私の業務に寛大なご配慮をくださることに、いつも感謝の心を持っております。書記官として、教主様にご協力できることがあれば、いつでも誠心誠意尽くさせていただきます。ですから、ご負担に思わず、気軽に私と接してくださいませ。それでは、 この辺で失礼いたします。\nシェルムより。",
 			"Shoupan": "シュシュシュシュッ！バババババン！シュパン！キョキョキョキョ！教〜主〜！ハ〜ロ〜！字を書くのめんどくさい！手が思ったスピードで動いてくれないんだもん！とにかく、今度、一緒にドライブ行こ〜！特別に後ろに乗せてあげるから〜！どこ行きたい？この前話した外の世界はどう？いきなり誘いに行くから、よく考えといてね〜！バイバーイ！",
             "Silphir": "最近ルードがトレーニングしろってうるさいの。バカみたいに筋トレすればいいと思ってるのかしら。だから教主にトレーニングを手伝ってほしいの。べ……別にあなたに会いたいわけじゃなくて、あなたが一番、役に立つからよ。本当だって。私のトレーニング時間を教えてあげるから、絶対来てよね。",
             "Sist": "ご機嫌よう、教主様。ご無沙汰してますわ。最近、私は新商品の広告を出してまして、多少のお金をいただいて体験できるイベントを実施しているのですが、教主様なら特別に2000ゴールドでいいですわよ。商品を同封しますから、1週間お試しになって、高評価レビューを書いてくださいまし。では、高評価レビュー、お待ちしておりますわ。",
@@ -687,7 +699,7 @@ const LETTER_MAP = {
             "Amelia": "Geez... Me, writing to a human? Never thought I'd see the day. I'll get straight to the point. Thank you, Master. I've spent a lot of time thinking, and I've realized I can't overlook the kindness you've shown me. Despite my rudeness, you've always looked out for me. I can't fully grasp it as an elf, but I recognize it must take incredible strength. This letter is a small token of gratitude from me. Just don't let the Mayor find out, okay?",
             "Ashur": "Greetings, Master. Well, this is awkward... writing to you. Thank you for putting up with all my nagging up until now. I did it for you, though, you get that, right? You're not Her Majesty, so I think you understand. Hmm... Actually, this is not why I'm writing. I've baked something new, and it turned out pretty tasty. Please give it a taste and let me know what you think.",
             "Aya": "Elemental Mountain's icy peaks can be tranquil, but it can also feel isolating sometimes. Master, I'm always thankful for how seriously you listen to my stories about my search for my siblings and for the genuine care you show. I truly hope we can one day tear down the walls between us and share a true bond. I'll wait for the day your feelings align with mine.",
-            "Barie": "",
+            "Barie": "Hello, Master.\nI happened across a rather rare book while I was away on an errand in the elf village. It seems to have something about your homeland in it, and the moment I saw it, I thought of you. I figured it was just the sort of thing you'd like, so I thought I'd send you a note. If you have some time, stop by the library. I set the book aside and marked it as not for checkout, so no one else can walk off with it before you get here. I'll be waiting.",
 			"Barong": "Maaaster, hellooo? I'm the bunny dollll, Barong's friend... Barong asked me to write this thing called a letter for herrr, so you should be honored, okaaay? I heard you promised to go to a restaurant with Barong last timeee... So why haven't you said anythiiing? Don't tell me you were just saying that, riiight? Barong is waiting, you knooow. Oh, and keep this a secret from Barong, okaaay? Thanks for understanding our complicated relationship. Let's play together again next tiiime. Heehee.",
 			"Belita": "Master, thank you for always being there for Erpin. She's upright and kind-hearted, but her gentle nature has always been a concern for me. Knowing that Ner and you are by her side brings me comfort. I'll admit, I sometimes find myself envious of Erpin. As the Witch Queen, I rely on Fricle's support, but as Belita the Witch, I often find myself feeling lonely. Please don't feel pressured, but a visit to the underground now and then would bring me happiness. I'll end this here, as you must have a lot on your plate.",
             "Beni": "Hello there, Master! I hope I'm doing this right, hehe! When I said I wanted to thank you, Chief Diana suggested writing a letter. She's actually helping me write it right now! Uh... now she's telling me not to mention that. Anyway, thank you so much for always giving me delicious things to eat at the Banquet Hall and chatting with me. Next time you visit Werebeast Forest, I'll make something really delicious for you, okay?!",
@@ -741,7 +753,7 @@ const LETTER_MAP = {
             "Sari": "Hi there, Master! What a pleasure! Writing letters is so difficult when I can't see your reactions to what I'm saying. But right now, I'm imagining a conversation with you while I write! Oh, now you're talking about that crème brûlée you had yesterday. Wow, amazing! That must have been SO good! You're so good at explaining things. Hmm, still... it is a bit awkward having a conversation with the imaginary version of you. I would much prefer to meet you face to face as usual! Come back soon and share some fun stories, okay?",
             "Selline": "Hey there. I was tidying up my photo album and found a picture where you came out really nicely, Master. It would be a waste to keep to myself, so I'm sending it to you. Don't worry, it's not a weird photo or anything. It suddenly reminded me of the time we played chess together. I don't mind playing by myself, but it's definitely best with someone else. I'd like to do that again with you next time. You will join me, right? I won't laugh at you for being bad at it. Hehe, I promise.",
             "Shady": "Uh... what am I doing here? I just have to write whatever? The others seemed to be doing this, so I thought I should write one too. This feels weird, though. Strange... I was never like this before. Why the heck am I even doing something like this?! Turning my inner thoughts into words? What? Hey, what have you done to me?! Geez... it's strange... this is definitely unsettling, but it's not completely terrible, either. Well, I'll keep dropping by the Banquet Hall to play pranks, so stay on your toes!",
-            "Sherum": "",
+            "Sherum": "Dear Master, I trust you have been well. As I am not accustomed to writing letters, I hope you will forgive me if my words seem somewhat stiff. I hope you know that I am always grateful for the generous tolerance you have shown toward my work, much as Her Majesty Belita has. As a scribe, should there ever be anything I can do to assist you, I will gladly do so with the utmost sincerity. So please, do not be a stranger. That is all. Sincerely, Sherum.",
 			"Shoupan": "Shou-shou-shou-shou! Pa-pa-pa-pa-pang! Shoupan! Ma-ma-ma-master! He-he-he-hello! Writing is so annoying! My hand won't move as fast as I'm thinking! Anyway, let's go for a drive next time! You can totally ride in my back seat! Where do you wanna go? What about the big outside world we talked about last time? I'm gonna ask you out of the blue, so think about it carefully! Buh-bye",
             "Silphir": "Rudd's been bugging me lately, telling me I should work out more. Hmph. As if just lifting weights is the answer for everything. That's why I want you to help with my training, Master. N-Not because I want to see you or anything, okay? It's just that you're the best fit for this. Seriously! I'll let you know my training schedule, so make sure you're on time.",
             "Sist": "Hello, Master. I wonder if you've been well. I've been promoting a new product lately. So I'm holding an event where you can try it for a small trial fee. Since you're the Master, I'll only charge about 2000 Gold for the trial fee. I'm enclosing the product, so please use it for a week and send me a very positive review. Well then, I'll be waiting for a good review!",
