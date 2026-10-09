@@ -1454,14 +1454,14 @@
                         return c.personality === pName;
                     });
                     
-                    // 根據實裝時序(日期)進行排序
+                    // 根據實裝時序(日期)進行排序：最新實裝或未來的角色排在最前面
                     pChars.sort((a, b) => {
                         const getDateStr = (dateStr) => dateStr ? dateStr.split('T')[0] : "0000-00-00";
                         const dateA = getDateStr(a.releaseDate);
                         const dateB = getDateStr(b.releaseDate);
-                        if (dateA < dateB) return -1;
-                        if (dateA > dateB) return 1;
-                        return 0; // 維持原始順序
+                        if (dateA > dateB) return -1; // A 的日期較新，排在前面
+                        if (dateA < dateB) return 1;  // A 的日期較舊，排在後面
+                        return 0; // 日期相同則維持原始順序
                     });
 
                     if (pChars.length === 0) return;
