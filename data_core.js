@@ -1,2488 +1,941 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>坨坨詳細資料</title>
-        <script src="data_core.js"></script>
-        <script src="data_skills.js"></script>
-        <script src="data_collectibles.js"></script>
-        <script src="data_intro.js"></script>
-        <script src="data_aside.js"></script>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link id="dynamicFavicon" rel="icon" href="https://i.postimg.cc/mkfSTq5k/Favicon.png" type="image/png">
-        <link rel="preconnect" href="https://firebasestorage.googleapis.com">
-        <link rel="stylesheet" href="sprites.css">
-        <link rel="stylesheet" href="char_sprites/char_sprites.css">
-        <link rel="preconnect" href="https://i.postimg.cc">
-        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
-        <script>
-            tailwind.config = { darkMode: 'class', }
-        </script>
-        <script>
-            const isDarkMode = localStorage.getItem('theme') === 'dark' || 
-                               (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
-            if (isDarkMode) { document.documentElement.classList.add('dark'); }
-            
-            // i18n 語言設定
-            window.currentLang = localStorage.getItem('user_lang') || "zh-TW";
-            document.documentElement.lang = window.currentLang === "ja" ? "ja" : "zh-TW";
-        </script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@esotericsoftware/spine-player@4.1.23/dist/spine-player.min.css">
-        <script src="https://cdn.jsdelivr.net/npm/@esotericsoftware/spine-player@4.1.23/dist/iife/spine-player.min.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-        <style>
-            /* 🌟 預設空珍藏品：情信 (更新為正確的雪碧圖尺寸與座標) */
-            .sprite-letter {
-            width: 144px !important;
-            height: 117px !important;
-            background-position: -740px -654px !important;
-            background-image: url('char_sprites/common_icon.png') !important;
-            /* 移除 background-size: auto，讓其正確讀取原始像素，並確保外框不會擠壓 */
-            background-repeat: no-repeat !important;
-            box-sizing: content-box !important;
-            border: none !important;
-            padding: 0 !important;
-            }
-            /* 🌟 種族專屬背景的平鋪與移動動畫 (全域背景) */
-            #raceBackground {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: -10; 
-            background-repeat: repeat;
-            background-size: 200px; 
-            opacity: 0.9; 
-            animation: raceBgPan 40s linear infinite;
-            }
-            .dark #raceBackground {
-            opacity: 0.4;
-            }
-            @keyframes raceBgPan {
-            0%   { background-position: 0px 0px; }
-            25%  { background-position: -200px 200px; }
-            50%  { background-position: 0px 400px; }
-            75%  { background-position: 200px 200px; }
-            100% { background-position: 0px 0px; }
-            }
-            body { font-family: 'Noto Sans TC', sans-serif; }
-            /* 🌟 只隱藏主立繪與技能區的控制器，保留超迷你小人的控制器 */
-            #charAvatar .spine-player-controls, 
-            #skillsContainer .spine-player-controls { display: none !important; }
-            .costume-btn { transition: all 0.2s ease; }
-            .costume-btn:active { transform: scale(0.95); }
-            /* 🌟 Spine 原生樣式覆蓋與金蠟筆載入圖 */
-            .spine-player-loading {
-            background-image: none !important;
-            border: none !important;
-            animation: none !important;
-            background: transparent url('https://i.postimg.cc/qvjNxZzg/golden-crayon.png') no-repeat center center !important;
-            background-size: contain !important;
-            width: 80px !important;
-            height: 80px !important;
-            position: absolute !important;
-            left: 50% !important;
-            top: 50% !important;
-            margin-top: -40px !important;
-            margin-left: -40px !important;
-            animation: crayonFloat 1.5s ease-in-out infinite !important;
-            opacity: 1 !important;
-            }
-            .spine-player-loading > div, 
-            .spine-player-loading::before, 
-            .spine-player-loading::after {
-            display: none !important;
-            content: none !important;
-            }
-            .spine-player-progress, .spine-player-progress-bar {
-            display: none !important;
-            opacity: 0 !important;
-            }
-            .spine-player-loading-custom {
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 80px; height: 80px;
-            margin: -40px 0 0 -40px;
-            background: url('https://i.postimg.cc/qvjNxZzg/golden-crayon.png') no-repeat center center;
-            background-size: contain;
-            animation: crayonFloat 1.5s ease-in-out infinite;
-            z-index: 10;
-            }
-            @keyframes crayonFloat {
-            0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.5)); }
-            50% { transform: translateY(-10px) scale(1.05); filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.9)); }
-            }
-            /* 🌟 坨坨展示框的動態縮放背景 (LOBBY_BACKGROUNDS) */
-            .animated-bg {
-            position: relative;
-            z-index: 1; 
-            }
-            .animated-bg::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-image: var(--bg-image);
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            z-index: -1; 
-            animation: slowZoom 12s ease-in-out infinite alternate;
-            }
-            @keyframes slowZoom {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.25); } 
-            }
-            #backToTop {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 9999;
-            display: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background-color: #fbbf24;
-            color: white;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.2s, background-color 0.3s;
-            font-size: 10px; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            }
-            #backToTop:hover { 
-            background-color: #d97706; 
-            transform: translateX(-50%) translateY(-5px); 
-            }
-            /* YouTube 彈出視窗樣式 */
-            .yt-modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.8); z-index: 9999;
-            display: flex; justify-content: center; align-items: center;
-            }
-            .yt-modal-content {
-            position: relative; width: 90%; max-width: 800px;
-            background: #000; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); padding: 10px;
-            }
-            .yt-modal-close {
-            position: absolute; top: -15px; right: -15px; background: #e74c3c;
-            color: white; border-radius: 50%; width: 35px; height: 35px;
-            text-align: center; line-height: 35px; cursor: pointer; font-size: 24px; font-weight: bold; z-index: 10000;
-            }
-            .yt-modal-close:hover { background: #c0392b; }
-            .video-container {
-            position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;
-            }
-            .video-container iframe {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            }
-        </style>
-    </head>
-    <body class="p-4 sm:p-8 bg-[#fcf8f2] dark:bg-slate-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
-        <div id="raceBackground"></div>
-        <div id="mainContainer" class="max-w-4xl mx-auto bg-white/90 dark:bg-slate-800/95 backdrop-blur-md p-6 rounded-2xl shadow-md border-4 border-amber-400 dark:border-slate-600 transition-colors">
-            <div class="flex items-end gap-2 mb-4">
-                <button onclick="window.close()" data-i18n="btn_close_page" class="px-4 py-2 bg-amber-500 text-white text-xs font-bold rounded-xl shadow hover:bg-amber-600 dark:bg-slate-700 dark:hover:bg-slate-600 transition shrink-0 z-10 relative">
-                ⬅️ 關閉此頁
-                </button>
-                <div id="topMiniSpineContainer" class="relative w-16 h-16 sm:w-20 sm:h-20 pointer-events-none -mb-2 z-0"></div>
-            </div>
-            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 border-b-2 border-amber-200 dark:border-slate-700 pb-6 mb-6">
-                <div class="flex flex-col items-center gap-3 flex-shrink-0">
-                    <div id="charAvatar" class="w-80 h-[400px] sm:w-80 sm:h-96 rounded-2xl border-4 border-amber-500 dark:border-slate-600 overflow-hidden shadow-md flex items-center justify-center text-3xl font-bold text-amber-900 dark:text-amber-100 relative cursor-pointer group animated-bg bg-transparent"></div>
-                    <div id="costumeButtonsContainer" class="flex flex-wrap justify-center gap-2 hidden w-full max-w-[320px]"></div>
-                </div>
-                <div class="text-center sm:text-left w-full mt-2 sm:mt-0">
-                    <div class="flex flex-col sm:flex-row justify-between items-center sm:items-end w-full mb-1 gap-2">
-                        <h1 id="charName" data-i18n="loading" class="text-3xl font-extrabold text-amber-950 dark:text-amber-400 tracking-tight flex items-center justify-center sm:justify-start flex-wrap gap-2">載入中...</h1>
-                        <div class="text-xs sm:text-sm font-bold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-slate-700/80 px-3 py-1.5 rounded-full shadow-sm border border-gray-200 dark:border-slate-600 flex items-center gap-1 shrink-0 transition-colors">
-                            📅 <span data-i18n="release_date_label">實裝日期</span>: <span id="releaseDateValue" class="text-gray-700 dark:text-gray-200 font-extrabold ml-0.5">09/10/2025</span>
-                        </div>
-                    </div>
-                    <div id="charStars" class="flex justify-center sm:justify-start items-center min-h-[28px] mb-3"></div>
-                    <div class="flex justify-center sm:justify-start gap-5 sm:gap-4 pt-3 flex-wrap">
-                        <div id="charIdentity"></div>
-                        <div id="charPersonality"></div>
-                        <div id="charRace"></div>
-                        <div id="charPosition"></div>
-                        <div id="charJob"></div>
-                        <div id="charAttribute"></div>
-                    </div>
-                    <div class="mt-6 pt-5 border-t border-dashed border-amber-200 dark:border-slate-600 space-y-4">
-                        <p id="charIntro" class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-medium bg-amber-50/50 dark:bg-slate-800/50 p-4 rounded-xl border border-amber-100 dark:border-slate-700 shadow-sm text-left"></p>
-                        <div class="flex flex-col gap-4 text-left bg-white/50 dark:bg-slate-800/30 p-4 rounded-xl border border-gray-100 dark:border-slate-700">
-                            <div class="flex items-center gap-2 text-sm border-b border-gray-100 dark:border-slate-700 pb-2">
-                                <span class="font-black text-amber-800 dark:text-amber-400 shrink-0" data-i18n="info_cv">🎙️ CV：</span>
-                                <span id="charCV" class="text-gray-800 dark:text-gray-200 font-bold text-base"></span>
-                            </div>
-                            <div class="flex flex-col gap-2">
-                                <span class="font-black text-amber-800 dark:text-amber-400 shrink-0" data-i18n="info_food">🍲 喜好料理</span>
-                                <div id="charFoodIcon" class="flex flex-wrap gap-2 justify-start"></div>
-                            </div>
-                            <div class="pt-2 border-t border-gray-100 dark:border-slate-700 flex flex-wrap items-end justify-between gap-x-4 gap-y-3">
-                                <div class="flex flex-col gap-2 flex-1 min-w-[200px]">
-                                    <span class="font-black text-amber-800 dark:text-amber-400 shrink-0" data-i18n="info_job_reward">💰 打工獎勵</span>
-                                    <div id="charRewardIcon" class="flex flex-wrap gap-2 justify-start"></div>
-                                </div>
-                                <div id="charJobCgContainer" class="shrink-0 hidden mb-1"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="mb-8">
-                <h2 class="text-lg font-bold text-amber-900 dark:text-amber-400 mb-3 flex items-center gap-1" data-i18n="crayon_detail_title">🖍️ 金蠟筆分佈詳情</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="bg-amber-50/60 dark:bg-slate-700/50 border border-amber-200 dark:border-slate-600 p-3 rounded-xl">
-                        <h3 class="font-bold text-amber-800 dark:text-amber-300 text-sm mb-2 border-b border-amber-200 dark:border-slate-600 pb-1" data-i18n="layer_1_stats">🥇 第一層屬性</h3>
-                        <ul id="layer1List" class="space-y-1 text-xs font-medium text-gray-700 dark:text-gray-300 list-disc list-inside"></ul>
-                    </div>
-                    <div class="bg-orange-50/60 dark:bg-slate-700/50 border border-orange-200 dark:border-slate-600 p-3 rounded-xl">
-                        <h3 class="font-bold text-orange-800 dark:text-orange-300 text-sm mb-2 border-b border-orange-200 dark:border-slate-600 pb-1" data-i18n="layer_2_stats">🥈 第二層屬性</h3>
-                        <ul id="layer2List" class="space-y-1 text-xs font-medium text-gray-700 dark:text-gray-300 list-disc list-inside"></ul>
-                    </div>
-                    <div class="bg-red-50/60 dark:bg-slate-700/50 border border-red-200 dark:border-slate-600 p-3 rounded-xl">
-                        <h3 class="font-bold text-red-800 dark:text-red-300 text-sm mb-2 border-b border-red-200 dark:border-slate-600 pb-1" data-i18n="layer_3_stats">🥉 第三層屬性</h3>
-                        <ul id="layer3List" class="space-y-1 text-xs font-medium text-gray-700 dark:text-gray-300 list-disc list-inside"></ul>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-8 bg-gradient-to-br from-amber-50 to-rose-50 dark:from-gray-800/80 dark:to-gray-800/80 backdrop-blur border border-rose-200 dark:border-gray-700/50 rounded-2xl p-6 shadow-xl transition-colors duration-300">
-                <div class="flex items-center gap-3 mb-4">
-                    <span class="text-2xl">🎁</span>
-                    <h3 data-i18n="present_title" class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-orange-400 dark:from-pink-400 dark:to-purple-400">
-                        坨坨珍藏品
-                    </h3>
-                </div>
-                <div id="presentWrapper" class="flex flex-col md:flex-row gap-6 items-center md:items-start rounded-xl bg-white/60 dark:bg-gray-900/50 border border-rose-100 dark:border-gray-800 p-5">
-                    <div id="presentLeft" class="w-full md:w-1/3 flex flex-col items-center gap-3 transition-all duration-300">
-                        <!-- 🔥 這裡將最小高度改為 180px，防止大圖片超出容器被截斷 -->
-                        <div id="presentContainer" class="w-full flex justify-center items-center relative min-h-[180px] sm:min-h-[200px]">
-                            <p data-i18n="present_loading" class="text-orange-400 dark:text-gray-500 text-sm animate-pulse">寶箱開啟中...</p>
-                        </div>
-                        <div id="presentName" class="hidden text-center font-bold text-rose-900 dark:text-rose-200 bg-rose-100/50 dark:bg-rose-900/30 px-3 py-1 rounded-lg border border-rose-200 dark:border-rose-800 text-sm"></div>
-                    </div>
-                    <div id="presentRight" class="w-full md:w-2/3 flex flex-col gap-3 transition-all duration-300">
-                        <div class="flex gap-2">
-                            <button id="btnLetter" onclick="switchPresentTab('letter')" data-i18n="btn_letter" class="flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-rose-500 text-white shadow-md">坨坨情信</button>
-                            <button id="btnThought" onclick="switchPresentTab('thought')" data-i18n="btn_thought" class="flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300">教主感想</button>
-                        </div>
-                        <div id="presentTextContainer" class="relative rounded-xl border border-rose-200 dark:border-gray-700 overflow-hidden transition-all duration-300 bg-rose-50 dark:bg-gray-800 flex flex-col min-h-[160px]">
-                            <div id="presentTextWrapper" class="relative z-20 flex-1 w-full p-5 flex flex-col transition-all">
-                                <p id="presentText" data-i18n="present_select_hint" class="text-sm md:text-base leading-relaxed w-full drop-shadow-md text-gray-700 dark:text-gray-300">請選擇顯示內容...</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-6 pt-6 border-t-2 border-amber-200 dark:border-slate-700">
-                <h2 data-i18n="skill_detail_title" class="text-xl font-black text-amber-950 dark:text-amber-400 mb-4 flex items-center gap-1.5">⚔️ 技能詳細資料</h2>
-                <div id="skillsContainer" class="space-y-5">
-                    <div data-i18n="skill_loading" class="text-sm text-gray-500">技能載入中...</div>
-                </div>
-            </div>
-            <div id="asideSection" class="mt-8 pt-8 border-t-4 border-dashed border-amber-200 dark:border-slate-700 hidden transition-all duration-500">
-                <h2 class="text-xl font-black text-fuchsia-900 dark:text-fuchsia-400 mb-4 flex items-center gap-1.5">
-                    🔮 <span data-i18n="aside_title">願像</span>
-                </h2>
-                <div id="asideContainer" class="space-y-4">
-                    <div class="text-sm text-gray-500" data-i18n="aside_loading">看起來思念還不夠深</div>
-                </div>
-            </div>
-            <div class="mt-8 pt-8 border-t-4 border-dashed border-amber-200 dark:border-slate-700">
-                <h2 data-i18n="comment_title" class="text-xl font-black text-amber-950 dark:text-amber-400 mb-4 flex items-center gap-1.5">💬 玩家評價與心得</h2>
-                <div class="bg-amber-50/80 dark:bg-slate-700/60 p-4 rounded-xl border border-amber-300 dark:border-slate-600 mb-6 shadow-sm transition-colors">
-                    <input type="text" id="commentAuthor" data-i18n="comment_author_placeholder" placeholder="您的暱稱 (留白將以匿名顯示)" class="w-full sm:w-1/2 mb-3 px-3 py-2 text-sm font-bold text-amber-900 dark:text-white placeholder-amber-700/50 dark:placeholder-gray-400 rounded-lg border border-amber-300 dark:border-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-slate-800 shadow-inner">
-                    <textarea id="commentContent" 
-                        rows="3"
-                        maxlength="500"
-                        oninput="document.getElementById('charCount').innerText = this.value.length + ' / 500'"
-                        data-i18n="comment_content_placeholder"
-                        placeholder="寫下您對這位坨坨的評價、組隊心得或是發廚發言..."
-                        class="w-full mb-1 px-3 py-2 text-sm font-medium text-gray-800 dark:text-gray-200 rounded-lg border border-amber-300 dark:border-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-slate-800 resize-none shadow-inner"></textarea>
-                    <div class="flex justify-end mb-3">
-                        <span id="charCount" class="text-[10px] font-bold text-amber-700/60 dark:text-gray-400">0 / 500</span>
-                    </div>
-                    <div class="flex justify-end">
-                        <button onclick="submitComment()" id="submitCommentBtn" data-i18n="btn_submit_comment" class="px-5 py-2 bg-amber-500 text-white text-sm font-bold rounded-xl shadow-md hover:bg-amber-600 dark:bg-amber-600 dark:hover:bg-amber-500 transition transform active:scale-95">
-                        送出評價 🚀
-                        </button>
-                    </div>
-                </div>
-                <div id="commentsList" class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
-                    <div data-i18n="comment_loading" class="text-center text-sm font-bold text-gray-500 py-6">連線至留言板中...</div>
-                </div>
-            </div>
-        </div>
-        <script>
-            // 🌟 全域通用：專門修復 WebGL 透明畫布下的「色彩增值(Multiply)」破洞 Bug
-            function fixSpineMultiplyHole(player) {
-                const skeleton = player.skeleton;
-                if (!skeleton) return;
+// ==========================================
+// 嘟嘟臉金蠟筆記事本 - 核心資料庫 (data_core.js)
+// 負責：首頁與詳細頁共用的基礎資料、圖片映射、多語系字典
+// ==========================================
 
-                for (let i = 0; i < skeleton.slots.length; i++) {
-                    let slot = skeleton.slots[i];
-        
-                    // 判斷是否為陰影插槽 (Trickcal 的陰影通常設定為 Multiply，或是名稱裡有 shadow)
-                    if (slot.data.blendMode === spine.BlendMode.Multiply || slot.data.name.toLowerCase().includes('shadow')) {
-                        // 將混合模式改為 Normal 避免自我重疊造成的破洞加深
-                        slot.data.blendMode = spine.BlendMode.Normal;
-            
-                        // 強制設定為半透明黑色 (R, G, B, A)
-                        // 將 Alpha 設為 0.4 或 0.5，絕對不要設為 1.0！
-                        // slot.color.set(0, 0, 0, 0.4);
-                        slot.color.a = Math.min(slot.color.a, 0.6);
-                    }
-                }
-            }
-
-            function getI18n(key) {
-                if (!key) return key;
-                const cleanKey = String(key).trim();
-                
-                const safeLang = (typeof LANG_DICT !== 'undefined' && LANG_DICT[window.currentLang]) ? window.currentLang : 'zh-TW';
-                
-                if (typeof LANG_DICT !== 'undefined' && LANG_DICT[safeLang] && LANG_DICT[safeLang][cleanKey]) {
-                    return LANG_DICT[safeLang][cleanKey];
-                }
-                return cleanKey; 
-            }
-            
-            function t(text) {
-                return getI18n(text);
-            }
-            
-            function applyI18n() {
-                try {
-                    document.querySelectorAll('[data-i18n]').forEach(el => {
-                        const key = el.getAttribute('data-i18n');
-                        const text = getI18n(key);
-                        
-                        if (text === key) return; 
-                        
-                        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-                            el.placeholder = text;
-                        } else {
-                            el.innerHTML = text;
-                        }
-                    });
-                } catch (e) {
-                    console.error("翻譯替換時發生錯誤:", e);
-                }
-            }
-            
-            const firebaseConfig = {
-                apiKey: "AIzaSyDhv8D2pY_0M56UJrDTQw0RGPHA-BkXU8Y",
-                authDomain: "crayon-note.firebaseapp.com",
-                projectId: "crayon-note",
-                storageBucket: "crayon-note.firebasestorage.app",
-                messagingSenderId: "210614088940",
-                appId: "1:210614088940:web:7addbdc7c466eeb05421c9",
-                measurementId: "G-M1EJPE12TE"
-            };
-            firebase.initializeApp(firebaseConfig);
-            const db = firebase.firestore();
-            
-            // 🌟 集中註冊全屬性的雪碧圖對應字典 (相容中/英雙語原始值)
-            const initIconMap = () => {
-                if (typeof window.ICON_MAP === 'undefined') window.ICON_MAP = {};
-                // 在 initIconMap 內新增這段：
-                window.ICON_MAP['identity_艾爾丁'] = 'sprite-base sprite-common sprite-PickPerconalityIcon_EldainHero';
-                window.ICON_MAP['identity_普通坨坨'] = 'sprite-base sprite-common sprite-PickPerconalityIcon_NormalHero';
-                // 攻擊類型
-                window.ICON_MAP['attribute_物理'] = 'sprite-base sprite-common sprite-Type_Physic';
-                window.ICON_MAP['attribute_魔法'] = 'sprite-base sprite-common sprite-Type_Magic';
-                window.ICON_MAP['attribute_Physical'] = 'sprite-base sprite-common sprite-Type_Physic';
-                window.ICON_MAP['attribute_Magic'] = 'sprite-base sprite-common sprite-Type_Magic';
-            
-                /// 性格
-                const personalities = { 
-    '冷靜': 'Composed', '憂鬱': 'Depressed', '天真': 'Innocence', '狂亂': 'Madness', '活潑': 'Vivacious', '共鳴': 'Resonance', 
-    '雙重性格': 'Multifaceted', '雙重': 'Multifaceted', '雙面': 'Multifaceted' 
+// ------------------------------------------
+// 多語系字典與翻譯系統
+// ------------------------------------------
+const LANG_DICT = {
+    "zh-TW": {
+        app_title: "嘟嘟臉金蠟筆記事本", app_subtitle: "祝各位教主日日出金蠟筆", stats_title: "📊 統計與加成資訊",
+        stats_stat: "統計", stats_character: "坨坨", stats_attack: "攻", stats_defence: "防", stats_hp: "血",
+        stats_critical: "爆", stats_resist: "抗", stats_personality: "🔮 性格：", stats_race: "🧬 種族：",
+        stats_position: "🗺️ 站位：", stats_job: "⚔️ 職業：", stats_cell: "🖍️ 金蠟筆格：", stats_crayon: "金蠟筆",
+        stats_level: "指定層數:", cell_kind: "格子種類:", level_1st: "第一層", level_2nd: "第二層", level_3rd: "第三層",
+        total_owned: "已擁有坨坨", crayon_used: "蠟筆消耗量", crayon_needed: "蠟筆需求量",
+        crayon_attack: "攻擊", crayon_defence: "防禦", crayon_hp: "血量", crayon_critical: "爆擊", crayon_resist: "爆抗",
+        personality_naive: "天真", personality_calm: "冷靜", personality_mad: "狂亂", personality_vivid: "活潑", personality_gloomy: "憂鬱", personality_resonance: "共鳴", personality_multifaceted: "雙面",
+        race_witch: "魔女", race_beast: "獸人", race_dragon: "龍族", race_spirit: "魔靈", race_fairy: "妖精", race_elf: "精靈", race_ghost: "幽靈", race_unknown: "???",
+        position_front: "前排", position_middle: "中排", position_back: "後排", position_all: "所有排", job_attacker: "輸出", job_defender: "肉盾", job_supporter: "輔助",
+        visit_count_prefix: "累計利用回數", maintenance_msg: "🔧 維護更新中...", event_title: "🎪 今期活動",
+        auth_offline_title: "當前狀態：單機模式", auth_offline_desc: "紀錄保存在此裝置", auth_online_title: "🟢 ", auth_logout: "登出",
+        filter_title: "🔍 篩選器", filter_search_placeholder: "搜尋坨坨...", filter_reset: "重置全部篩選", filter_display_mode: "👁️ 版面顯示：",
+        filter_btn_all: "全部", filter_btn_show_all: "顯示全部", filter_btn_show_1: "僅第一層", filter_btn_show_2: "僅第二層", filter_btn_show_3: "僅第三層",
+		grid_status: "格子狀態", filter_btn_opened: "已開啟", filter_btn_unopened: "未開啟",
+        stats_toggle_hint: "點擊展開 / 收起", stats_layer_1_title: "🥇 第一層統計", stats_layer_2_title: "🥈 第二層統計", stats_layer_3_title: "🥉 第三層統計",
+        stats_layer_1_rule: "(每格+3%, 蠟筆×2)", stats_layer_2_rule: "(每格+4%, 蠟筆×4)", stats_layer_3_rule: "(每格+5%, 蠟筆×6)",
+        stats_global_bonus: "📊 全體屬性加成", stats_need_more_prefix: "尚要 ", stats_need_more_suffix: " 根蠟筆",
+		menu_system_title: "系統選單", menu_gacha: "招募模擬器", menu_viewer: "動態展示器", menu_tier_maker: "排行榜生成器", menu_checklist: "自訂角色清單", menu_toggle_anim: "開關頂部跑酷動畫",
+		quick_action_title: "⚡ 快捷操作", quick_action_all_chars: "全體坨坨:", quick_action_own_all: "一鍵全部擁有", quick_action_cancel_all: "一鍵全部取消", quick_action_fill_crayons: "填滿蠟筆:", quick_action_clear_crayons: "清空蠟筆:", quick_action_fill_all: "填滿全層", quick_action_clear_all: "清空全層", quick_action_layer_1: "第一層", quick_action_layer_2: "第二層", quick_action_layer_3: "第三層", quick_action_own: "擁有", quick_action_cancel: "取消擁有", quick_action_fill: "填滿", quick_action_clear: "清空", quick_action_all_layers: "所有層數", quick_action_layer_n: "第 {n} 層", quick_action_confirm_chars: "確定要一鍵「{action}」所有坨坨嗎？\n(此操作會覆蓋所有坨坨的擁有狀態！)", quick_action_confirm_grids: "確定要「{action}」全體坨坨【{layer}】的蠟筆格子嗎？\n(⚠️ 警告：此操作會直接覆蓋目前的紀錄，且無法復原！)",
+		path_image_hint: "查看路徑圖",
+		info_job_reward: "💰 打工獎勵", info_food: "🍲 喜好料理", aside_title: "願像", aside_loading: "看起來思念還不夠深",
+		stats_attribute: "攻擊類型", 物理: "物理", 魔法: "魔法", 艾爾丁: "艾爾丁", 普通坨坨: "普通坨坨", 身份: "身份",
+		x_label: "台港澳服官方X", official_x_url: "https://x.com/trickcal_TW",
+        footer_author: "📝 記事本製作者: 冷笑話幽靈", footer_copyright: "© 遊戲版權: EpidGames & Bilibili", footer_lastupdate: "最後更新日期：10/09/2026",
+        "天真": "天真", "冷靜": "冷靜", "狂亂": "狂亂", "活潑": "活潑", "憂鬱": "憂鬱", "共鳴": "共鳴", "雙面": "雙面",
+        "魔女": "魔女", "獸人": "獸人", "龍族": "龍族", "魔靈": "魔靈", "妖精": "妖精", "精靈": "精靈", "幽靈": "幽靈", "???": "???",
+        "前排": "前排", "中排": "中排", "後排": "後排", "所有排": "所有排", "輸出": "輸出", "肉盾": "肉盾", "輔助": "輔助",
+        "攻擊": "攻擊", "防禦": "防禦", "血量": "血量", "爆擊": "爆擊", "爆抗": "爆抗", "全部": "全部",
+        "洛涅": "洛涅", "薇薇": "薇薇", "艾爾芬": "艾爾芬", "x乂錫安乂x": "x乂錫安乂x", "伊弗利特": "伊弗利特", "伊德": "伊德", "佩佩": "佩佩", "佩斯塔": "佩斯塔",
+        "修帕": "修帕", "傑德": "傑德", "優米": "優米", "劉美美": "劉美美", "加薇雅": "加薇雅", "卡洛特": "卡洛特", "卡蓮": "卡蓮", "喬菲": "喬菲",
+        "基狄恩": "基狄恩", "大師2號": "大師2號", "大木頭": "大木頭", "奈雅": "奈雅", "奶油": "奶油", "布蘭切": "布蘭切", "希拉": "希拉", "希爾德": "希爾德",
+        "希瑟圖": "希瑟圖", "希菲爾": "希菲爾", "帕特拉": "帕特拉", "庫洛艾": "庫洛艾", "康娜": "康娜", "愛麗絲": "愛麗絲", "班尼": "班尼", "斯皮奇": "斯皮奇",
+        "斯諾奇": "斯諾奇", "柯米": "柯米", "桃桃": "桃桃", "梅森": "梅森", "梅露娜": "梅露娜", "海莉": "海莉", "珀榭": "珀榭", "琳": "琳",
+        "瑟琳娜": "瑟琳娜", "瑪約": "瑪約", "瑪麗": "瑪麗", "皮可菈": "皮可菈", "盧波": "盧波", "米雪": "米雪", "綾": "綾", "羽伊": "羽伊",
+        "艾斯皮": "艾斯皮", "艾琳娜": "艾琳娜", "艾皮卡": "艾皮卡", "艾舒爾": "艾舒爾", "艾蜜莉雅": "艾蜜莉雅", "芙莉可": "芙莉可", "茱蜜": "茱蜜", "莉茲": "莉茲",
+        "莎莉": "莎莉", "萊薇": "萊薇", "蒂亞娜": "蒂亞娜", "謝蒂": "謝蒂", "貝魯": "貝魯", "貝麗塔": "貝麗塔", "路德": "路德", "路易": "路易",
+        "阿萊特": "阿萊特", "雷吉": "雷吉", "馬爾": "馬爾", "泰達": "泰達", "寧琉": "寧琉", "莉絲蒂": "莉絲蒂", "雷內瓦": "雷內瓦", "芭瓏": "芭瓏", "達雅": "達雅", "提格": "提格",
+		"羅蕾特": "羅蕾特", "琵拉": "琵拉", "雪蘭": "雪蘭", "芭莉耶": "芭莉耶", "瓊安": "瓊安", "柯米(泳裝)": "柯米(泳裝)", "麗息": "麗息",
+		"克魯布魯斯": "克魯布魯斯", "蠟筆勇士": "蠟筆勇士", "R41雷內瓦": "R41雷內瓦", "莉1莉": "莉1莉", "M.E.O.W.": "M.E.O.W.", "雷內瓦(NPC)": "雷內瓦", "榮春": "榮春", "高蒂": "高蒂", "可麗餅": "可麗餅",
+        page_title_char_detail: "坨坨詳細資料", btn_close_page: "⬅️ 關閉此頁", loading: "載入中...", release_date_label: "實裝日期",
+        crayon_detail_title: "🖍️ 金蠟筆分佈詳情", layer_1_stats: "🥇 第一層屬性", layer_2_stats: "🥈 第二層屬性", layer_3_stats: "🥉 第三層屬性",
+        present_title: "坨坨珍藏品", present_loading: "寶箱開啟中...", btn_letter: "坨坨情信", btn_thought: "教主感想",
+        present_select_hint: "請選擇顯示內容...", no_letter_hint: "（這隻坨坨好像還沒寫信給你呢...）", no_thought_hint: "（教主目前還沒寫下對這個珍藏品的感想呢...）",
+        present_delivering: "珍藏品正在送遞中...", present_suffix: "的珍藏品", present_error: "⚠️ 珍藏品載入錯誤",
+        skill_detail_title: "⚔️ 技能詳細資料", skill_loading: "技能載入中...", skill_normal_attack: "普通攻擊",
+        skill_basic: "【基本】", skill_enhanced: "【強化】", skill_passive: "被動技能", skill_admission: "普通技能", skill_graduate: "高級技能",
+        costume_default: "預設", costume_prefix: "服裝",
+        comment_title: "💬 玩家評價與心得", comment_author_placeholder: "您的暱稱 (留白將以匿名顯示)", comment_content_placeholder: "寫下您對這位坨坨的評價、組隊心得或是發廚發言...",
+        btn_submit_comment: "送出評價 🚀", btn_submitting: "傳送中... ⏳", comment_loading: "連線至留言板中...",
+        no_comment_hint: "目前還沒有評價，來搶頭香吧！ 🐾", time_just_now: "剛剛", anonymous_leader: "匿名教主#",
+        error_no_char: "❌ 未指定坨坨，請從主頁點擊坨坨按鈕進入。", error_no_data: "❌ 載入失敗：找不到 INITIAL_DATA。",
+        error_char_not_found: "❌ 找不到該坨坨資料。", error_no_skill_data: "❌ 找不到 skill.js 資料，請確認檔案存在。",
+        error_char_skill_not_found: "⚠️ 找不到該坨坨的技能資料。", alert_empty_comment: "請輸入評價內容！",
+        alert_comment_too_long: "評價內容太長囉，請縮減至 500 字以內！", alert_comment_failed: "留言失敗，請稍後再試！", error_load_comment: "讀取留言失敗，請確認資料庫權限設定。",
+		ui_title: "坨坨動態展示器", ui_back: "⬅️ 返回", ui_select_char: "👥 選擇坨坨", ui_show_all: "顯示全部", ui_hide_all: "隱藏全部", ui_please_select: "請先選擇坨坨", ui_camera: "🔄 重置", ui_waiting: "等待載入...", ui_mode_lobby: "🔄 模式: 大廳", ui_mode_battle: "⚔️ 模式: 戰鬥", ui_ar_open: "📷 開啟AR", ui_ar_close: "❌ 關閉AR", ui_ar_panel: "📷 相機面板", ui_ar_flip: "🔄 翻轉鏡頭", ui_ar_capture: "📸 拍照儲存", ui_costume: "服裝", ui_default_costume: "預設服裝", ui_default_model: "預設模型", ui_select_anim: "選擇動作", ui_slots: "🧩 外觀插槽", ui_show_slots: "全顯", ui_hide_slots: "全隱", ui_loading_data: "讀取資料中...",
+		gacha_simulator: "嘟嘟臉角色招募模擬器", gacha_select_pool: "📍 選擇招募池", gacha_personality_hint: "🔮 指定性格：", gacha_1_pull: "1次招募", gacha_10_pull: "10次招募", gacha_waiting: "等待招募中...", gacha_history: "📜 招募紀錄", gacha_rate_up: "🎯 特選招募", gacha_normal: "🌟 普通招募", gacha_personality_pool: "🔮 性格選擇招募", gacha_result_title: "🎉 招募結果 🎉", gacha_prev_page: "上一頁", gacha_next_page: "下一頁", gacha_page: "第 {current} / {total} 頁", gacha_unknown_time: "未知時間", gacha_unknown_pool: "未知招募",
+		ui_tier_title: "排行榜生成器", ui_tier_add_row: "新增級別", ui_tier_reset: "全部重置", ui_tier_export: "輸出圖片", ui_tier_pool_title: "選擇角色 (拖曳至上方排行榜)", ui_tier_default_title: "我的最愛排行榜", ui_tier_reset_confirm: "確定要重置整個排行榜並將所有角色放回角色池嗎？", ui_tier_export_error: "匯出圖片失敗",
+    },
+    "ja": {
+        app_title: "トリッカル特級クレヨンノート", app_subtitle: "教主が毎日特級クレヨンを受け取れますように", stats_title: "📊 統計とボーナス情報",
+        stats_stat: "統計", stats_character: "使徒", stats_attack: "攻撃", stats_defence: "防御", stats_hp: "HP",
+        stats_critical: "会心", stats_resist: "抵抗", stats_personality: "🔮 性格：", stats_race: "🧬 種族：",
+        stats_position: "🗺️ 配置：", stats_job: "⚔️ 職業：", stats_cell: "🖍️ 特級クレヨン：", stats_crayon: "特級クレヨン",
+        stats_level: "特定ボード:", cell_kind: "ステータス:", level_1st: "1段階目", level_2nd: "2段階目", level_3rd: "3段階目",
+        total_owned: "所有使徒", crayon_used: "消費クレヨン数", crayon_needed: "必要クレヨン数",
+        crayon_attack: "攻撃力", crayon_defence: "防御力", crayon_hp: "HP", crayon_critical: "会心", crayon_resist: "会心抵抗",
+        personality_naive: "純粋", personality_calm: "冷静", personality_mad: "狂気", personality_vivid: "活発", personality_gloomy: "憂鬱", personality_resonance: "共振", personality_multifaceted: "裏面",
+        race_witch: "魔女", race_beast: "獣人", race_dragon: "竜族", race_spirit: "精霊", race_fairy: "妖精", race_elf: "エルフ", race_ghost: "幽霊", race_unknown: "???",
+        position_front: "前列", position_middle: "中列", position_back: "後列", position_all: "全ての列", job_attacker: "攻撃", job_defender: "守備", job_supporter: "支援",
+        visit_count_prefix: "総閲覧数", maintenance_msg: "🔧 メンテナンス中...", event_title: "🎪 開催中のイベント",
+        auth_offline_title: "現在の状態：オフラインモード", auth_offline_desc: "データはこの端末に保存されます", auth_online_title: "🟢 ", auth_logout: "ログアウト",
+        filter_title: "🔍 フィルター", filter_search_placeholder: "使徒を検索...", filter_reset: "すべてのフィルターをリセット", filter_display_mode: "👁️ ボード表示：",
+        filter_btn_all: "すべて", filter_btn_show_all: "すべて表示", filter_btn_show_1: "1段階目のみ", filter_btn_show_2: "2段階目のみ", filter_btn_show_3: "3段階目のみ",
+		grid_status: "状態", filter_btn_opened: "解放済み",filter_btn_unopened: "未解放",
+        stats_toggle_hint: "クリックで展開 / 折りたたみ", stats_layer_1_title: "🥇 1段階目の統計", stats_layer_2_title: "🥈 2段階目の統計", stats_layer_3_title: "🥉 3段階目の統計",
+        stats_layer_1_rule: "(各マス+3%, クレヨン×2)", stats_layer_2_rule: "(各マス+4%, クレヨン×4)", stats_layer_3_rule: "(各マス+5%, クレヨン×6)",
+        stats_global_bonus: "📊 全体ステータスバフ", stats_need_more_prefix: "必要クレヨン数: ", stats_need_more_suffix: " 本",
+		menu_system_title: "システムメニュー", menu_gacha: "ガチャシミュレーター", menu_viewer: "アニメーション展示", menu_tier_maker: "ティアメーカー", menu_checklist: "マイカスタムリスト", menu_toggle_anim: "ランニングアニメーション切替",
+		quick_action_title: "⚡ クイック操作", quick_action_all_chars: "全使徒:", quick_action_own_all: "一括所有する", quick_action_cancel_all: "一括解除する", quick_action_fill_crayons: "クレヨンを埋める:", quick_action_clear_crayons: "クレヨンをクリア:", quick_action_fill_all: "全層を埋める", quick_action_clear_all: "全層をクリア", quick_action_layer_1: "1段階目", quick_action_layer_2: "2段階目", quick_action_layer_3: "3段階目", quick_action_own: "所有する", quick_action_cancel: "所有を解除", quick_action_fill: "埋める", quick_action_clear: "クリア", quick_action_all_layers: "すべての層", quick_action_layer_n: "{n} 段階目", quick_action_confirm_chars: "全使徒を「{action}」してもよろしいですか？\n(この操作はすべての使徒の所有状態を上書きします！)", quick_action_confirm_grids: "全使徒の【{layer}】のクレヨンマスを「{action}」してもよろしいですか？\n(⚠️ 警告: この操作は現在の記録を上書きし、元に戻すことはできません！)",
+		path_image_hint: "ルート図を見る",
+		info_job_reward: "💰 獲得報酬", info_food: "🍲 食べ物の好み", aside_title: "アサイド", aside_loading: "まだ思念が深くなさそう",
+		stats_attribute: "攻撃タイプ", 物理: "物理", 魔法: "魔法", 艾爾丁: "エルダイン", 普通坨坨: "ノーマル使徒", 身份: "身分",
+        x_label: "公式 X", official_x_url: "https://x.com/trickcal_jp",
+        footer_author: "📝 ノート作成者: 冷笑話幽靈", footer_copyright: "© ゲーム著作権: EpidGames & Bilibili", footer_lastupdate: "最終更新日：10/09/2026",
+        "天真": "純粋", "冷靜": "冷静", "狂亂": "狂気", "活潑": "活発", "憂鬱": "憂鬱", "共鳴": "共振", "雙面": "裏面",
+        "魔女": "魔女", "獸人": "獣人", "龍族": "竜族", "魔靈": "精霊", "妖精": "妖精", "精靈": "エルフ", "幽靈": "幽霊", "???": "???",
+        "前排": "前列", "中排": "中列", "後排": "後列", "所有排": "全ての列", "輸出": "攻撃", "肉盾": "守備", "輔助": "支援",
+        "攻擊": "攻撃", "防禦": "防御", "血量": "HP", "爆擊": "会心", "爆抗": "会心抵抗", "全部": "すべて",
+        "洛涅": "ローネ", "薇薇": "ヴィヴィ", "艾爾芬": "エルフィン", "x乂錫安乂x": "シオン・ザ・DB", "伊弗利特": "イフリート", "伊德": "イード", "佩佩": "ベルベット", "佩斯塔": "フェスタ",
+        "修帕": "シュパン", "傑德": "ジェイド", "優米": "ヨミ", "劉美美": "ユミミ", "加薇雅": "ガヴィア", "卡洛特": "キャロット", "卡蓮": "カレン", "喬菲": "チョッピー",
+        "基狄恩": "ギデオン", "大師2號": "マエストロMK2", "大木頭": "ビッグウッド", "奈雅": "ナイア", "奶油": "バター", "布蘭切": "ブランセ", "希拉": "シーラ", "希爾德": "ヒルデ",
+        "希瑟圖": "シスト", "希菲爾": "シルフィール", "帕特拉": "パトラ", "庫洛艾": "クロエ", "康娜": "カンナ", "愛麗絲": "アリス", "班尼": "ベニー", "斯皮奇": "スピッキー",
+        "斯諾奇": "スノキー", "柯米": "コミー", "桃桃": "モモ", "梅森": "メゾン", "梅露娜": "メロナ", "海莉": "ヘイリー", "珀榭": "ポーシャー", "琳": "リム",
+        "瑟琳娜": "セリーネ", "瑪約": "マヨ", "瑪麗": "マリー", "皮可菈": "ピコラ", "盧波": "ルポ", "米雪": "ミンス", "綾": "アヤ", "羽伊": "ウイ",
+        "艾斯皮": "エスピー", "艾琳娜": "エレナ", "艾皮卡": "エピカ", "艾舒爾": "エシュール", "艾蜜莉雅": "アメリア", "芙莉可": "フリックル", "茱蜜": "ジュビー", "莉茲": "リッツ",
+        "莎莉": "サリー", "萊薇": "レヴィ", "蒂亞娜": "ディアナ", "謝蒂": "シェイディ", "貝魯": "ベル", "貝麗塔": "ベリータ", "路德": "ルード", "路易": "キュウイ",
+        "阿萊特": "アレット", "雷吉": "レイジー", "馬爾": "マーゴ", "泰達": "タイダー", "寧琉": "ネル", "莉絲蒂": "リスティ", "雷內瓦": "リニュア", "芭瓏": "バロン", "達雅": "ダーヤ", "提格": "提格",
+		"羅蕾特": "ロレット", "琵拉": "琵拉", "雪蘭": "シェルム", "芭莉耶": "バリエ", "瓊安": "ジョアン", "柯米(泳裝)": "コミー（水着）", "麗息": "レーテー",
+		"克魯布魯斯": "ケルベロス", "蠟筆勇士": "イサムレヨン", "R41雷內瓦": "R41 リニュア", "莉1莉": "リリー", "M.E.O.W.": "M.E.O.W.", "雷內瓦(NPC)": "リニュア", "榮春": "ブルミ", "高蒂": "ゴールディ", "可麗餅": "クレープ",
+        page_title_char_detail: "使徒詳細データ", btn_close_page: "⬅️ 閉じる", loading: "読み込み中...", release_date_label: "実装日",
+        crayon_detail_title: "🖍️ 特級クレヨン分布詳細", layer_1_stats: "🥇 1段階目ステータス", layer_2_stats: "🥈 2段階目ステータス", layer_3_stats: "🥉 3段階目ステータス",
+        present_title: "使徒の愛用品", present_loading: "宝箱を開封中...", btn_letter: "使徒からの手紙", btn_thought: "教主の感想",
+        present_select_hint: "表示内容を選択してください...", no_letter_hint: "（この使徒はまだ手紙を書いていないようです...）", no_thought_hint: "（教主はまだこの愛用品に対する感想を書いていないようです...）",
+        present_delivering: "愛用品を配達中...", present_suffix: "の愛用品", present_error: "⚠️ 愛用品読み込みエラー",
+        skill_detail_title: "⚔️ スキル詳細", skill_loading: "スキル読み込み中...", skill_normal_attack: "普通攻撃",
+        skill_basic: "【基本】", skill_enhanced: "【強化】", skill_passive: "パッシブスキル", skill_admission: "低学年スキル", skill_graduate: "高学年スキル",
+        costume_default: "デフォルト", costume_prefix: "衣装",
+        comment_title: "💬 教主の評価と感想", comment_author_placeholder: "ニックネーム (空欄の場合は匿名表示)", comment_content_placeholder: "この使徒に対する評価、編成の感想、または愛の叫びを書いてください...",
+        btn_submit_comment: "評価を送信 🚀", btn_submitting: "送信中... ⏳", comment_loading: "掲示板に接続中...",
+        no_comment_hint: "まだ評価がありません。最初の評価を書きましょう！ 🐾", time_just_now: "たった今", anonymous_leader: "匿名教主#",
+        error_no_char: "❌ 使徒が指定されていません。ホーム画面からキャラクターボタンをタップしてください。", error_no_data: "❌ 読み込み失敗：INITIAL_DATAが見つかりません。",
+        error_char_not_found: "❌ 該当する使徒データが見つかりません。", error_no_skill_data: "❌ skill.jsのデータが見つかりません。ファイルが存在するか確認してください。",
+        error_char_skill_not_found: "⚠️ 該当する使徒のスキルデータが見つかりません。", alert_empty_comment: "評価内容を入力してください！",
+        alert_comment_too_long: "評価内容が長すぎます。500文字以内に短縮してください！", alert_comment_failed: "送信に失敗しました。後でもう一度お試しください！", error_load_comment: "コメントの読み込みに失敗しました。データベースの権限設定を確認してください。",
+		ui_title: "使徒ビューアー", ui_back: "⬅️ 戻る", ui_select_char: "👥 使徒選択", ui_show_all: "全て表示", ui_hide_all: "全て隠す", ui_please_select: "先に選択してください", ui_camera: "🔄 リセット", ui_waiting: "ロード中...", ui_mode_lobby: "🔄 モード: ロビー", ui_mode_battle: "⚔️ モード: バトル", ui_ar_open: "📷 ARオン", ui_ar_close: "❌ ARオフ", ui_ar_panel: "📷 カメラパネル", ui_ar_flip: "🔄 反転", ui_ar_capture: "📸 撮影", ui_costume: "衣装", ui_default_costume: "デフォルト", ui_default_model: "基本モデル", ui_select_anim: "モーション", ui_slots: "🧩 スロット", ui_show_slots: "全表示", ui_hide_slots: "全非表示", ui_loading_data: "読み込み中...",
+		gacha_simulator: "使徒ガチャシミュレーター", gacha_select_pool: "📍 ガチャ選択", gacha_personality_hint: "🔮 指定性格：", gacha_1_pull: "1回募集", gacha_10_pull: "10回募集", gacha_waiting: "結果待ち...", gacha_history: "📜 ガチャ履歴", gacha_rate_up: "🎯 ピックアップ募集", gacha_normal: "🌟 一般募集", gacha_personality_pool: "🔮 性格選択募集", gacha_result_title: "🎉 ガチャ結果 🎉", gacha_prev_page: "前へ", gacha_next_page: "次へ", gacha_page: "{current} / {total} ページ", gacha_unknown_time: "不明な時間", gacha_unknown_pool: "不明なガチャ",
+		ui_tier_title: "ティアメーカー", ui_tier_add_row: "ランク追加", ui_tier_reset: "すべてリセット", ui_tier_export: "画像として保存", ui_tier_pool_title: "キャラクター一覧 (上のランクへドラッグ)", ui_tier_default_title: "私の最強ランキング", ui_tier_reset_confirm: "本当にすべてリセットしてキャラクターを一覧に戻しますか？", ui_tier_export_error: "画像の出力に失敗しました。",
+    },
+    "en": {
+        app_title: "Trickcal Crayon Notepad", app_subtitle: "May the Master get Ultra Crayons daily", stats_title: "📊 Stats & Bonus Info",
+        stats_stat: "Stats", stats_character: " Apostle", stats_attack: "ATK", stats_defence: "DEF", stats_hp: "HP",
+        stats_critical: "CRIT", stats_resist: "RES", stats_personality: "🔮 Personality:", stats_race: "🧬 Race:",
+        stats_position: "🗺️ Position:", stats_job: "⚔️ Class:", stats_cell: "🖍️ Crayon Node:", stats_crayon: "Ultra Crayon",
+        stats_level: "Target Board:", cell_kind: "Node Type:", level_1st: "Board 1", level_2nd: "Board 2", level_3rd: "Board 3",
+        total_owned: "Owned Apostles", crayon_used: "Crayons Used", crayon_needed: "Crayons Needed",
+        crayon_attack: "ATK", crayon_defence: "DEF", crayon_hp: "HP", crayon_critical: "CRIT", crayon_resist: "CRIT RES",
+        personality_naive: "Pure", personality_calm: "Calm", personality_mad: "Mad", personality_vivid: "Vivid", personality_gloomy: "Gloomy", personality_resonance: "Resonance", personality_multifaceted: "Multifaceted",
+        race_witch: "Witch", race_beast: "Beast", race_dragon: "Dragon", race_spirit: "Spirit", race_fairy: "Fairy", race_elf: "Elf", race_ghost: "Ghost", race_unknown: "???",
+        position_front: "Front", position_middle: "Mid", position_back: "Back", position_all: "All Columns", job_attacker: "Attacker", job_defender: "Tank", job_supporter: "Support",
+        visit_count_prefix: "Total Visits", maintenance_msg: "🔧 Under Maintenance...", event_title: "🎪 Current Event",
+        auth_offline_title: "Status: Offline Mode", auth_offline_desc: "Data saved locally", auth_online_title: "🟢 ", auth_logout: "Logout",
+        filter_title: "🔍 Filter", filter_search_placeholder: "Search Apostle...", filter_reset: "Reset All", filter_display_mode: "👁️ View Mode:",
+        filter_btn_all: "All", filter_btn_show_all: "Show All", filter_btn_show_1: "Board 1 Only", filter_btn_show_2: "Board 2 Only", filter_btn_show_3: "Board 3 Only",
+		grid_status: "Status", filter_btn_opened: "Opened", filter_btn_unopened: "Unopened",
+        stats_toggle_hint: "Click to Expand / Collapse", stats_layer_1_title: "🥇 Board 1 Stats", stats_layer_2_title: "🥈 Board 2 Stats", stats_layer_3_title: "🥉 Board 3 Stats",
+        stats_layer_1_rule: "(Node+3%, Crayon×2)", stats_layer_2_rule: "(Node+4%, Crayon×4)", stats_layer_3_rule: "(Node+5%, Crayon×6)",
+        stats_global_bonus: "📊 Global Stat Bonus", stats_need_more_prefix: "Need ", stats_need_more_suffix: " Crayons",
+		menu_system_title: "System Menu", menu_gacha: "Gacha Simulator", menu_viewer: "Apostle Viewer", menu_tier_maker: "Tier List Maker", menu_checklist: "Custom Checklist", menu_toggle_anim: "Toggle Running Animation",
+		quick_action_title: "⚡ Quick Actions", quick_action_all_chars: "All Apostles:", quick_action_own_all: "Own All", quick_action_cancel_all: "Cancel All", quick_action_fill_crayons: "Fill Crayons:", quick_action_clear_crayons: "Clear Crayons:", quick_action_fill_all: "Fill All Layers", quick_action_clear_all: "Clear All Layers", quick_action_layer_1: "Layer 1", quick_action_layer_2: "Layer 2", quick_action_layer_3: "Layer 3", quick_action_own: "Own", quick_action_cancel: "Cancel", quick_action_fill: "Fill", quick_action_clear: "Clear", quick_action_all_layers: "All Layers", quick_action_layer_n: "Layer {n}", quick_action_confirm_chars: "Are you sure you want to '{action}' all Apostles?\n(This will overwrite the ownership status of all Apostles!)", quick_action_confirm_grids: "Are you sure you want to '{action}' the crayon grids for all Apostles in [{layer}]?\n(⚠️ Warning: This will overwrite current records and cannot be undone!)",
+		path_image_hint: "View Path Chart",
+		info_job_reward: "💰 Acquired Rewards", info_food: "🍲 Favorite Food", aside_title: "Yearning", aside_loading: "The thoughts don't seem deep enough yet",
+		stats_attribute: "Attack Type", 物理: "Physical", 魔法: "Magical", 艾爾丁: "Eldain", 普通坨坨: "Normal Apostle", 身份: "Identity",
+        x_label: "Official Global X", official_x_url: "https://x.com/trickcal_en",
+        footer_author: "📝 Author: 冷笑話幽靈", footer_copyright: "© Copyright: EpidGames & Bilibili", footer_lastupdate: "last updated on: 10/09/2026",
+        "天真": "Innocence", "冷靜": "Composed", "狂亂": "Madness", "活潑": "Vivacious", "憂鬱": "Depressed", "共鳴": "Resonance", "雙面": "Multifaceted",
+        "魔女": "Witch", "獸人": "Werebeast", "龍族": "Dragon", "魔靈": "Elemental", "妖精": "Sprite", "精靈": "Elf", "幽靈": "Phantom", "???": "???",
+        "前排": "Front", "中排": "Middle", "後排": "Back", "所有排": "All Columns", "輸出": "DPS", "肉盾": "Tank", "輔助": "Support",
+        "攻擊": "ATK", "防禦": "DEF", "血量": "HP", "爆擊": "CRIT", "爆抗": "CRIT RES", "全部": "All",
+        "洛涅": "Rohne", "薇薇": "Vivi", "艾爾芬": "Erpin", "x乂錫安乂x": "xXionx", "伊弗利特": "Ifrit", "伊德": "ED", "佩佩": "Velvet", "佩斯塔": "Festa",
+        "修帕": "Shoupan", "傑德": "Jade", "優米": "Yomi", "劉美美": "Yumimi", "加薇雅": "Gabia", "卡洛特": "Kyarot", "卡蓮": "Carren", "喬菲": "Chopi",
+        "基狄恩": "Kidian", "大師2號": "Maestro Mk.2", "大木頭": "Big Wood", "奈雅": "Naia", "奶油": "Butter", "布蘭切": "Blanchet", "希拉": "Sylla", "希爾德": "Hilde",
+        "希瑟圖": "Sist", "希菲爾": "Silphir", "帕特拉": "Patula", "庫洛艾": "Chloe", "康娜": "Canna", "愛麗絲": "Alice", "班尼": "Beni", "斯皮奇": "Speaki",
+        "斯諾奇": "Snorky", "柯米": "Kommy", "桃桃": "Momo", "梅森": "Maison", "梅露娜": "Meluna", "海莉": "Haley", "珀榭": "Posher", "琳": "Rim",
+        "瑟琳娜": "Selene", "瑪約": "Mayo", "瑪麗": "Marie", "皮可菈": "Picora", "盧波": "Rufo", "米雪": "Mynx", "綾": "Aya", "羽伊": "Ui",
+        "艾斯皮": "Espi", "艾琳娜": "Elena", "艾皮卡": "Epica", "艾舒爾": "Ashur", "艾蜜莉雅": "Amelia", "芙莉可": "Fricle", "茱蜜": "Jubee", "莉茲": "Leets",
+        "莎莉": "Sari", "萊薇": "Levi", "蒂亞娜": "Diana", "謝蒂": "Shaydi", "貝魯": "Veroo", "貝麗塔": "Belita", "路德": "Rudd", "路易": "Kyuri",
+        "阿萊特": "Allet", "雷吉": "Layze", "馬爾": "Mago", "泰達": "Taida", "寧琉": "Ner", "莉絲蒂": "Risty", "雷內瓦": "Renewa", "芭瓏": "Barong", "達雅": "Daya", "提格": "Tig",
+        "羅蕾特": "Rollett", "琵拉": "Pira", "雪蘭": "Sherum", "芭莉耶": "Barie", "瓊安": "Joanne", "柯米(泳裝)": "Swimsuit Kommy", "麗息": "Lethe",
+		"克魯布魯斯": "Cerberus", "蠟筆勇士": "Super Crayon", "R41雷內瓦": "R41 Renewa", "莉1莉": "L1ly", "M.E.O.W.": "M.E.O.W.", "雷內瓦(NPC)": "Renewa", "榮春": "Youngchun", "高蒂": "Goldy", "可麗餅": "Crepe",
+		page_title_char_detail: "Apostle Details", btn_close_page: "⬅️ Close", loading: "Loading...",  release_date_label: "Release Date",
+        crayon_detail_title: "🖍️ Ultra Crayon Details", layer_1_stats: "🥇 Board 1 Stats", layer_2_stats: "🥈 Board 2 Stats", layer_3_stats: "🥉 Board 3 Stats",
+        present_title: "Apostle's Cherished Items", present_loading: "Opening chest...", btn_letter: "Apostle's Letter", btn_thought: "Master's Thoughts",
+        present_select_hint: "Please select content to display...", no_letter_hint: "(This Apostle hasn't written a letter to you yet...)", no_thought_hint: "(The Master hasn't shared their thoughts on this item yet...)",
+        present_delivering: "Cherished item is being delivered...", present_suffix: "'s Cherished Item", present_error: "⚠️ Cherished Item Load Error",
+        skill_detail_title: "⚔️ Skill Details", skill_loading: "Loading skills...", skill_normal_attack: "Normal ATK",
+        skill_basic: "[Basic]", skill_enhanced: "[Enhance]", skill_passive: "Passive Skill", costume_default: "Default", costume_prefix: "Outfit ",
+        skill_admission: "Freshman Skill", skill_graduate: "Senior Skill",
+        comment_title: "💬 Master Reviews & Thoughts", comment_author_placeholder: "Your Nickname (Leave blank for anonymous)", comment_content_placeholder: "Write your review, team comp tips, or share your love for this Apostle...",
+        btn_submit_comment: "Submit Review 🚀", btn_submitting: "Submitting... ⏳", comment_loading: "Connecting to message board...",
+        no_comment_hint: "No reviews yet. Be the first to leave one! 🐾", time_just_now: "Just now", anonymous_leader: "Anon Leader #",
+        error_no_char: "❌ Apostle not specified. Please enter via the home page.", error_no_data: "❌ Load Failed: INITIAL_DATA not found.",
+        error_char_not_found: "❌ Apostle data not found.", error_no_skill_data: "❌ skill.js not found. Please check if the file exists.",
+        error_char_skill_not_found: "⚠️ Skill data for this Apostle not found.", alert_empty_comment: "Please enter your review content!",
+        alert_comment_too_long: "Review content is too long. Please keep it under 500 characters!", alert_comment_failed: "Failed to submit. Please try again later!", error_load_comment: "Failed to load comments. Please check database permissions.",
+		ui_title: "Apostle Viewer", ui_back: "⬅️ Back", ui_select_char: "👥 Select Apostle", ui_show_all: "Show All", ui_hide_all: "Hide All", ui_please_select: "Please select first", ui_camera: "🔄 Reset", ui_waiting: "Loading...", ui_mode_lobby: "🔄 Mode: Lobby", ui_mode_battle: "⚔️ Mode: Battle", ui_ar_open: "📷 AR On", ui_ar_close: "❌ AR Off", ui_ar_panel: "📷 Camera UI", ui_ar_flip: "🔄 Flip", ui_ar_capture: "📸 Capture", ui_costume: "Costume", ui_default_costume: "Default", ui_default_model: "Base Model", ui_select_anim: "Animation", ui_slots: "🧩 Slots", ui_show_slots: "Show All", ui_hide_slots: "Hide All", ui_loading_data: "Loading...",
+		gacha_simulator: "Apostle Gacha Simulator", gacha_select_pool: "📍 Select Pool", gacha_personality_hint: "🔮 Personality:", gacha_1_pull: "1 Pull", gacha_10_pull: "10 Pulls", gacha_waiting: "Waiting...", gacha_history: "📜 Gacha History", gacha_rate_up: "🎯 Rate Up", gacha_normal: "🌟 Normal Gacha", gacha_personality_pool: "🔮 Personality Gacha", gacha_result_title: "🎉 Gacha Results 🎉", gacha_prev_page: "Prev", gacha_next_page: "Next", gacha_page: "Page {current} / {total}", gacha_unknown_time: "Unknown Time", gacha_unknown_pool: "Unknown Pool",
+		ui_tier_title: "Tier List Maker", ui_tier_add_row: "Add Rank", ui_tier_reset: "Reset All", ui_tier_export: "Export Image", ui_tier_pool_title: "Character Pool (Drag to Rank)", ui_tier_default_title: "My Ultimate Tier List", ui_tier_reset_confirm: "Are you sure you want to reset the board and return all characters to the pool?", ui_tier_export_error: "Failed to export image.",
+    }
 };
-                Object.entries(personalities).forEach(([zh, en]) => {
-                    const cls = `sprite-base sprite-common sprite-Personality_${en}`;
-                    window.ICON_MAP[`personality_${zh}`] = cls;
-                    window.ICON_MAP[`personality_${en}`] = cls;
-                });
-            
-                // 種族
-                const races = { '龍族': 'Dragon', '魔靈': 'Elemental', '精靈': 'Elf', '幽靈': 'Phantom', '妖精': 'Sprite', '???': 'Unknown', '獸人': 'Werebeast', '魔女': 'Witch' };
-                Object.entries(races).forEach(([zh, en]) => {
-                    const cls = `sprite-base sprite-common sprite-Race_${en}`;
-                    window.ICON_MAP[`race_${zh}`] = cls;
-                    window.ICON_MAP[`race_${en}`] = cls;
-                });
-            
-                // 站位
-                const positions = { '後排': 'Back', '前排': 'Front', '中排': 'Middle', '全能': 'All' };
-                Object.entries(positions).forEach(([zh, en]) => {
-                    const cls = `sprite-base sprite-common sprite-Position_${en}`;
-                    window.ICON_MAP[`position_${zh}`] = cls;
-                    window.ICON_MAP[`position_${en}`] = cls;
-                });
-            
-                // 職業
-                const jobs = { '輸出': 'DPS', '輔助': 'Support', '肉盾': 'Tank' };
-                Object.entries(jobs).forEach(([zh, en]) => {
-                    const cls = `sprite-base sprite-common sprite-Job_${en}`;
-                    window.ICON_MAP[`job_${zh}`] = cls;
-                    window.ICON_MAP[`job_${en}`] = cls;
-                });
-            };
-            
-            const updateTag = (id, label, value, prefix) => {
-                const el = document.getElementById(id);
-                initIconMap();
-                const iconUrl = window.ICON_MAP[`${prefix}_${value}`] || "";
-                
-                if (!iconUrl) {
-                    el.classList.add('hidden');
-                    return;
-                }
-            
-                el.classList.remove('hidden');
-                // 統一容器 class，確保 group-hover 效果能完美傳遞給內部的 icon
-                el.className = 'relative group flex items-center justify-center'; 
-            
-                // 🌟 根據屬性大圖的大小設定精準的 CSS scale 比率，使其在 32x32px 佔位格內外觀完全一致
-                let scaleClass = 'scale-[0.5]'; // 64x64 縮小為 32x32 (預設)
-                if (prefix === 'race') scaleClass = 'scale-[0.58]';       // 55x55 縮小為 32x32
-                if (prefix === 'personality') scaleClass = 'scale-[0.48]';// 62x66 縮小為 32x32
-                if (prefix === 'identity') scaleClass = 'scale-[0.43]';
-            
-                const iconHtml = (iconUrl.startsWith('http') || iconUrl.startsWith('./'))
-                    ? `<img src="${iconUrl}" alt="${label}" class="w-8 h-8 object-contain transition-transform duration-300 group-hover:scale-125 cursor-help drop-shadow-sm">`
-                    : `<div class="w-8 h-8 flex items-center justify-center transition-transform duration-300 group-hover:scale-125 cursor-help drop-shadow-sm relative overflow-hidden shrink-0 bg-transparent">
-                        <div class="${iconUrl} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 origin-center ${scaleClass}"></div>
-                       </div>`;
-                
-                // 修正：tooltip 文字強制呼叫 t() 進行字典對比翻譯
-                el.innerHTML = `
-                    ${iconHtml}
-                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-3 py-1.5 bg-slate-900 dark:bg-slate-700 text-white dark:text-gray-100 text-[11px] font-black rounded-lg shadow-xl whitespace-nowrap pointer-events-none hidden group-hover:block transition-all duration-300 opacity-0 group-hover:opacity-100 z-50">
-                        ${label}：${t(value)}
-                        <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-slate-900 dark:border-t-slate-700"></div>
-                    </div>
-                `;
-            };
-            
-            function createBigHoverIcon(containerId, imgUrl, tooltipText) {
-                const container = document.getElementById(containerId);
-                if (!container) return;
-                if (!imgUrl) {
-                    container.innerHTML = `<span class="text-xs text-gray-400 font-bold px-2 py-1 bg-gray-100 dark:bg-slate-700 rounded-md">無圖片</span>`;
-                    return;
-                }
-                const iconHtml = (imgUrl.startsWith('http') || imgUrl.startsWith('./')) 
-                    ? `<img src="${imgUrl}" alt="icon" class="w-full h-full object-contain p-1 drop-shadow-sm">`
-                    : `<div class="w-full h-full flex items-center justify-center"><div class="${imgUrl} origin-center scale-[0.8] drop-shadow-sm"></div></div>`;
-                    
-                container.innerHTML = `
-                    <div class="relative group flex items-center justify-center cursor-help">
-                        <div class="w-14 h-14 sm:w-16 sm:h-16 bg-white dark:bg-slate-700 rounded-xl border-2 border-amber-200 dark:border-slate-600 shadow-sm overflow-hidden transition-transform duration-300 group-hover:scale-110 group-active:scale-95">
-                            ${iconHtml}
-                        </div>
-                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-slate-900 dark:bg-slate-800 text-white dark:text-gray-100 text-xs sm:text-sm font-black rounded-lg shadow-xl whitespace-nowrap pointer-events-none hidden group-hover:block transition-all duration-300 z-50 border border-slate-700">
-                            ${tooltipText}
-                            <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-slate-900 dark:border-t-slate-800"></div>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            // 🌟 將坨坨星星修改為 Sprite 排版並完美縮放對齊
-            function renderStars(charName) {
-                const starsContainer = document.getElementById('charStars');
-                if (!starsContainer) return;
-            
-                let grade = "3"; 
-                if (typeof GRADE_MAP !== 'undefined' && GRADE_MAP[charName]) {
-                    grade = GRADE_MAP[charName];
-                }
-            
-                const starClass = `sprite-${grade}STAR`;
-                
-                // 動態計算對應的縮小後寬度 (原寬度 * 0.24)
-                let wrapperWidth = 71; // 3星: 296 * 0.24 ≈ 71
-                if (grade === "1") wrapperWidth = 28; // 1星: 116 * 0.24 ≈ 28
-                if (grade === "2") wrapperWidth = 49; // 2星: 206 * 0.24 ≈ 49
 
-                // 建立與實際縮小後寬度相符的外框，讓 flex 置中能正確運作
-                starsContainer.innerHTML = `
-                    <div class="relative" style="width: ${wrapperWidth}px; height: 28px;">
-                        <div class="sprite-base sprite-common ${starClass} drop-shadow-md absolute top-0 left-0" style="transform: scale(0.24); transform-origin: top left;"></div>
-                    </div>
-                `;
-            }
-            
-            // 🌟 新增安全獲取食物圖示的輔助函式，兼容字串與物件格式
-            function getSafeFoodIconUrl(foodKey) {
-                if (typeof FOOD_ICON !== 'undefined' && FOOD_ICON[foodKey]) {
-                    return typeof FOOD_ICON[foodKey] === 'object' ? FOOD_ICON[foodKey].url : FOOD_ICON[foodKey];
-                }
-                return "";
-            }
-            
-            function renderExtraInfo(charName) {
-                const cvText = (typeof CV_MAP !== 'undefined' && CV_MAP[charName]) ? CV_MAP[charName] : "???";
-                document.getElementById('charCV').innerText = cvText;
-            
-                const introKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
-                const safeLang = (typeof INTRO_MAP !== 'undefined' && INTRO_MAP[window.currentLang]) ? window.currentLang : 'zh-TW';
-                let introText = "（資料建檔中...）";
-                
-                if (typeof INTRO_MAP !== 'undefined' && INTRO_MAP[safeLang] && INTRO_MAP[safeLang][introKey]) {
-                    let rawText = INTRO_MAP[safeLang][introKey];
-                    let lines = rawText.split('\n');
-                    
-                    if (lines.length >= 3) {
-                        let titleText = `<span class="block text-lg sm:text-xl font-black text-amber-950 dark:text-amber-300 mb-1">${lines[0]}</span>`;
-                        let quoteText = `<span class="block text-base sm:text-lg font-bold text-amber-700 dark:text-amber-500 mb-3">${lines[1]}</span>`;
-                        let descText = `<span class="block text-sm text-gray-700 dark:text-gray-300 leading-relaxed border-t border-dashed border-amber-200 dark:border-slate-600 pt-3">${lines.slice(2).join('<br>')}</span>`;
-                        introText = titleText + quoteText + descText;
-                    } else {
-                        introText = rawText.replace(/\n/g, '<br>');
-                    }
-                }
-                document.getElementById('charIntro').innerHTML = introText;
-            
-                // --- 處理喜好料理 ---
-                const foodContainer = document.getElementById('charFoodIcon');
-                foodContainer.innerHTML = '';
-            
-                const spineKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
-                const foodData = (typeof FOOD_MAP !== 'undefined') ? FOOD_MAP[spineKey] : null;
-            
-                if (!foodData || foodData === "無" || foodData === "餐牌" || (Array.isArray(foodData) && foodData.length === 0)) {
-                    foodContainer.innerHTML = `<span class="text-sm text-gray-500 dark:text-gray-400 font-bold py-1">無</span>`
-                } else {
-                    let html = "";
-                    let superFoods = [];
-                    let specialFoods = [];
-            
-                    // 自動兼容各種常見的鍵值寫法
-                    if (typeof foodData === 'object' && !Array.isArray(foodData)) {
-                        const superKeys = ['super', 'super_like', '超級', '超級喜好'];
-                        const specialKeys = ['special', 'special_like', '特別', '特別喜好'];
-            
-                        superKeys.forEach(k => {
-                            if (foodData[k]) superFoods = superFoods.concat(Array.isArray(foodData[k]) ? foodData[k] : [foodData[k]]);
-                        });
-                        specialKeys.forEach(k => {
-                            if (foodData[k]) specialFoods = specialFoods.concat(Array.isArray(foodData[k]) ? foodData[k] : [foodData[k]]);
-                        });
-                    }
-            
-                    // 渲染超級喜好
-                    superFoods.forEach(foodName => {
-                        const imgUrl = getSafeFoodIconUrl(foodName);
-                        html += `
-                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white dark:bg-slate-700 rounded-xl border-[3px] border-[#F06292] shadow-[0_0_8px_#ff00ff80] flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-110">
-                                ${imgUrl ? (imgUrl.startsWith('http') || imgUrl.startsWith('./') ? `<img src="${imgUrl}" class="w-full h-full object-contain p-1 drop-shadow-sm">` : `<div class="w-full h-full flex items-center justify-center"><div class="${imgUrl} origin-center scale-[0.6] sm:scale-[0.8] drop-shadow-sm"></div></div>`) : `<span class="text-[10px] text-gray-400 font-bold">${foodName}</span>`}
-                            </div>
-                        `;
-                    });
-            
-                    // 渲染特別喜好
-                    specialFoods.forEach(foodName => {
-                        const imgUrl = getSafeFoodIconUrl(foodName);
-                        html += `
-                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white dark:bg-slate-700 rounded-xl border-[3px] border-[#00ff00] shadow-[0_0_8px_#00ff0080] flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-110">
-                                ${imgUrl ? (imgUrl.startsWith('http') || imgUrl.startsWith('./') ? `<img src="${imgUrl}" class="w-full h-full object-contain p-1 drop-shadow-sm">` : `<div class="w-full h-full flex items-center justify-center"><div class="${imgUrl} origin-center scale-[0.6] sm:scale-[0.8] drop-shadow-sm"></div></div>`) : `<span class="text-[10px] text-gray-400 font-bold">${foodName}</span>`}
-                            </div>
-                        `;
-                    });
-            
-                    // 若非 object 格式，當作陣列處理
-                    if (html === "" && Array.isArray(foodData)) {
-                        foodData.forEach(foodName => {
-                            const imgUrl = getSafeFoodIconUrl(foodName);
-                            html += `
-                                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white dark:bg-slate-700 rounded-xl border-[3px] border-amber-400 shadow-sm flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-110">
-                                    ${imgUrl ? (imgUrl.startsWith('http') || imgUrl.startsWith('./') ? `<img src="${imgUrl}" class="w-full h-full object-contain p-1 drop-shadow-sm">` : `<div class="w-full h-full flex items-center justify-center"><div class="${imgUrl} origin-center scale-[0.6] sm:scale-[0.8] drop-shadow-sm"></div></div>`) : `<span class="text-[10px] text-gray-400 font-bold">${foodName}</span>`}
-                                </div>
-                            `;
-                        });
-                    }
-                    
-                    foodContainer.innerHTML = html;
-                }
-            
-                // --- 處理打工獎勵 ---
-                const rewardContainer = document.getElementById('charRewardIcon');
-                rewardContainer.innerHTML = '';
-            
-                const spineName = (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName]) 
-                    ? SPINE_MAP[charName] 
-                    : charName;
-            
-                // 🌟 防呆標記：預設為沒有打工劇情
-                let hasJobStory = false;
-            
-                if (typeof REWARD_MAP !== 'undefined' && REWARD_MAP[spineName]) {
-                    let rewards = REWARD_MAP[spineName];
-                    
-                    if (rewards.length === 0) {
-                        rewardContainer.innerHTML = `<span class="text-sm text-gray-500 dark:text-gray-400 font-bold py-1">無</span>`;
-                    } else {
-                        // 🌟 有獎勵代表有劇情，標記改為 true
-                        hasJobStory = true;
-                        let html = "";
-                        rewards.forEach((rewardKey, idx) => {
-                            const rewardDisplay = getI18n(rewardKey) !== rewardKey ? getI18n(rewardKey) : rewardKey;
-                            
-                            // 從 REWARD_ICON 尋找圖示
-                            let rewardUrl = "";
-                            if (typeof REWARD_ICON !== 'undefined' && REWARD_ICON[rewardKey]) {
-                                rewardUrl = typeof REWARD_ICON[rewardKey] === 'object' ? REWARD_ICON[rewardKey].url : REWARD_ICON[rewardKey];
-                            }
-            
-                            // 第一個螢光綠外框，其餘灰色，打橫排列
-                            let borderClass = idx === 0 
-                                ? "border-[3px] border-[#39ff14] shadow-[0_0_8px_rgba(57,255,20,0.6)]" 
-                                : "border-2 border-gray-300 dark:border-slate-600 shadow-sm";
-            
-                            html += `
-                                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white dark:bg-slate-700 rounded-xl ${borderClass} flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-110" title="${rewardDisplay}">
-                                    ${rewardUrl ? (rewardUrl.startsWith('http') || rewardUrl.startsWith('./') ? `<img src="${rewardUrl}" alt="${rewardDisplay}" class="w-full h-full object-contain p-1 drop-shadow-sm">` : `<div class="w-full h-full flex items-center justify-center"><div class="${rewardUrl} origin-center scale-[0.6] sm:scale-[0.8] drop-shadow-sm"></div></div>`) : `<span class="text-[10px] text-gray-400 font-bold p-1 break-words text-center">${rewardDisplay}</span>`}
-                                </div>
-                            `;
-                        });
-                        rewardContainer.innerHTML = html;
-                    }
-                } else {
-                    rewardContainer.innerHTML = `<span class="text-sm text-gray-500 dark:text-gray-400 font-bold py-1">無</span>`;
-                }
-            
-                // --- 處理打工劇情 CG 與 YouTube 連結 ---
-            const cgContainer = document.getElementById('charJobCgContainer');
-            if (cgContainer) {
-            if (!hasJobStory) {
-            cgContainer.innerHTML = '';
-            cgContainer.classList.add('hidden');
-            } else {
-            let youtubeUrl = null;
-            if (typeof WORK_URL !== 'undefined' && WORK_URL[spineName]) {
-            youtubeUrl = WORK_URL[spineName];
-            }
-            
-            const cgClass = `sprite-CG_Schedule_${spineName}`;
-            
-            // 🌟 這裡接續：
-            if (youtubeUrl && youtubeUrl.length > 0) {
-            // 擷取 Youtube ID
-            const videoId = youtubeUrl.split('/').pop().replace('watch?v=', '');
-            
-            cgContainer.innerHTML = `
-                <a href="#" 
-                   class="youtube-modal-trigger block relative rounded-xl border-[3px] border-amber-300 dark:border-slate-600 shadow-sm overflow-hidden group w-[144px] h-[72px] bg-slate-900 shrink-0 cursor-pointer" 
-                   title="點擊觀看打工劇情"
-                   data-video-id="${videoId}">
-                    <div class="absolute top-1/2 left-1/2 transition-transform duration-300 group-hover:scale-105" style="transform: translate(-50%, -50%) scale(0.140625); width: 1024px; height: 512px;">
-                        <div class="${cgClass} w-full h-full opacity-80 group-hover:opacity-100 transition-opacity"></div>
-                    </div>
-                    <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-300"></div>
-                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <div class="w-8 h-8 bg-red-600/90 group-hover:bg-red-600 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.5)] transform group-hover:scale-110 transition-all duration-300">
-                            <svg class="w-4 h-4 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                        </div>
-                    </div>
-                </a>
-            `;
-            } else {
-            cgContainer.innerHTML = `
-                <div class="block relative rounded-xl border-[3px] border-gray-400 dark:border-slate-700 shadow-sm overflow-hidden w-[144px] h-[72px] bg-slate-900 shrink-0 cursor-not-allowed" title="劇情影片準備中...">
-                    <div class="absolute top-1/2 left-1/2" style="transform: translate(-50%, -50%) scale(0.140625); width: 1024px; height: 512px;">
-                        <div class="${cgClass} w-full h-full opacity-50 grayscale"></div>
-                    </div>
-                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none bg-black/30">
-                        <span class="text-white text-xs font-bold tracking-wider px-2 py-1 bg-black/60 rounded backdrop-blur-sm">準備中</span>
-                    </div>
-                </div>
-            `;
-            }
-            cgContainer.classList.remove('hidden');
-            }
-            }            }
-            
-            const renderError = (msg) => {
-                document.getElementById('mainContainer').innerHTML = `
-                    <div class="text-center p-10 font-bold text-red-600 dark:text-red-400 text-lg">
-                        ${msg}
-                    </div>
-                `;
-            };
-            const escapeHTML = (str) => {
-                return str.replace(/[&<>'"]/g, 
-                    tag => ({
-                        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
-                    }[tag])
-                );
-            };
-            
-            const updateRaceBackground = (raceName, personalityData) => {
-    const bgDiv = document.getElementById('raceBackground');
-    if (!bgDiv) return;
+const currentLang = localStorage.getItem('user_lang') || 'zh-TW';
+function t(key) { return LANG_DICT[currentLang][key] || key; }
+// ------------------------------------------
+// 坨坨資料
+// ------------------------------------------
+const INITIAL_DATA = [
+	{ name: "麗息", personality: "冷靜", race: "幽靈", position: "前排", job: "肉盾", pathVersion: "V4", releaseDate: "2026-10-08T17:00:00+09:00" },
+	{ name: "柯米(泳裝)", personality: "冷靜", race: "獸人", position: "中排", job: "輔助", pathVersion: "", releaseDate: "2026-10-15T17:00:00+09:00" },
+	{ name: "瓊安", personality: "憂鬱, 天真", race: "妖精", position: "所有排", job: "輔助", pathVersion: "V4", releaseDate: "2026-09-24T17:00:00+09:00" },
+	{ name: "芭莉耶", personality: "憂鬱", race: "魔女", position: "後排", job: "輔助", pathVersion: "V4", releaseDate: "2026-09-10T17:00:00+09:00" },
+	{ name: "雪蘭", personality: "天真", race: "魔女", position: "前排", job: "輸出", pathVersion: "V1", releaseDate: "2026-09-10T17:00:00+09:00" },
+	{ name: "琵拉", personality: "狂亂", race: "龍族", position: "後排", job: "輔助", pathVersion: "V1", releaseDate: "2026-08-27T17:00:00+09:00" },
+	{ name: "羅蕾特", personality: "狂亂", race: "魔女", position: "後排", job: "輸出", pathVersion: "V1", releaseDate: "2026-07-30T17:00:00+09:00" },
+    { name: "洛涅", personality: "天真", race: "精靈", position: "前排", job: "肉盾", pathVersion: "V4", releaseDate: "2026-02-12" },
+    { name: "薇薇", personality: "天真", race: "龍族", position: "前排", job: "肉盾", pathVersion: "V4" },
+    { name: "卡洛特", personality: "天真", race: "妖精", position: "後排", job: "輔助", pathVersion: "V3", releaseDate: "2026-05-07" },
+    { name: "奈雅", personality: "天真", race: "魔靈", position: "中排", job: "輔助", pathVersion: "V1", releaseDate: "2026-02-26" },
+    { name: "艾爾芬", personality: "天真", race: "妖精", position: "後排", job: "輸出", pathVersion: "V2" },
+    { name: "馬爾", personality: "天真", race: "獸人", position: "中排", job: "輔助", pathVersion: "V1" },
+    { name: "加薇雅", personality: "天真", race: "魔靈", position: "中排", job: "輔助", pathVersion: "V2" },
+    { name: "希菲爾", personality: "天真", race: "龍族", position: "中排", job: "輸出", pathVersion: "V4" },
+    { name: "斯皮奇", personality: "天真", race: "幽靈", position: "後排", job: "輸出", pathVersion: "V1" },
+    { name: "海莉", personality: "天真", race: "精靈", position: "中排", job: "輸出", pathVersion: "V2" },
+    { name: "大木頭", personality: "天真", race: "魔靈", position: "前排", job: "肉盾", pathVersion: "V2" },
+    { name: "阿萊特", personality: "天真", race: "精靈", position: "前排", job: "肉盾", pathVersion: "V5" },
+    { name: "莎莉", personality: "天真", race: "幽靈", position: "中排", job: "輸出", pathVersion: "V2" },
+    { name: "路易", personality: "天真", race: "妖精", position: "中排", job: "輔助", pathVersion: "V3" },
+    { name: "修帕", personality: "活潑", race: "妖精", position: "後排", job: "輔助", pathVersion: "V5", releaseDate: "2026-03-12" },
+    { name: "奶油", personality: "活潑", race: "獸人", position: "後排", job: "輸出", pathVersion: "V3", releaseDate: "2025-10-23" },
+    { name: "桃桃", personality: "活潑", race: "獸人", position: "後排", job: "輸出", pathVersion: "V1" },
+    { name: "瑟琳娜", personality: "活潑", race: "幽靈", position: "前排", job: "肉盾", pathVersion: "V1", releaseDate: "2026-04-23" },
+    { name: "羽伊", personality: "活潑", race: "魔靈", position: "中排", job: "輔助", pathVersion: "V4" },
+    { name: "艾皮卡", personality: "活潑", race: "獸人", position: "中排", job: "輸出", pathVersion: "V5", releaseDate: "2026-01-01" },
+    { name: "路德", personality: "活潑", race: "龍族", position: "前排", job: "肉盾", pathVersion: "V4" },
+    { name: "康娜", personality: "活潑", race: "精靈", position: "後排", job: "輸出", pathVersion: "V2" },
+    { name: "班尼", personality: "活潑", race: "獸人", position: "前排", job: "輸出", pathVersion: "V4" },
+    { name: "盧波", personality: "活潑", race: "獸人", position: "中排", job: "輸出", pathVersion: "V5" },
+    { name: "茱蜜", personality: "活潑", race: "魔靈", position: "中排", job: "輸出", pathVersion: "V5" },
+    { name: "卡蓮", personality: "活潑", race: "妖精", position: "後排", job: "輔助", pathVersion: "V5" },
+    { name: "泰達", personality: "活潑", race: "精靈", position: "後排", job: "輸出", pathVersion: "V1" },
+    { name: "瑪麗", personality: "活潑", race: "妖精", position: "中排", job: "輸出", pathVersion: "V3" },
+    { name: "米雪", personality: "活潑", race: "獸人", position: "前排", job: "輸出", pathVersion: "V1" },
+    { name: "伊德", personality: "冷靜", race: "精靈", position: "前排", job: "肉盾", pathVersion: "V3", releaseDate: "2026-03-26" },
+    { name: "艾琳娜", personality: "冷靜", race: "精靈", position: "中排", job: "輸出", pathVersion: "V3", releaseDate: "2025-12-04" },
+    { name: "佩佩", personality: "冷靜", race: "魔女", position: "前排", job: "肉盾", pathVersion: "V5" },
+    { name: "希拉", personality: "冷靜", race: "魔靈", position: "後排", job: "輸出", pathVersion: "V2" },
+    { name: "皮可菈", personality: "冷靜", race: "魔女", position: "後排", job: "輔助", pathVersion: "V1" },
+    { name: "艾蜜莉雅", personality: "冷靜", race: "精靈", position: "後排", job: "輔助", pathVersion: "V2" },
+    { name: "芙莉可", personality: "冷靜", race: "魔女", position: "中排", job: "輸出", pathVersion: "V2" },
+    { name: "綾", personality: "冷靜", race: "魔女", position: "中排", job: "輸出", pathVersion: "V3" },
+    { name: "帕特拉", personality: "冷靜", race: "妖精", position: "前排", job: "輸出", pathVersion: "V2" },
+    { name: "梅露娜", personality: "冷靜", race: "魔靈", position: "後排", job: "輔助", pathVersion: "V2" },
+    { name: "傑德", personality: "冷靜", race: "龍族", position: "中排", job: "輸出", pathVersion: "V3" },
+    { name: "艾斯皮", personality: "冷靜", race: "幽靈", position: "中排", job: "輔助", pathVersion: "V4" },
+    { name: "雷吉", personality: "冷靜", race: "精靈", position: "後排", job: "輸出", pathVersion: "V2" },
+    { name: "瑪約", personality: "狂亂", race: "妖精", position: "後排", job: "輸出", pathVersion: "V1" },
+    { name: "莉茲", personality: "狂亂", race: "龍族", position: "前排", job: "輸出", pathVersion: "V2", releaseDate: "2025-12-18" },
+    { name: "謝蒂", personality: "狂亂", race: "幽靈", position: "前排", job: "輸出", pathVersion: "V1" },
+    { name: "庫洛艾", personality: "狂亂", race: "妖精", position: "前排", job: "肉盾", pathVersion: "V4" },
+    { name: "愛麗絲", personality: "狂亂", race: "幽靈", position: "中排", job: "輸出", pathVersion: "V2", releaseDate: "2025-11-06" },
+    { name: "蒂亞娜", personality: "狂亂", race: "獸人", position: "中排", job: "輔助", pathVersion: "V5" },
+    { name: "貝麗塔", personality: "狂亂", race: "魔女", position: "後排", job: "輸出", pathVersion: "V4" },
+    { name: "希瑟圖", personality: "狂亂", race: "龍族", position: "中排", job: "輸出", pathVersion: "V1" },
+    { name: "大師2號", personality: "狂亂", race: "精靈", position: "前排", job: "肉盾", pathVersion: "V4" },
+    { name: "梅森", personality: "狂亂", race: "幽靈", position: "後排", job: "輸出", pathVersion: "V4" },
+    { name: "伊弗利特", personality: "狂亂", race: "魔靈", position: "前排", job: "輸出", pathVersion: "V3" },
+    { name: "劉美美", personality: "狂亂", race: "獸人", position: "後排", job: "輸出", pathVersion: "V4" },
+    { name: "x乂錫安乂x", personality: "憂鬱", race: "幽靈", position: "後排", job: "輸出", pathVersion: "V3" },
+    { name: "基狄恩", personality: "憂鬱", race: "龍族", position: "前排", job: "輸出", pathVersion: "V3" },
+    { name: "布蘭切", personality: "憂鬱", race: "魔靈", position: "中排", job: "輸出", pathVersion: "V1", releaseDate: "2026-01-15" },
+    { name: "琳", personality: "憂鬱", race: "幽靈", position: "前排", job: "輸出", pathVersion: "V4" },
+    { name: "優米", personality: "憂鬱", race: "???", position: "中排", job: "輔助", pathVersion: "V1" },
+    { name: "希爾德", personality: "憂鬱", race: "精靈", position: "中排", job: "輔助", pathVersion: "V1", releaseDate: "2025-11-20" },
+    { name: "柯米", personality: "憂鬱", race: "獸人", position: "前排", job: "肉盾", pathVersion: "V2" },
+    { name: "珀榭", personality: "憂鬱", race: "魔女", position: "後排", job: "輔助", pathVersion: "V1" },
+    { name: "艾舒爾", personality: "憂鬱", race: "妖精", position: "後排", job: "輸出", pathVersion: "V5", releaseDate: "2026-01-29" },
+    { name: "斯諾奇", personality: "憂鬱", race: "魔女", position: "前排", job: "肉盾", pathVersion: "V3", releaseDate: "2026-04-09" },
+    { name: "貝魯", personality: "憂鬱", race: "幽靈", position: "中排", job: "輸出", pathVersion: "V1" },
+    { name: "佩斯塔", personality: "憂鬱", race: "精靈", position: "前排", job: "輔助", pathVersion: "V3" },
+    { name: "萊薇", personality: "憂鬱", race: "魔女", position: "中排", job: "輸出", pathVersion: "V5" },
+    { name: "喬菲", personality: "憂鬱", race: "獸人", position: "中排", job: "輸出", pathVersion: "V2" },
+    { name: "寧琉", personality: "狂亂", race: "妖精", position: "前排", job: "輔助", pathVersion: "V2", releaseDate: "2026-05-21" },
+    { name: "莉絲蒂", personality: "憂鬱", race: "精靈", position: "後排", job: "輸出", pathVersion: "V3", releaseDate: "2026-06-04" },
+    { name: "雷內瓦", personality: "狂亂", race: "精靈", position: "中排", job: "輸出", pathVersion: "V3", releaseDate: "2026-06-18T17:00:00+09:00" },
+    { name: "芭瓏", personality: "冷靜", race: "幽靈", position: "前排", job: "輸出", pathVersion: "V3", releaseDate: "2026-07-02T17:00:00+09:00" },
+	{ name: "達雅", personality: "天真", race: "龍族", position: "後排", job: "輸出", pathVersion: "V2", releaseDate: "2026-07-16T19:00:00+09:00" },
+	{ name: "提格", personality: "活潑", race: "獸人", position: "前排", job: "輸出", pathVersion: "V2", releaseDate: "2026-07-16T19:00:00+09:00" }
+];
 
-    // 1. 清除之前的切換計時器（避免切換角色時發生重複呼叫導致閃爍）
-    if (window.bgSwapInterval) {
-        clearInterval(window.bgSwapInterval);
-        window.bgSwapInterval = null;
+const CRAYON_PATH_CONFIG = {
+    "精靈": {
+        "V1": { layer1: ["攻擊", "血量"], layer2: ["攻擊", "防禦", "爆抗"], layer3: ["攻擊", "防禦", "爆擊", "爆抗"] },
+        "V2": { layer1: ["防禦", "爆抗"], layer2: ["攻擊", "血量", "爆擊"], layer3: ["攻擊", "防禦", "血量", "爆抗"] },
+        "V3": { layer1: ["攻擊", "防禦"], layer2: ["攻擊", "防禦", "血量"], layer3: ["攻擊", "血量", "爆擊", "爆抗"] },
+        "V4": { layer1: ["血量", "爆擊"], layer2: ["防禦", "爆擊", "爆抗"], layer3: ["攻擊", "防禦", "血量", "爆擊"] },
+        "V5": { layer1: ["爆擊", "爆抗"], layer2: ["爆擊", "血量", "爆抗"], layer3: ["爆擊", "防禦", "血量", "爆抗"] }
+    },
+    "獸人": {
+        "V1": { layer1: ["攻擊", "血量"], layer2: ["攻擊", "防禦", "爆抗"], layer3: ["攻擊", "防禦", "爆擊", "爆抗"] },
+        "V2": { layer1: ["防禦", "爆抗"], layer2: ["攻擊", "血量", "爆擊"], layer3: ["攻擊", "防禦", "血量", "爆抗"] },
+        "V3": { layer1: ["攻擊", "防禦"], layer2: ["攻擊", "防禦", "血量"], layer3: ["攻擊", "血量", "爆擊", "爆抗"] },
+        "V4": { layer1: ["血量", "爆擊"], layer2: ["防禦", "爆擊", "爆抗"], layer3: ["攻擊", "防禦", "血量", "爆擊"] },
+        "V5": { layer1: ["爆擊", "爆抗"], layer2: ["血量", "爆擊", "爆抗"], layer3: ["防禦", "血量", "爆擊", "爆抗"] }
+    },
+    "龍族": {
+        "V1": { layer1: ["爆擊", "爆抗"], layer2: ["血量", "爆擊", "爆抗"], layer3: ["爆擊", "防禦", "血量", "爆抗"] },
+        "V2": { layer1: ["攻擊", "血量"], layer2: ["攻擊", "防禦", "爆抗"], layer3: ["攻擊", "防禦", "爆擊", "爆抗"] },
+        "V3": { layer1: ["防禦", "爆抗"], layer2: ["攻擊", "血量", "爆擊"], layer3: ["攻擊", "防禦", "血量", "爆抗"] },
+        "V4": { layer1: ["血量", "爆擊"], layer2: ["防禦", "爆擊", "爆抗"], layer3: ["攻擊", "血量", "爆擊", "防禦"] }
+    },
+    "幽靈": {
+        "V1": { layer1: ["攻擊", "防禦"], layer2: ["攻擊", "防禦", "血量"], layer3: ["攻擊", "血量", "爆擊", "爆抗"] },
+        "V2": { layer1: ["血量", "爆擊"], layer2: ["防禦", "爆擊", "爆抗"], layer3: ["攻擊", "防禦", "血量", "爆擊"] },
+        "V3": { layer1: ["防禦", "爆抗"], layer2: ["攻擊", "血量", "爆擊"], layer3: ["攻擊", "防禦", "血量", "爆抗"] },
+        "V4": { layer1: ["爆擊", "爆抗"], layer2: ["血量", "爆擊", "爆抗"], layer3: ["防禦", "血量", "爆擊", "爆抗"] }
+    },
+    "魔女": {
+        "V1": { layer1: ["防禦", "爆抗"], layer2: ["攻擊", "血量", "爆擊"], layer3: ["攻擊", "防禦", "血量", "爆抗"] },
+        "V2": { layer1: ["攻擊", "血量"], layer2: ["攻擊", "防禦", "爆抗"], layer3: ["攻擊", "防禦", "爆擊", "爆抗"] },
+        "V3": { layer1: ["攻擊", "防禦"], layer2: ["攻擊", "防禦", "血量"], layer3: ["攻擊", "血量", "爆擊", "爆抗"] },
+        "V4": { layer1: ["血量", "爆擊"], layer2: ["防禦", "爆擊", "爆抗"], layer3: ["攻擊", "防禦", "血量", "爆擊"] },
+        "V5": { layer1: ["爆擊", "爆抗"], layer2: ["血量", "爆擊", "爆抗"], layer3: ["防禦", "血量", "爆擊", "爆抗"] }
+    },
+    "魔靈": {
+        "V1": { layer1: ["血量", "爆擊"], layer2: ["防禦", "爆擊", "爆抗"], layer3: ["攻擊", "防禦", "血量", "爆擊"] },
+        "V2": { layer1: ["攻擊", "血量"], layer2: ["攻擊", "防禦", "爆抗"], layer3: ["攻擊", "防禦", "爆擊", "爆抗"] },
+        "V3": { layer1: ["防禦", "爆抗"], layer2: ["攻擊", "血量", "爆擊"], layer3: ["攻擊", "防禦", "血量", "爆抗"] },
+        "V4": { layer1: ["爆擊", "爆抗"], layer2: ["血量", "爆擊", "爆抗"], layer3: ["防禦", "血量", "爆擊", "爆抗"] },
+        "V5": { layer1: ["攻擊", "防禦"], layer2: ["攻擊", "防禦", "血量"], layer3: ["攻擊", "血量", "爆擊", "爆抗"] }
+    },
+    "妖精": {
+        "V1": { layer1: ["防禦", "爆抗"], layer2: ["攻擊", "血量", "爆擊"], layer3: ["攻擊", "防禦", "血量", "爆抗"] },
+        "V2": { layer1: ["攻擊", "防禦"], layer2: ["攻擊", "防禦", "血量"], layer3: ["攻擊", "血量", "爆擊", "爆抗"] },
+        "V3": { layer1: ["攻擊", "血量"], layer2: ["攻擊", "防禦", "爆抗"], layer3: ["攻擊", "防禦", "爆擊", "爆抗"] },
+        "V4": { layer1: ["血量", "爆擊"], layer2: ["防禦", "爆擊", "爆抗"], layer3: ["攻擊", "防禦", "血量", "爆擊"] },
+        "V5": { layer1: ["爆擊", "爆抗"], layer2: ["血量", "爆擊", "爆抗"], layer3: ["防禦", "血量", "爆擊", "爆抗"] }
+    },
+    "???": {
+        "V1": { layer1: ["攻擊", "防禦"], layer2: ["攻擊", "防禦", "血量"], layer3: ["攻擊", "血量", "爆擊", "爆抗"] }
     }
+};
 
-    // 2. 處理雙面/多重性格資料，將其分割為陣列 
-    // 支援陣列格式 ["憂鬱", "天真"] 或是字串包含加號、逗號、斜線等 "憂鬱+天真"
-    let pList = [];
-    if (Array.isArray(personalityData)) {
-        pList = personalityData;
-    } else if (typeof personalityData === 'string') {
-        pList = personalityData.split(/[、,\/\s+]+/).map(s => s.trim()).filter(Boolean);
-    } else if (personalityData) {
-        pList = [String(personalityData)];
+const PATH_IMAGES = {
+    "幽靈": {
+        "V1": { 1: "https://i.postimg.cc/nMb6P1wY/PHANTOM-V1-L1.png", 2: "https://i.postimg.cc/0ytjmZqp/PHANTOM-V1-L2.png", 3: "https://i.postimg.cc/vDFpNvSt/PHANTOM-V1-L3.png" },
+        "V2": { 1: "https://i.postimg.cc/PNsBRMF2/PHANTOM-V2-L1.png", 2: "https://i.postimg.cc/z3Z9ckPP/PHANTOM-V2-L2.png", 3: "https://i.postimg.cc/V5Q3VFHZ/PHANTOM-V2-L3.png" },
+        "V3": { 1: "https://i.postimg.cc/pybg6B1S/PHANTOM-V3-L1.png", 2: "https://i.postimg.cc/23RPKxXK/PHANTOM-V3-L2.png", 3: "https://i.postimg.cc/qBhqWM5V/PHANTOM-V3-L3.png" },
+        "V4": { 1: "https://i.postimg.cc/FFdzwsBm/PHANTOM-V4-L1.png", 2: "https://i.postimg.cc/WpFzxbHc/PHANTOM-V4-L2.png", 3: "https://i.postimg.cc/J7D0S428/PHANTOM-V4-L3.png" }
+    },
+    "???": {
+        "V1": { 1: "https://i.postimg.cc/L5LH55cN/UNKNOWN-V1-L1.png", 2: "https://i.postimg.cc/vTfQTTJ0/UNKNOWN-V1-L2.png", 3: "https://i.postimg.cc/ZnpTnnGj/UNKNOWN-V1-L3.png" }
+    },
+    "妖精": {
+        "V1": { 1: "https://i.postimg.cc/VNvmMKyN/SPRITE-V1-L1.png", 2: "https://i.postimg.cc/43ystWCx/SPRITE-V1-L2.png", 3: "https://i.postimg.cc/fbyDX84T/SPRITE-V1-L3.png" },
+        "V2": { 1: "https://i.postimg.cc/Jh0MJpwn/SPRITE-V2-L1.png", 2: "https://i.postimg.cc/s2xsSTFW/SPRITE-V2-L2.png", 3: "https://i.postimg.cc/TP1fmt85/SPRITE-V2-L3.png" },
+        "V3": { 1: "https://i.postimg.cc/k5Gq8Tr8/SPRITE-V3-L1.png", 2: "https://i.postimg.cc/xd8nH6rM/SPRITE-V3-L2.png", 3: "https://i.postimg.cc/yNxs9Lqm/SPRITE-V3-L3.png" },
+        "V4": { 1: "https://i.postimg.cc/zfQ5kT5y/SPRITE-V4-L1.png", 2: "https://i.postimg.cc/W4yj70jD/SPRITE-V4-L2.png", 3: "https://i.postimg.cc/d0fv9GvT/SPRITE-V4-L3.png" },
+        "V5": { 1: "https://i.postimg.cc/XvP3g935/SPRITE-V5-L1.png", 2: "https://i.postimg.cc/8CYDbLDW/SPRITE-V5-L2.png", 3: "https://i.postimg.cc/XvP3g93d/SPRITE-V5-L3.png" }
+    },
+    "魔靈": {
+        "V1": { 1: "https://i.postimg.cc/t4CjQB4m/ELEMENTAL-V1-L1.png", 2: "https://i.postimg.cc/NjfcqdjC/ELEMENTAL-V1-L2.png", 3: "https://i.postimg.cc/135Qhv3C/ELEMENTAL-V1-L3.png" },
+        "V2": { 1: "https://i.postimg.cc/mg2sfmgn/ELEMENTAL-V2-L1.png", 2: "https://i.postimg.cc/g2SPY3xg/ELEMENTAL-V2-L2.png", 3: "https://i.postimg.cc/pLGt2Kmq/ELEMENTAL-V2-L3.png" },
+        "V3": { 1: "https://i.postimg.cc/7ZsyxS5R/ELEMENTAL-V3-L1.png", 2: "https://i.postimg.cc/7ZsyxS5j/ELEMENTAL-V3-L2.png", 3: "https://i.postimg.cc/vZqdQ51w/ELEMENTAL-V3-L3.png" },
+        "V4": { 1: "https://i.postimg.cc/13CZ9Dgh/ELEMENTAL-V4-L1.png", 2: "https://i.postimg.cc/dVHKqG7K/ELEMENTAL-V4-L2.png", 3: "https://i.postimg.cc/zGt1JTLr/ELEMENTAL-V4-L3.png" },
+        "V5": { 1: "https://i.postimg.cc/sg6RV5Bs/ELEMENTAL-V5-L1.png", 2: "https://i.postimg.cc/3xSHK2yK/ELEMENTAL-V5-L2.png", 3: "https://i.postimg.cc/P53kt1LX/ELEMENTAL-V5-L3.png" }
+    },
+    "魔女": {
+        "V1": { 1: "https://i.postimg.cc/bYxcZ7G2/WITCH-V1-L1.png", 2: "https://i.postimg.cc/ZY8tWG9v/WITCH-V1-L2.png", 3: "https://i.postimg.cc/VsqQJxSt/WITCH-V1-L3.png" },
+        "V2": { 1: "https://i.postimg.cc/VsqQJxSC/WITCH-V2-L1.png", 2: "https://i.postimg.cc/RC75Wk3f/WITCH-V2-L2.png", 3: "https://i.postimg.cc/qBsVNPt8/WITCH-V2-L3.png" },
+        "V3": { 1: "https://i.postimg.cc/h4LWXkJV/WITCH-V3-L1.png", 2: "https://i.postimg.cc/dQ2Phb7r/WITCH-V3-L2.png", 3: "https://i.postimg.cc/ry1XDBdg/WITCH-V3-L3.png" },
+        "V4": { 1: "https://i.postimg.cc/NG6qK3yx/WITCH-V4-L1.png", 2: "https://i.postimg.cc/HWwDrqJ2/WITCH-V4-L2.png", 3: "https://i.postimg.cc/T2VMKzyC/WITCH-V4-L3.png" },
+        "V5": { 1: "https://i.postimg.cc/sfYdMkB0/WITCH-V5-L1.png", 2: "https://i.postimg.cc/SQ6FnBX5/WITCH-V5-L2.png", 3: "https://i.postimg.cc/FFy5YMfw/WITCH-V5-L3.png" }
+    },
+    "精靈": {
+        "V1": { 1: "https://i.postimg.cc/CMNrTSnK/ELF-V1-L1.png", 2: "https://i.postimg.cc/CMNrTSnM/ELF-V1-L2.png", 3: "https://i.postimg.cc/FFZC5Nks/ELF-V1-L3.png" },
+        "V2": { 1: "https://i.postimg.cc/h4rZWcQj/ELF-V2-L1.png", 2: "https://i.postimg.cc/J4z6RvjW/ELF-V2-L2.png", 3: "https://i.postimg.cc/Pr53d91H/ELF-V2-L3.png" },
+        "V3": { 1: "https://i.postimg.cc/5N27fT8f/ELF-V3-L1.png", 2: "https://i.postimg.cc/nchRngqV/ELF-V3-L2.png", 3: "https://i.postimg.cc/jdSgRmyx/ELF-V3-L3.png" },
+        "V4": { 1: "https://i.postimg.cc/28ScCMn5/ELF-V4-L1.png", 2: "https://i.postimg.cc/dtVHJpG1/ELF-V4-L2.png", 3: "https://i.postimg.cc/Ghm7bVv9/ELF-V4-L3.png" },
+        "V5": { 1: "https://i.postimg.cc/7YZsqdSf/ELF-V5-L1.png", 2: "https://i.postimg.cc/kXg17zW2/ELF-V5-L2.png", 3: "https://i.postimg.cc/rFwnq35r/ELF-V5-L3.png" }
+    },
+    "獸人": {
+        "V1": { 1: "https://i.postimg.cc/nrPvFRtL/WEREBEAST-V1-L1.png", 2: "https://i.postimg.cc/j2FzxgrL/WEREBEAST-V1-L2.png", 3: "https://i.postimg.cc/hv59Dyqv/WEREBEAST-V1-L3.png" },
+        "V2": { 1: "https://i.postimg.cc/NFz1sJwM/WEREBEAST-V2-L1.png", 2: "https://i.postimg.cc/qq58Jbdn/WEREBEAST-V2-L2.png", 3: "https://i.postimg.cc/nrPvFRtB/WEREBEAST-V2-L3.png" },
+        "V3": { 1: "https://i.postimg.cc/PJRmX3km/WEREBEAST-V3-L1.png", 2: "https://i.postimg.cc/j2Fzxgry/WEREBEAST-V3-L2.png", 3: "https://i.postimg.cc/MHFy6P8s/WEREBEAST-V3-L3.png" },
+        "V4": { 1: "https://i.postimg.cc/v8q7tBxp/WEREBEAST-V4-L1.png", 2: "https://i.postimg.cc/BZY5B6PR/WEREBEAST-V4-L2.png", 3: "https://i.postimg.cc/pVGQJTnt/WEREBEAST-V4-L3.png" },
+        "V5": { 1: "https://i.postimg.cc/c197BH8S/WEREBEAST-V5-L1.png", 2: "https://i.postimg.cc/QN4gJtWX/WEREBEAST-V5-L2.png", 3: "https://i.postimg.cc/L4Ck3XZ4/WEREBEAST-V5-L3.png" }
+    },
+    "龍族": {
+        "V1": { 1: "https://i.postimg.cc/5tSLYNVY/DRAGON-V1-L1.png", 2: "https://i.postimg.cc/W4wgFbvd/DRAGON-V1-L2.png", 3: "https://i.postimg.cc/Ls3LY6pq/DRAGON-V1-L3.png" },
+        "V2": { 1: "https://i.postimg.cc/cJBwg4St/DRAGON-V2-L1.png", 2: "https://i.postimg.cc/SsQ8WFSN/DRAGON-V2-L2.png", 3: "https://i.postimg.cc/RFCfc5SF/DRAGON-V2-L3.png" },
+        "V3": { 1: "https://i.postimg.cc/gJcRvFzc/DRAGON-V3-L1.png", 2: "https://i.postimg.cc/HxW5QDYn/DRAGON-V3-L2.png", 3: "https://i.postimg.cc/k4M8x3JR/DRAGON-V3-L3.png" },
+        "V4": { 1: "https://i.postimg.cc/9MXTG5mq/DRAGON-V4-L1.png", 2: "https://i.postimg.cc/PxfZmsXD/DRAGON-V4-L2.png", 3: "https://i.postimg.cc/bJYbQcyb/DRAGON-V4-L3.png" }
     }
+};
 
-    // 3. 過濾出真的有背景圖的性格
-    let validPersonalities = pList.filter(p => typeof PERSONALITY_BACKGROUNDS !== 'undefined' && PERSONALITY_BACKGROUNDS[p]);
+const CV_MAP = {
+    "洛涅": "田向結月", "薇薇": "新井里美", "艾爾芬": "木野日菜", "x乂錫安乂x": "上坂すみれ", "伊弗利特": "安堂ななこ", "伊德": "内田真礼", "佩佩": "上田瞳", "佩斯塔": "仁見紗綾",
+    "修帕": "大空直美", "傑德": "行成とあ", "優米": "高野麻里佳", "劉美美": "兼田めぐみ", "加薇雅": "大谷衣里奈", "卡洛特": "牧野由依", "卡蓮": "咲谷怜奈", "喬菲": "漆山ゆうき",
+    "基狄恩": "鈴木愛唯", "大師2號": "田中音緒", "大木頭": "上田瞳", "奈雅": "佐伯伊織", "奶油": "長月あおい", "布蘭切": "和氣あず未", "希拉": "大木咲絵子", "希爾德": "秦佐和子",
+    "希瑟圖": "野口瑠璃子", "希菲爾": "葵あずさ", "帕特拉": "大園朱花子", "庫洛艾": "田村ゆかり", "康娜": "岡本美歌", "愛麗絲": "小見川千明", "班尼": "熊崎愛", "斯皮奇": "小坂井祐莉絵",
+    "斯諾奇": "高柳知葉", "柯米": "河瀨茉希", "桃桃": "平塚紗依", "梅森": "赤堀実華琉", "梅露娜": "美坂朱音", "海莉": "衣川里佳", "珀榭": "優木かな", "琳": "渕上舞",
+    "瑟琳娜": "石上靜香", "瑪約": "船戸ゆり絵", "瑪麗": "野村真悠華", "皮可菈": "小澤亜李", "盧波": "木村千咲", "米雪": "咲咲谷怜奈", "綾": "日笠陽子", "羽伊": "長縄まりあ",
+    "艾斯皮": "內海まり", "艾琳娜": "塚田悠衣", "艾皮卡": "日高里菜", "艾舒爾": "長尾玲奈", "艾蜜莉雅": "中林新夏", "芙莉可": "百瀨帆南", "茱蜜": "山田聖奈", "莉茲": "藤本侑里",
+    "莎莉": "漆山ゆうき", "萊薇": "上永紗也華", "蒂亞娜": "立花日菜", "謝蒂": "山城リアン", "貝魯": "若山なつみ", "貝麗塔": "松岡美里", "路德": "渡部惠子", "路易": "兼田めぐみ",
+    "阿萊特": "若山なつみ", "雷吉": "大園朱花子", "馬爾": "花咲心優", "泰達": "赤堀実華琉", "寧琉": "アンデルソンゆり子", "莉絲蒂": "黒沢ともよ", "雷內瓦": "花守ゆみり", "芭瓏": "橋本千波", "達雅": "羊宮妃那", "提格": "篠田南",
+	"羅蕾特": "日野麻里", "琵拉": "菱川花菜", "雪蘭": "安齋由香里", "芭莉耶": "寺澤百花", "瓊安": "雨宮天", "柯米(泳裝)": "河瀬茉希", "麗息": "藤咲野々花"
+};
+
+const GRADE_MAP = {
+    "洛涅": "3", "薇薇": "3", "艾爾芬": "3", "x乂錫安乂x": "3", "伊弗利特": "3", "伊德": "3", "佩佩": "3", "佩斯塔": "2",
+    "修帕": "3", "傑德": "3", "優米": "3", "劉美美": "2", "加薇雅": "3", "卡洛特": "3", "卡蓮": "2", "喬菲": "2",
+    "基狄恩": "3", "大師2號": "2", "大木頭": "2", "奈雅": "3", "奶油": "3", "布蘭切": "3", "希拉": "3", "希爾德": "3",
+    "希瑟圖": "3", "希菲爾": "3", "帕特拉": "1", "庫洛艾": "3", "康娜": "3", "愛麗絲": "3", "班尼": "3", "斯皮奇": "3",
+    "斯諾奇": "3", "柯米": "3", "桃桃": "3", "梅森": "1", "梅露娜": "2", "海莉": "3", "珀榭": "3", "琳": "3",
+    "瑟琳娜": "3", "瑪約": "3", "瑪麗": "2", "皮可菈": "3", "盧波": "3", "米雪": "1", "綾": "3", "羽伊": "3",
+    "艾斯皮": "2", "艾琳娜": "3", "艾皮卡": "3", "艾舒爾": "3", "艾蜜莉雅": "3", "芙莉可": "3", "茱蜜": "2", "莉茲": "3",
+    "莎莉": "2", "萊薇": "3", "蒂亞娜": "3", "謝蒂": "3", "貝魯": "1", "貝麗塔": "3", "路德": "3", "路易": "1",
+    "阿萊特": "2", "雷吉": "2", "馬爾": "3", "泰達": "2", "寧琉": "3", "莉絲蒂": "3", "雷內瓦": "3", "芭瓏": "3", "達雅": "3", "提格": "3", "羅蕾特": "3", "琵拉": "3", "雪蘭": "3", "芭莉耶": "2",
+	"瓊安": "3", "柯米(泳裝)": "3", "麗息": "2"
+};
+
+const ELDAIN_LIST = ['綾', '庫洛艾', '艾皮卡', '伊德', '羽伊', '薇薇', 'x乂錫安乂x', '優米', '雷內瓦', '瓊安'];
+
+// ------------------------------------------
+// 宴會廳
+// ------------------------------------------
+const FOOD_MAP = {
+    "Alice": { super: "有機檸檬茶", special: ["檸檬茶", "幽靈布丁", "惡靈布丁"] },
+    "Allet": { super: "ANSA太空食品", special: ["太空食品", "肉桂口味糖球", "肉桂口味健康糖球"] },
+    "Amelia": { super: "ANSA太空食品", special: ["太空食品", "巧克力冰淇淋", "深黑巧克力冰淇淋"] },
+    "Ashur": { super: "UFC炸蔬菜", special: ["UFC炸胡蘿蔔", "焦糖爆米花", "追劇焦糖爆米花"] },
+    "Aya": { super: "三重薄荷冰淇淋", special: ["薄荷巧克力冰淇淋", "巧克力冰淇淋", "深黑巧克力冰淇淋"] },
+    "Belita": { super: "草莓切片蛋糕", special: ["草莓蛋糕", "巧克力冰淇淋", "深黑巧克力冰淇淋"] },
+	"Barie": { super: "低糖棉花糖馬卡龍", special: ["棉花糖馬卡龍", "UFC炸胡蘿蔔", "UFC炸蔬菜"] },
+	"Barong": { super: "寶石蛋塔", special: ["寶石塔", "肉桂口味糖球", "肉桂口味健康糖球"] },
+    "Beni": { super: "甜甜蜂蜜罐", special: ["蜂蜜罐", "蜂蜜大蒜鮭魚", "皇家蜂蜜大蒜鮭魚"] },
+    "BigWood": { super: "椰子萬能青汁", special: ["椰子松針粥", "一碗米飯", "一碗糯米飯"] },
+    "Blanchet": { super: "有機檸檬茶", special: ["檸檬茶", "寶石塔", "寶石蛋塔"] },
+    "Butter": { super: "追劇焦糖爆米花", special: ["焦糖爆米花", "獸糧罐頭", "高級獸糧罐頭"] },
+    "Canna": { super: "一碗糯米飯", special: ["一碗米飯", "烤漫畫肉", "烤海賊漫畫肉"] },
+    "Carren": { super: "UFC炸蔬菜", special: ["UFC炸胡蘿蔔", "草莓蛋糕", "草莓切片蛋糕"] },
+    "Chloe": { super: "愛心扭結麵包", special: ["扭結麵包", "檸檬茶", "有機檸檬茶"] },
+    "Chopi": { super: "烤海賊漫畫肉", special: ["烤漫畫肉", "獸糧罐頭", "高級獸糧罐頭"] },
+    "Cuee": "無",
+	"Daya": { super: "寶石蛋塔", special: ["寶石塔", "檸檬茶", "有機檸檬茶"] },
+    "Diana": { super: "烤海賊漫畫肉", special: ["烤漫畫肉", "扭結麵包", "愛心扭結麵包"] },
+    "Ed": { super: "一級祕密葡萄汁", special: ["祕密葡萄汁", "UFC炸胡蘿蔔", "UFC炸蔬菜"] },
+    "Elena": { super: "滾燙的冰美式咖啡", special: ["溫熱的冰美式咖啡", "太空食品", "ANSA太空食品"] },
+    "Epica": { super: "追劇焦糖爆米花", special: ["焦糖爆米花", "烤漫畫肉", "烤海賊漫畫肉"] },
+    "Erpin": { super: "草莓切片蛋糕", special: ["草莓蛋糕", "巧克力冰淇淋", "深黑巧克力冰淇淋"] },
+    "Espi": { super: "深黑巧克力冰淇淋", special: ["巧克力冰淇淋", "UFC炸胡蘿蔔", "UFC炸蔬菜"] },
+    "Festa": { super: "氫氣炸豬排", special: ["空氣炸豬排", "祕密葡萄汁", "一級祕密葡萄汁"] },
+    "Fricle": { super: "927穀麵茶", special: ["麵茶", "扭結麵包", "愛心扭結麵包"] },
+    "Gabia": { super: "肉桂口味健康糖球", special: ["肉桂口味糖球", "檸檬茶", "有機檸檬茶"] },
+    "Haley": { super: "一碗糯米飯", special: ["一碗米飯", "檸檬茶", "有機檸檬茶"] },
+    "Hilde": { super: "皇家蜂蜜大蒜鮭魚", special: ["蜂蜜大蒜鮭魚", "太空食品", "ANSA太空食品"] },
+    "Ifrit": { super: "軟軟焦糖布丁", special: ["焦糖布丁", "龍族糖果", "龍族氣死你糖果"] },
+    "Jade": { super: "薄荷巧克力冰淇淋", special: ["巧克力冰淇淋", "龍族糖果", "龍族氣死你糖果"] },
+	"Joanne": { super: "927穀麵茶", special: ["麵茶", "薄荷巧克力冰淇淋", "巧克力冰淇淋"] },
+    "Jubee": { super: "甜甜蜂蜜罐", special: ["蜂蜜罐", "棉花糖馬卡龍", "低糖棉花糖馬卡龍"] },
+    "Kidian": { super: "愛心扭結麵包", special: ["扭結麵包", "獸糧罐頭", "高級獸糧罐頭"] },
+    "Kommy": { super: "高級獸糧罐頭", special: ["獸糧罐頭", "焦糖爆米花", "追劇焦糖爆米花"] },
+    "KommySwim": "無",
+	"Kyarot": { super: "兩口草生菜包", special: ["一口草生菜包", "蜂蜜罐", "甜甜蜂蜜罐"] },
+    "Lazy": { super: "高級獸糧罐頭", special: ["獸糧罐頭", "溫熱的冰美式咖啡", "滾燙的冰美式咖啡"] },
+    "Leets": { super: "龍族氣死你糖果", special: ["龍族糖果", "空氣炸豬排", "氫氣炸豬排"] },
+	"Lethe": "無",
+    "Levi": { super: "追劇焦糖爆米花", special: ["焦糖爆米花", "UFC炸胡蘿蔔", "UFC炸蔬菜"] },
+    "MaestroMK2": { super: "石榴甜茶", special: ["石榴果實", "祕密葡萄汁", "一級祕密葡萄汁"] },
+    "Mago": { super: "ANSA太空食品", special: ["太空食品", "獸糧罐頭", "高級獸糧罐頭"] },
+    "Maison": "無",
+    "Marie": { super: "UFC炸蔬菜", special: ["UFC炸胡蘿蔔", "焦糖布丁", "軟軟焦糖布丁"] },
+    "Mayo": { super: "一級祕密葡萄汁", special: ["祕密葡萄汁", "一碗米飯", "一碗糯米飯"] },
+    "Meluna": { super: "麝香甜瓜博孔奇尼起司", special: ["哈密瓜博孔奇尼起司", "一口草生菜包", "兩口草生菜包"] },
+    "Momo": { super: "甜甜蜂蜜罐", special: ["蜂蜜罐", "空氣炸豬排", "氫氣炸豬排"] },
+    "Mynx": "無",
+    "Naia": { super: "夏威夷海藻蓋飯", special: ["海藻沙拉", "金糖葫蘆", "白金糖葫蘆"] },
+    "Ner": { super: "低糖棉花糖馬卡龍", special: ["棉花糖馬卡龍", "哈密瓜博孔奇尼起司", "麝香甜瓜博孔奇尼起司"] },
+    "Patula": "無",
+    "Picora": { super: "白金糖葫蘆", special: ["金糖葫蘆", "溫熱的冰美式咖啡", "滾燙的冰美式咖啡"] },
+	"Pira": { super: "一級祕密葡萄汁", special: ["祕密葡萄汁", "龍族糖果", "龍族氣死你糖果"] },
+    "Posher": { super: "椰子萬能青汁", special: ["椰子松針粥", "太空食品", "ANSA太空食品"] },
+    "RenewaAwaken": { super: "有機檸檬茶", special: ["檸檬茶", "太空食品", "ANSA太空食品"] },
+    "Rim": { super: "燉南瓜", special: ["南瓜濃湯", "祕密葡萄汁", "一級祕密葡萄汁"] },
+    "Risty": { super: "石榴甜茶", special: ["石榴果實", "溫熱的冰美式咖啡", "滾燙的冰美式咖啡"] },
+    "Rohne": { super: "白金糖葫蘆", special: ["金糖葫蘆", "巧克力冰淇淋", "深黑巧克力冰淇淋"] },
+	"Rollett": {super: "軟軟焦糖布丁", special: ["焦糖布丁", "哈密瓜博孔奇尼起司", "麝香甜瓜博孔奇尼起司"] },
+    "Rude": { super: "927穀麵茶", special: ["麵茶", "太空食品", "ANSA太空食品"] },
+    "Rufo": { super: "皇家蜂蜜大蒜鮭魚", special: ["蜂蜜大蒜鮭魚", "哈密瓜博孔奇尼起司", "麝香甜瓜博孔奇尼起司"] },
+    "Sari": { super: "皇家蜂蜜大蒜鮭魚", special: ["蜂蜜大蒜鮭魚", "焦糖布丁", "軟軟焦糖布丁"] },
+    "Selline": { super: "惡靈布丁", special: ["幽靈布丁", , "一級祕密葡萄汁"] },
+    "Shady": { super: "惡靈布丁", special: ["幽靈布丁", "石榴果實", "石榴甜茶"] },
+	"Sherum": {special: ["棉花糖馬卡龍", "低糖棉花糖馬卡龍", "溫熱的冰美式咖啡", "滾燙的冰美式咖啡"] },
+    "Shoupan": { super: "ANSA太空食品", special: ["太空食品", "巧克力冰淇淋", "深黑巧克力冰淇淋"] },
+    "Silphir": { super: "白金糖葫蘆", special: ["金糖葫蘆", "幽靈布丁", "惡靈布丁"] },
+    "Sist": { super: "麝香甜瓜博孔奇尼起司", special: ["哈密瓜博孔奇尼起司", "溫熱的冰美式咖啡", "滾燙的冰美式咖啡"] },
+    "Snorky": { super: "一碗糯米飯", special: ["一碗米飯", "麵茶", "927穀麵茶"] },
+    "Speaki": { super: "肉桂口味健康糖球", special: ["肉桂口味糖球", "石榴果實", "石榴甜茶"] },
+    "Sylla": { super: "氫氣炸豬排", special: ["空氣炸豬排", "蜂蜜罐", "甜甜蜂蜜罐"] },
+    "Taida": { super: "滾燙的冰美式咖啡", special: ["溫熱的冰美式咖啡", "金糖葫蘆", "白金糖葫蘆"] },
+    "Tig": {super: "烤海賊漫畫肉", special: ["烤漫畫肉", "祕密葡萄汁", "一級祕密葡萄汁"]},
+	"Ui": { super: "夏威夷海藻蓋飯", special: ["海藻沙拉", "烤漫畫肉", "烤海賊漫畫肉"] },
+    "Velvet": { super: "兩口草生菜包", special: ["一口草生菜包", "椰子松針粥", "椰子萬能青汁"] },
+    "Veroo": "無",
+    "Vivi": { super: "滾燙的冰美式咖啡", special: ["溫熱的冰美式咖啡", "肉桂口味糖球", "肉桂口味健康糖球"] },
+    "xXionx": { super: "深黑巧克力冰淇淋", special: ["巧克力冰淇淋", "祕密葡萄汁", "一級祕密葡萄汁"] },
+    "Yomi": { super: "燉南瓜", special: ["南瓜濃湯", "一口草生菜包", "兩口草生菜包"] },
+    "Yumimi": { super: "兩口草生菜包", special: ["一口草生菜包", "太空食品", "ANSA太空食品"] }
+};
+// ------------------------------------------
+// 冒險協會
+// ------------------------------------------
+const REWARD_MAP = {
+    "Alice": ["細膩的鐵粉", "尖銳的針", "閃亮的玻璃"],
+    "Allet": ["軟棉棉的樹木", "堅硬的石頭", "牛肉"],
+    "Amelia": ["眨眼墨水", "可彎曲金屬", "濕潤的紙漿"],
+    "Ashur": ["魚", "巧克力", "槭樹樹液"],
+    "Aya": ["水果", "魚", "樹葉"],
+	"Barie": ["家禽肉", "寶石碎片", "尖銳的針"],
+	"Barong": ["樹葉", "堅硬的黑色果實", "寶石碎片"],
+    "Belita": ["起司", "寶石碎片", "麵粉"],
+    "Beni": ["閃亮的玻璃", "寶石碎片", "魚"],
+    "BigWood": ["眨眼墨水", "米", "濕潤的紙漿"],
+    "Blanchet": ["濕潤的紙漿", "雞蛋", "回收塑膠"],
+    "Butter": ["堅硬的石頭", "麵粉", "細膩的鐵粉"],
+    "Canna": ["雞蛋", "起司", "睡眠眼罩"],
+    "Carren": ["各式穀物", "堅硬的石頭", "雞蛋"],
+    "Chloe": ["麵粉", "柔軟的棉花", "巧克力"],
+    "Chopi": ["巧克力", "軟棉棉的樹木", "巧克力米"],
+    "Cuee": [],
+	"Daya": ["回收塑膠", "家禽肉", "彩虹花汁"],
+    "Diana": ["家禽肉", "起司", "尖銳的針"],
+    "Ed": ["槭樹樹液", "濕潤的紙漿", "蜂蜜"],
+    "Elena": ["尖銳的針", "家禽肉", "皮革樹葉"],
+    "Epica": ["牛奶", "巧克力米", "眨眼墨水"],
+    "Erpin": ["堅硬的碎布", "樹葉", "糖"],
+    "Espi": ["皮革樹葉", "軟棉棉的樹木", "可彎曲金屬"],
+    "Festa": ["巧克力", "堅硬的石頭", "巧克力米"],
+    "Fricle": ["柔軟的棉花", "牛肉", "堅硬的碎布"],
+    "Gabia": ["米", "牛肉", "百老師萬能醬料"],
+    "Haley": ["細膩的鐵粉", "軟棉棉的樹木", "閃亮的玻璃"],
+    "Hilde": ["可彎曲金屬", "魚", "軟棉棉的樹木"],
+    "Ifrit": ["銅湯匙", "蔬菜", "堅硬的黑色果實"],
+    "Jade": ["堅硬的黑色果實", "各式穀物", "水果"],
+	"Joanne": ["回收塑膠", "堅硬的黑色果實", "彩虹花汁"],
+    "Jubee": ["軟棉棉的樹木", "濕潤的紙漿", "牛肉"],
+    "Kidian": ["可彎曲金屬", "彩虹花汁", "軟棉棉的樹木"],
+    "Kommy": ["酥脆的金箔", "堅硬的黑色果實", "起司"],
+	"KommySwim": [],
+    "Kyarot": ["寶石碎片", "黏膩的黏土", "酥脆的金箔"],
+    "Lazy": ["堅硬的石頭", "雞蛋", "細膩的鐵粉"],
+    "Leets": ["酥脆的金箔", "細膩的鐵粉", "起司"],
+	"Lethe": [],
+    "Levi": ["堅硬的碎布", "水果", "糖"],
+    "MaestroMK2": ["牛肉", "尖銳的針", "銅湯匙"],
+    "Mago": ["堅硬的石頭", "百老師萬能醬料", "細膩的鐵粉"],
+    "Maison": [],
+    "Marie": ["軟棉棉的樹木", "百老師萬能醬料", "牛肉"],
+    "Mayo": ["軟棉棉的樹木", "蔬菜", "牛肉"],
+    "Meluna": ["堅硬的石頭", "魚", "細膩的鐵粉"],
+    "Momo": ["堅硬的石頭", "睡眠眼罩", "細膩的鐵粉"],
+    "Mynx": [],
+    "Naia": ["酥脆的金箔", "眨眼墨水", "蜂蜜"],
+    "Ner": ["細膩的鐵粉", "可彎曲金屬", "閃亮的玻璃"],
+    "Patula": [],
+    "Picora": ["皮革樹葉", "巧克力", "可彎曲金屬"],
+	"Pira": ["糖", "回收塑膠", "堅硬的石頭"],
+    "Posher": ["黏膩的黏土", "閃亮的玻璃", "柔軟的棉花"],
+    "RenewaAwaken": ["各式穀物", "閃亮的玻璃", "雞蛋"],
+    "Rim": ["黏膩的黏土", "軟棉棉的樹木", "柔軟的棉花"],
+    "Risty": ["銅湯匙", "柔軟的棉花", "堅硬的黑色果實"],
+    "Rohne": ["黏膩的黏土", "巧克力米", "柔軟的棉花"],
+	"Rollett": ["閃亮的玻璃", "堅硬的碎布", "魚"],
+    "Rude": ["巧克力米", "彩虹花汁", "米"],
+    "Rufo": ["細膩的鐵粉", "蜂蜜", "閃亮的玻璃"],
+    "Sari": ["彩虹花汁", "回收塑膠", "黏膩的黏土"],
+    "Selline": ["糖", "皮革樹葉", "堅硬的石頭"],
+    "Shady": ["黏膩的黏土", "槭樹樹液", "柔軟的棉花"],
+	"Sherum": ["銅湯匙", "牛肉", "軟棉棉的樹木",],
+    "Shoupan": ["濕潤的紙漿", "各式穀物", "回收塑膠", "睡眠眼罩", "堅硬的黑色果實"],
+    "Silphir": ["百老師萬能醬料", "牛奶"],
+    "Sist": ["睡眠眼罩", "水果", "家禽肉"],
+    "Snorky": ["回收塑膠", "百老師萬能醬料", "彩虹花汁"],
+    "Speaki": ["回收塑膠", "牛奶", "彩虹花汁"],
+    "Sylla": ["軟棉棉的樹木", "蜂蜜", "牛肉"],
+    "Taida": ["蜂蜜", "糖", "軟棉棉的樹木", "睡眠眼罩", "蔬菜"],
+    "Tig": ["彩虹花汁", "各式穀物", "黏膩的黏土"],
+	"Ui": ["蔬菜", "麵粉", "各式穀物"],
+    "Velvet": ["堅硬的石頭", "眨眼墨水", "細膩的鐵粉"],
+    "Veroo": [],
+    "Vivi": ["濕潤的紙漿", "蔬菜", "回收塑膠"],
+    "xXionx": ["樹葉", "雞蛋", "寶石碎片"],
+    "Yomi": ["睡眠眼罩", "酥脆的金箔", "家禽肉"],
+    "Yumimi": ["麵粉", "銅湯匙", "巧克力"]
+};
+
+const WORK_URL = {
+    "Alice": "https://youtu.be/JY58FJxViTA",
+    "Allet": "https://youtu.be/ktkGgvXn-ME",
+    "Amelia": "https://youtu.be/MpZsvsuNmqc",
+    "Ashur": "https://youtu.be/0DhptkL3r1c",
+    "Aya": "https://youtu.be/2VlyNDZ28Mc",
+	"Barie": "https://youtu.be/jHNKv0iYXCs",
+    "Barong": "https://youtu.be/riScYcKvJvE",
+    "Belita": "https://youtu.be/sctRJMHdx6w",
+    "Beni": "https://youtu.be/rqTyjkBImFg",
+    "BigWood": "https://youtu.be/tU7HeiZoPkc",
+    "Blanchet": "https://youtu.be/iTCr6Gd0ArY",
+    "Butter": "https://youtu.be/oapwQXy4f1g",
+    "Canna": "https://youtu.be/vfvP9HGL2Fs",
+    "Carren": "https://youtu.be/79y4iBON3WY",
+    "Chloe": "https://youtu.be/2bqGr1UlJ_w",
+    "Chopi": "https://youtu.be/3pcHOeayiuI",
+	"Daya": "https://youtu.be/B-oalCgpSOs",
+    "Diana": "https://youtu.be/btX9W6V8PrU",
+    "Ed": "https://youtu.be/HFj4FtrvjqI",
+    "Elena": "https://youtu.be/eyxQQ3LSL1A",
+    "Epica": "https://youtu.be/6dxpDLKWzJI",
+    "Erpin": "https://youtu.be/rgbOtvbLdB0",
+    "Espi": "https://youtu.be/hTyUw7ZfI28",
+    "Festa": "https://youtu.be/kdbGcSzzyqI",
+    "Fricle": "https://youtu.be/6dxpDLKWzJI",
+    "Gabia": "https://youtu.be/cu80mqXBiew",
+    "Haley": "https://youtu.be/u6mmhB-zY3Y",
+    "Hilde": "https://youtu.be/rLfss0AWKtA",
+    "Ifrit": "https://youtu.be/ANWq6bxvkBo",
+    "Jade": "https://youtu.be/9zc4o0jcU8g",
+    "Jubee": "https://youtu.be/GQNFRFORdB0",
+	"Joanne": "",
+    "Kidian": "https://youtu.be/PcT_8VB1NrQ",
+    "Kommy": "https://youtu.be/2qZbcsuXL9U",
+	"KommySwim": "",
+    "Kyarot": "https://youtu.be/jDl4YWvYp-U",
+    "Lazy": "https://youtu.be/83peJu7yMEU",
+    "Leets": "https://youtu.be/5FtyGwPgt1Q",
+	"Lethe": "",
+    "Levi": "https://youtu.be/79nJ7h2hnc0",
+    "MaestroMK2": "https://youtu.be/IDJxotfwcx8",
+    "Mago": "https://youtu.be/S8HF0T-C8gc",
+    "Marie": "https://youtu.be/WhHGJSMyc1c",
+    "Mayo": "https://youtu.be/7InY25WhPd0",
+    "Meluna": "https://youtu.be/-ea50ioN8Gw",
+    "Momo": "https://youtu.be/0sjEHtYM_Cg",
+    "Naia": "https://youtu.be/CVmOFWk-Mkk",
+    "Ner": "https://youtu.be/yDeHfWHSUt8",
+    "Picora": "https://youtu.be/rd9O8naEQZ8",
+	"Pira": "https://youtu.be/HoF-S_d-7fI",
+    "Posher": "https://youtu.be/f00ZKS1IE-g",
+    "RenewaAwaken": "https://youtu.be/AXm1PhUQmjE",
+    "Rim": "https://youtu.be/0dde_RrWSGE",
+    "Risty": "https://youtu.be/aATZTJcM5q4",
+    "Rohne": "https://youtu.be/lsuZ4u_yR3c",
+	"Rollett": "https://youtu.be/wa7nDhnh9O0",
+    "Rude": "https://youtu.be/mh-UMouGGcs",
+    "Rufo": "https://youtu.be/LVocNQWYRuM",
+    "Sari": "https://youtu.be/mRU5nRoA3g0",
+    "Selline": "https://youtu.be/Yn53p8bsBb0",
+    "Shady": "https://youtu.be/1siB-6t2eL0",
+	"Sherum": "https://youtu.be/gJ6ljB5Khh0",
+    "Shoupan": "https://youtu.be/su0DhWANaeg",
+    "Silphir": "https://youtu.be/dPklHe2kZhs",
+    "Sist": "https://youtu.be/j3QVWfLrJUo",
+    "Snorky": "https://youtu.be/A6kjEYeavNM",
+    "Speaki": "https://youtu.be/N1tmPLmZoXQ",
+    "Sylla": "https://youtu.be/cSu06V-8GKY",
+    "Taida": "https://youtu.be/ZAJztHqI7uA",
+    "Tig": "https://youtu.be/Xb3_b3sjcm0",
+	"Ui": "https://youtu.be/sen1414Z3Rw",
+    "Velvet": "https://youtu.be/uiyfp0lMa7E",
+    "Vivi": "https://youtu.be/Bi_Hi3PfTjU",
+    "xXionx": "https://youtu.be/1VLD414k_kk",
+    "Yomi": "https://youtu.be/nBco3aJoSUw",
+    "Yumimi": "https://youtu.be/uC9ohB_CqF8"
+};
+
+// ------------------------------------------
+// 圖標與圖片對應表
+// ------------------------------------------
+const LOBBY_BACKGROUNDS = [
+    "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/lobby%2FLobby-100010-1.webp?alt=media&token=91171715-07aa-4c3d-aee6-0daf8099536c", "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/lobby%2FLobby-10002-1.webp?alt=media&token=e44c4eba-f9b0-4e1e-bd2c-bbcd5891be84", "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/lobby%2FLobby-10003-1.webp?alt=media&token=11071be4-520c-4bd4-ae9d-10aae72e6dd1",
+    "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/lobby%2FLobby-10007-1.webp?alt=media&token=d5e8d59e-8dc0-41af-a18b-ed5e62a7cff2", "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/lobby%2FLobby-10008-1.webp?alt=media&token=daba6fe4-8708-4767-896f-e40867e86a2f", "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/lobby%2FLobby-10009-1.webp?alt=media&token=153f26aa-b336-4301-bffa-130172c0af75", "https://firebasestorage.googleapis.com/v0/b/crayon-note.firebasestorage.app/o/lobby%2FLobby_10001_1.webp?alt=media&token=97f5b368-2818-46f7-a957-6af54f9e3d33"
+];
+const SPINE_BACKGROUNDS = {
+"龍族":"https://i.postimg.cc/FdJxQDZ7/Gacha-Pattern-Bg-Dragon.png",
+"精靈":"https://i.postimg.cc/xJbPStRN/Gacha-Pattern-Bg-Elf.png",
+"妖精":"https://i.postimg.cc/G8sj1qQ4/Gacha-Pattern-Bg-Fairy.png",
+"獸人":"https://i.postimg.cc/S2zGpDrz/Gacha-Pattern-Bg-Furry.png",
+"幽靈":"https://i.postimg.cc/ygSTzvP0/Gacha-Pattern-Bg-Ghost.png",
+"???":"https://i.postimg.cc/kR3vMK1D/Gacha-Pattern-Bg-Mystic.png",
+"魔靈":"https://i.postimg.cc/BP9BZHYb/Gacha-Pattern-Bg-Spirit.png",
+"魔女":"https://i.postimg.cc/zHZFDKtL/Gacha-Pattern-Bg-Witch.png",
+"NPC":"https://i.postimg.cc/q703FkG3/Gacha-Characterpattern.png"
+}; 
+
+const FOOD_ICON = {
+    "草莓蛋糕": { ja: "イチゴケーキ", url: "https://i.postimg.cc/ZWC1KYw9/Icon-Food-1.png" },
+    "巧克力冰淇淋": { ja: "チョコアイス", url: "https://i.postimg.cc/TKpZY2tK/Icon-Food-2.png" },
+    "焦糖布丁": { ja: "クレームブリュレ", url: "https://i.postimg.cc/rDKvFyfK/Icon-Food-3.png" },
+    "焦糖爆米花": { ja: "キャラメルポップコーン", url: "https://i.postimg.cc/TKpZY2tP/Icon-Food-4.png" },
+    "獸糧罐頭": { ja: "アニマル缶", url: "https://i.postimg.cc/mPt02Zmy/Icon-Food-5.pngg" },
+    "扭結麵包": { ja: "プレッツェル", url: "https://i.postimg.cc/rD37d6HR/Icon-Food-6.png" },
+    "蜂蜜大蒜鮭魚": { ja: "ハニーガーリックサーモン", url: "https://i.postimg.cc/qNSWtfF3/Icon-Food-7.png" },
+    "烤漫畫肉": { ja: "マンガ肉焼き", url: "https://i.postimg.cc/jDmBWV1f/Icon-Food-8.png" },
+    "溫熱的冰美式咖啡": { ja: "ホットアイスアメリカーノ", url: "https://i.postimg.cc/nXgNs8W7/Icon-Food-9.png" },
+    "檸檬茶": { ja: "レモンティー", url: "https://i.postimg.cc/879xF8YR/Icon-Food-10.png" },
+    "祕密葡萄汁": { ja: "秘密のブドウジュース", url: "https://i.postimg.cc/CRX9Zy2j/Icon-Food-11.png" },
+    "太空食品": { ja: "宇宙食", url: "https://i.postimg.cc/879xF8Yb/Icon-Food-12.png" },
+    "哈密瓜博孔奇尼起司": { ja: "メロンボッコンチーニ", url: "https://i.postimg.cc/jDmBWV1k/Icon-Food-13.png" },
+    "一口草生菜包": { ja: "一口草-野菜包み", url: "https://i.postimg.cc/bZW4GX5m/Icon-Food-14.png" },
+    "蜂蜜罐": { ja: "ハニーポット", url: "https://i.postimg.cc/BjkR8WzN/Icon-Food-15.png" },
+    "海藻沙拉": { ja: "海藻サラダ", url: "https://i.postimg.cc/hX6NJFYZ/Icon-Food-16.png" },
+    "南瓜濃湯": { ja: "かぼちゃ粥", url: "https://i.postimg.cc/dhpg7Mff/Icon-Food-17.png" },
+    "肉桂口味糖球": { ja: "シナモン味の飴玉", url: "https://i.postimg.cc/yDt2JqGt/Icon-Food-18.png" },
+    "幽靈布丁": { ja: "幽霊プリン", url: "https://i.postimg.cc/WdCxDRyx/Icon-Food-19.pngg" },
+    "空氣炸豬排": { ja: "空気カツレツ", url: "https://i.postimg.cc/3kVzyMqs/Icon-Food-20.png" },
+    "寶石塔": { ja: "宝石タルト", url: "https://i.postimg.cc/XZ5mdHMH/Icon-Food-21.png" },
+    "石榴果實": { ja: "ガーネットの実", url: "https://i.postimg.cc/HrRFJGK1/Icon-Food-22.png" },
+    "龍族糖果": { ja: "竜族キャンティ", url: "https://i.postimg.cc/t16wWS0M/Icon-Food-23.png" },
+    "金糖葫蘆": { ja: "金のフルーツ飴", url: "https://i.postimg.cc/nsmgBR8S/Icon-Food-24.png" },
+    "椰子松針粥": { ja: "ココナッツ松葉粥", url: "https://i.postimg.cc/kVSzK1rz/Icon-Food-25.png" },
+    "麵茶": { ja: "穀物ドリンク", url: "https://i.postimg.cc/PLD9Y3Gc/Icon-Food-26.png" },
+    "薄荷巧克力冰淇淋": { ja: "チョコミントアイス", url: "https://i.postimg.cc/mc9JCXx0/Icon-Food-27.png" },
+    "UFC炸胡蘿蔔": { ja: "UFC ニンジンフライ", url: "https://i.postimg.cc/7Czd0svj/Icon-Food-28.png" },
+    "棉花糖馬卡龍": { ja: "マシュマロマカロン", url: "https://i.postimg.cc/d7CprHPc/Icon-Food-29.png" },
+    "一碗米飯": { ja: "ご飯", url: "https://i.postimg.cc/hJm6TyWB/Icon-Food-30.png" },
+    "美味維他命C": { ja: "もぐもぐビタミンC", url: "https://i.postimg.cc/hJm6TyWg/Icon-Food-31.png" },
+    "松糕": { ja: "笹団子", url: "https://i.postimg.cc/Z9N2p7th/Icon-Food-32.png" },
+    "酸甜維他命F": { ja: "スパビタF", url: "https://i.postimg.cc/SX93CTFk/Icon-Food-33.png" },
+    "聖誕樹幹蛋糕": { ja: "ブッシュドノエル", url: "https://i.postimg.cc/7Czd0s8q/Icon-Food-34.png" },
+    "杏仁金沙巧克力": { ja: "アーモンドロシェ", url: "https://i.postimg.cc/TybFg7MR/Icon-Food-35.png" },
+    "年糕湯": { ja: "餅スープ", url: "https://i.postimg.cc/zLh6KtZG/Icon-Food-36.png" },
+    "艾心堂綜合糖": { ja: "エーカリードロップ", url: "https://i.postimg.cc/kVSzK13G/Icon-Food-37.png" },
+    "草莓切片蛋糕": { ja: "あーんイチゴケーキ", url: "https://i.postimg.cc/zLh6KtZ3/Icon-Food-38.png" },
+    "ANSA太空食品": { ja: "ANSA宇宙食", url: "https://i.postimg.cc/nsmgBRbC/Icon-Food-39.png" },
+    "甜甜蜂蜜罐": { ja: "ハチミツツボ", url: "https://i.postimg.cc/Z9N2p7tW/Icon-Food-40.png" },
+    "龍族氣死你糖果": { ja: "逆鱗なでなでキャンディ", url: "https://i.postimg.cc/Z9N2p7tB/Icon-Food-41.png" },
+    "UFC炸蔬菜": { ja: "UFC野菜フライ", url: "https://i.postimg.cc/wydPVXgq/Icon-Food-42.png" },
+    "追劇焦糖爆米花": { ja: "エルフキャラメルポップコーン", url: "https://i.postimg.cc/8Fv9MKQF/Icon-Food-43.png" },
+    "肉桂口味健康糖球": { ja: "シナモンの健康アメ玉", url: "https://i.postimg.cc/1nZTHGs9/Icon-Food-44.png" },
+    "低糖棉花糖馬卡龍": { ja: "低糖マシュマロマカロン", url: "https://i.postimg.cc/wydPVXgv/Icon-Food-45.png" },
+    "高級獸糧罐頭": { ja: "高級アニマル缶", url: "https://i.postimg.cc/MM84D7qX/Icon-Food-46.png" },
+    "愛心扭結麵包": { ja: "ハートプレッツェル", url: "https://i.postimg.cc/HcCK2wdV/Icon-Food-47.png" },
+    "有機檸檬茶": { ja: "オーガニックレモンティー", url: "https://i.postimg.cc/R6z8R74h/Icon-Food-48.png" },
+    "兩口草生菜包": { ja: "二口草野菜包み", url: "https://i.postimg.cc/ZBhgc84v/Icon-Food-49.png" },
+    "氫氣炸豬排": { ja: "水素カツレツ", url: "https://i.postimg.cc/47TM56s7/Icon-Food-50.png" },
+    "椰子萬能青汁": { ja: "ココナッツ万能野菜ジュース", url: "https://i.postimg.cc/cgNjmR08/Icon-Food-51.png" },
+    "軟軟焦糖布丁": { ja: "ソフトクレームフリコレ", url: "https://i.postimg.cc/sQR8cYsh/Icon-Food-52.png" },
+    "白金糖葫蘆": { ja: "白銀フルーツ飴", url: "https://i.postimg.cc/1nZTHGsp/Icon-Food-53.png" },
+    "皇家蜂蜜大蒜鮭魚": { ja: "ロイヤルハニーガーリックサーモン", url: "https://i.postimg.cc/R6z8R74f/Icon-Food-54.png" },
+    "滾燙的冰美式咖啡": { ja: "灼熱アイスアメリカーノ", url: "https://i.postimg.cc/wydPVXgF/Icon-Food-55.png" },
+    "夏威夷海藻蓋飯": { ja: "海藻ボキ", url: "https://i.postimg.cc/34H6BXYj/Icon-Food-56.png" },
+    "燉南瓜": { ja: "ガほちゃシチュー", url: "https://i.postimg.cc/34H6BXYZ/Icon-Food-57.png" },
+    "927穀麵茶": { ja: "927粒穀物ドリンク", url: "https://i.postimg.cc/r0LbJ1MC/Icon-Food-58.png" },
+    "石榴甜茶": { ja: "ザクロフルーツパンチ", url: "https://i.postimg.cc/ygz5Pmsf/Icon-Food-59.png" },
+    "一級祕密葡萄汁": { ja: "一級品秘密のフトウシュース", url: "https://i.postimg.cc/62NS0rtM/Icon-Food-60.png" },
+    "寶石蛋塔": { ja: "秘宝タルト", url: "https://i.postimg.cc/ZBFQDW56/Icon-Food-61.png" },
+    "一碗糯米飯": { ja: "もち米ご飯", url: "https://i.postimg.cc/Q9rPbQh4/Icon-Food-62.png" },
+    "麝香甜瓜博孔奇尼起司": { ja: "マスクメロンボッコンチーニ", url: "https://i.postimg.cc/phYS1mLf/Icon-Food-63.png" },
+    "惡靈布丁": { ja: "悪霊プリン", url: "https://i.postimg.cc/MMbLrnpy/Icon-Food-64.png" },
+    "深黑巧克力冰淇淋": { ja: "ディープダーワチョコアイス", url: "https://i.postimg.cc/VrBhHJk9/Icon-Food-65.png" },
+    "烤海賊漫畫肉": { ja: "海賊マンガ肉焼き", url: "https://i.postimg.cc/R6QYbWZL/Icon-Food-66.png" },
+    "三重薄荷冰淇淋": { ja: "トリブルチョコスミントアイス", url: "https://i.postimg.cc/TLqsHK3Q/Icon-Food-67.png" },
     
-    // 若過濾後為空，把原始字串當作備用 (預防原本就只有單一字串且無特殊符號)
-    if (validPersonalities.length === 0 && typeof PERSONALITY_BACKGROUNDS !== 'undefined' && PERSONALITY_BACKGROUNDS[personalityData]) {
-        validPersonalities = [personalityData];
-    }
-
-    // 設定 CSS 動畫效果讓背景切換更柔和 (部分瀏覽器支援背景圖漸變)
-    bgDiv.style.transition = "background-image 1.5s ease-in-out";
-
-    // 負責組合與套用背景的內部函式
-    const applyBg = (currentP) => {
-        let bgImages = [];
-        // 先放種族圖 (在上層)
-        if (raceName && typeof CHAR_BACKGROUNDS !== 'undefined' && CHAR_BACKGROUNDS[raceName]) {
-            bgImages.push(`url('${CHAR_BACKGROUNDS[raceName]}')`);
-        }
-        // 再放性格圖 (在下層打底)
-        if (currentP && typeof PERSONALITY_BACKGROUNDS !== 'undefined' && PERSONALITY_BACKGROUNDS[currentP]) {
-            bgImages.push(`url('${PERSONALITY_BACKGROUNDS[currentP]}')`);
-        }
-
-        if (bgImages.length > 0) {
-            bgDiv.style.backgroundImage = bgImages.join(', ');
-        } else {
-            bgDiv.style.backgroundImage = "none";
-        }
-    };
-
-    // 4. 根據性格數量決定要不要輪播
-    if (validPersonalities.length > 1) {
-        let currentIndex = 0;
-        applyBg(validPersonalities[currentIndex]); // 初始化第一張性格圖
-        
-        // 設定計時器，每 4 秒切換一次性格背景圖
-        window.bgSwapInterval = setInterval(() => {
-            currentIndex = (currentIndex + 1) % validPersonalities.length;
-            applyBg(validPersonalities[currentIndex]);
-        }, 4000); 
-    } else {
-        // 單一性格或無性格，直接套用不輪播
-        applyBg(validPersonalities.length > 0 ? validPersonalities[0] : personalityData);
-    }
+    // 給 1 星坨坨使用的通用餐牌
+    "餐牌": { ja: "メニュー", url: "https://i.postimg.cc/YGfPyvCb/My-Home-Restaurant-Menu-Icon.png" }
 };
-            
-            let currentTargetName = "";
-            let currentCharData = null;
-            let globalSpinePlayer = null;
-            let globalIdleTimer = null;
-            
-            let currentTab = 'thought';
-            
-            function switchPresentTab(tab) {
-                currentTab = tab;
-                const btnLetter = document.getElementById('btnLetter');
-                const btnThought = document.getElementById('btnThought');
-                const presentText = document.getElementById('presentText');
-                const presentTextWrapper = document.getElementById('presentTextWrapper');
-                
-                const spineKey = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[currentTargetName] : currentTargetName; 
-                
-                const inactiveClass = "flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300";
-            
-                presentTextWrapper.style.backgroundImage = 'none';
-                presentText.className = "text-sm md:text-base leading-relaxed w-full drop-shadow-md text-gray-700 dark:text-gray-300";
-            
-                const langDataL = (typeof LETTER_MAP !== 'undefined' && LETTER_MAP[window.currentLang]) ? LETTER_MAP[window.currentLang] : ((typeof LETTER_MAP !== 'undefined') ? LETTER_MAP["zh-TW"] : {});
-                const langDataT = (typeof THOUGHT_MAP !== 'undefined' && THOUGHT_MAP[window.currentLang]) ? THOUGHT_MAP[window.currentLang] : ((typeof THOUGHT_MAP !== 'undefined') ? THOUGHT_MAP["zh-TW"] : {});
-                
-                let defaultNoLetter = getI18n('no_letter_hint');
-                if(defaultNoLetter === 'no_letter_hint') defaultNoLetter = '（這隻坨坨好像還沒寫信給你呢...）';
-                let defaultNoThought = getI18n('no_thought_hint');
-                if(defaultNoThought === 'no_thought_hint') defaultNoThought = '（教主目前還沒寫下對這個珍藏品的感想呢...）';
-            
-                if (tab === 'letter') {
-                    btnLetter.className = "flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-rose-500 text-white shadow-md";
-                    btnThought.className = inactiveClass;
-                    presentText.innerHTML = (langDataL[spineKey] || defaultNoLetter).replace(/\n/g, '<br>');
-                } else {
-                    btnThought.className = "flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-amber-500 text-white shadow-md";
-                    btnLetter.className = inactiveClass;
-                    presentText.innerHTML = (langDataT[spineKey] || defaultNoThought).replace(/\n/g, '<br>');
-                }
-            }
-            
-            function loadSpineAnimation(costumeKey) {
-                function getEffectiveViewport(canvasRect, baseViewport) {
-                    const scale = Math.min(canvasRect.width / baseViewport.width, canvasRect.height / baseViewport.height);
-                    const effW = canvasRect.width / scale;
-                    const effH = canvasRect.height / scale;
-                    const effX = baseViewport.x - (effW - baseViewport.width) / 2;
-                    const effY = baseViewport.y - (effH - baseViewport.height) / 2;
-                    return { x: effX, y: effY, width: effW, height: effH };
-                }
-                
-                const avatarBox = document.getElementById('charAvatar');
-                const baseFolderKey = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[currentTargetName] : currentTargetName; 
-                
-                clearTimeout(globalIdleTimer);
-            
-                if (window.globalSpinePlayer) {
-                    window.globalSpinePlayer.dispose();
-                    window.globalSpinePlayer = null;
-                }
-                
-                avatarBox.innerHTML = '<div class="spine-player-loading-custom"></div>';
-            
-                window.globalSpinePlayer = new spine.SpinePlayer(avatarBox, {
-                    skelUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.skel.bytes`,
-                    atlasUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.atlas.txt`,
-                    animation: "Idle_1",     
-                    premultipliedAlpha: true,
-                    backgroundColor: "#00000000", 
-                    alpha: true,
-                    showControls: false,
-                    showLoading: false, 
-                    viewport: { x: -400, y: 0, width: 800, height: 1000 },
-            
-                    success: function (player) {
-                                                                                
-                            const loader = avatarBox.querySelector('.spine-player-loading-custom');
-                            if (loader) loader.remove();
-            
-                            window.myPlayer = player;
-            
-                            let activeFaceBone = null; 
-                            let initialBoneX = 0;
-                            let initialBoneY = 0;
-            
-                            const skins = player.skeleton.data.skins;
-                            if (skins && skins.length > 1) {
-                                const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default');
-                                if (targetSkin) {
-                                    player.skeleton.setSkinByName(targetSkin.name);
-                                    player.skeleton.setToSetupPose(); 
-                                    player.skeleton.updateWorldTransform(); 
-                                }
-                            }
-                            // 🌟 呼叫修復函數
-                            fixSpineMultiplyHole(player);
-                        
-                            const animations = player.skeleton.data.animations;
-                            if (animations && animations.length > 0) {
-                                const animNames = animations.map(a => a.name);
-                                const playList = animNames;
-            
-                                function startRandomAnimationLoop() {
-                                    clearTimeout(globalIdleTimer);
-                                    globalIdleTimer = setTimeout(playNextAnimation, 5000);
-                                }
-            
-                                function playNextAnimation() {
-                                    const targetAnims = playList.length > 0 ? playList : ['Idle_1'];
-                                    const randomIndex = Math.floor(Math.random() * targetAnims.length);
-                                    const nextAnim = targetAnims[randomIndex];
-                                    player.animationState.setAnimation(0, nextAnim, true); 
-                                    startRandomAnimationLoop();
-                                }
-            
-                                startRandomAnimationLoop();
-            
-                                const canvas = avatarBox.querySelector('canvas');
-                                if (canvas) {
-                                    canvas.style.touchAction = 'none';
-            
-                                    let currentZoom = 1.0;
-                                    const ZOOM_ANCHOR_Y = 600; 
-                                    const baseViewport = { x: -400, y: 0, width: 800, height: 1000 }; 
-                                    const pointers = {}; 
-                                    let initialPinchDistance = 0;
-                
-                                    let isDragging = false;
-                                    let startX = 0, startY = 0;
-                                    let lastMouseX = 0, lastMouseY = 0;
-                                    let dragDistance = 0;
-                                    
-                                    let hitZoneOnDown = null;
-                                    let activeInteractBone = null; 
-                                    let initialBoneWorldX = 0, initialBoneWorldY = 0; 
-                
-                                    let hasTriggeredRub = false; 
-                                    let tickleTimer = null; 
-            
-                                    // 🌟 修正 1：建立專屬變數儲存拉扯狀態，並劫持更新函數防止被 Spine 動畫覆蓋
-                                    player._customDragTargetX = null;
-                                    player._customDragTargetY = null;
-                                    player._bouncingBone = null;
-                                    player._bounceX = null;
-                                    player._bounceY = null;
-            
-                                    const origUpdateWorldTransform = player.skeleton.updateWorldTransform;
-                                    player.skeleton.updateWorldTransform = function () {
-                                        // 在 Spine 計算絕對世界座標前，強制寫入我們的自訂拉扯座標
-                                        if (activeInteractBone && player._customDragTargetX !== null) {
-                                            activeInteractBone.x = player._customDragTargetX;
-                                            activeInteractBone.y = player._customDragTargetY;
-                                        } else if (player._bouncingBone) {
-                                            player._bouncingBone.x = player._bounceX;
-                                            player._bouncingBone.y = player._bounceY;
-                                        }
-                                        origUpdateWorldTransform.call(this);
-                                    };
-            
-                                    canvas.addEventListener('wheel', function(event) {
-                                        event.preventDefault();
-                                        currentZoom = event.deltaY < 0 ? Math.min(currentZoom + 0.1, 4.0) : Math.max(currentZoom - 0.1, 0.5);
-                                        if (player.skeleton) {
-                                            player.skeleton.scaleX = currentZoom;
-                                            player.skeleton.scaleY = currentZoom;
-                                            player.skeleton.y = ZOOM_ANCHOR_Y * (1 - currentZoom);
-                                        }
-                                    }, { passive: false });
-            
-                                    canvas.addEventListener('dblclick', function() {
-                                        currentZoom = 1.0;
-                                        if (player.skeleton) {
-                                            player.skeleton.scaleX = 1.0;
-                                            player.skeleton.scaleY = 1.0;
-                                            player.skeleton.y = 0;
-                                            player.skeleton.x = 0;
-                                            player.skeleton.updateWorldTransform();
-                                        }
-                                    });
-            
-                                    function getHitZone(mouseX, mouseY) {
-                                        const rect = canvas.getBoundingClientRect();
-                                        let camX, camY, camW, camH;
-                                        const camera = player.camera || (player.sceneRenderer && player.sceneRenderer.camera);
-                                        if (camera) {
-                                            camW = camera.viewportWidth * camera.zoom;
-                                            camH = camera.viewportHeight * camera.zoom;
-                                            camX = camera.position.x - camW / 2;
-                                            camY = camera.position.y - camH / 2;
-                                        } else {
-                                            const effView = getEffectiveViewport(rect, baseViewport);
-                                            camX = effView.x; camY = effView.y; camW = effView.width; camH = effView.height;
-                                        }
-                                        
-                                        let clickedPart = null;
-                                        let minDistance = Infinity;
-                                        
-                                        const hitZones = [
-                                            { name: "臉頰", bones: ["Character_Ball_Move"], radius: 50 },
-                                            { name: "頭部", bones: ["Character_Pat"], radius: 50 },
-                                            { name: "身體", bones: ["Character_Tickle"], radius: 60 }
-                                        ];
-                                        
-                                        hitZones.forEach(zone => {
-                                            let targetBone = null;
-                                            for (let bName of zone.bones) { targetBone = player.skeleton.findBone(bName); if (targetBone) break; }
-                                            if (targetBone) {
-                                                const boneCanvasX = ((targetBone.worldX - camX) / camW) * rect.width;
-                                                const boneCanvasY = rect.height - ((targetBone.worldY - camY) / camH) * rect.height;
-                                                const distance = Math.hypot(mouseX - boneCanvasX, mouseY - boneCanvasY);
-                                                
-                                                let skeletonScale = player.skeleton ? Math.abs(player.skeleton.scaleX) : 1;
-                                                const scaledRadius = (zone.radius * skeletonScale) * (rect.width / camW);
-                                                
-                                                if (distance < scaledRadius && distance < minDistance) { 
-                                                    minDistance = distance; 
-                                                    clickedPart = { ...zone, bone: targetBone }; 
-                                                }
-                                            }
-                                        });
-                                        return clickedPart;
-                                    }
-                                    
-                                    canvas.addEventListener('pointerdown', (e) => {
-                                        pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
-                                        const pointerKeys = Object.keys(pointers);
-            
-                                        if (pointerKeys.length === 2) {
-                                            isDragging = false;
-                                            clearTimeout(tickleTimer); 
-                                            const p1 = pointers[pointerKeys[0]], p2 = pointers[pointerKeys[1]];
-                                            initialPinchDistance = Math.hypot(p1.x - p2.x, p1.y - p2.y);
-                                            return; 
-                                        }
-            
-                                        isDragging = true;
-                                        startX = lastMouseX = e.clientX;
-                                        startY = lastMouseY = e.clientY;
-                                        dragDistance = 0;
-                                        hasTriggeredRub = false; 
-                                        hitZoneOnDown = null;
-                                        activeInteractBone = null;
-                                        canvas.setPointerCapture(e.pointerId);
-            
-                                        const rect = canvas.getBoundingClientRect();
-                                        hitZoneOnDown = getHitZone(e.clientX - rect.left, e.clientY - rect.top);
-                                        
-                                        if (hitZoneOnDown && (hitZoneOnDown.name === "臉頰" || hitZoneOnDown.name === "頭部")) {
-                                            activeInteractBone = hitZoneOnDown.bone; 
-                                            initialBoneX = activeInteractBone.x; 
-                                            initialBoneY = activeInteractBone.y;
-                                            initialBoneWorldX = activeInteractBone.worldX; 
-                                            initialBoneWorldY = activeInteractBone.worldY; 
-                                        }
-                                    });
-            
-                                    canvas.addEventListener('pointermove', (e) => {
-                                        if (pointers[e.pointerId]) {
-                                            pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
-                                        }
-                                        const pointerKeys = Object.keys(pointers);
-                                        
-                                        if (pointerKeys.length === 2) {
-                                            e.preventDefault();
-                                            const p1 = pointers[pointerKeys[0]], p2 = pointers[pointerKeys[1]];
-                                            const currentDistance = Math.hypot(p1.x - p2.x, p1.y - p2.y);
-                                            const zoomChange = currentDistance / initialPinchDistance;
-                                            
-                                            currentZoom = Math.min(Math.max(currentZoom * zoomChange, 0.5), 4.0);
-                                            if (player.skeleton) {
-                                                player.skeleton.scaleX = currentZoom;
-                                                player.skeleton.scaleY = currentZoom;
-                                                player.skeleton.y = ZOOM_ANCHOR_Y * (1 - currentZoom);
-                                                player.skeleton.updateWorldTransform();
-                                            }
-                                            initialPinchDistance = currentDistance;
-                                            return;
-                                        }
-                                        
-                                        if (!isDragging || !player.skeleton) return;
-                                        const rect = canvas.getBoundingClientRect();
-                                        if (rect.width === 0) return;
-                                        
-                                        const dx = e.clientX - lastMouseX;
-                                        const dy = e.clientY - lastMouseY;
-                                        dragDistance += Math.hypot(dx, dy);
-                                        
-                                        if (dragDistance > 10 && hitZoneOnDown && !hasTriggeredRub) {
-                                            hasTriggeredRub = true;
-                                            clearTimeout(tickleTimer);
-                                            clearTimeout(globalIdleTimer); 
-                                            const animNames = player.skeleton.data.animations.map(a => a.name);
-                                            if (hitZoneOnDown.name === "臉頰" && animNames.includes("Touch_Idle")) player.animationState.setAnimation(0, "Touch_Idle", true);
-                                            else if (hitZoneOnDown.name === "頭部" && animNames.includes("Pat_Idle")) player.animationState.setAnimation(0, "Pat_Idle", true);
-                                            else if (hitZoneOnDown.name === "身體" && animNames.includes("Tickle_Idle_1")) {
-                                                player.animationState.setAnimation(0, "Tickle_Idle_1", true);
-                                                tickleTimer = setTimeout(() => { if (animNames.includes("Tickle_Idle_2")) player.animationState.setAnimation(0, "Tickle_Idle_2", true); }, 2000);
-                                            }
-                                        }
-                                        
-                                        let currentCamW = 800, currentCamH = 1000;
-                                        const camera = player.camera || (player.sceneRenderer && player.sceneRenderer.camera);
-                                        if (camera) {
-                                            currentCamW = camera.viewportWidth * camera.zoom;
-                                            currentCamH = camera.viewportHeight * camera.zoom;
-                                        } else {
-                                            const effView = getEffectiveViewport(rect, baseViewport);
-                                            currentCamW = effView.width; currentCamH = effView.height;
-                                        }
-            
-                                        if (hasTriggeredRub && hitZoneOnDown && activeInteractBone) {
-                                            const isCheek = hitZoneOnDown.name === "臉頰";
-                                            const spineScaleX = currentCamW / rect.width;
-                                            const spineScaleY = currentCamH / rect.height;
-                                            const stretchIntensity = isCheek ? 1.3 : 0.3; 
-                                            
-                                            let worldDx = (e.clientX - startX) * spineScaleX * stretchIntensity;
-                                            let worldDy = -(e.clientY - startY) * spineScaleY * stretchIntensity;
-                                            
-                                            // 🌟 修正 2：如果往反方向拉，給予很大阻力而不是直接歸零卡死，手感更滑順
-                                            if (isCheek && worldDx > 0) worldDx *= 0.1; 
-                                            
-                                            let targetWorld = { 
-                                                x: initialBoneWorldX + worldDx, 
-                                                y: initialBoneWorldY + worldDy 
-                                            };
-                                            if (activeInteractBone.parent) activeInteractBone.parent.worldToLocal(targetWorld);
-                                            
-                                            let localDx = targetWorld.x - initialBoneX;
-                                            let localDy = targetWorld.y - initialBoneY;
-                                            
-                                            let rawDistance = Math.hypot(localDx, localDy);
-                                            const MAX_RADIUS = isCheek ? 55 : 20; 
-                                            
-                                            if (rawDistance > 0) {
-                                                let elasticDist = MAX_RADIUS * (1 - Math.exp(-rawDistance / (MAX_RADIUS * 1.2)));
-                                                localDx = (localDx / rawDistance) * elasticDist;
-                                                localDy = (localDy / rawDistance) * elasticDist;
-                                            }
-                                            
-                                            // 🌟 修正 3：將計算好的座標寫入劫持變數中，交由 Spine 迴圈每幀死死咬住位置
-                                            player._customDragTargetX = initialBoneX + localDx;
-                                            player._customDragTargetY = initialBoneY + localDy;
-            
-                                        } else if (!hitZoneOnDown) {
-                                            player.skeleton.x += dx * (currentCamW / rect.width);
-                                            player.skeleton.y -= dy * (currentCamH / rect.height);
-                                            player.skeleton.updateWorldTransform(); 
-                                        }
-                                        
-                                        lastMouseX = e.clientX;
-                                        lastMouseY = e.clientY;
-                                    });
-            
-                                    const stopDrag = (e) => { 
-                                        delete pointers[e.pointerId];
-                                        if (Object.keys(pointers).length < 2) initialPinchDistance = 0;
-            
-                                        if (!isDragging) return;
-                                        isDragging = false; 
-                                        clearTimeout(tickleTimer);
-                                        clearTimeout(globalIdleTimer); 
-            
-                                        const animNames = player.skeleton.data.animations.map(a => a.name);
-            
-                                        if (activeInteractBone) {
-                                            let targetX = initialBoneX, targetY = initialBoneY;
-                                            
-                                            // 🌟 修正 4：將骨骼交接給回彈劫持變數，維持動畫流暢度
-                                            player._bouncingBone = activeInteractBone;
-                                            player._bounceX = player._customDragTargetX !== null ? player._customDragTargetX : initialBoneX;
-                                            player._bounceY = player._customDragTargetY !== null ? player._customDragTargetY : initialBoneY;
-                                            
-                                            activeInteractBone = null; 
-                                            player._customDragTargetX = null;
-                                            player._customDragTargetY = null;
-                                            
-                                            let velX = 0, velY = 0;
-                                            const tension = 0.20, friction = 0.85; // 優化阻力避免過度抖動
-                                            function applyBounce() {
-                                                if (!player._bouncingBone) return;
-                                                
-                                                let dx = targetX - player._bounceX; 
-                                                let dy = targetY - player._bounceY;
-                                                velX += dx * tension; velY += dy * tension;
-                                                velX *= friction; velY *= friction;
-                                                
-                                                player._bounceX += velX; 
-                                                player._bounceY += velY;
-                                                
-                                                if (Math.abs(dx) > 0.1 || Math.abs(velX) > 0.1 || Math.abs(dy) > 0.1 || Math.abs(velY) > 0.1) {
-                                                    requestAnimationFrame(applyBounce);
-                                                } else {
-                                                    player._bounceX = targetX; 
-                                                    player._bounceY = targetY;
-                                                    player._bouncingBone = null; // 結束回彈
-                                                }
-                                            }
-                                            applyBounce();
-                                        }
-            
-                                        if (hasTriggeredRub) {
-                                            if (hitZoneOnDown && hitZoneOnDown.name === "臉頰" && animNames.includes("Touch_End")) {
-                                                player.animationState.setAnimation(0, "Touch_End", false);
-                                                player.animationState.addAnimation(0, "Idle_1", true, 0);
-                                            } else if (hitZoneOnDown && hitZoneOnDown.name === "頭部" && animNames.includes("Pat_End")) {
-                                                player.animationState.setAnimation(0, "Pat_End", false);
-                                                player.animationState.addAnimation(0, "Idle_1", true, 0);
-                                            } else if (hitZoneOnDown && hitZoneOnDown.name === "身體" && animNames.includes("Tickle_End")) {
-                                                player.animationState.setAnimation(0, "Tickle_End", false);
-                                                player.animationState.addAnimation(0, "Idle_1", true, 0);
-                                            } else {
-                                                player.animationState.setAnimation(0, "Idle_1", true);
-                                            }
-                                            startRandomAnimationLoop();
-                                        } else if (hitZoneOnDown && dragDistance < 10) {
-                                            if ((hitZoneOnDown.name === "頭部" || hitZoneOnDown.name === "臉頰") && animNames.includes("Smash_End_1")) {
-                                                player.animationState.setAnimation(0, "Smash_End_1", false);
-                                                if (animNames.includes("Smash_End_2")) {
-                                                    player.animationState.addAnimation(0, "Smash_End_2", false, 0);
-                                                }
-                                                player.animationState.addAnimation(0, "Idle_1", true, 0);
-                                            }
-                                            startRandomAnimationLoop();
-                                        } else {
-                                            startRandomAnimationLoop();
-                                        }
-                                    };
-            
-                                    canvas.addEventListener('pointerup', stopDrag);
-                                    canvas.addEventListener('pointercancel', stopDrag);
-                                    // 🌟 修正 5：移除 pointerout，既然有 setPointerCapture，讓滑鼠即使出界也不會突然鬆手斷掉
-                                }
-                            }
-                        },
-                    error: function (player, reason) {
-                        console.error("❌ Spine Load Error:", reason);
-                        const imgUrl = typeof IMAGE_MAP !== 'undefined' ? IMAGE_MAP[`avatar_${currentCharData.name}`] : '';
-                        avatarBox.innerHTML = imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-cover">` : currentCharData.name.charAt(0);
-                    }
-                });
-            }
-            
-            function renderCostumeButtons(charName) {
-                const container = document.getElementById('costumeButtonsContainer');
-                const costumes = typeof COSTUME_MAP !== 'undefined' ? COSTUME_MAP[charName] : [];
-                
-                if (!costumes || costumes.length <= 1) {
-                    container.classList.add('hidden');
-                    return;
-                }
-            
-                container.classList.remove('hidden');
-                let html = '';
-                costumes.forEach((costumeKey, idx) => {
-                    let displayName = idx === 0 ? t("costume_default") : `${t("costume_prefix")}${idx}`;
-                    if (displayName === "costume_default") displayName = "預設";
-                    if (displayName.includes("costume_prefix")) displayName = `服裝${idx}`;
-            
-                    let activeStyle = idx === 0 ? 'bg-amber-500 text-white border-amber-600 shadow-sm' : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-slate-600 hover:bg-amber-100 dark:hover:bg-slate-600';
-                    
-                    html += `<button onclick="changeCostume('${costumeKey}', this)" class="costume-btn px-4 py-1.5 text-xs font-bold rounded-lg border ${activeStyle}">${displayName}</button>`;
-                });
-                container.innerHTML = html;
-            }
-            
-            function changeCostume(costumeKey, btnElement) {
-                document.querySelectorAll('.costume-btn').forEach(btn => {
-                    btn.classList.remove('bg-amber-500', 'text-white', 'border-amber-600', 'shadow-sm');
-                    btn.classList.add('bg-white', 'dark:bg-slate-700', 'text-gray-700', 'dark:text-gray-200', 'border-gray-300', 'dark:border-slate-600', 'hover:bg-amber-100', 'dark:hover:bg-slate-600');
-                });
-                btnElement.classList.remove('bg-white', 'dark:bg-slate-700', 'text-gray-700', 'dark:text-gray-200', 'border-gray-300', 'dark:border-slate-600', 'hover:bg-amber-100', 'dark:hover:bg-slate-600');
-                btnElement.classList.add('bg-amber-500', 'text-white', 'border-amber-600', 'shadow-sm');
-            
-                loadSpineAnimation(costumeKey);
-            }
-            
-            function renderCollectibles(charName) {
-                const lang = window.currentLang || 'zh-TW';
-                const spineKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
-            
-                if (typeof PRESENT_MAP !== 'undefined' && PRESENT_MAP[spineKey]) {
-                    const presentData = PRESENT_MAP[spineKey];
-                    const presentNameBox = document.getElementById('presentName');
-            
-                    if (presentNameBox) {
-                        if (typeof presentData.name === 'object') {
-                            presentNameBox.innerText = presentData.name[lang] || presentData.name['zh-TW'] || presentData.name['zh'] || "未知珍藏品";
-                        } else {
-                            presentNameBox.innerText = presentData.name;
-                        }
-                    }
-                }
-            }
-            
-            window.skillSpinePlayers = [];
-            
-            function renderSkills(charName) {
-                const skillsContainer = document.getElementById('skillsContainer');
-                
-                if (typeof characterSkills === 'undefined') {
-                    skillsContainer.innerHTML = "❌ 找不到技能資料，請確認檔案已載入";
-                    return;
-                }
-            
-                const charBaseData = characterSkills.find(s => s.name.trim() === charName);
-            
-                if (!charBaseData) {
-                    skillsContainer.innerHTML = "找不到此坨坨的技能資料 (名稱可能不符)";
-                    return;
-                }
-                
-                if (charBaseData) {
-                    const charSkillData = charBaseData.skills[window.currentLang] || charBaseData.skills["zh-TW"];
-            
-                    if (charSkillData) {
-                        const makeStatChips = (statsArray) => {
-                            if (!statsArray || statsArray.length === 0) return '';
-                            let processedStats = [];
-            
-                            statsArray.forEach(stat => {
-                                if (typeof stat === 'string') {
-                                    processedStats.push(stat.trim());
-                                } else {
-                                    processedStats.push(stat);
-                                }
-                            });
-            
-                            processedStats = processedStats.filter(Boolean);
-            
-                            if (processedStats.length === 0) return '';
-            
-                            return `<div class="flex flex-wrap gap-1.5 mt-2 relative z-10">` + 
-                                processedStats.map(stat => `<span class="px-2 py-0.5 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 text-[11px] font-bold rounded-md shadow-sm">${stat}</span>`).join('') + 
-                                `</div>`;
-                        };
-            
-                        const renderUnifiedSkill = (skillObj) => {
-                            if (!skillObj || skillObj === "無") return "";
-                            if (typeof skillObj === 'string') {
-                                let desc = skillObj;
-                                let stats = [];
-                                const bracketMatches = skillObj.match(/\[(.*?)\]/g);
-                                if (bracketMatches) {
-                                    bracketMatches.forEach(match => {
-                                        stats.push(match.replace(/[\[\]]/g, '').trim());
-                                        desc = desc.replace(match, '').trim();
-                                    });
-                                } else if (skillObj.includes('|')) {
-                                    const parts = skillObj.split('|');
-                                    desc = parts[0].trim();
-                                    stats = parts.length > 1 ? parts[1].split(/[,、，]/).map(s => s.trim()).filter(Boolean) : [];
-                                }
-                                return `<p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap relative z-10">${desc}</p>${makeStatChips(stats)}`;
-                            }
-                            return `<p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap relative z-10">${skillObj.desc || ''}</p>${makeStatChips(skillObj.stats)}`;
-                        };
-            
-                        const getSkillIconHtml = (iconSrc, borderClasses, fallbackIcon, extraStyle = "") => {
-                            if (!iconSrc) return `<span>${fallbackIcon}</span>`;
-                            if (iconSrc.startsWith('http') || iconSrc.startsWith('./')) {
-                                return `<img src="${iconSrc}" class="w-10 h-10 rounded-lg shadow-sm border ${borderClasses}">`;
-                            } else {
-                                const styleAttr = extraStyle ? extraStyle : 'transform: translate(-50%, -50%) scale(0.625);';
-                                return `<div class="w-10 h-10 flex items-center justify-center rounded-lg shadow-sm border ${borderClasses} overflow-hidden bg-white dark:bg-slate-700 shrink-0 relative">
-                                            <div class="${iconSrc} absolute top-1/2 left-1/2" style="${styleAttr}"></div>
-                                        </div>`;
-                            }
-                        };
-            
-                        const spineKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
-                        
-                        const normalAttackIcon = charBaseData.attribute === "物理" ? "sprite-base sprite-common sprite-attack_physical" : "sprite-base sprite-common sprite-attack_magical";
-                        const normalSkillIcon = `sprite-Icon_NormalSkill_${spineKey}`;
-                        const passiveSkillIcon = `sprite-Icon_PassiveSkill_${spineKey}`;
-            
-                        // 1. 先取得原始性格資料
-                        let rawPersonality = currentCharData.personality;
-                        let pKey = "冷靜"; // 預設值
-                        // 2. 判斷是否有兩種性格 (即雙重性格) 邏輯
-                        if (Array.isArray(rawPersonality)) {
-                            // 如果資料格式是陣列 ["冷靜", "憂鬱"]
-                            if (rawPersonality.length > 1) {
-                                pKey = "雙面";
-                            } else if (rawPersonality.length === 1) {
-                                pKey = rawPersonality[0];
-                            }
-                        } else if (typeof rawPersonality === 'string') {
-                            // 如果資料格式是字串，檢查是否有分隔符號 (這裡涵蓋逗號、頓號、斜線、空白)
-                            if (rawPersonality.includes(',') || rawPersonality.includes('、') || rawPersonality.includes('/') || rawPersonality.trim().includes(' ')) {
-                                pKey = "雙面";
-                            } else {
-                                pKey = rawPersonality;
-                            }
-                        } else if (rawPersonality) {
-                            pKey = rawPersonality; // 其他預料外但有值的狀況
-                        }
-                        // 3. 對應圖片
-                        const personalityMap = {
-                            "冷靜": "ultimate_composed", "憂鬱": "ultimate_depressed", "天真": "ultimate_innocence", "狂亂": "ultimate_madness", "活潑": "ultimate_vivacious",
-                            "Composed": "ultimate_composed", "Depressed": "ultimate_depressed", "Innocence": "ultimate_innocence", "Madness": "ultimate_madness", "Vivacious": "ultimate_vivacious",
-                            "共鳴": "ultimate_resonance", "Resonance": "ultimate_resonance", "雙面": "ultimate_multifaceted", "Multifaceted": "ultimate_multifaceted"};
-                        const ultFileName = personalityMap[pKey] || "ultimate_composed";
-            
-                        const ultSkillIcon = `sprite-Icon_UltimateSkill_${spineKey}`;
-                        const ultStyle = `width: 64px; height: 64px; background-image: url('char_sprites/${ultFileName}.png'); background-size: auto; transform: translate(-50%, -50%) scale(0.625);`;
-            
-                        const enhancedData = charSkillData.normalAttack.enhanced;
-                        const hasEnhanced = enhancedData && enhancedData !== "無" && (typeof enhancedData === 'string' ? true : enhancedData.desc !== "無");
-                        
-                        let txtNormalAtk = getI18n('skill_normal_attack'); if(txtNormalAtk === 'skill_normal_attack') txtNormalAtk = '普通攻擊';
-                        let txtPassive = getI18n('skill_passive'); if(txtPassive === 'skill_passive') txtPassive = '被動技能';
-                        let txtBasic = getI18n('skill_basic'); if(txtBasic === 'skill_basic') txtBasic = '【基本】';
-                        let txtEnhanced = getI18n('skill_enhanced'); if(txtEnhanced === 'skill_enhanced') txtEnhanced = '【強化】';
-            
-                        let html = `
-                            <div class="relative bg-emerald-50/80 dark:bg-emerald-900/20 border-2 border-emerald-300 dark:border-emerald-700 rounded-xl p-4 shadow-sm overflow-visible">
-                                <div class="flex justify-between items-center border-b border-emerald-200 dark:border-emerald-800 pb-2 mb-3 relative z-10">
-                                    <div class="flex items-center gap-2">
-                                        ${getSkillIconHtml(normalSkillIcon, "border-emerald-300 dark:border-emerald-700", "🟢")}
-                                        <span class="font-extrabold text-emerald-800 dark:text-emerald-300 text-base">${charSkillData.normalSkill.name}</span>
-                                    </div>
-                                </div>
-                                <div class="pr-16 sm:pr-24 relative z-10">
-                                    <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.normalSkill.desc}</p>
-                                    ${makeStatChips(charSkillData.normalSkill.stats)}
-                                </div>
-                                <div id="spine-normal-skill" class="absolute bottom-2 right-2 pointer-events-none z-0 opacity-90 drop-shadow-md"></div>
-                            </div>
-                        `;
-            
-                        html += `
-                            <div class="relative bg-violet-50/80 dark:bg-violet-900/20 border-2 border-violet-300 dark:border-violet-700 rounded-xl p-4 shadow-sm overflow-visible">
-                                <div class="flex justify-between items-center border-b border-violet-200 dark:border-violet-800 pb-2 mb-3 relative z-10">
-                                    <div class="flex items-center gap-2">
-                                        ${getSkillIconHtml(ultSkillIcon, "border-violet-300 dark:border-violet-700", "🔥", ultStyle)}
-                                        <span class="font-extrabold text-violet-800 dark:text-violet-300 text-base">${charSkillData.ultimateSkill.name}</span>
-                                    </div>
-                                    <span class="px-2 py-0.5 bg-violet-600 dark:bg-violet-500 text-white font-black text-[10px] rounded-md shadow-sm">CD: ${charSkillData.ultimateSkill.cooldown || "N/A"}</span>
-                                </div>
-                                <div class="pr-16 sm:pr-24 relative z-10">
-                                    <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.ultimateSkill.desc}</p>
-                                    ${makeStatChips(charSkillData.ultimateSkill.stats)}
-                                </div>
-                                <div id="spine-ultimate-skill" class="absolute bottom-2 right-2 pointer-events-none z-0 opacity-90 drop-shadow-md"></div>
-                            </div>
-                        `;
-            
-                        html += `
-                            <div class="relative bg-amber-50/70 dark:bg-amber-900/20 border-2 border-amber-300 dark:border-amber-700 rounded-xl p-4 shadow-sm overflow-hidden">
-                                <div class="flex justify-between items-center border-b border-amber-200 dark:border-amber-800 pb-2 mb-3 relative z-10">
-                                    <div class="flex items-center gap-2">
-                                        ${getSkillIconHtml(passiveSkillIcon, "border-amber-300 dark:border-amber-700", "✨")}
-                                        <span class="font-extrabold text-amber-800 dark:text-amber-300 text-base">${txtPassive}</span>
-                                    </div>
-                                </div>
-                                <div class="relative z-10">
-                                    <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.passiveSkill.desc}</p>
-                                    ${makeStatChips(charSkillData.passiveSkill.stats)}
-                                </div>
-                            </div>
-                        `;
-                        
-                        html += `
-                            <div class="relative bg-slate-50 dark:bg-slate-700/40 border-2 border-slate-300 dark:border-slate-600 rounded-xl p-4 shadow-sm overflow-visible">
-                                <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-600 pb-2 mb-3 relative z-10">
-                                    <div class="flex items-center gap-2">
-                                        ${getSkillIconHtml(normalAttackIcon, "border-slate-300 dark:border-slate-600", "🎯")}
-                                        <span class="font-extrabold text-slate-800 dark:text-slate-200 text-base">${txtNormalAtk}</span>
-                                    </div>
-                                </div>
-                                <div class="space-y-4 pr-16 sm:pr-24 relative z-10">
-                                    <div>
-                                        ${hasEnhanced ? `<p class="text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">${txtBasic}</p>` : ''}
-                                        ${renderUnifiedSkill(charSkillData.normalAttack.basic)}
-                                    </div>
-                                    ${hasEnhanced ? `
-                                    <div>
-                                        <p class="text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">${txtEnhanced}</p>
-                                        ${renderUnifiedSkill(charSkillData.normalAttack.enhanced)}
-                                    </div>` : ''}
-                                </div>
-                                <div id="spine-attack" class="absolute bottom-2 right-2 pointer-events-none z-0 opacity-90 drop-shadow-md"></div>
-                            </div>
-                        `;
-                        
-                        skillsContainer.innerHTML = html;
-            
-                        setTimeout(() => loadSkillSpines(charName), 100);
-            
-                    } else {
-                        skillsContainer.innerHTML = `<div class="p-4 bg-gray-50 dark:bg-slate-700 text-gray-500 dark:text-gray-400 font-bold border border-gray-200 dark:border-slate-600 rounded-xl text-center">⚠️ ${getI18n('error_char_skill_not_found') || "找不到此坨坨的技能資料"}</div>`;
-                    }
-                }
-            }
-            
-            function renderAside(charName) {
-                const asideSection = document.getElementById('asideSection');
-                const asideContainer = document.getElementById('asideContainer');
-                const spineKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
-                const data = ASIDE_DATA[spineKey] || ASIDE_DATA[charName];
-                
-                let lang = window.currentLang || 'zh-TW';
-                if (lang === 'zh-TW') lang = 'zh'; 
-                
-                const getLocText = (obj) => {
-                    if (!obj) return '';
-                    if (typeof obj === 'string') return obj; 
-                    return obj[lang] || obj['zh'] || '';     
-                };
-                const getLocArray = (arrObj) => {
-                    if (!arrObj) return [];
-                    if (Array.isArray(arrObj)) return arrObj; 
-                    return arrObj[lang] || arrObj['zh'] || []; 
-                };
-                
-                const isUpcoming = ['Canna', 'Naia'].includes(charName) || ['Canna', 'Naia'].includes(spineKey);
-                const releaseTime = new Date('2026-07-23T04:00:00+09:00').getTime(); 
-                const now = new Date().getTime();
-                
-                // 無論是否有願像，都強制顯示願像區塊，由內部判斷內容
-                asideSection.classList.remove('hidden');
-                
-                if (!data && !isUpcoming) {
-                    // 🌟 加入未知願像的顯示
-                    const unknownMsg = {
-                        zh: "看起來思念還不夠深",
-                        ja: "まだ思念が深くなさそう",
-                        en: "The thoughts don't seem deep enough yet"
-                    };
-                    
-                    asideContainer.innerHTML = `
-                    <div class="py-8 px-4 bg-gray-50/80 dark:bg-slate-800/50 text-gray-500 dark:text-gray-400 font-bold border border-dashed border-gray-300 dark:border-slate-600 rounded-xl text-center shadow-sm flex flex-col items-center justify-center gap-3">
-                        <div class="flex justify-center items-center h-[100px]">
-                            <div class="sprite-base sprite-common sprite-no_aside drop-shadow-sm opacity-50" style="transform: scale(0.6);"></div>
-                        </div>
-                        <span class="text-sm tracking-widest">${unknownMsg[lang] || unknownMsg['zh']}</span>
-                    </div>`;
-                    return;
-                }
-                
-                asideSection.classList.remove('hidden');
-                
-                if (isUpcoming && now < releaseTime) {
-                    const upcomingMsg = {
-                        zh: "此坨坨的願像系統將於 2026/07/23 04:00 (JST) 實裝解鎖",
-                        ja: "この使徒のアサイドシステムは 2026/07/23 04:00 (JST) に実装されます",
-                        en: "This Apostle's Yearning system will be unlocked on 2026/08/06 04:00 (JST)"
-                    };
-                    
-                    asideContainer.innerHTML = `
-                    <div class="p-5 bg-fuchsia-50/80 dark:bg-slate-800/80 text-fuchsia-700 dark:text-fuchsia-400 font-bold border border-fuchsia-200 dark:border-slate-600 rounded-xl text-center shadow-sm flex items-center justify-center gap-2">
-                        <span>⏳</span> ${upcomingMsg[lang] || upcomingMsg['zh']}
-                    </div>`;
-                    return;
-                }
-                
-                if (!data) {
-                    asideSection.classList.add('hidden');
-                    return;
-                }
-                
-                const makeEffectChips = (effectsObj) => {
-                    const effects = getLocArray(effectsObj);
-                    if (effects.length === 0) return '';
-                    return `<div class="flex flex-wrap gap-1.5 mt-2">` + 
-                           effects.map(eff => `<span class="px-2 py-0.5 bg-white dark:bg-slate-700 border border-fuchsia-200 dark:border-fuchsia-900/50 text-fuchsia-800 dark:text-fuchsia-300 text-[11px] font-bold rounded-md shadow-sm">${eff}</span>`).join('') + 
-                           `</div>`;
-                };
-            
-                // 🌟 願像主圖：應用動態專屬雪碧圖 Class (sprite-AsideIcon_*)，並等比完美縮放置中
-                const asideMainSprite = `sprite-AsideIcon_${spineKey}`;
-                const asideMainHtml = `<div class="w-12 h-12 flex items-center justify-center relative overflow-hidden shrink-0 bg-transparent">
-                    <div class="${asideMainSprite} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 origin-center" style="transform: translate(-50%, -50%) scale(0.1875); width: 256px; height: 256px;"></div>
-                </div>`;
-            
-                let html = `
-                    <div class="mb-4 text-center sm:text-left">
-                        <span class="inline-flex items-center justify-center gap-2 px-4 py-1.5 bg-gradient-to-r from-fuchsia-100 to-purple-100 dark:from-fuchsia-900/50 dark:to-purple-900/50 text-fuchsia-900 dark:text-fuchsia-200 text-sm font-black rounded-lg border border-fuchsia-300 dark:border-fuchsia-700 shadow-sm drop-shadow-sm tracking-wide">
-                            ${asideMainHtml}
-                            ${getLocText(data.totalName)}
-                        </span>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                `;
-            
-                // 🌟 願像星級技能圖標：套用專屬雪碧圖 Class (sprite-Aside_Skill_*_1~3)，並精準縮放對齊
-                for (let i = 1; i <= 3; i++) {
-                    const starData = data.stars[i];
-                    if (!starData) continue;
-            
-                    const starIcons = { 1: "sprite-ASIDE_1STAR", 2: "sprite-ASIDE_2STAR", 3: "sprite-ASIDE_3STAR" };
-                    const asideSkillSprite = `sprite-Aside_Skill_${spineKey}_${i}`;
-            
-                    html += `
-                        <div class="relative bg-white dark:bg-slate-800/80 border-2 border-fuchsia-200 dark:border-fuchsia-800/60 rounded-xl p-4 shadow-sm flex flex-col h-full hover:shadow-md transition-shadow">
-                            <div class="flex items-center gap-3 border-b border-fuchsia-100 dark:border-fuchsia-800/50 pb-3 mb-3">
-                                <div class="w-9 h-9 flex items-center justify-center rounded-lg shadow-sm border border-fuchsia-300 dark:border-fuchsia-600 bg-fuchsia-50 dark:bg-slate-700 overflow-hidden relative shrink-0 bg-transparent">
-                                    <div class="${asideSkillSprite} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 origin-center scale-[0.5625]"></div>
-                                </div>
-                                <div>
-                                    <div class="mb-0.5 flex items-center" style="height: 14px;">
-                                        <div class="${starIcons[i]} drop-shadow-sm origin-left" style="width: 73px; height: 29px; transform: scale(0.6); transform-origin: left center;"></div>
-                                    </div>
-                                    <div class="font-extrabold text-gray-800 dark:text-gray-200 text-sm">${getLocText(starData.name)}</div>
-                                </div>
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed mb-1 whitespace-pre-wrap">${getLocText(starData.desc)}</p>
-                                ${makeEffectChips(starData.effects)}
-                            </div>
-                    `;
-            
-                    if (i === 3 && starData.globalEffects) {
-                        const globalEffectsArr = getLocArray(starData.globalEffects);
-                        if (globalEffectsArr.length > 0) {
-                            const globalTitle = {
-                                zh: "🌟 坨坨全體能力值加成",
-                                ja: "🌟 使者全体ステータスボーナス",
-                                en: "🌟 Apostle Global Stat Bonus"
-                            };
-                            html += `
-                                <div class="mt-4 pt-3 border-t border-dashed border-fuchsia-300 dark:border-fuchsia-800/80">
-                                    <div class="text-[11px] font-black text-amber-600 dark:text-amber-400 mb-1.5 flex items-center gap-1">
-                                        ${globalTitle[lang] || globalTitle['zh']}
-                                    </div>
-                                    ${makeEffectChips(starData.globalEffects)}
-                                </div>
-                            `;
-                        }
-                    }
-            
-                    html += `</div>`;
-                }
-            
-                html += `</div>`;
-                asideContainer.innerHTML = html;
-            }
-            
-            function loadSkillSpines(charName) {
-                if (window.skillSpinePlayers && window.skillSpinePlayers.length > 0) {
-                    window.skillSpinePlayers.forEach(p => p.dispose());
-                    window.skillSpinePlayers = [];
-                }
-            
-                window.currentActiveCharName = charName;
-            
-                const baseFolderKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
-            
-                const targets = [
-                    { id: 'spine-attack', prefix: 'Attack' },
-                    { id: 'spine-normal-skill', prefix: 'Skill' },
-                    { id: 'spine-ultimate-skill', prefix: 'Ultimate' }
-                ];
-            
-                targets.forEach(target => {
-                    const container = document.getElementById(target.id);
-                    if (!container) return;
-            
-                    const isMobile = window.innerWidth <= 768;
-            
-                    container.style.position = "absolute"; 
-                    container.style.zIndex = "999";        
-                    container.style.pointerEvents = "none"; 
-                    container.style.transform = "none"; 
-            
-                    if (isMobile) {
-                        container.style.width = "150px";   
-                        container.style.height = "150px";
-                        container.style.bottom = "10px";  
-                        container.style.right = "-60px";   
-                    } else {
-                        container.style.width = "240px";   
-                        container.style.height = "240px";
-                        container.style.bottom = "10px";  
-                        container.style.right = "-40px";   
-                    }
-            
-                    const desktopViewport = { 
-                        x: -500, y: -150, width: 1500, height: 3000, 
-                        padLeft: "0%", padRight: "0%", padTop: "0%", padBottom: "0%", transitionTime: 0 
-                    };
-                    
-                    const mobileViewport = { 
-                        x: -300, y: -100, width: 1050, height: 2100, 
-                        padLeft: "0%", padRight: "0%", padTop: "0%", padBottom: "0%", transitionTime: 0 
-                    };
-            
-                    const player = new spine.SpinePlayer(target.id, {
-                        skelUrl: `./spine_sd_assets/${baseFolderKey}.skel.bytes`,
-                        atlasUrl: `./spine_sd_assets/${baseFolderKey}.atlas.txt`,
-                        animation: "Idle", 
-                        skin: "Normal",    
-                        backgroundColor: "#00000000",
-                        alpha: true,
-                        premultipliedAlpha: true, 
-                        showControls: false, 
-                        showLoading: false,
-                        viewport: isMobile ? mobileViewport : desktopViewport,
-            
-                        success: function (player) {
-                            // 🌟 呼叫修復函數
-                            fixSpineMultiplyHole(player);
 
-                            window.skillSpinePlayers.push(player);
-            
-                            const canvas = container.querySelector('canvas');
-                            if (canvas) {
-                                canvas.style.width = '100%';
-                                canvas.style.height = '100%';
-                                canvas.style.position = 'relative';
-                                canvas.style.zIndex = '999'; 
-                            }
-            
-                            const skins = player.skeleton.data.skins;
-                            if (skins && skins.length > 0) {
-                                const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name === 'default') || skins[0];
-                                if (targetSkin) {
-                                    player.skeleton.setSkinByName(targetSkin.name);
-                                    player.skeleton.setSlotsToSetupPose(); 
-                                }
-                            }
-            
-                            const allAnims = player.skeleton.data.animations.map(a => a.name);
-                            const hasIdle = allAnims.includes("Idle") ? "Idle" : null;
-                            
-                            const regex = new RegExp(`^${target.prefix}`, 'i'); 
-                            let matchedAnims = allAnims.filter(name => regex.test(name));
-                            matchedAnims.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
-            
-                            let groups = [];
-                            let groupMap = {};
-                            matchedAnims.forEach(anim => {
-                                let lastIdx = anim.lastIndexOf('_');
-                                let baseName = lastIdx !== -1 ? anim.substring(0, lastIdx) : anim;
-                                if (!groupMap[baseName]) {
-                                    groupMap[baseName] = [];
-                                    groups.push(groupMap[baseName]);
-                                }
-                                groupMap[baseName].push(anim);
-                            });
-            
-                            if (groups.length > 0) {
-                                let currentGroupIndex = 0;
-                                function playCurrentGroup() {
-                                    if (!player.skeleton) return;
-                                    const currentGroup = groups[currentGroupIndex];
-                                    player.animationState.setAnimation(0, currentGroup[0], false);
-                                    for (let i = 1; i < currentGroup.length; i++) {
-                                        player.animationState.addAnimation(0, currentGroup[i], false, 0);
-                                    }
-                                    if (hasIdle) {
-                                        player.animationState.addAnimation(0, hasIdle, true, 0);
-                                    }
-                                }
-            
-                                setTimeout(() => { playCurrentGroup(); }, 500);
-            
-                                player.animationState.addListener({
-                                    complete: function(entry) {
-                                        const currentGroup = groups[currentGroupIndex];
-                                        const lastAnimInGroup = currentGroup[currentGroup.length - 1];
-                                        if (entry.animation.name === lastAnimInGroup) {
-                                            setTimeout(() => {
-                                                if (player.skeleton) {
-                                                    currentGroupIndex++;
-                                                    if (currentGroupIndex >= groups.length) currentGroupIndex = 0;
-                                                    playCurrentGroup();
-                                                }
-                                            }, 2000); 
-                                        }
-                                    }
-                                });
-                            }
-                        },
-                        error: function(player, reason) {
-                            console.error(`[SD小人] ❌ 載入失敗 (${baseFolderKey}):`, reason);
-                        }
-                    });
-                });
-            }
-            let topMiniSpinePlayer = null;
-            
-            function loadTopMiniSpine(charName) {
-                const container = document.getElementById('topMiniSpineContainer');
-                if (!container) return;
-            
-                container.style.pointerEvents = "none";
-                container.style.display = 'block';
-                container.style.height = '90px'; 
-                container.style.width = '90px';  
-                container.style.position = "relative";
-                container.style.zIndex = "99999"; 
-            
-                if (topMiniSpinePlayer) {
-                    topMiniSpinePlayer.dispose();
-                    topMiniSpinePlayer = null;
-                }
-            
-                container.innerHTML = '<div id="topMiniSpineWrapper" style="width: 100%; height: 100%;"></div>';
-            
-                const skinName = typeof MINI_SPINE !== 'undefined' && MINI_SPINE[charName] ? MINI_SPINE[charName] : null;
-            
-                if (!skinName) {
-                    container.style.display = 'none'; 
-                    return;
-                }
-            
-                topMiniSpinePlayer = new spine.SpinePlayer("topMiniSpineWrapper", {
-                    skelUrl: "./mini/Minimi.skel.bytes", 
-                    atlasUrl: "./mini/Minimi.atlas.txt",
-                    
-                    skin: skinName, 
-                    animation: "Idle",
-                    showControls: false, 
-                    showLoading: false, 
-                    backgroundColor: "#00000000",
-                    alpha: true,
-                    premultipliedAlpha: true, // 🌟 這裡也修正為 true 確保沒有灰線
-                    viewport: { x: -250, y: 0, width: 500, height: 500 },
-            
-                    success: (player) => {
-                        // 🌟 呼叫修復函數
-                        fixSpineMultiplyHole(player);
-                                                                                                        
-                        const canvas = container.querySelector('canvas');
-                        if (canvas) {
-                            canvas.style.width = '100%';
-                            canvas.style.height = '100%';
-                            canvas.style.position = 'relative';
-                            canvas.style.zIndex = '99999';
-                        }
-            
-                        const anims = player.skeleton.data.animations.map(a => a.name);
-                        if (!anims.includes("Idle")) {
-                            let targetAnim = anims.includes("idle") ? "idle" : anims[0];
-                            if (targetAnim) {
-                                player.animationState.setAnimation(0, targetAnim, true);
-                            }
-                        }
-            
-                        player.animationState.timeScale = 0.5;
-                        player.play();
-                    },
-                    error: (player, reason) => {
-                        console.error("❌ 超迷你 Spine 載入失敗，原因：", reason);
-                    }
-                });
-            }
-            let resizeTimeout;
-            let lastWindowWidth = window.innerWidth;
-            
-            window.addEventListener('resize', () => {
-                if (window.innerWidth === lastWindowWidth) {
-                    return; 
-                }
-            
-                lastWindowWidth = window.innerWidth;
-            
-                clearTimeout(resizeTimeout);
-                resizeTimeout = setTimeout(() => {
-                    if (window.currentActiveCharName) {
-                        loadSkillSpines(window.currentActiveCharName);
-                    }
-                }, 300); 
-            });
-            
-            window.changeLanguage = function(lang) {
-                window.currentLang = lang;
-                document.documentElement.lang = lang === "ja" ? "ja" : "zh-TW";
-                
-                if (!currentCharData) return;
-                
-                applyI18n();
-            
-                document.querySelectorAll('.costume-btn').forEach((btn, idx) => {
-                    let displayName = idx === 0 ? t("costume_default") : `${t("costume_prefix")}${idx}`;
-                    if (displayName === "costume_default") displayName = "預設";
-                    if (displayName.includes("costume_prefix")) displayName = `服裝${idx}`;
-                    btn.innerText = displayName;
-                });
-                
-                const displayName = getI18n(currentCharData.name);
-            
-            // 1. 名字恢復為純文字
-            document.getElementById('charName').innerHTML = displayName;
-            document.title = `${displayName} - ${getI18n('page_title_char_detail') || '詳細資料'}`;
+const REWARD_ICON = {
+    // 🍕 食材類
+    "麵粉": { ja: "小麦粉", url: "https://i.postimg.cc/Vd6QSCc7/Icon-Food-Made-Low1.png" },
+    "雞蛋": { ja: "卵", url: "https://i.postimg.cc/bsJcGtjg/Icon-Food-Made-Low2.png" },
+    "家禽肉": { ja: "鶏肉", url: "https://i.postimg.cc/qzRVt3dQ/Icon-Food-Made-Low3.png" },
+    "水果": { ja: "果物", url: "https://i.postimg.cc/hfjWJdqy/Icon-Food-Made-Low4.png" },
+    "巧克力": { ja: "チョコ", url: "https://i.postimg.cc/HVxDJyCN/Icon-Food-Made-Low5.png" },
+    "糖": { ja: "砂糖", url: "https://i.postimg.cc/gnJFwZPB/Icon-Food-Made-Low6.png" },
+    "牛肉": { ja: "牛肉", url: "https://i.postimg.cc/ykd4JZzp/Icon-Food-Made-Low7.png" },
+    "魚": { ja: "魚", url: "https://i.postimg.cc/rKmXdrL3/Icon-Food-Made-Low8.png" },
+    "堅硬的黑色果實": { ja: "黒くて硬い実", url: "https://i.postimg.cc/hfjWJdqN/Icon-Food-Made-Low9.png" },
+    "各式穀物": { ja: "雑穀", url: "https://i.postimg.cc/vcBF1Vdp/Icon-Food-Made-Low10.png" },
+    "蔬菜": { ja: "野菜", url: "https://i.postimg.cc/2V6RqZDp/Icon-Food-Made-Low11.png" },
+    "蜂蜜": { ja: "蜜", url: "https://i.postimg.cc/GH2wBy1W/Icon-Food-Made-Low12.png" },
+    "百老師萬能醬料": { ja: "万能スパイス", url: "https://i.postimg.cc/mt5x7gbm/Icon-Food-Made-Low13.png" },
+    "牛奶": { ja: "牛乳", url: "https://i.postimg.cc/MvT2cQS2/Icon-Food-Made-Low14.png" },
+    "米": { ja: "米", url: "https://i.postimg.cc/4mSCpxJ8/Icon-Food-Made-Low15.png" },
+    "起司": { ja: "チーズ", url: "https://i.postimg.cc/9rn3yQW8/Icon-Food-Made-Low16.png" },
+    "樹葉": { ja: "木の葉", url: "https://i.postimg.cc/GH50vmcg/Icon-Food-Made-Low17.png" },
+    "巧克力米": { ja: "スプリンクル", url: "https://i.postimg.cc/ykbq08Vb/Icon-Food-Made-Low18.png" },
 
-            // 1.5 實裝日期多語系更新
-            let releaseLabel = getI18n('release_date_label');
-            if (releaseLabel === 'release_date_label') releaseLabel = '實裝日期';
-            if (document.getElementById('releaseDateLabelText')) document.getElementById('releaseDateLabelText').innerText = releaseLabel;
-            
-            // 2. 準備所有屬性標籤的多國語言文字
-            let idLabel = getI18n('stats_identity'); if(idLabel === 'stats_identity') idLabel = '身份';
-            let pLabel = getI18n('stats_personality'); if(pLabel === 'stats_personality') pLabel = '性格';
-            let rLabel = getI18n('stats_race'); if(rLabel === 'stats_race') rLabel = '種族';
-            let posLabel = getI18n('stats_position'); if(posLabel === 'stats_position') posLabel = '站位';
-            let jLabel = getI18n('stats_job'); if(jLabel === 'stats_job') jLabel = '職業';
-            let aLabel = getI18n('stats_attribute'); if(aLabel === 'stats_attribute') aLabel = '攻擊類型';
-            
-            // 3. 判斷是否為艾爾丁身份
-            const isEldain = (typeof ELDAIN_LIST !== 'undefined') ? ELDAIN_LIST.includes(currentCharData.name) : false;
-            const identityValue = isEldain ? '艾爾丁' : '普通坨坨';
-            
-            // 4. 取得攻擊類型
-            let currentAttribute = "未知";
-            if (typeof characterSkills !== 'undefined') {
-            const skillData = characterSkills.find(s => s.name.trim() === currentCharData.name);
-            if (skillData && skillData.attribute) {
-            currentAttribute = skillData.attribute;
-            }
-            }
-            // 處理雙重性格判斷
-let displayPersonality = currentCharData.personality;
-if (Array.isArray(displayPersonality)) {
-    displayPersonality = displayPersonality.length > 1 ? "雙面" : displayPersonality[0];
-} else if (typeof displayPersonality === 'string') {
-    // 檢查是否包含分隔符號
-    if (displayPersonality.includes('、') || displayPersonality.includes(',') || displayPersonality.includes('/') || displayPersonality.trim().includes(' ')) {
-        displayPersonality = "雙面";
-    } 
-    // 若資料本身寫的是「雙重性格」或「雙重」，統一轉換為「雙面」
-    else if (displayPersonality === "雙重性格" || displayPersonality === "雙重") {
-        displayPersonality = "雙面";
+    // 🪵 素材類
+    "軟棉棉的樹木": { ja: "加工しやすい木", url: "https://i.postimg.cc/YhscQCp5/Icon-Made-Low1.png" },
+    "堅硬的石頭": { ja: "固い石", url: "https://i.postimg.cc/qz5f2vJf/Icon-Made-Low2.png" },
+    "細膩的鐵粉": { ja: "サラサラの鉄粉", url: "https://i.postimg.cc/N5zhRjsq/Icon-Made-Low3.png" },
+    "酥脆的金箔": { ja: "パリパリの金箔", url: "https://i.postimg.cc/jLFVySxY/Icon-Made-Low4.png" },
+    "寶石碎片": { ja: "宝石の欠片", url: "https://i.postimg.cc/mt5x7gLG/Icon-Made-Low5.png" },
+    "閃亮的玻璃": { ja: "キラキラのガラス", url: "https://i.postimg.cc/pp6NKLWR/Icon-Made-Low6.png" },
+    "黏膩的黏土": { ja: "やわらか粘土", url: "https://i.postimg.cc/GH50vmLR/Icon-Made-Low7.png" },
+    "濕潤的紙漿": { ja: "湿っぽい紙の原料", url: "https://i.postimg.cc/ykbq081V/Icon-Made-Low9.png" },
+    "回收塑膠": { ja: "再生プラスチック", url: "https://i.postimg.cc/HVhGbkYH/Icon-Made-Low10.png" },
+    "彩虹花汁": { ja: "虹の花の汁", url: "https://i.postimg.cc/6ymsCpW6/Icon-Made-Low12.png" },
+    "堅硬的碎布": { ja: "ごわごわの布切れ", url: "https://i.postimg.cc/D8MV1wvw/Icon-Made-Low13.png" },
+    "皮革樹葉": { ja: "レザーウッドの葉", url: "https://i.postimg.cc/jLFVySx5/Icon-Made-Low14.png" },
+    "柔軟的棉花": { ja: "ふわふわ綿", url: "https://i.postimg.cc/JG2wjzrt/Icon-Made-Low15.png" },
+    "槭樹樹液": { ja: "カエデの樹液", url: "https://i.postimg.cc/ZCMk65bW/Icon-Made-Low16.png" },
+    "眨眼墨水": { ja: "ウィンクウィンク", url: "https://i.postimg.cc/gxXCsbjm/Icon-Made-Low18.png" },
+    "睡眠眼罩": { ja: "睡眠アイマスク", url: "https://i.postimg.cc/bZD7gfrq/Icon-Made-Low20.png" },
+    "銅湯匙": { ja: "銅の匙", url: "https://i.postimg.cc/mPzvjWkb/Icon-Made-Low21.png" },
+    "尖銳的針": { ja: "尖った針", url: "https://i.postimg.cc/0zMTn1jk/Icon-Made-Low25.png" },
+    "可彎曲金屬": { ja: "曲がったもの", url: "https://i.postimg.cc/PPRG15t0/Icon-Furn-Made-Low1.png" }
+};
+// ------------------------------------------
+// Spine 與服裝對應表
+// ------------------------------------------
+const SPINE_MAP = {
+    "洛涅": "Rohne", "薇薇": "Vivi", "艾爾芬": "Erpin", "x乂錫安乂x": "xXionx", "伊弗利特": "Ifrit", "伊德": "Ed", "佩佩": "Velvet", "佩斯塔": "Festa",
+    "修帕": "Shoupan", "傑德": "Jade", "優米": "Yomi", "劉美美": "Yumimi", "加薇雅": "Gabia", "卡洛特": "Kyarot", "卡蓮": "Carren", "喬菲": "Chopi",
+    "基狄恩": "Kidian", "大師2號": "MaestroMK2", "大木頭": "BigWood", "奈雅": "Naia", "奶油": "Butter", "布蘭切": "Blanchet", "希拉": "Sylla", "希爾德": "Hilde",
+    "希瑟圖": "Sist", "希菲爾": "Silphir", "帕特拉": "Patula", "庫洛艾": "Chloe", "康娜": "Canna", "愛麗絲": "Alice", "班尼": "Beni", "斯皮奇": "Speaki",
+    "斯諾奇": "Snorky", "柯米": "Kommy", "桃桃": "Momo", "梅森": "Maison", "梅露娜": "Meluna", "海莉": "Haley", "珀榭": "Posher", "琳": "Rim",
+    "瑟琳娜": "Selline", "瑪約": "Mayo", "瑪麗": "Marie", "皮可菈": "Picora", "盧波": "Rufo", "米雪": "Mynx", "綾": "Aya", "羽伊": "Ui",
+    "艾斯皮": "Espi", "艾琳娜": "Elena", "艾皮卡": "Epica", "艾舒爾": "Ashur", "艾蜜莉雅": "Amelia", "芙莉可": "Fricle", "茱蜜": "Jubee", "莉茲": "Leets",
+    "莎莉": "Sari", "萊薇": "Levi", "蒂亞娜": "Diana", "謝蒂": "Shady", "貝魯": "Veroo", "貝麗塔": "Belita", "路德": "Rude", "路易": "Cuee",
+    "阿萊特": "Allet", "雷吉": "Lazy", "馬爾": "Mago", "泰達": "Taida", "寧琉": "Ner", "莉絲蒂": "Risty", "R41雷內瓦": "R41_Renewa", "雷內瓦": "RenewaAwaken", "芭瓏": "Barong", "達雅": "Daya", "提格": "Tig",
+	"羅蕾特": "Rollett", "琵拉": "Pira", "雪蘭": "Sherum", "芭莉耶": "Barie", "瓊安": "Joanne", "柯米(泳裝)": "KommySwim", "麗息": "Lethe"
+};
+
+const COSTUME_MAP = {
+    "劉美美": ["Yumimi"], "卡蓮": ["Carren"], "喬菲": ["Chopi"], "帕特拉": ["Patula"], "梅森": ["Maison"], "瑪麗": ["Marie"], "米雪": ["Mynx"], "茱蜜": ["Jubee"], "莎莉": ["Sari"], "貝魯": ["Veroo"], "路易": ["Cuee"], "阿萊特": ["Allet"], "雷吉": ["Lazy"], "泰達": ["Taida"],
+    "艾舒爾": ["Ashur", "AshurSkin1"], "貝麗塔": ["Belita", "BelitaSkin1"], "班尼": ["Beni", "BeniSkin1"], "大木頭": ["BigWood", "BigWoodSkin1"], "艾斯皮": ["Espi", "EspiSkin1"], "佩斯塔": ["Festa", "FestaSkin1"], "伊弗利特": ["Ifrit", "IfritSkin1"], "傑德": ["Jade", "JadeSkin1"], "莉茲": ["Leets", "LeetsSkin1"], "萊薇": ["Levi", "LeviSkin1"], "大師2號": ["MaestroMK2", "MaestroMK2Skin1"], "馬爾": ["Mago", "MagoSkin1"], "瑪約": ["Mayo", "MayoSkin1"], "梅露娜": ["Meluna", "MelunaSkin1"], "路德": ["Rude", "RudeSkin1"], "盧波": ["Rufo", "RufoSkin1"], "修帕": ["Shoupan", "ShoupanSkin1"], "希菲爾": ["Silphir", "SilphirSkin1"], "斯諾奇": ["Snorky", "SnorkySkin1"], "斯皮奇": ["Speaki", "SpeakiSkin1"], "佩佩": ["Velvet", "VelvetSkin1"],
+    "布蘭切": ["Blanchet", "BlanchetSkin1"], "奶油": ["Butter", "ButterSkin1"], "康娜": ["Canna", "CannaSkin1"], "伊德": ["Ed", "EdSkin1", "EdSkin2", "EdSkin3"], "艾琳娜": ["Elena", "ElenaSkin1"], "艾皮卡": ["Epica", "EpicaSkin1", "EpicaSkin2", "EpicaSkin3"], "芙莉可": ["Fricle", "FricleSkin1"], "加薇雅": ["Gabia", "GabiaSkin1", "GabiaSkin2"], "海莉": ["Haley", "HaleySkin1", "HaleySkin2"], "希爾德": ["Hilde", "HildeSkin1"], "基狄恩": ["Kidian", "KidianSkin1", "KidianSkin2", "KidianSkin3"], "柯米": ["Kommy", "KommySkin1", "KommySkin2"], "卡洛特": ["Kyarot", "KyarotSkin1"], "奈雅": ["Naia", "NaiaSkin1"], "寧琉": ["Ner", "NerSkin1", "NerSkin2"], "皮可菈": ["Picora", "PicoraSkin1"], "珀榭": ["Posher", "PosherSkin1", "PosherSkin3"], "琳": ["Rim", "RimSkin1", "RimSkin2"], "洛涅": ["Rohne", "RohneSkin2"], "謝蒂": ["Shady", "ShadySkin1"], "希瑟圖": ["Sist", "SistSkin1"], "希拉": ["Sylla", "SyllaSkin1"], "優米": ["Yomi", "YomiSkin1", "YomiSkin2"],
+    "愛麗絲": ["Alice", "AliceSkin1", "AliceSkin2"], "艾蜜莉雅": ["Amelia", "AmeliaSkin2"], "綾": ["Aya", "AyaSkin1", "AyaSkin2", "AyaSkin3", "AyaSkin4"], "庫洛艾": ["Chloe", "ChloeSkin1", "ChloeSkin2", "ChloeSkin3", "ChloeSkin4"], "蒂亞娜": ["Diana", "DianaSkin1", "DianaSkin2"], "桃桃": ["Momo", "MomoSkin3"], "瑟琳娜": ["Selline", "SellineSkin1"], "羽伊": ["Ui", "UiSkin1", "UiSkin2", "UiSkin3", "UiSkin4"], "薇薇": ["Vivi", "ViviSkin1", "ViviSkin2", "ViviSkin3", "ViviSkin4"], "x乂錫安乂x": ["xXionx", "xXionxSkin1", "xXionxSkin2", "xXionxSkin3", "xXionxSkin4"],
+    "艾爾芬": ["Erpin", "ErpinSkin1", "ErpinSkin3"], "莉絲蒂": ["Risty", "RistySkin1"], "雷內瓦": ["RenewaAwaken", "RenewaAwakenSkin1", "RenewaAwakenSkin2"],
+	"芭瓏": ["Barong", "BarongSkin1"], "達雅": ["Daya", "DayaSkin1"], "提格": ["Tig", "TigSkin1"], "柯米(泳裝)": ["KommySwim", "KommySwimSkin3"], "麗息": ["Lethe"],
+	"羅蕾特": ["Rollett", "RollettSkin2"], "琵拉": ["Pira", "PiraSkin2"], "雪蘭": ["Sherum", "SherumSkin1"], "芭莉耶": ["Barie"], "瓊安": ["Joanne", "JoanneSkin2", "JoanneSkin3", "JoanneSkin5"]
+};
+
+
+const SD_COSTUME = {
+    "劉美美": ["Yumimi"], "卡蓮": ["Carren"], "喬菲": ["Chopi"], "帕特拉": ["Patula"], "梅森": ["Maison"], "瑪麗": ["Marie"], "米雪": ["Mynx"], "茱蜜": ["Jubee"], "莎莉": ["Sari"], "貝魯": ["Veroo"], "路易": ["Cuee"], "阿萊特": ["Allet"], "雷吉": ["Lazy"], "泰達": ["Taida"],
+    "艾舒爾": ["Ashur", "AshurSkin1"], "貝麗塔": ["Belita", "BelitaSkin1"], "班尼": ["Beni", "BeniSkin1"], "大木頭": ["BigWood", "BigWoodSkin1"], "艾斯皮": ["Espi", "EspiSkin1"], "佩斯塔": ["Festa", "FestaSkin1"], "伊弗利特": ["Ifrit", "IfritSkin1"], "傑德": ["Jade", "JadeSkin1"], "莉茲": ["Leets", "LeetsSkin1"], "萊薇": ["Levi", "LeviSkin1"], "大師2號": ["MaestroMK2", "MaestroMK2Skin1"], "馬爾": ["Mago", "MagoSkin1"], "瑪約": ["Mayo", "MayoSkin1"], "梅露娜": ["Meluna", "MelunaSkin1"], "路德": ["Rude", "RudeSkin1"], "盧波": ["Rufo", "RufoSkin1"], "修帕": ["Shoupan", "ShoupanSkin1"], "希菲爾": ["Silphir", "SilphirSkin1"], "斯諾奇": ["Snorky", "SnorkySkin1"], "斯皮奇": ["Speaki", "SpeakiSkin1"], "佩佩": ["Velvet", "VelvetSkin1"],
+    "布蘭切": ["Blanchet", "BlanchetSkin1"], "奶油": ["Butter", "ButterSkin1"], "康娜": ["Canna", "CannaSkin1"], "伊德": ["Ed", "EdSkin1", "EdSkin2", "EdSkin3"], "艾琳娜": ["Elena", "ElenaSkin1"], "艾皮卡": ["Epica", "EpicaSkin1", "EpicaSkin2", "EpicaSkin3"], "芙莉可": ["Fricle", "FricleSkin1"], "加薇雅": ["Gabia", "GabiaSkin1", "GabiaSkin2"], "海莉": ["Haley", "HaleySkin1", "HaleySkin2"], "希爾德": ["Hilde", "HildeSkin1"], "基狄恩": ["Kidian", "KidianSkin1", "KidianSkin2", "KidianSkin3"], "柯米": ["Kommy", "KommySkin1", "KommySkin2"], "卡洛特": ["Kyarot", "KyarotSkin1"], "奈雅": ["Naia", "NaiaSkin1"], "寧琉": ["Ner", "NerSkin1", "NerSkin2"], "皮可菈": ["Picora", "PicoraSkin1"], "珀榭": ["Posher", "PosherSkin1", "PosherSkin3"], "琳": ["Rim", "RimSkin1", "RimSkin2"], "洛涅": ["Rohne", "RohneSkin2"], "謝蒂": ["Shady", "ShadySkin1"], "希瑟圖": ["Sist", "SistSkin1"], "希拉": ["Sylla", "SyllaSkin1"], "優米": ["Yomi", "YomiSkin1", "YomiSkin2"],
+    "愛麗絲": ["Alice", "AliceSkin1", "AliceSkin2"], "艾蜜莉雅": ["Amelia", "AmeliaSkin2"], "綾": ["Aya", "AyaSkin1", "AyaSkin2", "AyaSkin3", "AyaSkin4"], "庫洛艾": ["Chloe", "ChloeSkin1", "ChloeSkin2", "ChloeSkin3", "ChloeSkin4"], "蒂亞娜": ["Diana", "DianaSkin1", "DianaSkin2"], "桃桃": ["Momo", "MomoSkin3"], "瑟琳娜": ["Selline", "SellineSkin1"], "羽伊": ["Ui", "UiSkin1", "UiSkin2", "UiSkin3", "UiSkin4"], "薇薇": ["Vivi", "ViviSkin1", "ViviSkin2", "ViviSkin3", "ViviSkin4"], "x乂錫安乂x": ["xXionx", "xXionxSkin1", "xXionxSkin2", "xXionxSkin3", "xXionxSkin4"],
+    "艾爾芬": ["Erpin", "ErpinSkin1", "ErpinSkin3"], "莉絲蒂": ["Risty", "RistySkin1"], "雷內瓦": ["RenewaAwaken", "RenewaAwakenSkin1", "RenewaAwakenSkin2"],
+	"芭瓏": ["Barong", "BarongSkin1"], "達雅": ["Daya", "DayaSkin1"], "提格": ["Tig", "TigSkin1"], "柯米(泳裝)": ["KommySwim", "KommySwimSkin3"], "麗息": ["Lethe"],
+	"羅蕾特": ["Rollett", "RollettSkin2"], "琵拉": ["Pira", "PiraSkin2"], "雪蘭": ["Sherum", "SherumSkin1"], "芭莉耶": ["Barie"], "瓊安": ["Joanne", "JoanneSkin2", "JoanneSkin3", "JoanneSkin5"]
+};
+
+//迷你坨坨SPINE NAME
+const MINI_SPINE = {
+    "洛涅": "Mini_Rohne", "薇薇": "Mini_Vivi", "艾爾芬": "Mini_Erpin", "x乂錫安乂x": "Mini_xXionx", "伊弗利特": "Mini_Ifrit", "伊德": "Mini_Ed", "佩佩": "Mini_Velvet", "佩斯塔": "Mini_Festa",
+    "修帕": "Mini_Shoupan", "傑德": "Mini_Jade", "優米": "Mini_Yomi", "劉美美": "Mini_Yumimi", "加薇雅": "Mini_Gabia", "卡洛特": "Mini_Kyarot", "卡蓮": "Mini_Carren", "喬菲": "Mini_Chopi",
+    "基狄恩": "Mini_Kidian", "大師2號": "Mini_MaestroMK2", "大木頭": "Mini_BigWood", "奈雅": "Mini_Naia", "奶油": "Mini_Butter", "布蘭切": "Mini_Blanchet", "希拉": "Mini_Sylla", "希爾德": "Mini_Hilde",
+    "希瑟圖": "Mini_Sist", "希菲爾": "Mini_Silphir", "帕特拉": "Mini_Patula", "庫洛艾": "Mini_Chloe", "康娜": "Mini_Canna", "愛麗絲": "Mini_Alice", "班尼": "Mini_Beni", "斯皮奇": "Mini_Speaki",
+    "斯諾奇": "Mini_Snorky", "柯米": "Mini_Kommy", "桃桃": "Mini_Momo", "梅森": "Mini_Maison", "梅露娜": "Mini_Meluna", "海莉": "Mini_Haley", "珀榭": "Mini_Posher", "琳": "Mini_Rim",
+    "瑟琳娜": "Mini_Selline", "瑪約": "Mini_Mayo", "瑪麗": "Mini_Marie", "皮可菈": "Mini_Picora", "盧波": "Mini_Rufo", "米雪": "Mini_Mynx", "綾": "Mini_Aya", "羽伊": "Mini_Ui",
+    "艾斯皮": "Mini_Espi", "艾琳娜": "Mini_Elena", "艾皮卡": "Mini_Epica", "艾舒爾": "Mini_Ashur", "艾蜜莉雅": "Mini_Amelia", "芙莉可": "Mini_Fricle", "茱蜜": "Mini_Jubee", "莉茲": "Mini_Leets",
+    "莎莉": "Mini_Sari", "萊薇": "Mini_Levi", "蒂亞娜": "Mini_Diana", "謝蒂": "Mini_Shady", "貝魯": "Mini_Veroo", "貝麗塔": "Mini_Belita", "路德": "Mini_Rude", "路易": "Mini_Cuee",
+    "阿萊特": "Mini_Allet", "雷吉": "Mini_Lazy", "馬爾": "Mini_Mago", "泰達": "Mini_Taida", "寧琉": "Mini_Ner", "莉絲蒂": "Mini_Risty",  "雷內瓦": "Mini_RenewaAwaken", "芭瓏": "Mini_Barong", "達雅": "Mini_Daya", "提格": "Mini_Tig",
+	"羅蕾特": "Mini_Rollett", "琵拉": "Mini_Pira", "雪蘭": "Mini_Sherum", "芭莉耶": "Mini_Barie", "瓊安": "Mini_Joanne", "柯米(泳裝)": "Mini_KommySwim", "麗息": "Mini_Lethe"
+};
+
+// ------------------------------------------
+// 特選使者招募, 活動, 卡片schedule
+// ------------------------------------------
+
+const PICKUP_SCHEDULE = [
+	{
+        start: "2026-09-10T17:00:00+09:00",
+        end: "2026-09-17T03:59:59+09:00",
+        chars: ["雪蘭"],
+        note: "Sherum"
+    },
+	{
+        start: "2026-10-08T17:00:00+09:00",
+        end: "2026-10-22T10:59:59+09:00",
+        chars: ["瓊安", "優米", "海莉"],
+        note: "SwimKommy"
+    },
+	{
+        start: "2026-10-01T03:00:00+09:00",
+        end: "2026-10-08T10:59:59+09:00",
+        chars: ["瓊安", "貝麗塔", "艾皮卡"],
+        note: "Joanne"
+    },
+];
+
+// 🎪 遊戲內活動排程表
+const EVENT_SCHEDULE = [
+    {
+        start: "2026-09-10T17:00:00+09:00",
+        end: "2026-09-24T10:59:59+09:00",
+        eventId: "Theme023" 
+    },
+	{
+        start: "2026-09-24T17:00:00+09:00",
+        end: "2026-10-22T10:59:59+09:00",
+        eventId: "Theme024" 
+    },
+	{
+        start: "2026-09-24T17:00:00+09:00",
+        end: "2026-10-22T10:59:59+09:00",
+        eventId: "SelectPickPersonality" 
+    },
+	{
+        start: "2026-08-13T17:00:00+09:00",
+        end: "2026-08-27T10:59:59+09:00",
+        eventId: "PickPersonalityComposed" 
+    },
+	{
+        start: "2026-08-20T17:00:00+09:00",
+        end: "2026-08-27T10:59:59+09:00",
+        eventId: "GachaOnceSelectPickHero1" 
+    },
+	{
+        start: "2026-09-25T12:00:00+09:00",
+        end: "2026-09-28T03:59:59+09:00",
+        eventId: "TowerBattle" 
+    },
+	{
+        start: "2026-08-14T12:00:00+09:00",
+        end: "2026-08-17T03:59:59+09:00",
+        eventId: "Playground" 
+    },
+	{
+        start: "2026-08-28T12:00:00+09:00",
+        end: "2026-08-30T03:59:59+09:00",
+        eventId: "WWE" 
+    },
+	{
+        start: "2026-09-11T11:00:00+09:00",
+        end: "2026-09-14T03:59:59+09:00",
+        eventId: "TricDice" 
     }
-}
-            // 5. 渲染全部屬性圖示
-                updateTag('charIdentity', idLabel, identityValue, 'identity');
-                updateTag('charPersonality', pLabel, displayPersonality, 'personality'); // <-- 改成 displayPersonality
-                updateTag('charRace', rLabel, currentCharData.race, 'race');
-                updateTag('charPosition', posLabel, currentCharData.position, 'position');
-                updateTag('charJob', jLabel, currentCharData.job, 'job');
-                updateTag('charAttribute', aLabel, currentAttribute, 'attribute');
-                
-                renderStars(currentTargetName);
-                renderExtraInfo(currentTargetName);
-                
-                // 🌟 新增：透過種族與 pathVersion 查詢對應的蠟筆設定
-                let crayonConfig = { layer1: [], layer2: [], layer3: [] };
-                if (typeof CRAYON_PATH_CONFIG !== 'undefined' && 
-                    CRAYON_PATH_CONFIG[currentCharData.race] && 
-                    CRAYON_PATH_CONFIG[currentCharData.race][currentCharData.pathVersion]) {
-                    crayonConfig = CRAYON_PATH_CONFIG[currentCharData.race][currentCharData.pathVersion];
-                }
+];
 
-                const renderCrayonList = (elementId, array) => {
-                    const ul = document.getElementById(elementId);
-                    const safeArray = array || []; // 終極防呆，確保絕對不會出現 undefined 錯誤
-                    ul.innerHTML = safeArray.map(attr => `<li>${t(attr)}</li>`).join('');
-                };
-                
-                // 改從 crayonConfig 讀取資料
-                renderCrayonList('layer1List', crayonConfig.layer1);
-                renderCrayonList('layer2List', crayonConfig.layer2);
-                renderCrayonList('layer3List', crayonConfig.layer3);
-                
-                renderSkills(currentTargetName);
-                renderCollectibles(currentTargetName);
-                renderAside(currentTargetName); 
-                switchPresentTab(currentTab);
-            };
-            
-            window.addEventListener('storage', (e) => {
-                // 1. 監聽語言切換
-                if (e.key === 'user_lang' && e.newValue && e.newValue !== window.currentLang) {
-                    console.log(`📡 偵測到主頁將語言切換至 ${e.newValue}，自動同步更新！`);
-                    changeLanguage(e.newValue);
-                }
-                
-                // 🌟 2. 新增：監聽主題切換 (跟隨 index.html 即時切換亮/暗色)
-                if (e.key === 'theme') {
-                    console.log(`🌗 偵測到主頁將主題切換至 ${e.newValue}，自動同步更新！`);
-                    if (e.newValue === 'dark') {
-                        document.documentElement.classList.add('dark');
-                    } else {
-                        document.documentElement.classList.remove('dark');
-                    }
-                }
-            });
-            
-            window.onload = function() {
-                applyI18n(); 
-            
-                const urlParams = new URLSearchParams(window.location.search);
-                currentTargetName = urlParams.get('char')?.trim();
-            
-                if (!currentTargetName) { renderError(getI18n('error_no_char') || "❌ 未指定坨坨，請從主頁點擊坨坨按鈕進入。"); return; }
-                if (typeof INITIAL_DATA === 'undefined') { renderError(getI18n('error_no_data') || "❌ 載入失敗：找不到 INITIAL_DATA。"); return; }
-            
-                currentCharData = INITIAL_DATA.find(c => c.name.trim() === currentTargetName);
-                if (!currentCharData) { renderError(`${getI18n('error_char_not_found') || "❌ 找不到坨坨資料: "}${currentTargetName}`); return; }
-            
-                const avatarBox = document.getElementById('charAvatar');
-                if (typeof LOBBY_BACKGROUNDS !== 'undefined' && LOBBY_BACKGROUNDS.length > 0) {
-                    const randomIndex = Math.floor(Math.random() * LOBBY_BACKGROUNDS.length);
-                    const randomBgUrl = LOBBY_BACKGROUNDS[randomIndex];
-                    avatarBox.style.setProperty('--bg-image', `url('${randomBgUrl}')`);
-                } else {
-                    avatarBox.style.setProperty('--bg-image', `none`);
-                }
-            
-                const displayName = getI18n(currentCharData.name);
-            
-            // 1. 名字恢復為純文字，移除舊的 identityHtml
-            document.getElementById('charName').innerHTML = displayName;
-
-            // 🌟 實裝日期處理：若無 releaseDate 則預設為 09/10/2025
-            let releaseLabel = getI18n('release_date_label');
-            if (releaseLabel === 'release_date_label') releaseLabel = '實裝日期';
-            if (document.getElementById('releaseDateLabelText')) document.getElementById('releaseDateLabelText').innerText = releaseLabel;
-            
-            const releaseDateText = currentCharData.releaseDate || '09/10/2025';
-            const releaseValueEl = document.getElementById('releaseDateValue');
-            if (releaseValueEl) releaseValueEl.innerText = releaseDateText;
-            
-            // 2. 準備所有屬性標籤的多國語言文字
-            let idLabel = getI18n('stats_identity'); if(idLabel === 'stats_identity') idLabel = '身份';
-            let pLabel = getI18n('stats_personality'); if(pLabel === 'stats_personality') pLabel = '性格';
-            let rLabel = getI18n('stats_race'); if(rLabel === 'stats_race') rLabel = '種族';
-            let posLabel = getI18n('stats_position'); if(posLabel === 'stats_position') posLabel = '站位';
-            let jLabel = getI18n('stats_job'); if(jLabel === 'stats_job') jLabel = '職業';
-            let aLabel = getI18n('stats_attribute'); if(aLabel === 'stats_attribute') aLabel = '攻擊類型';
-            
-            // 3. 判斷是否為艾爾丁身份
-            const isEldain = (typeof ELDAIN_LIST !== 'undefined') ? ELDAIN_LIST.includes(currentCharData.name) : false;
-            const identityValue = isEldain ? '艾爾丁' : '普通坨坨';
-            
-            // 4. 取得攻擊類型
-            let currentAttribute = "未知";
-            if (typeof characterSkills !== 'undefined') {
-            const skillData = characterSkills.find(s => s.name.trim() === currentCharData.name);
-            if (skillData && skillData.attribute) {
-            currentAttribute = skillData.attribute;
-            }
-            }
-            // 處理雙重性格判斷
-let displayPersonality = currentCharData.personality;
-if (Array.isArray(displayPersonality)) {
-    displayPersonality = displayPersonality.length > 1 ? "雙面" : displayPersonality[0];
-} else if (typeof displayPersonality === 'string') {
-    // 檢查是否包含分隔符號
-    if (displayPersonality.includes('、') || displayPersonality.includes(',') || displayPersonality.includes('/') || displayPersonality.trim().includes(' ')) {
-        displayPersonality = "雙面";
-    } 
-    // 若資料本身寫的是「雙重性格」或「雙重」，統一轉換為「雙面」
-    else if (displayPersonality === "雙重性格" || displayPersonality === "雙重") {
-        displayPersonality = "雙面";
+// 🃏 特選卡片排程表
+const CARD_SCHEDULE = [
+	{
+        start: "2026-09-24T04:00:00+09:00",
+        end: "2026-10-22T10:59:59+09:00",
+        id: "Rune58",
+        type: "Rune"
+    },
+	{
+        start: "2026-09-17T04:00:00+09:00",
+        end: "2026-09-24T10:59:59+09:00",
+        id: "Artifact92",
+        type: "Artifact"
     }
-}
-            // 5. 渲染全部屬性圖示
-                updateTag('charIdentity', idLabel, identityValue, 'identity');
-                updateTag('charPersonality', pLabel, displayPersonality, 'personality'); // <-- 改成 displayPersonality
-                updateTag('charRace', rLabel, currentCharData.race, 'race');
-                updateTag('charPosition', posLabel, currentCharData.position, 'position');
-                updateTag('charJob', jLabel, currentCharData.job, 'job');
-                updateTag('charAttribute', aLabel, currentAttribute, 'attribute');
-            
-            // 1. 直接從網址列解析出所有的參數（改成檢查或直接用新的變數名稱，避免衝突）
-            const queryParams = new URLSearchParams(window.location.search);
-
-            // 2. 抓取種族與性格（如果網址沒有，就從 currentCharData 拿來當備用）
-            const currentRace = currentCharData.race || queryParams.get('race');
-            const currentPersonality = queryParams.get('personality') || currentCharData.personality;
-
-            // 3. 傳入這兩個確定有值的變數！
-            updateRaceBackground(currentRace, currentPersonality);
-                
-                renderStars(currentTargetName);
-                renderExtraInfo(currentTargetName);
-            
-                const spineKey = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[currentCharData.name] : currentCharData.name;
-            
-                const faviconEl = document.getElementById('dynamicFavicon');
-                const defaultFaviconUrl = 'https://i.postimg.cc/mkfSTq5k/Favicon.png';
-                
-                if (faviconEl && spineKey) {
-                    const testImg = new Image();
-                    testImg.onload = function() { faviconEl.href = this.src; };
-                    testImg.onerror = function() { faviconEl.href = defaultFaviconUrl; };
-                    testImg.src = `./favicon/${spineKey}.png`;
-                }
-            
-                if (spineKey) {
-                    const presentLeft = document.getElementById('presentLeft');
-                    const presentRight = document.getElementById('presentRight');
-                    const presentContainer = document.getElementById('presentContainer');
-                    const presentNameBox = document.getElementById('presentName');
-            
-                    const DEFAULT_NO_PRESENT = "sprite-base sprite-common sprite-letter";
-            
-                    let finalImgUrl = DEFAULT_NO_PRESENT;
-                    let presentDisplayName = getI18n('present_delivering'); 
-                    if (presentDisplayName === 'present_delivering') presentDisplayName = '未配發寶物';
-            
-                    let isHasPresent = false;
-            
-                    if (typeof PRESENT_MAP !== 'undefined' && PRESENT_MAP[spineKey]) {
-                        finalImgUrl = PRESENT_MAP[spineKey].sprite || `sprite-PresentList_${spineKey}`;
-                        if (!finalImgUrl.includes('sprite-base')) finalImgUrl = `sprite-base sprite-common ${finalImgUrl}`;
-                        isHasPresent = true;
-            
-                        const pNameData = PRESENT_MAP[spineKey].name;
-                        if (pNameData) {
-                            if (typeof pNameData === 'object') {
-                                presentDisplayName = pNameData[window.currentLang] || pNameData["zh-TW"];
-                            } else {
-                                presentDisplayName = pNameData;
-                            }
-                        } else {
-                            presentDisplayName = `${currentCharData.name} - Present`;
-                        }
-                    }
-            
-                    if (presentNameBox) {
-                        presentNameBox.innerText = presentDisplayName;
-                        presentNameBox.className = "inline-block mb-1 tracking-wide px-4 py-1.5 rounded-full border transition-colors duration-300";
-            
-                        if (!isHasPresent) {
-                            presentNameBox.classList.add(
-                                'text-sm', 'text-rose-400', 'dark:text-gray-400', 
-                                'bg-rose-50', 'dark:bg-gray-800/50', 
-                                'border-rose-200', 'dark:border-gray-700', 'border-dashed'
-                            );
-                        } else {
-                            presentNameBox.classList.add(
-                                'text-base', 'font-bold', 'text-rose-900', 'dark:text-gray-100', 
-                                'bg-rose-100', 'dark:bg-gray-800', 
-                                'border-rose-300', 'dark:border-gray-600', 'shadow-sm'
-                            );
-                        }
-                        presentNameBox.classList.remove('hidden');
-                    }
-            
-                    const altText = isHasPresent ? `${currentCharData.name} - ${presentDisplayName}` : "No Present";
-            
-                    // 🔥 修正：使用純淨的縮放置中演算法處理容器，不干擾 Tailwind 的 hover 效果
-                    if (presentContainer) {
-                        if (finalImgUrl.startsWith('http') || finalImgUrl.startsWith('./') || finalImgUrl.startsWith('data:')) {
-                            const imgClass = isHasPresent 
-                                ? "w-32 h-32 md:w-40 md:h-40 object-contain transition-transform duration-300 hover:scale-110 drop-shadow-md"
-                                : "w-24 h-24 md:w-32 md:h-32 object-contain opacity-70 animate-pulse"; 
-                            presentContainer.innerHTML = `
-                                <img src="${finalImgUrl}" alt="${altText}" class="${imgClass}" loading="lazy" onerror="if(this.src != 'https://i.postimg.cc/qtwD6bsq/Icon-Present.png') this.src='https://i.postimg.cc/qtwD6bsq/Icon-Present.png'; else this.parentElement.innerHTML='<p class=\\'text-gray-500 text-sm\\'>⚠️ Image Error</p>'">
-                            `;
-                        } else {
-                            // 設定正確安全的縮放比例，防止雪碧圖超出原本容器邊界
-// 這裡保留您的動態縮放與位置調整
-const baseScaleVal = isHasPresent ? 0.65 : 0.75; 
-const interactClass = isHasPresent ? 'hover:scale-110 transition-transform duration-300 drop-shadow-md cursor-pointer' : 'opacity-90 drop-shadow-sm transition-transform duration-300';
-const verticalPos = isHasPresent ? "-translate-y-1/2" : "-translate-y-[35%]";
-
-// ✨ 修正重點：移除 w-full h-full 與 flex 的壓縮限制，並加上 shrink-0
-presentContainer.innerHTML = `
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 ${verticalPos} pointer-events-none">
-        <div style="transform: scale(${baseScaleVal}); transform-origin: center;" class="pointer-events-auto shrink-0 flex items-center justify-center">
-            <div class="${finalImgUrl} ${interactClass} shrink-0 max-w-none max-h-none block" title="${altText}"></div>
-        </div>
-    </div>
-`;
-
-                        }
-                    }
-            
-                    if (!isHasPresent) {
-                        if (presentRight) presentRight.classList.add('hidden');
-                        if (presentLeft) presentLeft.className = "w-full flex flex-col items-center justify-center gap-4 py-6 transition-all duration-300";
-                    } else {
-                        if (presentRight) presentRight.classList.remove('hidden');
-                        if (presentLeft) presentLeft.className = "w-full md:w-1/3 flex flex-col items-center gap-3 transition-all duration-300";
-                    }
-                    
-                    renderCostumeButtons(currentCharData.name);
-            
-                    const initialCostumeKey = (typeof COSTUME_MAP !== 'undefined' && COSTUME_MAP[currentCharData.name] && COSTUME_MAP[currentCharData.name].length > 0) 
-                                              ? COSTUME_MAP[currentCharData.name][0] 
-                                              : spineKey;
-                    setTimeout(() => { loadSpineAnimation(initialCostumeKey); }, 100);
-                } else {
-                    const imgUrl = typeof IMAGE_MAP !== 'undefined' ? IMAGE_MAP[`avatar_${currentCharData.name}`] : '';
-                    if (imgUrl) {
-                        avatarBox.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover">`;
-                    } else {
-                        avatarBox.innerText = currentCharData.name.charAt(0);
-                    }
-                }
-            
-                let crayonConfig = { layer1: [], layer2: [], layer3: [] };
-                if (typeof CRAYON_PATH_CONFIG !== 'undefined' && 
-                    CRAYON_PATH_CONFIG[currentCharData.race] && 
-                    CRAYON_PATH_CONFIG[currentCharData.race][currentCharData.pathVersion]) {
-                    crayonConfig = CRAYON_PATH_CONFIG[currentCharData.race][currentCharData.pathVersion];
-                }
-
-                const renderCrayonList = (elementId, array) => {
-                    const ul = document.getElementById(elementId);
-                    const safeArray = array || [];
-                    ul.innerHTML = safeArray.map(attr => `<li>${t(attr)}</li>`).join('');
-                };
-                
-                // 改從 crayonConfig 讀取資料
-                renderCrayonList('layer1List', crayonConfig.layer1);
-                renderCrayonList('layer2List', crayonConfig.layer2);
-                renderCrayonList('layer3List', crayonConfig.layer3);
-            
-                document.title = `${displayName} - ${getI18n('page_title_char_detail')}`;
-            
-                renderSkills(currentTargetName);
-                renderAside(currentTargetName);
-                
-                loadComments(currentTargetName);
-                switchPresentTab('thought'); 
-                loadTopMiniSpine(currentTargetName);
-             };
-            
-            function getAnonymousId() {
-                let anonId = localStorage.getItem('trickcal_anon_id');
-                if (!anonId) {
-                    const randomNum = Math.floor(Math.random() * 9000) + 1000;
-                    let prefix = getI18n('anonymous_leader');
-                    if(prefix === 'anonymous_leader') prefix = "匿名教主#";
-                    anonId = `${prefix}${randomNum}`;
-                    localStorage.setItem('trickcal_anon_id', anonId);
-                }
-                return anonId;
-            }
-            
-            function loadComments(charName) {
-                db.collection("character_comments")
-                  .where("character", "==", charName)
-                  .orderBy("timestamp", "desc")
-                  .onSnapshot((snapshot) => {
-                      const list = document.getElementById('commentsList');
-                      
-                      if (snapshot.empty) {
-                          let noDataMsg = getI18n('no_comment_hint');
-                          if(noDataMsg === 'no_comment_hint') noDataMsg = "目前還沒有評價，來搶頭香吧！ 🐾";
-                          list.innerHTML = `<div class="text-center text-sm font-bold text-gray-400 dark:text-gray-500 py-8 bg-gray-50 dark:bg-slate-800/50 rounded-xl border border-dashed border-gray-200 dark:border-slate-600">${noDataMsg}</div>`;
-                          return;
-                      }
-                      
-                      let html = "";
-                      snapshot.forEach(doc => {
-                          const data = doc.data();
-                          let justNowMsg = getI18n('time_just_now');
-                          if(justNowMsg === 'time_just_now') justNowMsg = "剛剛";
-                          
-                          const timeString = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString(window.currentLang === 'ja' ? 'ja-JP' : 'zh-TW', {
-                              month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                          }) : justNowMsg;
-
-                          // 🌟 解析並渲染回覆內容
-                          let repliesHtml = "";
-                          if (data.replies && data.replies.length > 0) {
-                              repliesHtml = `<div class="mt-3 space-y-2 pl-3 sm:pl-4 border-l-[3px] border-amber-200 dark:border-slate-600">`;
-                              data.replies.forEach(r => {
-                                  const rTime = r.timestamp ? new Date(r.timestamp).toLocaleString(window.currentLang === 'ja' ? 'ja-JP' : 'zh-TW', {
-                                      month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                                  }) : justNowMsg;
-                                  
-                                  const safeAuthorName = escapeHTML(r.author); // 取得對方名字
-                                  
-                                  repliesHtml += `
-                                      <div class="bg-amber-50/60 dark:bg-slate-800/60 p-2 sm:p-3 rounded-lg text-xs sm:text-sm group relative">
-                                          <div class="flex justify-between items-baseline mb-1 border-b border-amber-100 dark:border-slate-700 pb-1">
-                                              <span class="font-bold text-amber-800 dark:text-amber-400">↳ 👤 ${safeAuthorName}</span>
-                                              <div class="flex items-center gap-2">
-                                                  <span class="text-[10px] text-gray-500 dark:text-gray-400">${rTime}</span>
-                                                  <button onclick="openReplyModal('${doc.id}', '${safeAuthorName}')" class="text-[10px] font-bold text-amber-600 dark:text-amber-400 opacity-0 group-hover:opacity-100 transition-opacity bg-amber-100/50 dark:bg-slate-700 px-1.5 py-0.5 rounded">回覆</button>
-                                              </div>
-                                          </div>
-                                          <p class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">${escapeHTML(r.content)}</p>
-                                      </div>
-                                  `;
-                              });
-                              repliesHtml += `</div>`;
-                          }
-                          
-                          html += `
-                              <div class="bg-white dark:bg-slate-700/80 p-3 sm:p-4 rounded-xl border border-gray-200 dark:border-slate-600 shadow-sm transition hover:shadow-md mb-4">
-                                  <div class="flex justify-between items-baseline mb-2 border-b border-gray-100 dark:border-slate-600 pb-2">
-                                      <span class="font-black text-sm text-amber-900 dark:text-amber-400 flex items-center gap-1">
-                                          👤 ${escapeHTML(data.author)}
-                                      </span>
-                                      <span class="text-[10px] sm:text-xs text-gray-400 dark:text-gray-400 font-medium">${timeString}</span>
-                                  </div>
-                                  <p class="text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap leading-relaxed">${escapeHTML(data.content)}</p>
-                                  
-                                  ${repliesHtml}
-                                  
-                                  <div class="mt-2 pt-2 text-right">
-                                      <button onclick="openReplyModal('${doc.id}')" class="inline-flex items-center gap-1 text-xs font-bold text-amber-600 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 transition bg-amber-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-amber-200 dark:border-slate-600">
-                                          💬 回覆
-                                      </button>
-                                  </div>
-                              </div>
-                          `;
-                      });
-                      list.innerHTML = html;
-                  }, (error) => {
-                      console.error("讀取留言失敗:", error);
-                      let errorMsg = getI18n('error_load_comment');
-                      if(errorMsg === 'error_load_comment') errorMsg = "讀取留言失敗，請確認資料庫權限設定。";
-                      list.innerHTML = `<div class="text-center text-red-500 dark:text-red-400 font-bold text-sm py-4">${errorMsg}</div>`;
-                  });
-            }
-            
-            function submitComment() {
-                let authorInput = document.getElementById('commentAuthor').value.trim();
-                if (!authorInput) { authorInput = getAnonymousId(); }
-            
-                const contentInput = document.getElementById('commentContent').value.trim();
-                const btn = document.getElementById('submitCommentBtn');
-            
-                let alertEmpty = getI18n('alert_empty_comment'); if(alertEmpty==='alert_empty_comment') alertEmpty='請輸入評價內容！';
-                let alertTooLong = getI18n('alert_comment_too_long'); if(alertTooLong==='alert_comment_too_long') alertTooLong='評價內容太長囉，請縮減至 500 字以內！';
-                
-                if (!contentInput) { alert(alertEmpty); return; }
-                if (contentInput.length > 500) { alert(alertTooLong); return; }
-            
-                let textSubmitting = getI18n('btn_submitting'); if(textSubmitting==='btn_submitting') textSubmitting='傳送中... ⏳';
-                let textSubmitBtn = getI18n('btn_submit_comment'); if(textSubmitBtn==='btn_submit_comment') textSubmitBtn='送出評價 🚀';
-            
-                btn.disabled = true;
-                btn.innerHTML = textSubmitting;
-                btn.classList.replace('bg-amber-500', 'bg-gray-400');
-                btn.classList.replace('dark:bg-amber-600', 'dark:bg-gray-500');
-            
-                db.collection("character_comments").add({
-                    character: currentTargetName,
-                    author: authorInput,
-                    content: contentInput,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                }).then(() => {
-                    document.getElementById('commentContent').value = '';
-                    document.getElementById('charCount').innerText = '0 / 500'; 
-                    btn.disabled = false;
-                    btn.innerHTML = textSubmitBtn;
-                    btn.classList.replace('bg-gray-400', 'bg-amber-500');
-                    btn.classList.replace('dark:bg-gray-500', 'dark:bg-amber-600');
-                }).catch(err => {
-                    console.error("留言失敗:", err);
-                    let alertFail = getI18n('alert_comment_failed'); if(alertFail==='alert_comment_failed') alertFail="留言失敗，請稍後再試！";
-                    alert(alertFail);
-                    btn.disabled = false;
-                    btn.innerHTML = textSubmitBtn;
-                    btn.classList.replace('bg-gray-400', 'bg-amber-500');
-                    btn.classList.replace('dark:bg-gray-500', 'dark:bg-amber-600');
-                });
-            }
-            // 🌟 回覆功能相關函式 (支援 @ 標註)
-            function openReplyModal(docId, targetAuthor = null) {
-                document.getElementById('replyTargetDocId').value = docId;
-                
-                const contentBox = document.getElementById('replyModalContent');
-                
-                // 如果有傳入 targetAuthor (代表是點擊別人的回覆)，就自動加上 @ 標註
-                if (targetAuthor) {
-                    contentBox.value = `@${targetAuthor} `;
-                } else {
-                    contentBox.value = '';
-                }
-                
-                document.getElementById('replyModal').style.display = 'flex';
-                
-                // 彈出後自動將游標對焦到輸入框，提升體驗
-                setTimeout(() => contentBox.focus(), 100);
-            }
-            function closeReplyModal() {
-                document.getElementById('replyModal').style.display = 'none';
-                document.getElementById('replyTargetDocId').value = '';
-            }
-
-            function submitReply() {
-                const docId = document.getElementById('replyTargetDocId').value;
-                if (!docId) return;
-
-                let authorInput = document.getElementById('replyModalAuthor').value.trim();
-                if (!authorInput) { authorInput = getAnonymousId(); }
-
-                const contentInput = document.getElementById('replyModalContent').value.trim();
-                if (!contentInput) { alert("請輸入回覆內容！"); return; }
-                if (contentInput.length > 300) { alert("回覆內容請縮減至 300 字以內！"); return; }
-
-                const btn = document.getElementById('btnSubmitReply');
-                btn.disabled = true;
-                btn.innerHTML = "傳送中... ⏳";
-                btn.classList.replace('bg-amber-500', 'bg-gray-400');
-
-                const replyData = {
-                    author: authorInput,
-                    content: contentInput,
-                    // 使用 Date.now() 產生絕對時間戳，避免 ArrayUnion 在部分環境對 serverTimestamp 報錯
-                    timestamp: Date.now() 
-                };
-
-                // 將回覆物件推進該留言的 replies 陣列中
-                db.collection("character_comments").doc(docId).update({
-                    replies: firebase.firestore.FieldValue.arrayUnion(replyData)
-                }).then(() => {
-                    closeReplyModal();
-                    btn.disabled = false;
-                    btn.innerHTML = "送出回覆 🚀";
-                    btn.classList.replace('bg-gray-400', 'bg-amber-500');
-                }).catch(err => {
-                    console.error("回覆失敗:", err);
-                    alert("回覆失敗，請稍後再試！");
-                    btn.disabled = false;
-                    btn.innerHTML = "送出回覆 🚀";
-                    btn.classList.replace('bg-gray-400', 'bg-amber-500');
-                });
-            }
-
-            // 點擊半透明黑底也能關閉回覆視窗
-            document.addEventListener('DOMContentLoaded', () => {
-                const rModal = document.getElementById('replyModal');
-                if (rModal) {
-                    rModal.addEventListener('click', function(e) {
-                        if (e.target === this) closeReplyModal();
-                    });
-                }
-            });
-            window.onscroll = function() {
-                const btn = document.getElementById("backToTop");
-                if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-                    btn.style.display = "flex";
-                } else {
-                    btn.style.display = "none";
-                }
-            };
-            
-            function scrollToTop() {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        </script>
-        <footer class="mt-12 mb-6 text-center border-t border-gray-200 dark:border-gray-700 pt-6">
-            <div class="flex flex-col gap-1 text-[11px] text-gray-500 dark:text-gray-400 opacity-80">
-                <p data-i18n="footer_author">📝 記事本製作者: 冷笑話幽靈</p>
-                <p data-i18n="footer_copyright">© 遊戲版權: EpidGames & Bilibili</p>
-                <p data-i18n="footer_lastupdate">最後更新日期：30/07/2026</p>
-            </div>
-        </footer>
-        <button id="backToTop" onclick="scrollToTop()" title="回頂部"> ▲ </button>
-        <div id="ytModal" class="yt-modal-overlay" style="display: none;">
-            <div class="yt-modal-content">
-                <span class="yt-modal-close">&times;</span>
-                <div class="video-container">
-                    <iframe id="ytIframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                </div>
-            </div>
-        </div>
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const modal = document.getElementById('ytModal');
-                const iframe = document.getElementById('ytIframe');
-                const closeBtn = document.querySelector('.yt-modal-close');
-            
-                // 處理動態生成的按鈕點擊 (使用事件代理)
-                document.body.addEventListener('click', function(e) {
-                    // 尋找被點擊的元素是不是我們的觸發按鈕
-                    const trigger = e.target.closest('.youtube-modal-trigger');
-                    if (trigger) {
-                        e.preventDefault();
-                        const videoId = trigger.getAttribute('data-video-id');
-                        if (videoId) {
-                            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-                            modal.style.display = 'flex';
-                        }
-                    }
-                });
-            
-                function closeModal() {
-                    modal.style.display = 'none';
-                    iframe.src = ''; // 清空以停止播放
-                }
-            
-                closeBtn.addEventListener('click', closeModal);
-                modal.addEventListener('click', function(e) {
-                    if (e.target === this) closeModal();
-                });
-            });
-        </script>
-        <div id="replyModal" class="yt-modal-overlay" style="display: none;">
-            <div class="bg-white dark:bg-slate-800 p-5 rounded-xl w-11/12 max-w-md shadow-2xl border-[3px] border-amber-300 dark:border-slate-600 relative">
-                <h3 class="text-lg font-black text-amber-900 dark:text-amber-400 mb-3 flex items-center gap-2">💬 回覆留言</h3>
-                <input type="hidden" id="replyTargetDocId">
-                <input type="text" id="replyModalAuthor" placeholder="您的暱稱 (留白將以匿名顯示)" class="w-full mb-3 px-3 py-2 text-sm font-bold text-amber-900 dark:text-white placeholder-amber-700/50 dark:placeholder-gray-400 rounded-lg border border-amber-300 dark:border-slate-500 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500 shadow-inner">
-                <textarea id="replyModalContent" rows="3" placeholder="寫下您的回覆..." class="w-full mb-3 px-3 py-2 text-sm font-medium text-gray-800 dark:text-gray-200 rounded-lg border border-amber-300 dark:border-slate-500 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none shadow-inner"></textarea>
-                <div class="flex justify-end gap-2">
-                    <button onclick="closeReplyModal()" class="px-4 py-2 bg-gray-200 dark:bg-slate-600 text-gray-700 dark:text-gray-200 text-sm font-bold rounded-xl shadow-sm hover:bg-gray-300 dark:hover:bg-slate-500 transition">取消</button>
-                    <button onclick="submitReply()" id="btnSubmitReply" class="px-4 py-2 bg-amber-500 text-white text-sm font-bold rounded-xl shadow-md hover:bg-amber-600 transition transform active:scale-95">送出回覆 🚀</button>
-                </div>
-            </div>
-        </div>
-    </body>
-</html>
+];
+console.log("LANG_DICT 內容:", LANG_DICT);
