@@ -2002,9 +2002,11 @@ if (Array.isArray(displayPersonality)) {
             if (releaseLabel === 'release_date_label') releaseLabel = '實裝日期';
             if (document.getElementById('releaseDateLabelText')) document.getElementById('releaseDateLabelText').innerText = releaseLabel;
             
-            const releaseDateText = currentCharData.releaseDate || '09/10/2025';
-            const releaseValueEl = document.getElementById('releaseDateValue');
-            if (releaseValueEl) releaseValueEl.innerText = releaseDateText;
+            let releaseDateText = currentCharData.releaseDate || '09/10/2025';
+                // 判斷字串中是否有空格或 'T'，並只取前半段的日期部分
+                releaseDateText = releaseDateText.split(' ')[0].split('T')[0];
+                const releaseValueEl = document.getElementById('releaseDateValue');
+                if (releaseValueEl) releaseValueEl.innerText = releaseDateText;
             
             // 2. 準備所有屬性標籤的多國語言文字
             let idLabel = getI18n('stats_identity'); if(idLabel === 'stats_identity') idLabel = '身份';
