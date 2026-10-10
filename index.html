@@ -1538,14 +1538,30 @@
 
                     pChars.sort((a, b) => {
                         let cmp = 0;
+                        // 取得翻譯後的名稱
+                        const nameA = t(a.name);
+                        const nameB = t(b.name);
+                        
+                        // 根據當前語言設定排序規則
+                        let locale = 'zh-TW';
+                        let options = { collation: 'stroke' }; // 中文預設筆畫
+                        
+                        if (window.currentLang === 'ja') {
+                            locale = 'ja-JP';
+                            options = {}; // 日文預設五十音
+                        } else if (window.currentLang === 'en') {
+                            locale = 'en-US';
+                            options = {}; // 英文預設字母A-Z
+                        }
+
                         if (activeSortBy === 'name') {
-                            cmp = a.name.localeCompare(b.name, ['zh-TW', 'ja', 'en-US'], { collation: 'stroke' });
+                            cmp = nameA.localeCompare(nameB, locale, options);
                         } else {
                             const dateA = a.releaseDate ? a.releaseDate.split('T')[0] : "0000-00-00";
                             const dateB = b.releaseDate ? b.releaseDate.split('T')[0] : "0000-00-00";
                             if (dateA > dateB) cmp = 1;
                             else if (dateA < dateB) cmp = -1;
-                            else cmp = a.name.localeCompare(b.name, ['zh-TW', 'ja', 'en-US'], { collation: 'stroke' });
+                            else cmp = nameA.localeCompare(nameB, locale, options); // 同日期時以當地語言名稱排序
                         }
                         return activeSortOrder === 'asc' ? cmp : -cmp;
                     });
