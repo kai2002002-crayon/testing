@@ -1378,7 +1378,7 @@
                 setSortBy('personality');
                 const orderBtn = document.getElementById('btn_sort_order');
                 if (orderBtn) {
-                    orderBtn.innerHTML = '⬇️ 逆排';
+                    orderBtn.innerHTML = t('sort_order_desc') || '⬇️ 逆排';
                     orderBtn.setAttribute('data-lang-key', 'sort_order_desc');
                 }
             }
