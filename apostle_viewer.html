@@ -476,17 +476,17 @@
                     header.onclick = () => togglePersonalityGroup(groupId, btnId);
                     const pSprite = SPRITE_CLASS_MAP[`p_${p}`] || "";
                     
-                    // 🌟 群組標題的文字顏色邏輯
-                    // 將這行移除：
-                    // const headerStyle = p === "雙面" ? `style="--c1: #c084fc; --c2: #4ade80;"` : ""; 
-                    
-                    // 🌟 1. 先定義 textClass，抓取字典裡的文字顏色
-                    const pColors = personalityColors[p] || "border-gray-400 text-gray-500";
-                    const borderClass = pColors.split(' ')[0];
-                    const textClass = pColors.split(' ')[1] || ""; 
+                   // 🌟 群組標題的文字顏色邏輯
+                    // (上方已經宣告過 borderClass 和 textClass，這裡直接組合 HTML 即可)
 
-                    // 🌟 2. 組合 HTML，並用 <span class="${textClass}"> 把文字包起來
+                    // 🌟 組合 HTML，並用 <span class="${textClass}"> 把文字包起來
                     header.innerHTML = `
+                        <div class="flex items-center gap-1">
+                            <div class="sprite-base sprite-common ${pSprite} shrink-0 scale-[0.35] origin-left -ml-2"></div>
+                            <h3 class="text-xs sm:text-sm font-black border-l-4 ${borderClass} pl-1 -ml-3"><span class="${textClass}">${getI18n(p)}</span></h3>
+                        </div>
+                        <span id="${btnId}" class="text-xs text-gray-400">🔼</span>
+                    `;
                         <div class="flex items-center gap-1">
                             <div class="sprite-base sprite-common ${pSprite} shrink-0 scale-[0.35] origin-left -ml-2"></div>
                             <h3 class="text-xs sm:text-sm font-black border-l-4 ${borderClass} pl-1 -ml-3"><span class="${textClass}">${getI18n(p)}</span></h3>
