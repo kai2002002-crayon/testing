@@ -1925,7 +1925,8 @@
                 const enList = pList.map(p => pDictLang[p] || 'Multifaceted');
                 // 動態註冊專屬的雙面性格組合 class
                 if (typeof window.ICON_MAP === 'undefined') window.ICON_MAP = {};
-                window.ICON_MAP[`personality_${displayPersonality}`] = `sprite-base sprite-common sprite-Personality_${enList.join('_')}`;
+                // 這樣無論 JSON 裡順序怎麼對調，都會固定產出字母順序排在前面的 (例如 D 在 I 前面，永遠輸出 Depressed_Innocence)
+                window.ICON_MAP[`personality_${displayPersonality}`] = `sprite-base sprite-common sprite-Personality_Multifaceted_${enList.sort().join('_')}`;
             } else if (pList.length === 1) {
                 displayPersonality = pList[0];
                 if (displayPersonality === "雙重性格" || displayPersonality === "雙重") {
