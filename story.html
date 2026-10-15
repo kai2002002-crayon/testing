@@ -30,7 +30,7 @@
             <button onclick="loadStoryCategory('main')" class="flex flex-col items-center group cursor-pointer hover:scale-105 transition-transform outline-none">
                 <div class="w-24 h-24 bg-blue-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:bg-blue-400 group-hover:shadow-blue-500/50 transition-all">
                     <!-- 將圖片路徑換成你準備的圖示 -->
-                    <img src="story/icon_main.png" alt="主線" class="w-14 h-14 object-contain" onerror="this.style.display='none'">
+                    <img src="story/Mainstory.png" alt="主線" class="w-14 h-14 object-contain" onerror="this.style.display='none'">
                 </div>
                 <span class="mt-4 font-black text-xl tracking-wider">主線劇情</span>
             </button>
@@ -38,7 +38,7 @@
             <button onclick="loadStoryCategory('event')" class="flex flex-col items-center group cursor-pointer hover:scale-105 transition-transform outline-none">
                 <div class="w-24 h-24 bg-amber-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:bg-amber-400 group-hover:shadow-amber-500/50 transition-all">
                     <!-- 將圖片路徑換成你準備的圖示 -->
-                    <img src="story/icon_event.png" alt="活動" class="w-14 h-14 object-contain" onerror="this.style.display='none'">
+                    <img src="story/Eventstory.png" alt="活動" class="w-14 h-14 object-contain" onerror="this.style.display='none'">
                 </div>
                 <span class="mt-4 font-black text-xl tracking-wider">活動劇情</span>
             </button>
@@ -101,19 +101,27 @@
                 bannerContainer.innerHTML = '<p class="text-center text-slate-500 w-full col-span-full font-bold text-lg">目前尚無劇情資料</p>';
             } else {
                 storyData.forEach(story => {
-                    const bannerHTML = `
-                        <div onclick="loadEpisodes('${story.id}')" class="cursor-pointer group bg-slate-100 dark:bg-slate-700/50 rounded-xl overflow-hidden hover:shadow-xl hover:ring-2 hover:ring-indigo-500 transition-all hover:-translate-y-1">
-                            <div class="h-48 w-full bg-slate-300 dark:bg-slate-800 relative overflow-hidden">
-                                <img src="${story.banner}" alt="${story.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="this.src='https://via.placeholder.com/600x300?text=No+Banner'">
-                            </div>
-                            <div class="p-4 text-center">
-                                ${story.chapterNumber ? `<p class="text-sm text-indigo-500 dark:text-indigo-400 font-bold mb-1">${story.chapterNumber}</p>` : ''}
-                                <h4 class="font-black text-lg text-slate-800 dark:text-white">${story.name}</h4>
-                            </div>
+                // 根據當前類別，決定圖片前綴是 'Main' 還是 'Event'
+                const imgPrefix = category === 'main' ? 'Main' : 'Event';
+                // 自動組合 banner 圖片路徑
+                const bannerUrl = `story/${imgPrefix}${story.chapterNumber}.png`;
+                
+                // 動態產生顯示文字 (主線顯示 "第 001 章"，活動顯示 "活動 002")
+                const displayLabel = category === 'main' ? `第 ${story.chapterNumber} 章` : `活動 ${story.chapterNumber}`;
+
+                const bannerHTML = `
+                    <div onclick="loadEpisodes('${story.id}')" class="cursor-pointer group bg-slate-100 dark:bg-slate-700/50 rounded-xl overflow-hidden hover:shadow-xl hover:ring-2 hover:ring-indigo-500 transition-all hover:-translate-y-1">
+                        <div class="h-48 w-full bg-slate-300 dark:bg-slate-800 relative overflow-hidden">
+                            <img src="${bannerUrl}" alt="${story.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="this.src='https://via.placeholder.com/600x300?text=${imgPrefix}${story.chapterNumber}'">
                         </div>
-                    `;
-                    bannerContainer.insertAdjacentHTML('beforeend', bannerHTML);
-                });
+                        <div class="p-4 text-center">
+                            <p class="text-sm text-indigo-500 dark:text-indigo-400 font-bold mb-1">${displayLabel}</p>
+                            <h4 class="font-black text-lg text-slate-800 dark:text-white">${story.name}</h4>
+                        </div>
+                    </div>
+                `;
+                bannerContainer.insertAdjacentHTML('beforeend', bannerHTML);
+            });
             }
             bannerContainer.classList.remove('hidden');
         }
