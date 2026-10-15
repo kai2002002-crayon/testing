@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark"> <!-- 如果你的網站預設是深色模式，保留 class="dark" -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>劇情回顧</title>
+    <!-- 引入 Tailwind CSS (如果你的專案已經有編譯好的 CSS，可換成你自己的) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 min-h-screen text-slate-800 dark:text-slate-200 p-4 sm:p-8">
+
+    <!-- 頂部導覽列 (可選，讓使用者可以點擊回首頁) -->
+    <div class="max-w-6xl mx-auto mb-8 flex justify-between items-center">
+        <h1 class="text-3xl font-black text-indigo-600 dark:text-indigo-400">📖 劇情回顧室</h1>
+        <a href="index.html" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 rounded-lg font-bold transition-colors">
+            返回首頁
+        </a>
+    </div>
+
+    <!-- 劇情回顧主區塊 -->
+    <div class="max-w-6xl mx-auto font-sans">
+        
+        <!-- 兩大區域按鈕 (Icons) -->
+        <div class="flex justify-center gap-12 mb-12 border-b border-slate-300 dark:border-slate-700 pb-8">
+            <button onclick="loadStoryCategory('main')" class="flex flex-col items-center group cursor-pointer hover:scale-105 transition-transform outline-none">
+                <div class="w-24 h-24 bg-blue-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:bg-blue-400 group-hover:shadow-blue-500/50 transition-all">
+                    <!-- 將圖片路徑換成你準備的圖示 -->
+                    <img src="story/icon_main.png" alt="主線" class="w-14 h-14 object-contain" onerror="this.style.display='none'">
+                </div>
+                <span class="mt-4 font-black text-xl tracking-wider">主線劇情</span>
+            </button>
+
+            <button onclick="loadStoryCategory('event')" class="flex flex-col items-center group cursor-pointer hover:scale-105 transition-transform outline-none">
+                <div class="w-24 h-24 bg-amber-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:bg-amber-400 group-hover:shadow-amber-500/50 transition-all">
+                    <!-- 將圖片路徑換成你準備的圖示 -->
+                    <img src="story/icon_event.png" alt="活動" class="w-14 h-14 object-contain" onerror="this.style.display='none'">
+                </div>
+                <span class="mt-4 font-black text-xl tracking-wider">活動劇情</span>
+            </button>
+        </div>
+
+        <!-- 篇章 Banner 列表區 (預設隱藏) -->
+        <div id="banner-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10 hidden">
+            <!-- JS 動態生成 Banner -->
+        </div>
+
+        <!-- 該篇章的章節列表區 (打橫列出，預設隱藏) -->
+        <div id="episode-container" class="hidden bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
+            <h3 id="episode-title" class="text-2xl font-black mb-6 border-b border-slate-200 dark:border-slate-700 pb-3 text-indigo-600 dark:text-indigo-400"></h3>
+            <!-- 橫向滑動區塊 -->
+            <div id="episode-list" class="flex gap-4 overflow-x-auto pb-4 snap-x">
+                <!-- JS 動態生成章節按鈕 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- YouTube 影片彈出視窗 (Modal) -->
+    <div id="video-modal" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm">
+        <div class="relative w-full max-w-5xl mx-4 bg-gray-900 rounded-xl shadow-2xl ring-1 ring-white/10">
+            <button onclick="closeVideo()" class="absolute -top-12 right-0 text-white hover:text-red-400 text-lg font-bold bg-black/50 px-4 py-2 rounded-lg transition-colors">
+                ✕ 關閉影片
+            </button>
+            <div class="aspect-video w-full">
+                <!-- aspect-video 會自動維持 16:9 比例 -->
+                <iframe id="youtube-player" class="w-full h-full" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入劇情資料檔 -->
+    <script src="data_story.js"></script>
+
+    <!-- 頁面互動邏輯 -->
+    <script>
+        let currentCategory = ''; 
+
+        // 1. 載入兩大類別 (主線 / 活動) 的 Banners
+        function loadStoryCategory(category) {
+            currentCategory = category;
+            const bannerContainer = document.getElementById('banner-container');
+            const episodeContainer = document.getElementById('episode-container');
+            
+            bannerContainer.innerHTML = ''; 
+            episodeContainer.classList.add('hidden'); 
+
+            // 如果 data_story.js 尚未載入或格式錯誤的保護機制
+            if (typeof STORY_DATA === 'undefined') {
+                bannerContainer.innerHTML = '<p class="text-center text-red-500 w-full col-span-full">無法載入資料，請檢查 data_story.js 是否正確連結。</p>';
+                bannerContainer.classList.remove('hidden');
+                return;
+            }
+
+            const storyData = STORY_DATA[category];
+
+            if (!storyData || storyData.length === 0) {
+                bannerContainer.innerHTML = '<p class="text-center text-slate-500 w-full col-span-full font-bold text-lg">目前尚無劇情資料</p>';
+            } else {
+                storyData.forEach(story => {
+                    const bannerHTML = `
+                        <div onclick="loadEpisodes('${story.id}')" class="cursor-pointer group bg-slate-100 dark:bg-slate-700/50 rounded-xl overflow-hidden hover:shadow-xl hover:ring-2 hover:ring-indigo-500 transition-all hover:-translate-y-1">
+                            <div class="h-48 w-full bg-slate-300 dark:bg-slate-800 relative overflow-hidden">
+                                <img src="${story.banner}" alt="${story.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="this.src='https://via.placeholder.com/600x300?text=No+Banner'">
+                            </div>
+                            <div class="p-4 text-center">
+                                ${story.chapterNumber ? `<p class="text-sm text-indigo-500 dark:text-indigo-400 font-bold mb-1">${story.chapterNumber}</p>` : ''}
+                                <h4 class="font-black text-lg text-slate-800 dark:text-white">${story.name}</h4>
+                            </div>
+                        </div>
+                    `;
+                    bannerContainer.insertAdjacentHTML('beforeend', bannerHTML);
+                });
+            }
+            bannerContainer.classList.remove('hidden');
+        }
+
+        // 2. 載入所選篇章的章節清單
+        function loadEpisodes(storyId) {
+            const episodeContainer = document.getElementById('episode-container');
+            const episodeList = document.getElementById('episode-list');
+            const episodeTitle = document.getElementById('episode-title');
+            
+            const storyData = STORY_DATA[currentCategory].find(s => s.id === storyId);
+            if (!storyData) return;
+
+            const chapterPrefix = storyData.chapterNumber ? `${storyData.chapterNumber} - ` : '';
+            episodeTitle.innerText = `${chapterPrefix}${storyData.name}`;
+            episodeList.innerHTML = '';
+
+            storyData.episodes.forEach(ep => {
+                const epHTML = `
+                    <button onclick="playVideo('${ep.youtubeId}')" class="shrink-0 flex flex-col items-center justify-center w-44 p-4 bg-slate-50 dark:bg-slate-900 hover:bg-indigo-50 dark:hover:bg-indigo-900/50 border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-500 rounded-xl cursor-pointer transition-all snap-center shadow-sm group">
+                        <span class="text-indigo-600 dark:text-indigo-400 font-black text-2xl mb-2">${ep.epNumber}</span>
+                        <span class="text-sm font-bold text-slate-700 dark:text-slate-300 text-center line-clamp-2 h-10 flex items-center">${ep.title}</span>
+                        <div class="mt-4 w-10 h-10 rounded-full bg-red-600 flex items-center justify-center text-white pl-1 shadow-lg group-hover:scale-110 group-hover:bg-red-500 transition-transform">
+                            ▶
+                        </div>
+                    </button>
+                `;
+                episodeList.insertAdjacentHTML('beforeend', epHTML);
+            });
+
+            episodeContainer.classList.remove('hidden');
+            // 自動平滑捲動到章節區
+            setTimeout(() => {
+                episodeContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+
+        // 3. 播放 YouTube 影片
+        function playVideo(youtubeId) {
+            const modal = document.getElementById('video-modal');
+            const player = document.getElementById('youtube-player');
+            
+            player.src = `https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`;
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+            }, 10);
+        }
+
+        // 4. 關閉影片
+        function closeVideo() {
+            const modal = document.getElementById('video-modal');
+            const player = document.getElementById('youtube-player');
+            
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                player.src = ''; 
+            }, 300);
+        }
+    </script>
+</body>
+</html>
