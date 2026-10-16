@@ -1989,261 +1989,291 @@
                 }
             });
             
-            window.onload = function() {
+            // 🌟 1. 將 window.onload 加上 async 關鍵字以支援非同步讀取
+            window.onload = async function() {
                 applyI18n(); 
             
                 const urlParams = new URLSearchParams(window.location.search);
                 currentTargetName = urlParams.get('char')?.trim();
             
                 if (!currentTargetName) { renderError(getI18n('error_no_char') || "❌ 未指定坨坨，請從主頁點擊坨坨按鈕進入。"); return; }
-                if (typeof INITIAL_DATA === 'undefined') { renderError(getI18n('error_no_data') || "❌ 載入失敗：找不到 INITIAL_DATA。"); return; }
-            
-                currentCharData = INITIAL_DATA.find(c => c.name.trim() === currentTargetName);
-                if (!currentCharData) { renderError(`${getI18n('error_char_not_found') || "❌ 找不到坨坨資料: "}${currentTargetName}`); return; }
-            
-                const avatarBox = document.getElementById('charAvatar');
-                if (typeof LOBBY_BACKGROUNDS !== 'undefined' && LOBBY_BACKGROUNDS.length > 0) {
-                    const randomIndex = Math.floor(Math.random() * LOBBY_BACKGROUNDS.length);
-                    const randomBgUrl = LOBBY_BACKGROUNDS[randomIndex];
-                    avatarBox.style.setProperty('--bg-image', `url('${randomBgUrl}')`);
-                } else {
-                    avatarBox.style.setProperty('--bg-image', `none`);
-                }
-            
-                const displayName = getI18n(currentCharData.name);
-            
-            // 1. 名字恢復為純文字，移除舊的 identityHtml
-            document.getElementById('charName').innerHTML = displayName;
 
-            // 🌟 實裝日期處理：若無 releaseDate 則預設為 09/10/2025
-            let releaseLabel = getI18n('release_date_label');
-            if (releaseLabel === 'release_date_label') releaseLabel = '實裝日期';
-            if (document.getElementById('releaseDateLabelText')) document.getElementById('releaseDateLabelText').innerText = releaseLabel;
-            
-            let releaseDateText = currentCharData.releaseDate || '09/10/2025';
-                // 1. 過濾掉時間部分 (空格或 'T' 後面的內容)
-                releaseDateText = releaseDateText.split(' ')[0].split('T')[0];
-                // 2. 判斷是否為 YYYY-MM-DD 或 YYYY/MM/DD 格式，並轉換為 DD/MM/YYYY
-                const dateMatch = releaseDateText.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/);
-                if (dateMatch) {
-                    const year = dateMatch[1];
-                    const month = dateMatch[2].padStart(2, '0'); // 自動補零，例如 9 會變成 09
-                    const day = dateMatch[3].padStart(2, '0');
-                    releaseDateText = `${day}/${month}/${year}`;
-                }
-                const releaseValueEl = document.getElementById('releaseDateValue');
-                if (releaseValueEl) releaseValueEl.innerText = releaseDateText;
-            
-            // 2. 準備所有屬性標籤的多國語言文字
-            let idLabel = getI18n('stats_identity'); if(idLabel === 'stats_identity') idLabel = '身份';
-            let pLabel = getI18n('stats_personality'); if(pLabel === 'stats_personality') pLabel = '性格';
-            let rLabel = getI18n('stats_race'); if(rLabel === 'stats_race') rLabel = '種族';
-            let posLabel = getI18n('stats_position'); if(posLabel === 'stats_position') posLabel = '站位';
-            let jLabel = getI18n('stats_job'); if(jLabel === 'stats_job') jLabel = '職業';
-            let aLabel = getI18n('stats_attribute'); if(aLabel === 'stats_attribute') aLabel = '攻擊類型';
-            
-            // 3. 判斷是否為艾爾丁身份
-            const isEldain = (typeof ELDAIN_LIST !== 'undefined') ? ELDAIN_LIST.includes(currentCharData.name) : false;
-            const identityValue = isEldain ? '艾爾丁' : '普通坨坨';
-            
-            // 4. 取得攻擊類型
-            let currentAttribute = "未知";
-            if (typeof characterSkills !== 'undefined') {
-            const skillData = characterSkills.find(s => s.name.trim() === currentCharData.name);
-            if (skillData && skillData.attribute) {
-            currentAttribute = skillData.attribute;
-            }
-            }
-            // 處理雙重性格判斷
-            let displayPersonality = currentCharData.personality;
-            let pList = [];
-            if (Array.isArray(displayPersonality)) {
-                pList = displayPersonality;
-            } else if (typeof displayPersonality === 'string') {
-                pList = displayPersonality.split(/[、,\/\s+]+/).map(s => s.trim()).filter(Boolean);
-            } else if (displayPersonality) {
-                pList = [String(displayPersonality)];
-            }
+                // 顯示載入中提示
+                document.getElementById('charName').innerHTML = "資料連線中...";
 
-            const pDictLoad = { '冷靜': 'Composed', '憂鬱': 'Depressed', '天真': 'Innocence', '狂亂': 'Madness', '活潑': 'Vivacious', '共鳴': 'Resonance' };
-
-            if (pList.length > 1) {
-                displayPersonality = pList.join('+'); // 將多重性格組合成顯示字串，例如 "憂鬱+天真"
-                const enList = pList.map(p => pDictLoad[p] || 'Multifaceted');
-                // 動態註冊專屬的雙面性格組合 class
-                if (typeof window.ICON_MAP === 'undefined') window.ICON_MAP = {};
-                // 🌟 修正：補上 Multifaceted_ 並且對陣列進行 .sort()，確保 CSS Class 名稱與 sprites.css 及 index.html 完全一致
-                window.ICON_MAP[`personality_${displayPersonality}`] = `sprite-base sprite-common sprite-Personality_Multifaceted_${enList.sort().join('_')}`;
-            } else if (pList.length === 1) {
-                displayPersonality = pList[0];
-                if (displayPersonality === "雙重性格" || displayPersonality === "雙重") {
-                    displayPersonality = "雙面";
-                }
-            }
-            // 5. 渲染全部屬性圖示
-                updateTag('charIdentity', idLabel, identityValue, 'identity');
-                updateTag('charPersonality', pLabel, displayPersonality, 'personality'); // <-- 改成 displayPersonality
-                updateTag('charRace', rLabel, currentCharData.race, 'race');
-                updateTag('charPosition', posLabel, currentCharData.position, 'position');
-                updateTag('charJob', jLabel, currentCharData.job, 'job');
-                updateTag('charAttribute', aLabel, currentAttribute, 'attribute');
-            
-            // 1. 直接從網址列解析出所有的參數（改成檢查或直接用新的變數名稱，避免衝突）
-            const queryParams = new URLSearchParams(window.location.search);
-
-            // 2. 抓取種族與性格（如果網址沒有，就從 currentCharData 拿來當備用）
-            const currentRace = currentCharData.race || queryParams.get('race');
-            const currentPersonality = queryParams.get('personality') || currentCharData.personality;
-
-            // 3. 傳入這兩個確定有值的變數！
-            updateRaceBackground(currentRace, currentPersonality);
-                
-                renderStars(currentTargetName);
-                renderExtraInfo(currentTargetName);
-            
-                const spineKey = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[currentCharData.name] : currentCharData.name;
-            
-                const faviconEl = document.getElementById('dynamicFavicon');
-                const defaultFaviconUrl = 'https://i.postimg.cc/mkfSTq5k/Favicon.png';
-                
-                if (faviconEl && spineKey) {
-                    const testImg = new Image();
-                    testImg.onload = function() { faviconEl.href = this.src; };
-                    testImg.onerror = function() { faviconEl.href = defaultFaviconUrl; };
-                    testImg.src = `./favicon/${spineKey}.png`;
-                }
-            
-                if (spineKey) {
-                    const presentLeft = document.getElementById('presentLeft');
-                    const presentRight = document.getElementById('presentRight');
-                    const presentContainer = document.getElementById('presentContainer');
-                    const presentNameBox = document.getElementById('presentName');
-            
-                    const DEFAULT_NO_PRESENT = "sprite-base sprite-common sprite-letter";
-            
-                    let finalImgUrl = DEFAULT_NO_PRESENT;
-                    let presentDisplayName = getI18n('present_delivering'); 
-                    if (presentDisplayName === 'present_delivering') presentDisplayName = '未配發寶物';
-            
-                    let isHasPresent = false;
-            
-                    if (typeof PRESENT_MAP !== 'undefined' && PRESENT_MAP[spineKey]) {
-                        finalImgUrl = PRESENT_MAP[spineKey].sprite || `sprite-PresentList_${spineKey}`;
-                        if (!finalImgUrl.includes('sprite-base')) finalImgUrl = `sprite-base sprite-common ${finalImgUrl}`;
-                        isHasPresent = true;
-            
-                        const pNameData = PRESENT_MAP[spineKey].name;
-                        if (pNameData) {
-                            if (typeof pNameData === 'object') {
-                                presentDisplayName = pNameData[window.currentLang] || pNameData["zh-TW"];
-                            } else {
-                                presentDisplayName = pNameData;
-                            }
-                        } else {
-                            presentDisplayName = `${currentCharData.name} - Present`;
-                        }
+                try {
+                    // 🌟 2. 從 Firestore 讀取共用對應字典 (SPINE_MAP, FOOD_MAP 等)
+                    const configDoc = await db.collection("configs").doc("maps").get();
+                    if (configDoc.exists) {
+                        const cloudMaps = configDoc.data();
+                        
+                        // 將雲端地圖對應表掛載到全域變數，確保後續程式碼（如 SPINE_MAP[...], FOOD_MAP[...]）無縫接軌
+                        window.SPINE_MAP = cloudMaps.SPINE_MAP || {};
+                        window.FOOD_MAP = cloudMaps.FOOD_MAP || {};
+                        window.PRESENT_MAP = cloudMaps.PRESENT_MAP || {};
+                        window.IMAGE_MAP = cloudMaps.IMAGE_MAP || {};
+                        window.ELDAIN_LIST = cloudMaps.ELDAIN_LIST || [];
+                        window.COSTUME_MAP = cloudMaps.COSTUME_MAP || {};
+                        window.LOBBY_BACKGROUNDS = cloudMaps.LOBBY_BACKGROUNDS || [];
+                        window.CRAYON_PATH_CONFIG = cloudMaps.CRAYON_PATH_CONFIG || {};
                     }
-            
-                    if (presentNameBox) {
-                        presentNameBox.innerText = presentDisplayName;
-                        presentNameBox.className = "inline-block mb-1 tracking-wide px-4 py-1.5 rounded-full border transition-colors duration-300";
-            
-                        if (!isHasPresent) {
-                            presentNameBox.classList.add(
-                                'text-sm', 'text-rose-400', 'dark:text-gray-400', 
-                                'bg-rose-50', 'dark:bg-gray-800/50', 
-                                'border-rose-200', 'dark:border-gray-700', 'border-dashed'
-                            );
-                        } else {
-                            presentNameBox.classList.add(
-                                'text-base', 'font-bold', 'text-rose-900', 'dark:text-gray-100', 
-                                'bg-rose-100', 'dark:bg-gray-800', 
-                                'border-rose-300', 'dark:border-gray-600', 'shadow-sm'
-                            );
-                        }
-                        presentNameBox.classList.remove('hidden');
-                    }
-            
-                    const altText = isHasPresent ? `${currentCharData.name} - ${presentDisplayName}` : "No Present";
-            
-                    // 🔥 修正：使用純淨的縮放置中演算法處理容器，不干擾 Tailwind 的 hover 效果
-                    if (presentContainer) {
-                        if (finalImgUrl.startsWith('http') || finalImgUrl.startsWith('./') || finalImgUrl.startsWith('data:')) {
-                            const imgClass = isHasPresent 
-                                ? "w-32 h-32 md:w-40 md:h-40 object-contain transition-transform duration-300 hover:scale-110 drop-shadow-md"
-                                : "w-24 h-24 md:w-32 md:h-32 object-contain opacity-70 animate-pulse"; 
-                            presentContainer.innerHTML = `
-                                <img src="${finalImgUrl}" alt="${altText}" class="${imgClass}" loading="lazy" onerror="if(this.src != 'https://i.postimg.cc/qtwD6bsq/Icon-Present.png') this.src='https://i.postimg.cc/qtwD6bsq/Icon-Present.png'; else this.parentElement.innerHTML='<p class=\\'text-gray-500 text-sm\\'>⚠️ Image Error</p>'">
-                            `;
-                        } else {
-                            // 設定正確安全的縮放比例，防止雪碧圖超出原本容器邊界
-// 這裡保留您的動態縮放與位置調整
-const baseScaleVal = isHasPresent ? 0.65 : 0.75; 
-const interactClass = isHasPresent ? 'hover:scale-110 transition-transform duration-300 drop-shadow-md cursor-pointer' : 'opacity-90 drop-shadow-sm transition-transform duration-300';
-const verticalPos = isHasPresent ? "-translate-y-1/2" : "-translate-y-[35%]";
 
-// ✨ 修正重點：移除 w-full h-full 與 flex 的壓縮限制，並加上 shrink-0
-presentContainer.innerHTML = `
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 ${verticalPos} pointer-events-none">
-        <div style="transform: scale(${baseScaleVal}); transform-origin: center;" class="pointer-events-auto shrink-0 flex items-center justify-center">
-            <div class="${finalImgUrl} ${interactClass} shrink-0 max-w-none max-h-none block" title="${altText}"></div>
-        </div>
-    </div>
-`;
-
-                        }
-                    }
-            
-                    if (!isHasPresent) {
-                        if (presentRight) presentRight.classList.add('hidden');
-                        if (presentLeft) presentLeft.className = "w-full flex flex-col items-center justify-center gap-4 py-6 transition-all duration-300";
-                    } else {
-                        if (presentRight) presentRight.classList.remove('hidden');
-                        if (presentLeft) presentLeft.className = "w-full md:w-1/3 flex flex-col items-center gap-3 transition-all duration-300";
-                    }
+                    // 🌟 3. 從 Firestore 讀取角色基本資料
+                    const charSnapshot = await db.collection("characters").where("name", "==", currentTargetName).get();
                     
-                    renderCostumeButtons(currentCharData.name);
-            
-                    const initialCostumeKey = (typeof COSTUME_MAP !== 'undefined' && COSTUME_MAP[currentCharData.name] && COSTUME_MAP[currentCharData.name].length > 0) 
-                                              ? COSTUME_MAP[currentCharData.name][0] 
-                                              : spineKey;
-                    setTimeout(() => { loadSpineAnimation(initialCostumeKey); }, 100);
-                } else {
-                    const imgUrl = typeof IMAGE_MAP !== 'undefined' ? IMAGE_MAP[`avatar_${currentCharData.name}`] : '';
-                    if (imgUrl) {
-                        avatarBox.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover">`;
-                    } else {
-                        avatarBox.innerText = currentCharData.name.charAt(0);
+                    if (charSnapshot.empty) { 
+                        renderError(`${getI18n('error_char_not_found') || "❌ 找不到坨坨資料: "}${currentTargetName}`); 
+                        return; 
                     }
-                }
-            
-                let crayonConfig = { layer1: [], layer2: [], layer3: [] };
-                if (typeof CRAYON_PATH_CONFIG !== 'undefined' && 
-                    CRAYON_PATH_CONFIG[currentCharData.race] && 
-                    CRAYON_PATH_CONFIG[currentCharData.race][currentCharData.pathVersion]) {
-                    crayonConfig = CRAYON_PATH_CONFIG[currentCharData.race][currentCharData.pathVersion];
-                }
+                    currentCharData = charSnapshot.docs[0].data();
 
-                const renderCrayonList = (elementId, array) => {
-                    const ul = document.getElementById(elementId);
-                    const safeArray = array || [];
-                    ul.innerHTML = safeArray.map(attr => `<li>${t(attr)}</li>`).join('');
-                };
+                    // 🌟 4. 從 Firestore 讀取角色技能資料
+                    const skillSnapshot = await db.collection("character_skills").where("name", "==", currentTargetName).get();
+                    if (!skillSnapshot.empty) {
+                        window.characterSkills = [skillSnapshot.docs[0].data()];
+                    } else {
+                        window.characterSkills = [];
+                    }
+
+                    // ==========================================
+                    // 以下完全保留您原本的渲染邏輯（資料已由雲端字典全數支援）
+                    // ==========================================
+                    
+                    const avatarBox = document.getElementById('charAvatar');
+                    if (typeof LOBBY_BACKGROUNDS !== 'undefined' && LOBBY_BACKGROUNDS.length > 0) {
+                        const randomIndex = Math.floor(Math.random() * LOBBY_BACKGROUNDS.length);
+                        const randomBgUrl = LOBBY_BACKGROUNDS[randomIndex];
+                        avatarBox.style.setProperty('--bg-image', `url('${randomBgUrl}')`);
+                    } else {
+                        avatarBox.style.setProperty('--bg-image', `none`);
+                    }
                 
-                // 改從 crayonConfig 讀取資料
-                renderCrayonList('layer1List', crayonConfig.layer1);
-                renderCrayonList('layer2List', crayonConfig.layer2);
-                renderCrayonList('layer3List', crayonConfig.layer3);
-            
-                document.title = `${displayName} - ${getI18n('page_title_char_detail')}`;
-            
-                renderSkills(currentTargetName);
-                renderAside(currentTargetName);
+                    const displayName = getI18n(currentCharData.name);
                 
-                loadComments(currentTargetName);
-                switchPresentTab('thought'); 
-                loadTopMiniSpine(currentTargetName);
-             };
+                    // 1. 名字恢復為純文字
+                    document.getElementById('charName').innerHTML = displayName;
+
+                    // 實裝日期處理
+                    let releaseLabel = getI18n('release_date_label');
+                    if (releaseLabel === 'release_date_label') releaseLabel = '實裝日期';
+                    if (document.getElementById('releaseDateLabelText')) document.getElementById('releaseDateLabelText').innerText = releaseLabel;
+                    
+                    let releaseDateText = currentCharData.releaseDate || '09/10/2025';
+                    releaseDateText = releaseDateText.split(' ')[0].split('T')[0];
+                    const dateMatch = releaseDateText.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/);
+                    if (dateMatch) {
+                        const year = dateMatch[1];
+                        const month = dateMatch[2].padStart(2, '0'); 
+                        const day = dateMatch[3].padStart(2, '0');
+                        releaseDateText = `${day}/${month}/${year}`;
+                    }
+                    const releaseValueEl = document.getElementById('releaseDateValue');
+                    if (releaseValueEl) releaseValueEl.innerText = releaseDateText;
+                
+                    // 2. 準備所有屬性標籤的多國語言文字
+                    let idLabel = getI18n('stats_identity'); if(idLabel === 'stats_identity') idLabel = '身份';
+                    let pLabel = getI18n('stats_personality'); if(pLabel === 'stats_personality') pLabel = '性格';
+                    let rLabel = getI18n('stats_race'); if(rLabel === 'stats_race') rLabel = '種族';
+                    let posLabel = getI18n('stats_position'); if(posLabel === 'stats_position') posLabel = '站位';
+                    let jLabel = getI18n('stats_job'); if(jLabel === 'stats_job') jLabel = '職業';
+                    let aLabel = getI18n('stats_attribute'); if(aLabel === 'stats_attribute') aLabel = '攻擊類型';
+                
+                    // 3. 判斷是否為艾爾丁身份
+                    const isEldain = (typeof ELDAIN_LIST !== 'undefined') ? ELDAIN_LIST.includes(currentCharData.name) : false;
+                    const identityValue = isEldain ? '艾爾丁' : '普通坨坨';
+                
+                    // 4. 取得攻擊類型
+                    let currentAttribute = "未知";
+                    if (typeof window.characterSkills !== 'undefined' && window.characterSkills.length > 0) {
+                        const skillData = window.characterSkills.find(s => s.name.trim() === currentCharData.name);
+                        if (skillData && skillData.attribute) {
+                            currentAttribute = skillData.attribute;
+                        }
+                    }
+
+                    // 處理雙重性格判斷
+                    let displayPersonality = currentCharData.personality;
+                    let pList = [];
+                    if (Array.isArray(displayPersonality)) {
+                        pList = displayPersonality;
+                    } else if (typeof displayPersonality === 'string') {
+                        pList = displayPersonality.split(/[、,\/\s+]+/).map(s => s.trim()).filter(Boolean);
+                    } else if (displayPersonality) {
+                        pList = [String(displayPersonality)];
+                    }
+
+                    const pDictLoad = { '冷靜': 'Composed', '憂鬱': 'Depressed', '天真': 'Innocence', '狂亂': 'Madness', '活潑': 'Vivacious', '共鳴': 'Resonance' };
+
+                    if (pList.length > 1) {
+                        displayPersonality = pList.join('+'); 
+                        const enList = pList.map(p => pDictLoad[p] || 'Multifaceted');
+                        if (typeof window.ICON_MAP === 'undefined') window.ICON_MAP = {};
+                        window.ICON_MAP[`personality_${displayPersonality}`] = `sprite-base sprite-common sprite-Personality_Multifaceted_${enList.sort().join('_')}`;
+                    } else if (pList.length === 1) {
+                        displayPersonality = pList[0];
+                        if (displayPersonality === "雙重性格" || displayPersonality === "雙重") {
+                            displayPersonality = "雙面";
+                        }
+                    }
+
+                    // 5. 渲染全部屬性圖示
+                    updateTag('charIdentity', idLabel, identityValue, 'identity');
+                    updateTag('charPersonality', pLabel, displayPersonality, 'personality'); 
+                    updateTag('charRace', rLabel, currentCharData.race, 'race');
+                    updateTag('charPosition', posLabel, currentCharData.position, 'position');
+                    updateTag('charJob', jLabel, currentCharData.job, 'job');
+                    updateTag('charAttribute', aLabel, currentAttribute, 'attribute');
+                
+                    const queryParams = new URLSearchParams(window.location.search);
+                    const currentRace = currentCharData.race || queryParams.get('race');
+                    const currentPersonality = queryParams.get('personality') || currentCharData.personality;
+                    updateRaceBackground(currentRace, currentPersonality);
+                        
+                    renderStars(currentTargetName);
+                    renderExtraInfo(currentTargetName);
+                
+                    const spineKey = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[currentCharData.name] : currentCharData.name;
+                
+                    const faviconEl = document.getElementById('dynamicFavicon');
+                    const defaultFaviconUrl = 'https://i.postimg.cc/mkfSTq5k/Favicon.png';
+                    
+                    if (faviconEl && spineKey) {
+                        const testImg = new Image();
+                        testImg.onload = function() { faviconEl.href = this.src; };
+                        testImg.onerror = function() { faviconEl.href = defaultFaviconUrl; };
+                        testImg.src = `./favicon/${spineKey}.png`;
+                    }
+                
+                    if (spineKey) {
+                        const presentLeft = document.getElementById('presentLeft');
+                        const presentRight = document.getElementById('presentRight');
+                        const presentContainer = document.getElementById('presentContainer');
+                        const presentNameBox = document.getElementById('presentName');
+                
+                        const DEFAULT_NO_PRESENT = "sprite-base sprite-common sprite-letter";
+                
+                        let finalImgUrl = DEFAULT_NO_PRESENT;
+                        let presentDisplayName = getI18n('present_delivering'); 
+                        if (presentDisplayName === 'present_delivering') presentDisplayName = '未配發寶物';
+                
+                        let isHasPresent = false;
+                
+                        if (typeof PRESENT_MAP !== 'undefined' && PRESENT_MAP[spineKey]) {
+                            finalImgUrl = PRESENT_MAP[spineKey].sprite || `sprite-PresentList_${spineKey}`;
+                            if (!finalImgUrl.includes('sprite-base')) finalImgUrl = `sprite-base sprite-common ${finalImgUrl}`;
+                            isHasPresent = true;
+                
+                            const pNameData = PRESENT_MAP[spineKey].name;
+                            if (pNameData) {
+                                if (typeof pNameData === 'object') {
+                                    presentDisplayName = pNameData[window.currentLang] || pNameData["zh-TW"];
+                                } else {
+                                    presentDisplayName = pNameData;
+                                }
+                            } else {
+                                presentDisplayName = `${currentCharData.name} - Present`;
+                            }
+                        }
+                
+                        if (presentNameBox) {
+                            presentNameBox.innerText = presentDisplayName;
+                            presentNameBox.className = "inline-block mb-1 tracking-wide px-4 py-1.5 rounded-full border transition-colors duration-300";
+                
+                            if (!isHasPresent) {
+                                presentNameBox.classList.add(
+                                    'text-sm', 'text-rose-400', 'dark:text-gray-400', 
+                                    'bg-rose-50', 'dark:bg-gray-800/50', 
+                                    'border-rose-200', 'dark:border-gray-700', 'border-dashed'
+                                );
+                            } else {
+                                presentNameBox.classList.add(
+                                    'text-base', 'font-bold', 'text-rose-900', 'dark:text-gray-100', 
+                                    'bg-rose-100', 'dark:bg-gray-800', 
+                                    'border-rose-300', 'dark:border-gray-600', 'shadow-sm'
+                                );
+                            }
+                            presentNameBox.classList.remove('hidden');
+                        }
+                
+                        const altText = isHasPresent ? `${currentCharData.name} - ${presentDisplayName}` : "No Present";
+                
+                        if (presentContainer) {
+                            if (finalImgUrl.startsWith('http') || finalImgUrl.startsWith('./') || finalImgUrl.startsWith('data:')) {
+                                const imgClass = isHasPresent 
+                                    ? "w-32 h-32 md:w-40 md:h-40 object-contain transition-transform duration-300 hover:scale-110 drop-shadow-md"
+                                    : "w-24 h-24 md:w-32 md:h-32 object-contain opacity-70 animate-pulse"; 
+                                presentContainer.innerHTML = `
+                                    <img src="${finalImgUrl}" alt="${altText}" class="${imgClass}" loading="lazy" onerror="if(this.src != 'https://i.postimg.cc/qtwD6bsq/Icon-Present.png') this.src='https://i.postimg.cc/qtwD6bsq/Icon-Present.png'; else this.parentElement.innerHTML='<p class=\\'text-gray-500 text-sm\\'>⚠️ Image Error</p>'">
+                                `;
+                            } else {
+                                const baseScaleVal = isHasPresent ? 0.65 : 0.75; 
+                                const interactClass = isHasPresent ? 'hover:scale-110 transition-transform duration-300 drop-shadow-md cursor-pointer' : 'opacity-90 drop-shadow-sm transition-transform duration-300';
+                                const verticalPos = isHasPresent ? "-translate-y-1/2" : "-translate-y-[35%]";
+
+                                presentContainer.innerHTML = `
+                                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 ${verticalPos} pointer-events-none">
+                                        <div style="transform: scale(${baseScaleVal}); transform-origin: center;" class="pointer-events-auto shrink-0 flex items-center justify-center">
+                                            <div class="${finalImgUrl} ${interactClass} shrink-0 max-w-none max-h-none block" title="${altText}"></div>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        }
+                
+                        if (!isHasPresent) {
+                            if (presentRight) presentRight.classList.add('hidden');
+                            if (presentLeft) presentLeft.className = "w-full flex flex-col items-center justify-center gap-4 py-6 transition-all duration-300";
+                        } else {
+                            if (presentRight) presentRight.classList.remove('hidden');
+                            if (presentLeft) presentLeft.className = "w-full md:w-1/3 flex flex-col items-center gap-3 transition-all duration-300";
+                        }
+                        
+                        renderCostumeButtons(currentCharData.name);
+                
+                        const initialCostumeKey = (typeof COSTUME_MAP !== 'undefined' && COSTUME_MAP[currentCharData.name] && COSTUME_MAP[currentCharData.name].length > 0) 
+                                                  ? COSTUME_MAP[currentCharData.name][0] 
+                                                  : spineKey;
+                        setTimeout(() => { loadSpineAnimation(initialCostumeKey); }, 100);
+                    } else {
+                        const imgUrl = typeof IMAGE_MAP !== 'undefined' ? IMAGE_MAP[`avatar_${currentCharData.name}`] : '';
+                        if (imgUrl) {
+                            avatarBox.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover">`;
+                        } else {
+                            avatarBox.innerText = currentCharData.name.charAt(0);
+                        }
+                    }
+                
+                    let crayonConfig = { layer1: [], layer2: [], layer3: [] };
+                    if (typeof CRAYON_PATH_CONFIG !== 'undefined' && 
+                        CRAYON_PATH_CONFIG[currentCharData.race] && 
+                        CRAYON_PATH_CONFIG[currentCharData.race][currentCharData.pathVersion]) {
+                        crayonConfig = CRAYON_PATH_CONFIG[currentCharData.race][currentCharData.pathVersion];
+                    }
+
+                    const renderCrayonList = (elementId, array) => {
+                        const ul = document.getElementById(elementId);
+                        const safeArray = array || [];
+                        ul.innerHTML = safeArray.map(attr => `<li>${t(attr)}</li>`).join('');
+                    };
+                    
+                    renderCrayonList('layer1List', crayonConfig.layer1);
+                    renderCrayonList('layer2List', crayonConfig.layer2);
+                    renderCrayonList('layer3List', crayonConfig.layer3);
+                
+                    document.title = `${displayName} - ${getI18n('page_title_char_detail')}`;
+                
+                    renderSkills(currentTargetName);
+                    renderAside(currentTargetName);
+                    
+                    loadComments(currentTargetName);
+                    switchPresentTab('thought'); 
+                    loadTopMiniSpine(currentTargetName);
+
+                } catch (error) {
+                    console.error("🔥 Firestore 讀取錯誤:", error);
+                    renderError("讀取資料失敗，請確認網路連線與資料庫權限。");
+                }
+            };
             
             function getAnonymousId() {
                 let anonId = localStorage.getItem('trickcal_anon_id');
@@ -2487,28 +2517,34 @@ presentContainer.innerHTML = `
                 const iframe = document.getElementById('ytIframe');
                 const closeBtn = document.querySelector('.yt-modal-close');
             
-                // 處理動態生成的按鈕點擊 (使用事件代理)
-                document.body.addEventListener('click', function(e) {
-                    // 尋找被點擊的元素是不是我們的觸發按鈕
+                // 🌟 處理打工影片點擊事件 (事件委託，這樣非同步生成的按鈕也能監聽到)
+                document.body.addEventListener('click', (e) => {
                     const trigger = e.target.closest('.youtube-modal-trigger');
                     if (trigger) {
                         e.preventDefault();
                         const videoId = trigger.getAttribute('data-video-id');
                         if (videoId) {
+                            // 設定 Iframe src 並顯示 Modal
                             iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
                             modal.style.display = 'flex';
                         }
                     }
                 });
-            
-                function closeModal() {
+
+                // 🌟 關閉彈窗邏輯
+                const closeModal = () => {
                     modal.style.display = 'none';
-                    iframe.src = ''; // 清空以停止播放
-                }
-            
-                closeBtn.addEventListener('click', closeModal);
-                modal.addEventListener('click', function(e) {
-                    if (e.target === this) closeModal();
+                    iframe.src = ''; // 清空 src 停止背景播放影片
+                };
+
+                // 點擊 X 按鈕關閉
+                if (closeBtn) closeBtn.addEventListener('click', closeModal);
+
+                // 點擊半透明黑底關閉
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        closeModal();
+                    }
                 });
             });
         </script>
