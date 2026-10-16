@@ -19,6 +19,7 @@
         <link rel="preconnect" href="https://www.gstatic.com">
         <link rel="preconnect" href="https://unpkg.com">
         <link rel="preload" as="image" href="https://i.postimg.cc/qvjNxZzg/golden-crayon.png">
+        <script src="data_config.js"></script>
         <script src="data_core.js"></script>
         <script src="data_skills.js"></script>
         <script src="https://cdn.tailwindcss.com"></script>
@@ -27,6 +28,98 @@
                 darkMode: 'class',
             }
         </script>
+        <!-- 2. 載入 Firebase SDK 並執行資料合併 -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+    // 填入與 admin.html 完全相同的金鑰
+    const firebaseConfig = {
+  apiKey: "AIzaSyBxYB_Q29_hG5rOCMfemR2Dwod2PwUuqOA",
+  authDomain: "crayonadmin-c20d6.firebaseapp.com",
+  projectId: "crayonadmin-c20d6",
+  storageBucket: "crayonadmin-c20d6.firebasestorage.app",
+  messagingSenderId: "522711827218",
+  appId: "1:522711827218:web:99bef1b13dec040e08e9cb"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function loadAndMergeGameData() {
+        try {
+            // 這裡可以讓網頁顯示「載入中 (Loading...)」的動畫
+            console.log("正在從雲端讀取角色資料...");
+
+            const querySnapshot = await getDocs(collection(db, "global_characters"));
+
+            // 確保接收資料的陣列與物件已經存在
+            window.INITIAL_DATA = [];
+            window.characterSkills = [];
+            window.ASIDE_DATA = window.ASIDE_DATA || {};
+            window.INTRO_MAP = window.INTRO_MAP || { "zh-TW": {}, "ja": {}, "en": {} };
+            window.THOUGHT_MAP = window.THOUGHT_MAP || { "zh-TW": {}, "ja": {}, "en": {} };
+            window.LETTER_MAP = window.LETTER_MAP || { "zh-TW": {}, "ja": {}, "en": {} };
+            window.PRESENT_MAP = window.PRESENT_MAP || {};
+
+            // 遍歷雲端上的每一隻角色
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                const spineName = data.spineName;
+                const zhName = data.names["zh-TW"];
+
+                // A. 合併角色名稱到 LANG_DICT
+                if (data.names) {
+                    if (data.names["zh-TW"]) LANG_DICT["zh-TW"][zhName] = data.names["zh-TW"];
+                    if (data.names["ja"]) LANG_DICT["ja"][zhName] = data.names["ja"];
+                    if (data.names["en"]) LANG_DICT["en"][zhName] = data.names["en"];
+                }
+
+                // B. 還原核心屬性
+                if (data.core && Object.keys(data.core).length > 0) {
+                    INITIAL_DATA.push(data.core);
+                }
+
+                // C. 還原技能資料
+                if (data.skills && Object.keys(data.skills).length > 0) {
+                    characterSkills.push(data.skills);
+                }
+
+                // D. 還原願像資料
+                if (data.aside) {
+                    ASIDE_DATA[spineName] = data.aside;
+                }
+
+                // E. 還原多語系文本 (簡介、感想、書信、珍藏品)
+                if (data.texts) {
+                    const langs = ["zh-TW", "ja", "en"];
+                    langs.forEach(lang => {
+                        if (data.texts.intro && data.texts.intro[lang]) INTRO_MAP[lang][spineName] = data.texts.intro[lang];
+                        if (data.texts.thought && data.texts.thought[lang]) THOUGHT_MAP[lang][spineName] = data.texts.thought[lang];
+                        if (data.texts.letter && data.texts.letter[lang]) LETTER_MAP[lang][spineName] = data.texts.letter[lang];
+                        
+                        if (data.texts.present && data.texts.present[lang]) {
+                            if (!PRESENT_MAP[spineName]) PRESENT_MAP[spineName] = { name: {} };
+                            PRESENT_MAP[spineName].name[lang] = data.texts.present[lang];
+                        }
+                    });
+                }
+            });
+
+            console.log("✅ 資料讀取與合併完成！共載入", INITIAL_DATA.length, "名角色。");
+
+            // 3. 資料全部就緒，呼叫你的網頁初始化函數開始畫 UI
+            renderMainUI(); 
+
+        } catch (error) {
+            console.error("讀取資料失敗:", error);
+            alert("無法載入圖鑑資料，請檢查網路連線。");
+        }
+    }
+
+    // 網頁一打開就開始載入資料
+    loadAndMergeGameData();
+</script>
         <script>
             // 🌟 動態載入對應語言的 PWA Manifest
             (function() {
@@ -2225,43 +2318,75 @@
             } 
             }); 
             }
-            window.addEventListener('load', () => {
-                document.getElementById('loader').style.display = 'none';
+            // 宣告為全域函數，讓頂部的 module 可以呼叫它
+window.renderMainUI = function() {
+    // 隱藏 Loading 畫面 (對應你 HTML 中的 id="loader")
+    const loaderElement = document.getElementById('loader');
+    if (loaderElement) {
+        loaderElement.style.display = 'none';
+    }
+
+    try {
+        if (typeof INITIAL_DATA === 'undefined') throw new Error("找不到 INITIAL_DATA，請確認 data_core.js 是否載入成功！");
+        
+        if (typeof CRAYON_PATH_CONFIG !== 'undefined') {
+            INITIAL_DATA.forEach(char => {
+                if (char.pathVersion && CRAYON_PATH_CONFIG[char.race] && CRAYON_PATH_CONFIG[char.race][char.pathVersion]) {
+                    const config = CRAYON_PATH_CONFIG[char.race][char.pathVersion];
+                    char.layer1 = config.layer1 || [];
+                    char.layer2 = config.layer2 || [];
+                    char.layer3 = config.layer3 || [];
+                }
+            });
+        }
+        if (typeof characterSkills !== 'undefined') {
+            const skillsArray = Array.isArray(characterSkills) ? characterSkills : Object.values(characterSkills);
             
-                try {
-                    if (typeof INITIAL_DATA === 'undefined') throw new Error("找不到 INITIAL_DATA，請確認 data_core.js 是否載入成功！");
-                    if (typeof CRAYON_PATH_CONFIG !== 'undefined') {
-                        INITIAL_DATA.forEach(char => {
-                            if (char.pathVersion && CRAYON_PATH_CONFIG[char.race] && CRAYON_PATH_CONFIG[char.race][char.pathVersion]) {
-                                const config = CRAYON_PATH_CONFIG[char.race][char.pathVersion];
-                                char.layer1 = config.layer1 || [];
-                                char.layer2 = config.layer2 || [];
-                                char.layer3 = config.layer3 || [];
-                            }
-                        });
+            INITIAL_DATA.forEach(char => {
+                const skillData = skillsArray.find(item => item.name === char.name);
+                if (skillData && skillData.attribute) {
+                    if (String(skillData.attribute).includes("魔")) {
+                        char.type = "魔法";
+                    } else {
+                        char.type = "物理";
                     }
-                    if (typeof characterSkills !== 'undefined') {
-                        const skillsArray = Array.isArray(characterSkills) ? characterSkills : Object.values(characterSkills);
-                        
-                        INITIAL_DATA.forEach(char => {
-                            const skillData = skillsArray.find(item => item.name === char.name);
-                            
-                            if (skillData && skillData.attribute) {
-                                if (String(skillData.attribute).includes("魔")) {
-                                    char.type = "魔法";
-                                } else {
-                                    char.type = "物理";
-                                }
-                            } else {
-                                char.type = "物理";
-                            }
-                        });
-                    }
-                    renderPickupBanner(); renderCardBanner(); updateEventBanner(); startBannerRotation(); initStates(); changeLanguage(currentLang); updateAnimToggleUI();
-                    if (!isStatsOpen) { const body = document.getElementById("statsPanelBody"); const icon = document.getElementById("statsToggleIcon"); if(body) { body.classList.add("hidden"); body.classList.remove("grid"); icon.innerText = "▶"; } }
-                } catch (e) { const errBanner = document.getElementById('errorBanner'); if(errBanner) { errBanner.innerHTML = `⚠️ 畫面繪製失敗: ${e.message}`; errBanner.classList.remove('hidden'); } }
-                try {
-                    if (typeof firebase !== 'undefined') {
+                } else {
+                    char.type = "物理";
+                }
+            });
+        }
+        
+        // 執行所有 UI 繪製與初始化
+        renderPickupBanner(); 
+        renderCardBanner(); 
+        updateEventBanner(); 
+        startBannerRotation(); 
+        initStates(); 
+        changeLanguage(currentLang); 
+        updateAnimToggleUI();
+        
+        if (!isStatsOpen) { 
+            const body = document.getElementById("statsPanelBody"); 
+            const icon = document.getElementById("statsToggleIcon"); 
+            if(body) { 
+                body.classList.add("hidden"); 
+                body.classList.remove("grid"); 
+                icon.innerText = "▶"; 
+            } 
+        }
+    } catch (e) { 
+        const errBanner = document.getElementById('errorBanner'); 
+        if(errBanner) { 
+            errBanner.innerHTML = `⚠️ 畫面繪製失敗: ${e.message}`; 
+            errBanner.classList.remove('hidden'); 
+        } 
+    }
+};
+
+// 保留 Firebase Auth 的獨立初始化 (不需要等資料讀取完畢就能檢查登入狀態)
+window.addEventListener('load', () => {
+    try {
+        if (typeof firebase !== 'undefined') {
                         const firebaseConfig = { 
     apiKey: "AIzaSyDhv8D2pY_0M56UJrDTQw0RGPHA-BkXU8Y", 
     authDomain: "crayon-note.firebaseapp.com", 
