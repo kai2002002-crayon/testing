@@ -2020,7 +2020,10 @@
                     }
 
                     // 🌟 3. 從 Firestore 讀取角色基本資料
-                    const charSnapshot = await db.collection("global_characters").where("name", "==", currentTargetName).get();
+                    // 使用點記號 (dot notation) 來查詢巢狀欄位
+const charSnapshot = await db.collection("global_characters")
+  .where("name.zh-TW", "==", currentTargetName)
+  .get();
                     
                     if (charSnapshot.empty) { 
                         renderError(`${getI18n('error_char_not_found') || "❌ 找不到坨坨資料: "}${currentTargetName}`); 
