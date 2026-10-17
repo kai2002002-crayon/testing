@@ -2225,7 +2225,8 @@
                         if (imgUrl) {
                             avatarBox.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover">`;
                         } else {
-                            avatarBox.innerText = currentCharData.name.charAt(0);
+                            // ✅ 修正寫法：直接使用 currentTargetName，或者安全的取值
+avatarBox.innerText = currentTargetName.charAt(0);
                         }
                     }
                 
