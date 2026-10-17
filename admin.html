@@ -13,65 +13,65 @@
     <script src="data_collectibles.js"></script>
     
     <!-- Firebase SDK (以 v10 為例) -->
-    <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-    // 🌟 引入 Google Auth 相關模組
-    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+// 🌟 引入 redirect 相關模組
+import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
-    const firebaseConfig = { 
-        apiKey: "AIzaSyDhv8D2pY_0M56UJrDTQw0RGPHA-BkXU8Y", 
-        authDomain: "crayon-note.firebaseapp.com", 
-        projectId: "crayon-note", 
-        storageBucket: "crayon-note.firebasestorage.app", 
-        messagingSenderId: "210614088940", 
-        appId: "1:210614088940:web:7addbdc7c466eeb05421c9", 
-        measurementId: "G-M1EJPE12TE" 
-    };
+const firebaseConfig = { 
+    apiKey: "AIzaSyDhv8D2pY_0M56UJrDTQw0RGPHA-BkXU8Y", 
+    authDomain: "crayon-note.firebaseapp.com", 
+    projectId: "crayon-note", 
+    storageBucket: "crayon-note.firebasestorage.app", 
+    messagingSenderId: "210614088940", 
+    appId: "1:210614088940:web:7addbdc7c466eeb05421c9", 
+    measurementId: "G-M1EJPE12TE" 
+};
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
-    window.db = db;
-    window.setDoc = setDoc;
-    window.doc = doc;
+window.db = db;
+window.setDoc = setDoc;
+window.doc = doc;
 
-    // 🌟 你的管理員白名單 Email
-    const ADMIN_EMAILS = [
-        "kai2002002@gmail.com" // 請換成你的真實管理員 Email
-    ];
+const ADMIN_EMAILS = [
+    "your-email@ha.org.hk" // 請換成你的真實管理員 Email
+];
 
-    onAuthStateChanged(auth, (user) => {
-        const overlay = document.getElementById('loginOverlay');
-        if (user) {
-            // 檢查是否在白名單內
-            if (ADMIN_EMAILS.length === 0 || ADMIN_EMAILS.includes(user.email)) {
-                console.log("✅ 管理員驗證成功：", user.email);
-                overlay.classList.add('hidden'); // 通過驗證，隱藏登入遮罩
-            } else {
-                alert(`❌ 帳號 ${user.email} 沒有管理員權限！`);
-                signOut(auth);
-            }
+// 🌟 檢查從 Google 登入頁面跳轉回來後的結果
+getRedirectResult(auth).catch((error) => {
+    console.error("重新導向登入錯誤:", error);
+    alert("登入失敗：" + error.message);
+});
+
+onAuthStateChanged(auth, (user) => {
+    const overlay = document.getElementById('loginOverlay');
+    if (user) {
+        if (ADMIN_EMAILS.length === 0 || ADMIN_EMAILS.includes(user.email)) {
+            console.log("✅ 管理員驗證成功：", user.email);
+            overlay.classList.add('hidden');
         } else {
-            console.log("🔒 尚未登入");
-            overlay.classList.remove('hidden'); // 未登入，顯示登入遮罩
+            alert(`❌ 帳號 ${user.email} 沒有管理員權限！`);
+            signOut(auth);
         }
-    });
+    } else {
+        console.log("🔒 尚未登入");
+        overlay.classList.remove('hidden');
+    }
+});
 
-    // 綁定按鈕點擊事件觸發 Google 彈窗登入
-    window.addEventListener('DOMContentLoaded', () => {
-        const loginBtn = document.getElementById('googleLoginBtn');
-        if (loginBtn) {
-            loginBtn.addEventListener('click', () => {
-                const provider = new GoogleAuthProvider();
-                signInWithPopup(auth, provider).catch((error) => {
-                    console.error("登入失敗:", error);
-                    alert("登入失敗：" + error.message);
-                });
-            });
-        }
-    });
+// 🌟 改用跳轉式登入
+window.addEventListener('DOMContentLoaded', () => {
+    const loginBtn = document.getElementById('googleLoginBtn');
+    if (loginBtn) {
+        loginBtn.addEventListener('click', () => {
+            const provider = new GoogleAuthProvider();
+            signInWithRedirect(auth, provider);
+        });
+    }
+});
 </script>
     
     <script>
