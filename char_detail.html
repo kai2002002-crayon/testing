@@ -2426,138 +2426,132 @@
                 
                 document.getElementById('replyModal').style.display = 'flex';
                 
-                // 彈出後自動將游標對焦到輸入框，提升體驗
-                setTimeout(() => contentBox.focus(), 100);
-            }
-            function closeReplyModal() {
-                document.getElementById('replyModal').style.display = 'none';
-                document.getElementById('replyTargetDocId').value = '';
+                }
+                
+                // 設定游標位置到文字最後
+                setTimeout(() => {
+                    contentBox.focus();
+                    contentBox.setSelectionRange(contentBox.value.length, contentBox.value.length);
+                }, 10);
+                
+                document.getElementById('replyModal').classList.remove('hidden');
             }
 
+            // 關閉回覆視窗
+            function closeReplyModal() {
+                document.getElementById('replyModal').classList.add('hidden');
+                document.getElementById('replyModalAuthor').value = '';
+                document.getElementById('replyModalContent').value = '';
+                document.getElementById('replyModalCount').innerText = '0 / 200';
+            }
+
+            // 送出回覆
             function submitReply() {
                 const docId = document.getElementById('replyTargetDocId').value;
-                if (!docId) return;
-
                 let authorInput = document.getElementById('replyModalAuthor').value.trim();
-                if (!authorInput) { authorInput = getAnonymousId(); }
-
                 const contentInput = document.getElementById('replyModalContent').value.trim();
-                if (!contentInput) { alert("請輸入回覆內容！"); return; }
-                if (contentInput.length > 300) { alert("回覆內容請縮減至 300 字以內！"); return; }
+                const btn = document.getElementById('submitReplyBtn');
 
-                const btn = document.getElementById('btnSubmitReply');
+                if (!authorInput) { authorInput = getAnonymousId(); }
+                if (!contentInput) { alert(getI18n('alert_empty_reply') || "請輸入回覆內容！"); return; }
+                if (contentInput.length > 200) { alert(getI18n('alert_reply_too_long') || "回覆內容太長囉，請縮減至 200 字以內！"); return; }
+
                 btn.disabled = true;
-                btn.innerHTML = "傳送中... ⏳";
-                btn.classList.replace('bg-amber-500', 'bg-gray-400');
+                btn.innerHTML = getI18n('btn_submitting') || '傳送中... ⏳';
 
                 const replyData = {
                     author: authorInput,
                     content: contentInput,
-                    // 使用 Date.now() 產生絕對時間戳，避免 ArrayUnion 在部分環境對 serverTimestamp 報錯
-                    timestamp: Date.now() 
+                    // 為了簡化，回覆時間存為 ISO 字串
+                    timestamp: new Date().toISOString() 
                 };
 
-                // 將回覆物件推進該留言的 replies 陣列中
                 db.collection("character_comments").doc(docId).update({
                     replies: firebase.firestore.FieldValue.arrayUnion(replyData)
                 }).then(() => {
                     closeReplyModal();
                     btn.disabled = false;
-                    btn.innerHTML = "送出回覆 🚀";
-                    btn.classList.replace('bg-gray-400', 'bg-amber-500');
+                    btn.innerHTML = getI18n('btn_submit_reply') || '送出回覆 🚀';
                 }).catch(err => {
                     console.error("回覆失敗:", err);
-                    alert("回覆失敗，請稍後再試！");
+                    alert(getI18n('alert_comment_failed') || "回覆失敗，請稍後再試！");
                     btn.disabled = false;
-                    btn.innerHTML = "送出回覆 🚀";
-                    btn.classList.replace('bg-gray-400', 'bg-amber-500');
+                    btn.innerHTML = getI18n('btn_submit_reply') || '送出回覆 🚀';
+                });
+            }
+            
+            // YouTube Modal 相關邏輯 (攔截 CG 圖點擊)
+            document.addEventListener('click', function(e) {
+                const trigger = e.target.closest('.youtube-modal-trigger');
+                if (trigger) {
+                    e.preventDefault();
+                    const videoId = trigger.getAttribute('data-video-id');
+                    if (videoId) {
+                        openYoutubeModal(videoId);
+                    }
+                }
+            });
+
+            function openYoutubeModal(videoId) {
+                const overlay = document.createElement('div');
+                overlay.className = 'yt-modal-overlay';
+                overlay.id = 'ytModalOverlay';
+                
+                overlay.innerHTML = `
+                    <div class="yt-modal-content">
+                        <div class="yt-modal-close" onclick="closeYoutubeModal()">&times;</div>
+                        <div class="video-container">
+                            <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(overlay);
+                
+                // 點擊背景關閉
+                overlay.addEventListener('click', function(e) {
+                    if (e.target === overlay) {
+                        closeYoutubeModal();
+                    }
                 });
             }
 
-            // 點擊半透明黑底也能關閉回覆視窗
-            document.addEventListener('DOMContentLoaded', () => {
-                const rModal = document.getElementById('replyModal');
-                if (rModal) {
-                    rModal.addEventListener('click', function(e) {
-                        if (e.target === this) closeReplyModal();
-                    });
-                }
-            });
-            window.onscroll = function() {
-                const btn = document.getElementById("backToTop");
-                if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-                    btn.style.display = "flex";
-                } else {
-                    btn.style.display = "none";
+            window.closeYoutubeModal = function() {
+                const overlay = document.getElementById('ytModalOverlay');
+                if (overlay) {
+                    overlay.remove();
                 }
             };
-            
-            function scrollToTop() {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
         </script>
-        <footer class="mt-12 mb-6 text-center border-t border-gray-200 dark:border-gray-700 pt-6">
-            <div class="flex flex-col gap-1 text-[11px] text-gray-500 dark:text-gray-400 opacity-80">
-                <p data-i18n="footer_author">📝 記事本製作者: 冷笑話幽靈</p>
-                <p data-i18n="footer_copyright">© 遊戲版權: EpidGames & Bilibili</p>
-                <p data-i18n="footer_lastupdate">最後更新日期：30/07/2026</p>
-            </div>
-        </footer>
-        <button id="backToTop" onclick="scrollToTop()" title="回頂部"> ▲ </button>
-        <div id="ytModal" class="yt-modal-overlay" style="display: none;">
-            <div class="yt-modal-content">
-                <span class="yt-modal-close">&times;</span>
-                <div class="video-container">
-                    <iframe id="ytIframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+        <!-- 回覆 Modal 的 HTML 結構 -->
+        <div id="replyModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
+            <div class="bg-amber-50 dark:bg-slate-800 w-full max-w-md rounded-2xl shadow-2xl border-2 border-amber-300 dark:border-slate-600 p-5 transform transition-all">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-black text-amber-900 dark:text-amber-400">💬 回覆留言</h3>
+                    <button onclick="closeReplyModal()" class="text-gray-400 hover:text-red-500 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
                 </div>
-            </div>
-        </div>
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const modal = document.getElementById('ytModal');
-                const iframe = document.getElementById('ytIframe');
-                const closeBtn = document.querySelector('.yt-modal-close');
-            
-                // 🌟 處理打工影片點擊事件 (事件委託，這樣非同步生成的按鈕也能監聽到)
-                document.body.addEventListener('click', (e) => {
-                    const trigger = e.target.closest('.youtube-modal-trigger');
-                    if (trigger) {
-                        e.preventDefault();
-                        const videoId = trigger.getAttribute('data-video-id');
-                        if (videoId) {
-                            // 設定 Iframe src 並顯示 Modal
-                            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-                            modal.style.display = 'flex';
-                        }
-                    }
-                });
-
-                // 🌟 關閉彈窗邏輯
-                const closeModal = () => {
-                    modal.style.display = 'none';
-                    iframe.src = ''; // 清空 src 停止背景播放影片
-                };
-
-                // 點擊 X 按鈕關閉
-                if (closeBtn) closeBtn.addEventListener('click', closeModal);
-
-                // 點擊半透明黑底關閉
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) {
-                        closeModal();
-                    }
-                });
-            });
-        </script>
-        <div id="replyModal" class="yt-modal-overlay" style="display: none;">
-            <div class="bg-white dark:bg-slate-800 p-5 rounded-xl w-11/12 max-w-md shadow-2xl border-[3px] border-amber-300 dark:border-slate-600 relative">
-                <h3 class="text-lg font-black text-amber-900 dark:text-amber-400 mb-3 flex items-center gap-2">💬 回覆留言</h3>
+                
                 <input type="hidden" id="replyTargetDocId">
-                <input type="text" id="replyModalAuthor" placeholder="您的暱稱 (留白將以匿名顯示)" class="w-full mb-3 px-3 py-2 text-sm font-bold text-amber-900 dark:text-white placeholder-amber-700/50 dark:placeholder-gray-400 rounded-lg border border-amber-300 dark:border-slate-500 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500 shadow-inner">
-                <textarea id="replyModalContent" rows="3" placeholder="寫下您的回覆..." class="w-full mb-3 px-3 py-2 text-sm font-medium text-gray-800 dark:text-gray-200 rounded-lg border border-amber-300 dark:border-slate-500 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none shadow-inner"></textarea>
+                
+                <input type="text" id="replyModalAuthor" placeholder="您的暱稱 (留白將以匿名顯示)" class="w-full mb-3 px-3 py-2 text-sm font-bold text-amber-900 dark:text-white placeholder-amber-700/50 dark:placeholder-gray-400 rounded-lg border border-amber-300 dark:border-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-slate-700 shadow-inner">
+                
+                <textarea id="replyModalContent" 
+                    rows="4"
+                    maxlength="200"
+                    oninput="document.getElementById('replyModalCount').innerText = this.value.length + ' / 200'"
+                    placeholder="寫下您的回覆..."
+                    class="w-full mb-1 px-3 py-2 text-sm font-medium text-gray-800 dark:text-gray-200 rounded-lg border border-amber-300 dark:border-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-slate-700 resize-none shadow-inner"></textarea>
+                
+                <div class="flex justify-end mb-4">
+                    <span id="replyModalCount" class="text-[10px] font-bold text-amber-700/60 dark:text-gray-400">0 / 200</span>
+                </div>
+                
                 <div class="flex justify-end gap-2">
-                    <button onclick="closeReplyModal()" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 text-sm font-bold rounded-lg shadow hover:bg-gray-400 dark:hover:bg-gray-500 transition">取消</button>
-                    <button id="btnSubmitReply" onclick="submitReply()" class="px-4 py-2 bg-amber-500 text-white text-sm font-bold rounded-lg shadow hover:bg-amber-600 transition">送出回覆 🚀</button>
+                    <button onclick="closeReplyModal()" class="px-4 py-2 bg-gray-200 dark:bg-slate-600 text-gray-700 dark:text-gray-200 text-sm font-bold rounded-xl hover:bg-gray-300 dark:hover:bg-slate-500 transition">取消</button>
+                    <button onclick="submitReply()" id="submitReplyBtn" class="px-4 py-2 bg-amber-500 text-white text-sm font-bold rounded-xl shadow-md hover:bg-amber-600 transition transform active:scale-95">送出回覆 🚀</button>
                 </div>
             </div>
         </div>
