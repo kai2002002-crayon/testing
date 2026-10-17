@@ -2426,15 +2426,11 @@
                 
                 document.getElementById('replyModal').style.display = 'flex';
                 
-                }
-                
                 // 設定游標位置到文字最後
                 setTimeout(() => {
                     contentBox.focus();
                     contentBox.setSelectionRange(contentBox.value.length, contentBox.value.length);
                 }, 10);
-                
-                document.getElementById('replyModal').classList.remove('hidden');
             }
 
             // 關閉回覆視窗
