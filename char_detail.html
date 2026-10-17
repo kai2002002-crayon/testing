@@ -331,7 +331,7 @@
                     if (slot.data.blendMode === spine.BlendMode.Multiply || slot.data.name.toLowerCase().includes('shadow')) {
                         // 將混合模式改為 Normal 避免自我重疊造成的破洞加深
                         slot.data.blendMode = spine.BlendMode.Normal;
-            
+        
                         // 強制設定為半透明黑色 (R, G, B, A)
                         // 將 Alpha 設為 0.4 或 0.5，絕對不要設為 1.0！
                         // slot.color.set(0, 0, 0, 0.4);
@@ -398,7 +398,7 @@
                 window.ICON_MAP['attribute_魔法'] = 'sprite-base sprite-common sprite-Type_Magic';
                 window.ICON_MAP['attribute_Physical'] = 'sprite-base sprite-common sprite-Type_Physic';
                 window.ICON_MAP['attribute_Magic'] = 'sprite-base sprite-common sprite-Type_Magic';
-            
+        
                 /// 性格
                 const personalities = { 
                     '冷靜': 'Composed', '憂鬱': 'Depressed', '天真': 'Innocence', '狂亂': 'Madness', '活潑': 'Vivacious', '共鳴': 'Resonance', 
@@ -409,7 +409,7 @@
                     window.ICON_MAP[`personality_${zh}`] = cls;
                     window.ICON_MAP[`personality_${en}`] = cls;
                 });
-            
+        
                 // 種族
                 const races = { '龍族': 'Dragon', '魔靈': 'Elemental', '精靈': 'Elf', '幽靈': 'Phantom', '妖精': 'Sprite', '???': 'Unknown', '獸人': 'Werebeast', '魔女': 'Witch' };
                 Object.entries(races).forEach(([zh, en]) => {
@@ -417,7 +417,7 @@
                     window.ICON_MAP[`race_${zh}`] = cls;
                     window.ICON_MAP[`race_${en}`] = cls;
                 });
-            
+        
                 // 站位
                 const positions = { '後排': 'Back', '前排': 'Front', '中排': 'Middle', '所有排': 'All' };
                 Object.entries(positions).forEach(([zh, en]) => {
@@ -425,7 +425,7 @@
                     window.ICON_MAP[`position_${zh}`] = cls;
                     window.ICON_MAP[`position_${en}`] = cls;
                 });
-            
+        
                 // 職業
                 const jobs = { '輸出': 'DPS', '輔助': 'Support', '肉盾': 'Tank' };
                 Object.entries(jobs).forEach(([zh, en]) => {
@@ -439,28 +439,28 @@
                 const el = document.getElementById(id);
                 initIconMap();
                 const iconUrl = window.ICON_MAP[`${prefix}_${value}`] || "";
-                
+        
                 if (!iconUrl) {
                     el.classList.add('hidden');
                     return;
                 }
-            
+        
                 el.classList.remove('hidden');
                 // 統一容器 class，確保 group-hover 效果能完美傳遞給內部的 icon
                 el.className = 'relative group flex items-center justify-center'; 
-            
+        
                 // 🌟 根據屬性大圖的大小設定精準的 CSS scale 比率，使其在 32x32px 佔位格內外觀完全一致
                 let scaleClass = 'scale-[0.5]'; // 64x64 縮小為 32x32 (預設)
                 if (prefix === 'race') scaleClass = 'scale-[0.58]';       // 55x55 縮小為 32x32
                 if (prefix === 'personality') scaleClass = 'scale-[0.48]';// 62x66 縮小為 32x32
                 if (prefix === 'identity') scaleClass = 'scale-[0.43]';
-            
+        
                 const iconHtml = (iconUrl.startsWith('http') || iconUrl.startsWith('./'))
                     ? `<img src="${iconUrl}" alt="${label}" class="w-8 h-8 object-contain transition-transform duration-300 group-hover:scale-125 cursor-help drop-shadow-sm">`
                     : `<div class="w-8 h-8 flex items-center justify-center transition-transform duration-300 group-hover:scale-125 cursor-help drop-shadow-sm relative overflow-hidden shrink-0 bg-transparent">
                         <div class="${iconUrl} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 origin-center ${scaleClass}"></div>
                        </div>`;
-                
+        
                 // 🌟 修正：利用 .replace(/[：:︰\s]+$/, '') 自動過濾掉 label 尾部可能自帶的任何全半形冒號，防止出現雙冒號
                 const cleanLabel = label.replace(/[：:︰\s]+$/, '');
 
@@ -501,12 +501,12 @@
             function renderStars(charName) {
                 const starsContainer = document.getElementById('charStars');
                 if (!starsContainer) return;
-            
+        
                 let grade = "3"; 
                 if (typeof GRADE_MAP !== 'undefined' && GRADE_MAP[charName]) {
                     grade = GRADE_MAP[charName];
                 }
-            
+        
                 const starClass = `sprite-${grade}STAR`;
                 
                 // 動態計算對應的縮小後寬度 (原寬度 * 0.24)
@@ -533,7 +533,7 @@
             function renderExtraInfo(charName) {
                 const cvText = (typeof CV_MAP !== 'undefined' && CV_MAP[charName]) ? CV_MAP[charName] : "???";
                 document.getElementById('charCV').innerText = cvText;
-            
+        
                 const introKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
                 const safeLang = (typeof INTRO_MAP !== 'undefined' && INTRO_MAP[window.currentLang]) ? window.currentLang : 'zh-TW';
                 let introText = "（資料建檔中...）";
@@ -552,26 +552,26 @@
                     }
                 }
                 document.getElementById('charIntro').innerHTML = introText;
-            
+        
                 // --- 處理喜好料理 ---
                 const foodContainer = document.getElementById('charFoodIcon');
                 foodContainer.innerHTML = '';
-            
+        
                 const spineKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
                 const foodData = (typeof FOOD_MAP !== 'undefined') ? FOOD_MAP[spineKey] : null;
-            
+        
                 if (!foodData || foodData === "無" || foodData === "餐牌" || (Array.isArray(foodData) && foodData.length === 0)) {
                     foodContainer.innerHTML = `<span class="text-sm text-gray-500 dark:text-gray-400 font-bold py-1">無</span>`
                 } else {
                     let html = "";
                     let superFoods = [];
                     let specialFoods = [];
-            
+        
                     // 自動兼容各種常見的鍵值寫法
                     if (typeof foodData === 'object' && !Array.isArray(foodData)) {
                         const superKeys = ['super', 'super_like', '超級', '超級喜好'];
                         const specialKeys = ['special', 'special_like', '特別', '特別喜好'];
-            
+        
                         superKeys.forEach(k => {
                             if (foodData[k]) superFoods = superFoods.concat(Array.isArray(foodData[k]) ? foodData[k] : [foodData[k]]);
                         });
@@ -579,7 +579,7 @@
                             if (foodData[k]) specialFoods = specialFoods.concat(Array.isArray(foodData[k]) ? foodData[k] : [foodData[k]]);
                         });
                     }
-            
+        
                     // 渲染超級喜好
                     superFoods.forEach(foodName => {
                         const imgUrl = getSafeFoodIconUrl(foodName);
@@ -589,7 +589,7 @@
                             </div>
                         `;
                     });
-            
+        
                     // 渲染特別喜好
                     specialFoods.forEach(foodName => {
                         const imgUrl = getSafeFoodIconUrl(foodName);
@@ -599,7 +599,7 @@
                             </div>
                         `;
                     });
-            
+        
                     // 若非 object 格式，當作陣列處理
                     if (html === "" && Array.isArray(foodData)) {
                         foodData.forEach(foodName => {
@@ -614,18 +614,18 @@
                     
                     foodContainer.innerHTML = html;
                 }
-            
+        
                 // --- 處理打工獎勵 ---
                 const rewardContainer = document.getElementById('charRewardIcon');
                 rewardContainer.innerHTML = '';
-            
+        
                 const spineName = (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName]) 
                     ? SPINE_MAP[charName] 
                     : charName;
-            
+        
                 // 🌟 防呆標記：預設為沒有打工劇情
                 let hasJobStory = false;
-            
+        
                 if (typeof REWARD_MAP !== 'undefined' && REWARD_MAP[spineName]) {
                     let rewards = REWARD_MAP[spineName];
                     
@@ -643,12 +643,12 @@
                             if (typeof REWARD_ICON !== 'undefined' && REWARD_ICON[rewardKey]) {
                                 rewardUrl = typeof REWARD_ICON[rewardKey] === 'object' ? REWARD_ICON[rewardKey].url : REWARD_ICON[rewardKey];
                             }
-            
+        
                             // 第一個螢光綠外框，其餘灰色，打橫排列
                             let borderClass = idx === 0 
                                 ? "border-[3px] border-[#39ff14] shadow-[0_0_8px_rgba(57,255,20,0.6)]" 
                                 : "border-2 border-gray-300 dark:border-slate-600 shadow-sm";
-            
+        
                             html += `
                                 <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white dark:bg-slate-700 rounded-xl ${borderClass} flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-110" title="${rewardDisplay}">
                                     ${rewardUrl ? (rewardUrl.startsWith('http') || rewardUrl.startsWith('./') ? `<img src="${rewardUrl}" alt="${rewardDisplay}" class="w-full h-full object-contain p-1 drop-shadow-sm">` : `<div class="w-full h-full flex items-center justify-center"><div class="${rewardUrl} origin-center scale-[0.6] sm:scale-[0.8] drop-shadow-sm"></div></div>`) : `<span class="text-[10px] text-gray-400 font-bold p-1 break-words text-center">${rewardDisplay}</span>`}
@@ -660,7 +660,7 @@
                 } else {
                     rewardContainer.innerHTML = `<span class="text-sm text-gray-500 dark:text-gray-400 font-bold py-1">無</span>`;
                 }
-            
+        
                 // --- 處理打工劇情 CG 與 YouTube 連結 ---
             const cgContainer = document.getElementById('charJobCgContainer');
             if (cgContainer) {
@@ -710,7 +710,7 @@
             }
             cgContainer.classList.remove('hidden');
             }
-            }            }
+            }        }
             
             const renderError = (msg) => {
                 document.getElementById('mainContainer').innerHTML = `
@@ -811,10 +811,10 @@
                 const spineKey = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[currentTargetName] : currentTargetName; 
                 
                 const inactiveClass = "flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300";
-            
+        
                 presentTextWrapper.style.backgroundImage = 'none';
                 presentText.className = "text-sm md:text-base leading-relaxed w-full drop-shadow-md text-gray-700 dark:text-gray-300";
-            
+        
                 const langDataL = (typeof LETTER_MAP !== 'undefined' && LETTER_MAP[window.currentLang]) ? LETTER_MAP[window.currentLang] : ((typeof LETTER_MAP !== 'undefined') ? LETTER_MAP["zh-TW"] : {});
                 const langDataT = (typeof THOUGHT_MAP !== 'undefined' && THOUGHT_MAP[window.currentLang]) ? THOUGHT_MAP[window.currentLang] : ((typeof THOUGHT_MAP !== 'undefined') ? THOUGHT_MAP["zh-TW"] : {});
                 
@@ -822,7 +822,7 @@
                 if(defaultNoLetter === 'no_letter_hint') defaultNoLetter = '（這隻坨坨好像還沒寫信給你呢...）';
                 let defaultNoThought = getI18n('no_thought_hint');
                 if(defaultNoThought === 'no_thought_hint') defaultNoThought = '（教主目前還沒寫下對這個珍藏品的感想呢...）';
-            
+        
                 if (tab === 'letter') {
                     btnLetter.className = "flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-rose-500 text-white shadow-md";
                     btnThought.className = inactiveClass;
@@ -848,14 +848,14 @@
                 const baseFolderKey = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[currentTargetName] : currentTargetName; 
                 
                 clearTimeout(globalIdleTimer);
-            
+        
                 if (window.globalSpinePlayer) {
                     window.globalSpinePlayer.dispose();
                     window.globalSpinePlayer = null;
                 }
                 
                 avatarBox.innerHTML = '<div class="spine-player-loading-custom"></div>';
-            
+        
                 window.globalSpinePlayer = new spine.SpinePlayer(avatarBox, {
                     skelUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.skel.bytes`,
                     atlasUrl: `./spine_assets/${baseFolderKey}/${costumeKey}.atlas.txt`,
@@ -866,18 +866,18 @@
                     showControls: false,
                     showLoading: false, 
                     viewport: { x: -400, y: 0, width: 800, height: 1000 },
-            
+        
                     success: function (player) {
-                                                                                                        
+                                                                                                                                                            
                             const loader = avatarBox.querySelector('.spine-player-loading-custom');
                             if (loader) loader.remove();
-            
+        
                             window.myPlayer = player;
-            
+        
                             let activeFaceBone = null; 
                             let initialBoneX = 0;
                             let initialBoneY = 0;
-            
+        
                             const skins = player.skeleton.data.skins;
                             if (skins && skins.length > 1) {
                                 const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default');
@@ -889,17 +889,17 @@
                             }
                             // 🌟 呼叫修復函數
                             fixSpineMultiplyHole(player);
-                        
+        
                             const animations = player.skeleton.data.animations;
                             if (animations && animations.length > 0) {
                                 const animNames = animations.map(a => a.name);
                                 const playList = animNames;
-            
+        
                                 function startRandomAnimationLoop() {
                                     clearTimeout(globalIdleTimer);
                                     globalIdleTimer = setTimeout(playNextAnimation, 5000);
                                 }
-            
+        
                                 function playNextAnimation() {
                                     const targetAnims = playList.length > 0 ? playList : ['Idle_1'];
                                     const randomIndex = Math.floor(Math.random() * targetAnims.length);
@@ -907,19 +907,19 @@
                                     player.animationState.setAnimation(0, nextAnim, true); 
                                     startRandomAnimationLoop();
                                 }
-            
+        
                                 startRandomAnimationLoop();
-            
+        
                                 const canvas = avatarBox.querySelector('canvas');
                                 if (canvas) {
                                     canvas.style.touchAction = 'none';
-            
+        
                                     let currentZoom = 1.0;
                                     const ZOOM_ANCHOR_Y = 600; 
                                     const baseViewport = { x: -400, y: 0, width: 800, height: 1000 }; 
                                     const pointers = {}; 
                                     let initialPinchDistance = 0;
-                
+        
                                     let isDragging = false;
                                     let startX = 0, startY = 0;
                                     let lastMouseX = 0, lastMouseY = 0;
@@ -928,17 +928,17 @@
                                     let hitZoneOnDown = null;
                                     let activeInteractBone = null; 
                                     let initialBoneWorldX = 0, initialBoneWorldY = 0; 
-                
+        
                                     let hasTriggeredRub = false; 
                                     let tickleTimer = null; 
-            
+        
                                     // 🌟 修正 1：建立專屬變數儲存拉扯狀態，並劫持更新函數防止被 Spine 動畫覆蓋
                                     player._customDragTargetX = null;
                                     player._customDragTargetY = null;
                                     player._bouncingBone = null;
                                     player._bounceX = null;
                                     player._bounceY = null;
-            
+        
                                     const origUpdateWorldTransform = player.skeleton.updateWorldTransform;
                                     player.skeleton.updateWorldTransform = function () {
                                         // 在 Spine 計算絕對世界座標前，強制寫入我們的自訂拉扯座標
@@ -951,7 +951,7 @@
                                         }
                                         origUpdateWorldTransform.call(this);
                                     };
-            
+        
                                     canvas.addEventListener('wheel', function(event) {
                                         event.preventDefault();
                                         currentZoom = event.deltaY < 0 ? Math.min(currentZoom + 0.1, 4.0) : Math.max(currentZoom - 0.1, 0.5);
@@ -961,7 +961,7 @@
                                             player.skeleton.y = ZOOM_ANCHOR_Y * (1 - currentZoom);
                                         }
                                     }, { passive: false });
-            
+        
                                     canvas.addEventListener('dblclick', function() {
                                         currentZoom = 1.0;
                                         if (player.skeleton) {
@@ -972,7 +972,7 @@
                                             player.skeleton.updateWorldTransform();
                                         }
                                     });
-            
+        
                                     function getHitZone(mouseX, mouseY) {
                                         const rect = canvas.getBoundingClientRect();
                                         let camX, camY, camW, camH;
@@ -1019,7 +1019,7 @@
                                     canvas.addEventListener('pointerdown', (e) => {
                                         pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
                                         const pointerKeys = Object.keys(pointers);
-            
+        
                                         if (pointerKeys.length === 2) {
                                             isDragging = false;
                                             clearTimeout(tickleTimer); 
@@ -1027,7 +1027,7 @@
                                             initialPinchDistance = Math.hypot(p1.x - p2.x, p1.y - p2.y);
                                             return; 
                                         }
-            
+        
                                         isDragging = true;
                                         startX = lastMouseX = e.clientX;
                                         startY = lastMouseY = e.clientY;
@@ -1036,7 +1036,7 @@
                                         hitZoneOnDown = null;
                                         activeInteractBone = null;
                                         canvas.setPointerCapture(e.pointerId);
-            
+        
                                         const rect = canvas.getBoundingClientRect();
                                         hitZoneOnDown = getHitZone(e.clientX - rect.left, e.clientY - rect.top);
                                         
@@ -1048,7 +1048,7 @@
                                             initialBoneWorldY = activeInteractBone.worldY; 
                                         }
                                     });
-            
+        
                                     canvas.addEventListener('pointermove', (e) => {
                                         if (pointers[e.pointerId]) {
                                             pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
@@ -1102,7 +1102,7 @@
                                             const effView = getEffectiveViewport(rect, baseViewport);
                                             currentCamW = effView.width; currentCamH = effView.height;
                                         }
-            
+        
                                         if (hasTriggeredRub && hitZoneOnDown && activeInteractBone) {
                                             const isCheek = hitZoneOnDown.name === "臉頰";
                                             const spineScaleX = currentCamW / rect.width;
@@ -1136,7 +1136,7 @@
                                             // 🌟 修正 3：將計算好的座標寫入劫持變數中，交由 Spine 迴圈每幀死死咬住位置
                                             player._customDragTargetX = initialBoneX + localDx;
                                             player._customDragTargetY = initialBoneY + localDy;
-            
+        
                                         } else if (!hitZoneOnDown) {
                                             player.skeleton.x += dx * (currentCamW / rect.width);
                                             player.skeleton.y -= dy * (currentCamH / rect.height);
@@ -1146,18 +1146,18 @@
                                         lastMouseX = e.clientX;
                                         lastMouseY = e.clientY;
                                     });
-            
+        
                                     const stopDrag = (e) => { 
                                         delete pointers[e.pointerId];
                                         if (Object.keys(pointers).length < 2) initialPinchDistance = 0;
-            
+        
                                         if (!isDragging) return;
                                         isDragging = false; 
                                         clearTimeout(tickleTimer);
                                         clearTimeout(globalIdleTimer); 
-            
+        
                                         const animNames = player.skeleton.data.animations.map(a => a.name);
-            
+        
                                         if (activeInteractBone) {
                                             let targetX = initialBoneX, targetY = initialBoneY;
                                             
@@ -1193,7 +1193,7 @@
                                             }
                                             applyBounce();
                                         }
-            
+        
                                         if (hasTriggeredRub) {
                                             if (hitZoneOnDown && hitZoneOnDown.name === "臉頰" && animNames.includes("Touch_End")) {
                                                 player.animationState.setAnimation(0, "Touch_End", false);
@@ -1221,7 +1221,7 @@
                                             startRandomAnimationLoop();
                                         }
                                     };
-            
+        
                                     canvas.addEventListener('pointerup', stopDrag);
                                     canvas.addEventListener('pointercancel', stopDrag);
                                     // 🌟 修正 5：移除 pointerout，既然有 setPointerCapture，讓滑鼠即使出界也不會突然鬆手斷掉
@@ -1244,14 +1244,14 @@
                     container.classList.add('hidden');
                     return;
                 }
-            
+        
                 container.classList.remove('hidden');
                 let html = '';
                 costumes.forEach((costumeKey, idx) => {
                     let displayName = idx === 0 ? t("costume_default") : `${t("costume_prefix")}${idx}`;
                     if (displayName === "costume_default") displayName = "預設";
                     if (displayName.includes("costume_prefix")) displayName = `服裝${idx}`;
-            
+        
                     let activeStyle = idx === 0 ? 'bg-amber-500 text-white border-amber-600 shadow-sm' : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-slate-600 hover:bg-amber-100 dark:hover:bg-slate-600';
                     
                     html += `<button onclick="changeCostume('${costumeKey}', this)" class="costume-btn px-4 py-1.5 text-xs font-bold rounded-lg border ${activeStyle}">${displayName}</button>`;
@@ -1266,18 +1266,18 @@
                 });
                 btnElement.classList.remove('bg-white', 'dark:bg-slate-700', 'text-gray-700', 'dark:text-gray-200', 'border-gray-300', 'dark:border-slate-600', 'hover:bg-amber-100', 'dark:hover:bg-slate-600');
                 btnElement.classList.add('bg-amber-500', 'text-white', 'border-amber-600', 'shadow-sm');
-            
+        
                 loadSpineAnimation(costumeKey);
             }
             
             function renderCollectibles(charName) {
                 const lang = window.currentLang || 'zh-TW';
                 const spineKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
-            
+        
                 if (typeof PRESENT_MAP !== 'undefined' && PRESENT_MAP[spineKey]) {
                     const presentData = PRESENT_MAP[spineKey];
                     const presentNameBox = document.getElementById('presentName');
-            
+        
                     if (presentNameBox) {
                         if (typeof presentData.name === 'object') {
                             presentNameBox.innerText = presentData.name[lang] || presentData.name['zh-TW'] || presentData.name['zh'] || "未知珍藏品";
@@ -1297,9 +1297,9 @@
                     skillsContainer.innerHTML = "❌ 找不到技能資料，請確認檔案已載入";
                     return;
                 }
-            
+        
                 const charBaseData = characterSkills.find(s => s.name.trim() === charName);
-            
+        
                 if (!charBaseData) {
                     skillsContainer.innerHTML = "找不到此坨坨的技能資料 (名稱可能不符)";
                     return;
@@ -1307,12 +1307,12 @@
                 
                 if (charBaseData) {
                     const charSkillData = charBaseData.skills[window.currentLang] || charBaseData.skills["zh-TW"];
-            
+        
                     if (charSkillData) {
                         const makeStatChips = (statsArray) => {
                             if (!statsArray || statsArray.length === 0) return '';
                             let processedStats = [];
-            
+        
                             statsArray.forEach(stat => {
                                 if (typeof stat === 'string') {
                                     processedStats.push(stat.trim());
@@ -1320,16 +1320,16 @@
                                     processedStats.push(stat);
                                 }
                             });
-            
+        
                             processedStats = processedStats.filter(Boolean);
-            
+        
                             if (processedStats.length === 0) return '';
-            
+        
                             return `<div class="flex flex-wrap gap-1.5 mt-2 relative z-10">` + 
                                 processedStats.map(stat => `<span class="px-2 py-0.5 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 text-[11px] font-bold rounded-md shadow-sm">${stat}</span>`).join('') + 
                                 `</div>`;
                         };
-            
+        
                         const renderUnifiedSkill = (skillObj) => {
                             if (!skillObj || skillObj === "無") return "";
                             if (typeof skillObj === 'string') {
@@ -1350,7 +1350,7 @@
                             }
                             return `<p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap relative z-10">${skillObj.desc || ''}</p>${makeStatChips(skillObj.stats)}`;
                         };
-            
+        
                         const getSkillIconHtml = (iconSrc, borderClasses, fallbackIcon, extraStyle = "") => {
                             if (!iconSrc) return `<span>${fallbackIcon}</span>`;
                             if (iconSrc.startsWith('http') || iconSrc.startsWith('./')) {
@@ -1362,13 +1362,13 @@
                                         </div>`;
                             }
                         };
-            
+        
                         const spineKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
                         
                         const normalAttackIcon = charBaseData.attribute === "物理" ? "sprite-base sprite-common sprite-attack_physical" : "sprite-base sprite-common sprite-attack_magical";
                         const normalSkillIcon = `sprite-Icon_NormalSkill_${spineKey}`;
                         const passiveSkillIcon = `sprite-Icon_PassiveSkill_${spineKey}`;
-            
+        
                         // 1. 先取得原始性格資料並處理組合
                         let rawPersonality = currentCharData.personality;
                         let pListUlt = [];
@@ -1400,10 +1400,10 @@
                                 ultFileName = personalityMap[pKey] || "ultimate_composed";
                             }
                         }
-            
+        
                         const ultSkillIcon = `sprite-Icon_UltimateSkill_${spineKey}`;
                         const ultStyle = `width: 64px; height: 64px; background-image: url('char_sprites/${ultFileName}.png'); background-size: auto; transform: translate(-50%, -50%) scale(0.625);`;
-            
+        
                         const enhancedData = charSkillData.normalAttack.enhanced;
                         const hasEnhanced = enhancedData && enhancedData !== "無" && (typeof enhancedData === 'string' ? true : enhancedData.desc !== "無");
                         
@@ -1411,7 +1411,7 @@
                         let txtPassive = getI18n('skill_passive'); if(txtPassive === 'skill_passive') txtPassive = '被動技能';
                         let txtBasic = getI18n('skill_basic'); if(txtBasic === 'skill_basic') txtBasic = '【基本】';
                         let txtEnhanced = getI18n('skill_enhanced'); if(txtEnhanced === 'skill_enhanced') txtEnhanced = '【強化】';
-            
+        
                         let html = `
                             <div class="relative bg-emerald-50/80 dark:bg-emerald-900/20 border-2 border-emerald-300 dark:border-emerald-700 rounded-xl p-4 shadow-sm overflow-visible">
                                 <div class="flex justify-between items-center border-b border-emerald-200 dark:border-emerald-800 pb-2 mb-3 relative z-10">
@@ -1427,7 +1427,7 @@
                                 <div id="spine-normal-skill" class="absolute bottom-2 right-2 pointer-events-none z-0 opacity-90 drop-shadow-md"></div>
                             </div>
                         `;
-            
+        
                         html += `
                             <div class="relative bg-violet-50/80 dark:bg-violet-900/20 border-2 border-violet-300 dark:border-violet-700 rounded-xl p-4 shadow-sm overflow-visible">
                                 <div class="flex justify-between items-center border-b border-violet-200 dark:border-violet-800 pb-2 mb-3 relative z-10">
@@ -1444,7 +1444,7 @@
                                 <div id="spine-ultimate-skill" class="absolute bottom-2 right-2 pointer-events-none z-0 opacity-90 drop-shadow-md"></div>
                             </div>
                         `;
-            
+        
                         html += `
                             <div class="relative bg-amber-50/70 dark:bg-amber-900/20 border-2 border-amber-300 dark:border-amber-700 rounded-xl p-4 shadow-sm overflow-hidden">
                                 <div class="flex justify-between items-center border-b border-amber-200 dark:border-amber-800 pb-2 mb-3 relative z-10">
@@ -1459,7 +1459,7 @@
                                 </div>
                             </div>
                         `;
-                        
+        
                         html += `
                             <div class="relative bg-slate-50 dark:bg-slate-700/40 border-2 border-slate-300 dark:border-slate-600 rounded-xl p-4 shadow-sm overflow-visible">
                                 <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-600 pb-2 mb-3 relative z-10">
@@ -1484,9 +1484,9 @@
                         `;
                         
                         skillsContainer.innerHTML = html;
-            
+        
                         setTimeout(() => loadSkillSpines(charName), 100);
-            
+        
                     } else {
                         skillsContainer.innerHTML = `<div class="p-4 bg-gray-50 dark:bg-slate-700 text-gray-500 dark:text-gray-400 font-bold border border-gray-200 dark:border-slate-600 rounded-xl text-center">⚠️ ${getI18n('error_char_skill_not_found') || "找不到此坨坨的技能資料"}</div>`;
                     }
@@ -1566,13 +1566,13 @@
                            effects.map(eff => `<span class="px-2 py-0.5 bg-white dark:bg-slate-700 border border-fuchsia-200 dark:border-fuchsia-900/50 text-fuchsia-800 dark:text-fuchsia-300 text-[11px] font-bold rounded-md shadow-sm">${eff}</span>`).join('') + 
                            `</div>`;
                 };
-            
+        
                 // 🌟 願像主圖：應用動態專屬雪碧圖 Class (sprite-AsideIcon_*)，並等比完美縮放置中
                 const asideMainSprite = `sprite-AsideIcon_${spineKey}`;
                 const asideMainHtml = `<div class="w-12 h-12 flex items-center justify-center relative overflow-hidden shrink-0 bg-transparent">
                     <div class="${asideMainSprite} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 origin-center" style="transform: translate(-50%, -50%) scale(0.1875); width: 256px; height: 256px;"></div>
                 </div>`;
-            
+        
                 let html = `
                     <div class="mb-4 text-center sm:text-left">
                         <span class="inline-flex items-center justify-center gap-2 px-4 py-1.5 bg-gradient-to-r from-fuchsia-100 to-purple-100 dark:from-fuchsia-900/50 dark:to-purple-900/50 text-fuchsia-900 dark:text-fuchsia-200 text-sm font-black rounded-lg border border-fuchsia-300 dark:border-fuchsia-700 shadow-sm drop-shadow-sm tracking-wide">
@@ -1582,15 +1582,15 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 `;
-            
+        
                 // 🌟 願像星級技能圖標：套用專屬雪碧圖 Class (sprite-Aside_Skill_*_1~3)，並精準縮放對齊
                 for (let i = 1; i <= 3; i++) {
                     const starData = data.stars[i];
                     if (!starData) continue;
-            
+        
                     const starIcons = { 1: "sprite-ASIDE_1STAR", 2: "sprite-ASIDE_2STAR", 3: "sprite-ASIDE_3STAR" };
                     const asideSkillSprite = `sprite-Aside_Skill_${spineKey}_${i}`;
-            
+        
                     html += `
                         <div class="relative bg-white dark:bg-slate-800/80 border-2 border-fuchsia-200 dark:border-fuchsia-800/60 rounded-xl p-4 shadow-sm flex flex-col h-full hover:shadow-md transition-shadow">
                             <div class="flex items-center gap-3 border-b border-fuchsia-100 dark:border-fuchsia-800/50 pb-3 mb-3">
@@ -1609,7 +1609,7 @@
                                 ${makeEffectChips(starData.effects)}
                             </div>
                     `;
-            
+        
                     if (i === 3 && starData.globalEffects) {
                         const globalEffectsArr = getLocArray(starData.globalEffects);
                         if (globalEffectsArr.length > 0) {
@@ -1628,10 +1628,10 @@
                             `;
                         }
                     }
-            
+        
                     html += `</div>`;
                 }
-            
+        
                 html += `</div>`;
                 asideContainer.innerHTML = html;
             }
@@ -1641,28 +1641,28 @@
                     window.skillSpinePlayers.forEach(p => p.dispose());
                     window.skillSpinePlayers = [];
                 }
-            
+        
                 window.currentActiveCharName = charName;
-            
+        
                 const baseFolderKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
-            
+        
                 const targets = [
                     { id: 'spine-attack', prefix: 'Attack' },
                     { id: 'spine-normal-skill', prefix: 'Skill' },
                     { id: 'spine-ultimate-skill', prefix: 'Ultimate' }
                 ];
-            
+        
                 targets.forEach(target => {
                     const container = document.getElementById(target.id);
                     if (!container) return;
-            
+        
                     const isMobile = window.innerWidth <= 768;
-            
+        
                     container.style.position = "absolute"; 
                     container.style.zIndex = "999";        
                     container.style.pointerEvents = "none"; 
                     container.style.transform = "none"; 
-            
+        
                     if (isMobile) {
                         container.style.width = "150px";   
                         container.style.height = "150px";
@@ -1674,7 +1674,7 @@
                         container.style.bottom = "10px";  
                         container.style.right = "-40px";   
                     }
-            
+        
                     const desktopViewport = { 
                         x: -500, y: -150, width: 1500, height: 3000, 
                         padLeft: "0%", padRight: "0%", padTop: "0%", padBottom: "0%", transitionTime: 0 
@@ -1684,7 +1684,7 @@
                         x: -300, y: -100, width: 1050, height: 2100, 
                         padLeft: "0%", padRight: "0%", padTop: "0%", padBottom: "0%", transitionTime: 0 
                     };
-            
+        
                     const player = new spine.SpinePlayer(target.id, {
                         skelUrl: `./spine_sd_assets/${baseFolderKey}.skel.bytes`,
                         atlasUrl: `./spine_sd_assets/${baseFolderKey}.atlas.txt`,
@@ -1696,13 +1696,13 @@
                         showControls: false, 
                         showLoading: false,
                         viewport: isMobile ? mobileViewport : desktopViewport,
-            
+        
                         success: function (player) {
                             // 🌟 呼叫修復函數
                             fixSpineMultiplyHole(player);
 
                             window.skillSpinePlayers.push(player);
-            
+        
                             const canvas = container.querySelector('canvas');
                             if (canvas) {
                                 canvas.style.width = '100%';
@@ -1710,7 +1710,7 @@
                                 canvas.style.position = 'relative';
                                 canvas.style.zIndex = '999'; 
                             }
-            
+        
                             const skins = player.skeleton.data.skins;
                             if (skins && skins.length > 0) {
                                 const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name === 'default') || skins[0];
@@ -1719,14 +1719,14 @@
                                     player.skeleton.setSlotsToSetupPose(); 
                                 }
                             }
-            
+        
                             const allAnims = player.skeleton.data.animations.map(a => a.name);
                             const hasIdle = allAnims.includes("Idle") ? "Idle" : null;
                             
                             const regex = new RegExp(`^${target.prefix}`, 'i'); 
                             let matchedAnims = allAnims.filter(name => regex.test(name));
                             matchedAnims.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
-            
+        
                             let groups = [];
                             let groupMap = {};
                             matchedAnims.forEach(anim => {
@@ -1738,7 +1738,7 @@
                                 }
                                 groupMap[baseName].push(anim);
                             });
-            
+        
                             if (groups.length > 0) {
                                 let currentGroupIndex = 0;
                                 function playCurrentGroup() {
@@ -1752,9 +1752,9 @@
                                         player.animationState.addAnimation(0, hasIdle, true, 0);
                                     }
                                 }
-            
+        
                                 setTimeout(() => { playCurrentGroup(); }, 500);
-            
+        
                                 player.animationState.addListener({
                                     complete: function(entry) {
                                         const currentGroup = groups[currentGroupIndex];
@@ -1783,28 +1783,28 @@
             function loadTopMiniSpine(charName) {
                 const container = document.getElementById('topMiniSpineContainer');
                 if (!container) return;
-            
+        
                 container.style.pointerEvents = "none";
                 container.style.display = 'block';
                 container.style.height = '90px'; 
                 container.style.width = '90px';  
                 container.style.position = "relative";
                 container.style.zIndex = "99999"; 
-            
+        
                 if (topMiniSpinePlayer) {
                     topMiniSpinePlayer.dispose();
                     topMiniSpinePlayer = null;
                 }
-            
+        
                 container.innerHTML = '<div id="topMiniSpineWrapper" style="width: 100%; height: 100%;"></div>';
-            
+        
                 const skinName = typeof MINI_SPINE !== 'undefined' && MINI_SPINE[charName] ? MINI_SPINE[charName] : null;
-            
+        
                 if (!skinName) {
                     container.style.display = 'none'; 
                     return;
                 }
-            
+        
                 topMiniSpinePlayer = new spine.SpinePlayer("topMiniSpineWrapper", {
                     skelUrl: "./mini/Minimi.skel.bytes", 
                     atlasUrl: "./mini/Minimi.atlas.txt",
@@ -1817,11 +1817,11 @@
                     alpha: true,
                     premultipliedAlpha: true, // 🌟 這裡也修正為 true 確保沒有灰線
                     viewport: { x: -250, y: 0, width: 500, height: 500 },
-            
+        
                     success: (player) => {
                         // 🌟 呼叫修復函數
                         fixSpineMultiplyHole(player);
-                                                                                                                                                
+                                                                                                                                                                                                            
                         const canvas = container.querySelector('canvas');
                         if (canvas) {
                             canvas.style.width = '100%';
@@ -1829,7 +1829,7 @@
                             canvas.style.position = 'relative';
                             canvas.style.zIndex = '99999';
                         }
-            
+        
                         const anims = player.skeleton.data.animations.map(a => a.name);
                         if (!anims.includes("Idle")) {
                             let targetAnim = anims.includes("idle") ? "idle" : anims[0];
@@ -1837,7 +1837,7 @@
                                 player.animationState.setAnimation(0, targetAnim, true);
                             }
                         }
-            
+        
                         player.animationState.timeScale = 0.5;
                         player.play();
                     },
@@ -1853,9 +1853,9 @@
                 if (window.innerWidth === lastWindowWidth) {
                     return; 
                 }
-            
+        
                 lastWindowWidth = window.innerWidth;
-            
+        
                 clearTimeout(resizeTimeout);
                 resizeTimeout = setTimeout(() => {
                     if (window.currentActiveCharName) {
@@ -1871,7 +1871,7 @@
                 if (!currentCharData) return;
                 
                 applyI18n();
-            
+        
                 document.querySelectorAll('.costume-btn').forEach((btn, idx) => {
                     let displayName = idx === 0 ? t("costume_default") : `${t("costume_prefix")}${idx}`;
                     if (displayName === "costume_default") displayName = "預設";
@@ -1880,7 +1880,7 @@
                 });
                 
                 const displayName = getI18n(currentCharData.name);
-            
+        
             // 1. 名字恢復為純文字
             document.getElementById('charName').innerHTML = displayName;
             document.title = `${displayName} - ${getI18n('page_title_char_detail') || '詳細資料'}`;
@@ -1889,7 +1889,7 @@
             let releaseLabel = getI18n('release_date_label');
             if (releaseLabel === 'release_date_label') releaseLabel = '實裝日期';
             if (document.getElementById('releaseDateLabelText')) document.getElementById('releaseDateLabelText').innerText = releaseLabel;
-            
+                
             // 2. 準備所有屬性標籤的多國語言文字
             let idLabel = getI18n('stats_identity'); if(idLabel === 'stats_identity') idLabel = '身份';
             let pLabel = getI18n('stats_personality'); if(pLabel === 'stats_personality') pLabel = '性格';
@@ -1897,11 +1897,11 @@
             let posLabel = getI18n('stats_position'); if(posLabel === 'stats_position') posLabel = '站位';
             let jLabel = getI18n('stats_job'); if(jLabel === 'stats_job') jLabel = '職業';
             let aLabel = getI18n('stats_attribute'); if(aLabel === 'stats_attribute') aLabel = '攻擊類型';
-            
+                
             // 3. 判斷是否為艾爾丁身份
             const isEldain = (typeof ELDAIN_LIST !== 'undefined') ? ELDAIN_LIST.includes(currentCharData.name) : false;
             const identityValue = isEldain ? '艾爾丁' : '普通坨坨';
-            
+                
             // 4. 取得攻擊類型
             let currentAttribute = "未知";
             if (typeof characterSkills !== 'undefined') {
@@ -2003,27 +2003,10 @@
                 document.getElementById('charName').innerHTML = "資料連線中...";
 
                 try {
-                    // 🌟 2. 從 Firestore 讀取共用對應字典 (SPINE_MAP, FOOD_MAP 等)
-                    const configDoc = await db.collection("configs").doc("maps").get();
-                    if (configDoc.exists) {
-                        const cloudMaps = configDoc.data();
-                        
-                        // 將雲端地圖對應表掛載到全域變數，確保後續程式碼（如 SPINE_MAP[...], FOOD_MAP[...]）無縫接軌
-                        window.SPINE_MAP = cloudMaps.SPINE_MAP || {};
-                        window.FOOD_MAP = cloudMaps.FOOD_MAP || {};
-                        window.PRESENT_MAP = cloudMaps.PRESENT_MAP || {};
-                        window.IMAGE_MAP = cloudMaps.IMAGE_MAP || {};
-                        window.ELDAIN_LIST = cloudMaps.ELDAIN_LIST || [];
-                        window.COSTUME_MAP = cloudMaps.COSTUME_MAP || {};
-                        window.LOBBY_BACKGROUNDS = cloudMaps.LOBBY_BACKGROUNDS || [];
-                        window.CRAYON_PATH_CONFIG = cloudMaps.CRAYON_PATH_CONFIG || {};
-                    }
-
-                    // 🌟 3. 從 Firestore 讀取角色基本資料
-                    // 使用點記號 (dot notation) 來查詢巢狀欄位
-const charSnapshot = await db.collection("global_characters")
-  .where("name.zh-TW", "==", currentTargetName)
-  .get();
+                    // 🌟 2. 從 Firestore 讀取角色基本資料 (使用點記號查詢巢狀欄位)
+                    const charSnapshot = await db.collection("global_characters")
+                      .where("name.zh-TW", "==", currentTargetName)
+                      .get();
                     
                     if (charSnapshot.empty) { 
                         renderError(`${getI18n('error_char_not_found') || "❌ 找不到坨坨資料: "}${currentTargetName}`); 
@@ -2031,16 +2014,15 @@ const charSnapshot = await db.collection("global_characters")
                     }
                     currentCharData = charSnapshot.docs[0].data();
 
-                    // 🌟 4. 從 Firestore 讀取角色技能資料
-                    const skillSnapshot = await db.collection("character_skills").where("name", "==", currentTargetName).get();
-                    if (!skillSnapshot.empty) {
-                        window.characterSkills = [skillSnapshot.docs[0].data()];
+                    // 🌟 3. 改從本地 `characterSkills`（來自 data_skills.js）取得技能資料，不查詢不存在的 `character_skills` 集合
+                    if (typeof characterSkills !== 'undefined') {
+                        // 已經由 data_skills.js 載入
                     } else {
                         window.characterSkills = [];
                     }
 
                     // ==========================================
-                    // 以下完全保留您原本的渲染邏輯（資料已由雲端字典全數支援）
+                    // 以下保留原有的渲染邏輯
                     // ==========================================
                     
                     const avatarBox = document.getElementById('charAvatar');
@@ -2235,8 +2217,8 @@ const charSnapshot = await db.collection("global_characters")
                         renderCostumeButtons(currentCharData.name);
                 
                         const initialCostumeKey = (typeof COSTUME_MAP !== 'undefined' && COSTUME_MAP[currentCharData.name] && COSTUME_MAP[currentCharData.name].length > 0) 
-                                                  ? COSTUME_MAP[currentCharData.name][0] 
-                                                  : spineKey;
+                                                ? COSTUME_MAP[currentCharData.name][0] 
+                                                : spineKey;
                         setTimeout(() => { loadSpineAnimation(initialCostumeKey); }, 100);
                     } else {
                         const imgUrl = typeof IMAGE_MAP !== 'undefined' ? IMAGE_MAP[`avatar_${currentCharData.name}`] : '';
