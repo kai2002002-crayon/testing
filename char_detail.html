@@ -2005,7 +2005,7 @@
                 try {
                     // 🌟 2. 從 Firestore 讀取角色基本資料 (使用點記號查詢巢狀欄位)
                     const charSnapshot = await db.collection("global_characters")
-                      .where("name.zh-TW", "==", currentTargetName)
+                      .where("names.zh-TW", "==", currentTargetName)
                       .get();
                     
                     if (charSnapshot.empty) { 
