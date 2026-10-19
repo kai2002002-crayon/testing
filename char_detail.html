@@ -1298,19 +1298,7 @@
                     return;
                 }
         
-                // 🌟 同步升級技能搜尋的防呆邏輯
-const skillSearchTarget = charName.toLowerCase();
-const skillMappedKey = (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName]) ? String(SPINE_MAP[charName]).toLowerCase() : skillSearchTarget;
-
-const charBaseData = characterSkills.find(s => {
-    const possibleKeys = [s.name, s.Name, s.charName, s.id, s.ID];
-    return possibleKeys.some(val => {
-        if (val === null || val === undefined || val === "") return false;
-        let strVal = typeof val === 'object' ? (val[window.currentLang] || val['zh-TW'] || val['zh'] || Object.values(val)[0]) : val;
-        strVal = String(strVal).trim().toLowerCase();
-        return strVal === skillSearchTarget || strVal === skillMappedKey;
-    });
-});
+                const charBaseData = characterSkills.find(s => s.name.trim() === charName);
         
                 if (!charBaseData) {
                     skillsContainer.innerHTML = "找不到此坨坨的技能資料 (名稱可能不符)";
@@ -2010,8 +1998,7 @@ const charBaseData = characterSkills.find(s => {
                 }
             });
             
-            window.onload = async function() {
-                try {
+            window.onload = function() {
                 applyI18n(); 
             
                 const urlParams = new URLSearchParams(window.location.search);
@@ -2021,21 +2008,7 @@ const charBaseData = characterSkills.find(s => {
                 if (typeof INITIAL_DATA === 'undefined') { renderError(getI18n('error_no_data') || "❌ 載入失敗：找不到 INITIAL_DATA。"); return; }
             
                 // 🌟 修復 1-1：相容 Firestore 大小寫欄位名稱，避免 find() 崩潰
-                // 🌟 修復 1-1：極致防呆版角色搜尋，自動相容大小寫、中英對照、多種欄位名稱及物件安全
-const searchTarget = currentTargetName.toLowerCase();
-const mappedSpineKey = (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[currentTargetName]) ? String(SPINE_MAP[currentTargetName]).toLowerCase() : searchTarget;
-
-currentCharData = INITIAL_DATA.find(c => {
-    const possibleKeys = [c.name, c.Name, c.charName, c.id, c.ID];
-    return possibleKeys.some(val => {
-        if (val === null || val === undefined || val === "") return false;
-        // 如果是多語系物件，嘗試解開
-        let strVal = typeof val === 'object' ? (val[window.currentLang] || val['zh-TW'] || val['zh'] || Object.values(val)[0]) : val;
-        strVal = String(strVal).trim().toLowerCase();
-        // 比對原始名稱或 Spine 英文 ID
-        return strVal === searchTarget || strVal === mappedSpineKey;
-    });
-});
+                currentCharData = INITIAL_DATA.find(c => (c.name || c.Name || c.charName || "").trim() === currentTargetName);
                 if (!currentCharData) { renderError(`${getI18n('error_char_not_found') || "❌ 找不到坨坨資料: "}${currentTargetName}`); return; }
             
                 // 🌟 修復 1-2：統一正規化欄位 (解決屬性 icon、金蠟筆、高級技能顯示不到的問題)
