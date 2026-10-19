@@ -303,18 +303,19 @@ async function fetchGlobalCharacters() {
         const characters = [];
 
         snapshot.forEach((doc) => {
-            const data = doc.data();
+            const data = doc.id ? doc.data() : doc; // 兼容不同格式
             
+            // 🌟 多重路徑防呆，確保一定能抓到性格與屬性
             const character = {
                 id: doc.id,
-                name: data.core?.name || data.names?.["zh-TW"] || "未知角色",
-                job: data.core?.job || "未知職業",
-                position: data.core?.position || "未知站位",
-                race: data.core?.race || "未知種族",
-                personality: data.core?.personality || "未知性格",
-                attribute: data.skills?.attribute || "未知屬性",
-                spineName: data.spineName || "",
-                presentUrl: data.texts?.present?.url || ""
+                name: data.core?.name || data.names?.["zh-TW"] || data.name || "未知角色",
+                job: data.core?.job || data.job || "未知職業",
+                position: data.core?.position || data.position || "未知站位",
+                race: data.core?.race || data.race || "未知種族",
+                personality: data.personality || data.core?.personality || data.personalityName || "天真",
+                attribute: data.skills?.attribute || data.attribute || "未知屬性",
+                spineName: data.spineName || data.core?.spineName || data.name || "",
+                presentUrl: data.texts?.present?.url || data.presentUrl || ""
             };
 
             characters.push(character);
