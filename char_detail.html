@@ -319,7 +319,7 @@
             firebase.initializeApp(firebaseConfig);
             const db = firebase.firestore();
             
-            // 🌟 修復 1：全面防呆，統一轉小寫處理索引鍵，解決中英文大小寫不同步的問題
+            // 🌟 屬性與標籤對應註冊 (支援中英文與大小寫)
             const initIconMap = () => {
                 if (typeof window.ICON_MAP === 'undefined') window.ICON_MAP = {};
                 
@@ -334,7 +334,10 @@
                 
                 register('attribute', '物理', 'Physic', 'sprite-Type_Physic');
                 register('attribute', '物理', 'Physical', 'sprite-Type_Physic');
+                register('attribute', 'physic', 'physic', 'sprite-Type_Physic');
+                register('attribute', 'physical', 'physical', 'sprite-Type_Physic');
                 register('attribute', '魔法', 'Magic', 'sprite-Type_Magic');
+                register('attribute', 'magic', 'magic', 'sprite-Type_Magic');
 
                 const personalities = { 
                     '冷靜': 'Composed', '憂鬱': 'Depressed', '天真': 'Innocence', '狂亂': 'Madness', '活潑': 'Vivacious', '共鳴': 'Resonance', 
@@ -355,7 +358,6 @@
             const updateTag = (id, label, value, prefix) => {
                 const el = document.getElementById(id);
                 initIconMap();
-                // 🌟 使用小寫進行查找比對，完美解決 "Elf" 和 "elf" 的問題
                 const searchKey = `${prefix}_${value}`.toLowerCase();
                 const iconUrl = window.ICON_MAP[searchKey] || "";
         
@@ -608,12 +610,11 @@
                 if (Array.isArray(personalityData)) {
                     pList = personalityData;
                 } else if (typeof personalityData === 'string') {
-                    pList = personalityData.split(/[、,\/\s+]+/).map(s => s.trim()).filter(Boolean);
+                    pList = personalityData.split(/[v,\/\s+]+/).map(s => s.trim()).filter(Boolean);
                 } else if (personalityData) {
                     pList = [String(personalityData)];
                 }
 
-                // 🌟 修復 2：針對可能為英文的鍵值進行翻譯查找
                 const raceToZh = {
                     'Dragon': '龍族', 'Elemental': '魔靈', 'Elf': '精靈', 'Phantom': '幽靈', 
                     'Sprite': '妖精', 'Unknown': '???', 'Werebeast': '獸人', 'Witch': '魔女',
@@ -622,9 +623,7 @@
                 const pToZh = {
                     'Composed': '冷靜', 'Depressed': '憂鬱', 'Innocence': '天真', 
                     'Madness': '狂亂', 'Vivacious': '活潑', 'Resonance': '共鳴',
-                    'composed': '冷靜', 'depressed': '憂鬱', 'innocence': '天真',
-                    'madness': '狂亂', 'vivacious': '活潑', 'resonance': '共鳴',
-                    'Multifaceted': '雙面', 'multifaceted': '雙面'
+                    'composed': '冷靜', 'depressed': '憂鬱', 'innocence': '天真'
                 };
 
                 const mappedRace = raceToZh[raceName] || raceName;
@@ -778,7 +777,6 @@
             function renderCostumeButtons(charName) {
                 const container = document.getElementById('costumeButtonsContainer');
                 const spineKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
-                // 🌟 修復 3：COSTUME_MAP 改以 spineKey 作為優先搜尋目標
                 const costumes = typeof COSTUME_MAP !== 'undefined' ? (COSTUME_MAP[spineKey] || COSTUME_MAP[charName] || []) : [];
                 
                 if (!costumes || costumes.length <= 1) {
@@ -915,12 +913,12 @@
                         if (Array.isArray(rawPersonality)) {
                             pListUlt = rawPersonality;
                         } else if (typeof rawPersonality === 'string') {
-                            pListUlt = rawPersonality.split(/[、,\/\s+]+/).map(s => s.trim()).filter(Boolean);
+                            pListUlt = rawPersonality.split(/[v,\/\s+]+/).map(s => s.trim()).filter(Boolean);
                         } else if (rawPersonality) {
                             pListUlt = [String(rawPersonality)];
                         }
 
-                        // 🌟 修復 4：對高級技能圖片映射表全面支援英文與大小寫防護
+                        // 🌟 高級技能 Icon 正確對應性格
                         let ultFileName = "ultimate_composed";
                         const pDictUlt = { 
                             '冷靜': 'composed', '憂鬱': 'depressed', '天真': 'innocence', '狂亂': 'madness', '活潑': 'vivacious', '共鳴': 'resonance',
@@ -1177,19 +1175,7 @@
                 }
         
                 window.currentActiveCharName = charName;
-        
                 const baseFolderKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
-                
-                // 🌟 修復 5：加入 SD_COSTUME 判斷，確保小人動態會讀取對應的 Skin 或是特定的檔案
-                let sdFolderKey = baseFolderKey;
-                let skinName = 'Normal';
-                if (typeof SD_COSTUME !== 'undefined') {
-                    if (SD_COSTUME[baseFolderKey]) {
-                        skinName = SD_COSTUME[baseFolderKey];
-                    } else if (SD_COSTUME[charName]) {
-                        skinName = SD_COSTUME[charName];
-                    }
-                }
         
                 const targets = [
                     { id: 'spine-attack', prefix: 'Attack' },
@@ -1230,11 +1216,11 @@
                         padLeft: "0%", padRight: "0%", padTop: "0%", padBottom: "0%", transitionTime: 0 
                     };
         
+                    // 🌟 戰鬥小人嚴格讀取 spine_sd_assets 內原裝檔，不套用額外 skin 名稱
                     const player = new spine.SpinePlayer(target.id, {
-                        skelUrl: `./spine_sd_assets/${sdFolderKey}.skel.bytes`,
-                        atlasUrl: `./spine_sd_assets/${sdFolderKey}.atlas.txt`,
+                        skelUrl: `./spine_sd_assets/${baseFolderKey}.skel.bytes`,
+                        atlasUrl: `./spine_sd_assets/${baseFolderKey}.atlas.txt`,
                         animation: "Idle", 
-                        skin: skinName,    
                         backgroundColor: "#00000000",
                         alpha: true,
                         premultipliedAlpha: true, 
@@ -1252,15 +1238,6 @@
                                 canvas.style.height = '100%';
                                 canvas.style.position = 'relative';
                                 canvas.style.zIndex = '999'; 
-                            }
-        
-                            const skins = player.skeleton.data.skins;
-                            if (skins && skins.length > 0) {
-                                const targetSkin = skins.find(s => s.name === skinName) || skins.find(s => s.name === 'default') || skins[0];
-                                if (targetSkin) {
-                                    player.skeleton.setSkinByName(targetSkin.name);
-                                    player.skeleton.setSlotsToSetupPose(); 
-                                }
                             }
         
                             const allAnims = player.skeleton.data.animations.map(a => a.name);
@@ -1316,7 +1293,7 @@
                             }
                         },
                         error: function(player, reason) {
-                            console.error(`[SD小人] ❌ 載入失敗 (${sdFolderKey}):`, reason);
+                            console.error(`[SD小人] ❌ 載入失敗 (${baseFolderKey}):`, reason);
                         }
                     });
                 });
@@ -1445,7 +1422,7 @@
                 if (Array.isArray(displayPersonality)) {
                     pList = displayPersonality;
                 } else if (typeof displayPersonality === 'string') {
-                    pList = displayPersonality.split(/[、,\/\s+]+/).map(s => s.trim()).filter(Boolean);
+                    pList = displayPersonality.split(/[v,\/\s+]+/).map(s => s.trim()).filter(Boolean);
                 } else if (displayPersonality) {
                     pList = [String(displayPersonality)];
                 }
@@ -1475,7 +1452,6 @@
                 renderExtraInfo(currentTargetName);
                 
                 let crayonConfig = { layer1: [], layer2: [], layer3: [] };
-                // 🌟 修復 6：Crayon 更新加入語系對應轉換
                 const raceToZh = {
                     'Dragon': '龍族', 'Elemental': '魔靈', 'Elf': '精靈', 'Phantom': '幽靈', 
                     'Sprite': '妖精', 'Unknown': '???', 'Werebeast': '獸人', 'Witch': '魔女',
@@ -1615,7 +1591,7 @@
                     if (Array.isArray(displayPersonality)) {
                         pList = displayPersonality;
                     } else if (typeof displayPersonality === 'string') {
-                        pList = displayPersonality.split(/[、,\/\s+]+/).map(s => s.trim()).filter(Boolean);
+                        pList = displayPersonality.split(/[v,\/\s+]+/).map(s => s.trim()).filter(Boolean);
                     } else if (displayPersonality) {
                         pList = [String(displayPersonality)];
                     }
@@ -1935,4 +1911,3 @@
         </script>
     </body>
 </html>
-```<FollowUp label="如果修改後部分圖片還是顯示破圖或 404？" query="如果替換程式碼後，部分小人動畫或技能圖示還是破圖/404，該怎麼排查資料夾路徑？"/>
