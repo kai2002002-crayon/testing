@@ -1370,7 +1370,8 @@
                         const passiveSkillIcon = `sprite-Icon_PassiveSkill_${spineKey}`;
         
                         // 1. 先取得原始性格資料並處理組合
-                        let rawPersonality = currentCharData.personality;
+                        // 🌟 修復 2：改用相容大小寫的方式讀取性格，避免回退成預設的冷靜
+                        let rawPersonality = currentCharData.personality || currentCharData.Personality || currentCharData.PERSONALITY || "";
                         let pListUlt = [];
                         if (Array.isArray(rawPersonality)) {
                             pListUlt = rawPersonality;
@@ -1636,21 +1637,28 @@
                 asideContainer.innerHTML = html;
             }
             
-            function loadSkillSpines(charName) {
+           function loadSkillSpines(charName) {
                 if (window.skillSpinePlayers && window.skillSpinePlayers.length > 0) {
                     window.skillSpinePlayers.forEach(p => p.dispose());
                     window.skillSpinePlayers = [];
                 }
-        
+            
                 window.currentActiveCharName = charName;
-        
-                const baseFolderKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
-        
+            
+                // 🌟 修復 3：優先讀取 SD_COSTUME，如果沒有才用 SPINE_MAP
+                let baseFolderKey = charName;
+                if (typeof SD_COSTUME !== 'undefined' && SD_COSTUME[charName]) {
+                    baseFolderKey = SD_COSTUME[charName];
+                } else if (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName]) {
+                    baseFolderKey = SPINE_MAP[charName];
+                }
+            
                 const targets = [
                     { id: 'spine-attack', prefix: 'Attack' },
                     { id: 'spine-normal-skill', prefix: 'Skill' },
                     { id: 'spine-ultimate-skill', prefix: 'Ultimate' }
                 ];
+                // 下方保持不變...
         
                 targets.forEach(target => {
                     const container = document.getElementById(target.id);
@@ -1990,160 +1998,115 @@
                 }
             });
             
-            // 🌟 1. 將 window.onload 加上 async 關鍵字以支援非同步讀取
-            window.onload = async function() {
+            window.onload = function() {
                 applyI18n(); 
             
                 const urlParams = new URLSearchParams(window.location.search);
                 currentTargetName = urlParams.get('char')?.trim();
             
                 if (!currentTargetName) { renderError(getI18n('error_no_char') || "❌ 未指定坨坨，請從主頁點擊坨坨按鈕進入。"); return; }
+                if (typeof INITIAL_DATA === 'undefined') { renderError(getI18n('error_no_data') || "❌ 載入失敗：找不到 INITIAL_DATA。"); return; }
+            
+                // 🌟 修復 1-1：相容 Firestore 大小寫欄位名稱，避免 find() 崩潰
+                currentCharData = INITIAL_DATA.find(c => (c.name || c.Name || c.charName || "").trim() === currentTargetName);
+                if (!currentCharData) { renderError(`${getI18n('error_char_not_found') || "❌ 找不到坨坨資料: "}${currentTargetName}`); return; }
+            
+                // 🌟 修復 1-2：統一正規化欄位 (解決屬性 icon、金蠟筆、高級技能顯示不到的問題)
+                const charRace = currentCharData.race || currentCharData.Race || currentCharData.RACE || "";
+                const charPersonality = currentCharData.personality || currentCharData.Personality || currentCharData.PERSONALITY || "";
+                const charJob = currentCharData.job || currentCharData.Job || currentCharData.JOB || "";
+                const charPosition = currentCharData.position || currentCharData.Position || currentCharData.POSITION || "";
+                const charPathVersion = currentCharData.pathVersion || currentCharData.PathVersion || currentCharData.path_version || "";
+                let releaseDateText = currentCharData.releaseDate || currentCharData.ReleaseDate || currentCharData.release_date || '09/10/2025';
 
-                // 顯示載入中提示
-                document.getElementById('charName').innerHTML = "資料連線中...";
+                const avatarBox = document.getElementById('charAvatar');
+                if (typeof LOBBY_BACKGROUNDS !== 'undefined' && LOBBY_BACKGROUNDS.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * LOBBY_BACKGROUNDS.length);
+                    const randomBgUrl = LOBBY_BACKGROUNDS[randomIndex];
+                    avatarBox.style.setProperty('--bg-image', `url('${randomBgUrl}')`);
+                } else {
+                    avatarBox.style.setProperty('--bg-image', `none`);
+                }
+            
+                // 🌟 修復 1-3：強制使用安全的 currentTargetName，解決名字顯示為 undefined 的問題
+                const displayName = getI18n(currentTargetName);
+                document.getElementById('charName').innerHTML = displayName;
 
-                try {
-                    // 🌟 2. 從 Firestore 讀取角色基本資料 (使用點記號查詢巢狀欄位)
-                    const charSnapshot = await db.collection("global_characters")
-                      .where("names.zh-TW", "==", currentTargetName)
-                      .get();
-                    
-                    if (charSnapshot.empty) { 
-                        renderError(`${getI18n('error_char_not_found') || "❌ 找不到坨坨資料: "}${currentTargetName}`); 
-                        return; 
+                let releaseLabel = getI18n('release_date_label');
+                if (releaseLabel === 'release_date_label') releaseLabel = '實裝日期';
+                if (document.getElementById('releaseDateLabelText')) document.getElementById('releaseDateLabelText').innerText = releaseLabel;
+            
+                releaseDateText = releaseDateText.split(' ')[0].split('T')[0];
+                const dateMatch = releaseDateText.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/);
+                if (dateMatch) {
+                    const year = dateMatch[1];
+                    const month = dateMatch[2].padStart(2, '0'); 
+                    const day = dateMatch[3].padStart(2, '0');
+                    releaseDateText = `${day}/${month}/${year}`;
+                }
+                const releaseValueEl = document.getElementById('releaseDateValue');
+                if (releaseValueEl) releaseValueEl.innerText = releaseDateText;
+            
+                let idLabel = getI18n('stats_identity'); if(idLabel === 'stats_identity') idLabel = '身份';
+                let pLabel = getI18n('stats_personality'); if(pLabel === 'stats_personality') pLabel = '性格';
+                let rLabel = getI18n('stats_race'); if(rLabel === 'stats_race') rLabel = '種族';
+                let posLabel = getI18n('stats_position'); if(posLabel === 'stats_position') posLabel = '站位';
+                let jLabel = getI18n('stats_job'); if(jLabel === 'stats_job') jLabel = '職業';
+                let aLabel = getI18n('stats_attribute'); if(aLabel === 'stats_attribute') aLabel = '攻擊類型';
+            
+                const isEldain = (typeof ELDAIN_LIST !== 'undefined') ? ELDAIN_LIST.includes(currentTargetName) : false;
+                const identityValue = isEldain ? '艾爾丁' : '普通坨坨';
+            
+                let currentAttribute = "未知";
+                if (typeof characterSkills !== 'undefined') {
+                    const skillData = characterSkills.find(s => (s.name || s.Name || "").trim() === currentTargetName);
+                    if (skillData) {
+                        currentAttribute = skillData.attribute || skillData.Attribute || currentAttribute;
                     }
-                    currentCharData = charSnapshot.docs[0].data();
+                }
 
-                    // =========================================================
-                    // 🌟 核心修復：資料結構正規化
-                    // 將 admin.html 存入的多語系物件 (Object) 解開成純字串
-                    // 讓後續的 SPINE_MAP, COSTUME_MAP, CRAYON 都能正常運作
-                    // =========================================================
-                    const extractLocalString = (val) => {
-                        if (!val) return "";
-                        if (typeof val === 'string') return val;
-                        if (Array.isArray(val)) return val; // 性格可能是陣列
-                        if (typeof val === 'object') {
-                            return val['zh-TW'] || val['zh'] || val['ja'] || val['en'] || Object.values(val)[0] || "";
-                        }
-                        return String(val);
-                    };
+                // 使用正規化後的 charPersonality
+                let displayPersonality = charPersonality;
+                let pList = [];
+                if (Array.isArray(displayPersonality)) {
+                    pList = displayPersonality;
+                } else if (typeof displayPersonality === 'string') {
+                    pList = displayPersonality.split(/[、,\/\s+]+/).map(s => s.trim()).filter(Boolean);
+                } else if (displayPersonality) {
+                    pList = [String(displayPersonality)];
+                }
 
-                    currentCharData.name = extractLocalString(currentCharData.names) || currentCharData.name || currentTargetName;
-                    currentCharData.race = extractLocalString(currentCharData.race);
-                    currentCharData.personality = extractLocalString(currentCharData.personality);
-                    currentCharData.position = extractLocalString(currentCharData.position);
-                    currentCharData.job = extractLocalString(currentCharData.job);
-                    if (currentCharData.pathVersion) {
-                        currentCharData.pathVersion = extractLocalString(currentCharData.pathVersion);
+                const pDictLoad = { '冷靜': 'Composed', '憂鬱': 'Depressed', '天真': 'Innocence', '狂亂': 'Madness', '活潑': 'Vivacious', '共鳴': 'Resonance' };
+
+                if (pList.length > 1) {
+                    displayPersonality = pList.join('+'); 
+                    const enList = pList.map(p => pDictLoad[p] || 'Multifaceted');
+                    if (typeof window.ICON_MAP === 'undefined') window.ICON_MAP = {};
+                    window.ICON_MAP[`personality_${displayPersonality}`] = `sprite-base sprite-common sprite-Personality_Multifaceted_${enList.sort().join('_')}`;
+                } else if (pList.length === 1) {
+                    displayPersonality = pList[0];
+                    if (displayPersonality === "雙重性格" || displayPersonality === "雙重") {
+                        displayPersonality = "雙面";
                     }
-                    // =========================================================
-
-                    // 🌟 3. 改從本地 `characterSkills`（來自 data_skills.js）取得技能資料，不查詢不存在的 `character_skills` 集合
-                    if (typeof characterSkills !== 'undefined') {
-                        // 已經由 data_skills.js 載入
-                    } else {
-                        window.characterSkills = [];
-                    }
-
-                    // ==========================================
-                    // 以下保留原有的渲染邏輯
-                    // ==========================================
-                    
-                    const avatarBox = document.getElementById('charAvatar');
-                    if (typeof LOBBY_BACKGROUNDS !== 'undefined' && LOBBY_BACKGROUNDS.length > 0) {
-                        const randomIndex = Math.floor(Math.random() * LOBBY_BACKGROUNDS.length);
-                        const randomBgUrl = LOBBY_BACKGROUNDS[randomIndex];
-                        avatarBox.style.setProperty('--bg-image', `url('${randomBgUrl}')`);
-                    } else {
-                        avatarBox.style.setProperty('--bg-image', `none`);
-                    }
+                }
                 
-                    const displayName = getI18n(currentCharData.name);
-                
-                    // 1. 名字恢復為純文字
-                    document.getElementById('charName').innerHTML = displayName;
+                // 改用容錯變數載入 Icon
+                updateTag('charIdentity', idLabel, identityValue, 'identity');
+                updateTag('charPersonality', pLabel, displayPersonality, 'personality'); 
+                updateTag('charRace', rLabel, charRace, 'race');
+                updateTag('charPosition', posLabel, charPosition, 'position');
+                updateTag('charJob', jLabel, charJob, 'job');
+                updateTag('charAttribute', aLabel, currentAttribute, 'attribute');
 
-                    // 實裝日期處理
-                    let releaseLabel = getI18n('release_date_label');
-                    if (releaseLabel === 'release_date_label') releaseLabel = '實裝日期';
-                    if (document.getElementById('releaseDateLabelText')) document.getElementById('releaseDateLabelText').innerText = releaseLabel;
-                    
-                    let releaseDateText = currentCharData.releaseDate || '09/10/2025';
-                    releaseDateText = releaseDateText.split(' ')[0].split('T')[0];
-                    const dateMatch = releaseDateText.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/);
-                    if (dateMatch) {
-                        const year = dateMatch[1];
-                        const month = dateMatch[2].padStart(2, '0'); 
-                        const day = dateMatch[3].padStart(2, '0');
-                        releaseDateText = `${day}/${month}/${year}`;
-                    }
-                    const releaseValueEl = document.getElementById('releaseDateValue');
-                    if (releaseValueEl) releaseValueEl.innerText = releaseDateText;
+                const queryParams = new URLSearchParams(window.location.search);
+                const currentRace = charRace || queryParams.get('race');
+                const currentPersonality = queryParams.get('personality') || charPersonality;
+                updateRaceBackground(currentRace, currentPersonality);
                 
-                    // 2. 準備所有屬性標籤的多國語言文字
-                    let idLabel = getI18n('stats_identity'); if(idLabel === 'stats_identity') idLabel = '身份';
-                    let pLabel = getI18n('stats_personality'); if(pLabel === 'stats_personality') pLabel = '性格';
-                    let rLabel = getI18n('stats_race'); if(rLabel === 'stats_race') rLabel = '種族';
-                    let posLabel = getI18n('stats_position'); if(posLabel === 'stats_position') posLabel = '站位';
-                    let jLabel = getI18n('stats_job'); if(jLabel === 'stats_job') jLabel = '職業';
-                    let aLabel = getI18n('stats_attribute'); if(aLabel === 'stats_attribute') aLabel = '攻擊類型';
-                
-                    // 3. 判斷是否為艾爾丁身份
-                    const isEldain = (typeof ELDAIN_LIST !== 'undefined') ? ELDAIN_LIST.includes(currentCharData.name) : false;
-                    const identityValue = isEldain ? '艾爾丁' : '普通坨坨';
-                
-                    // 4. 取得攻擊類型
-                    let currentAttribute = "未知";
-                    if (typeof window.characterSkills !== 'undefined' && window.characterSkills.length > 0) {
-                        const skillData = window.characterSkills.find(s => s.name.trim() === currentCharData.name);
-                        if (skillData && skillData.attribute) {
-                            currentAttribute = skillData.attribute;
-                        }
-                    }
+                renderStars(currentTargetName);
+                renderExtraInfo(currentTargetName);
 
-                    // 處理雙重性格判斷
-                    let displayPersonality = currentCharData.personality;
-                    let pList = [];
-                    if (Array.isArray(displayPersonality)) {
-                        pList = displayPersonality;
-                    } else if (typeof displayPersonality === 'string') {
-                        pList = displayPersonality.split(/[、,\/\s+]+/).map(s => s.trim()).filter(Boolean);
-                    } else if (displayPersonality) {
-                        pList = [String(displayPersonality)];
-                    }
-
-                    const pDictLoad = { '冷靜': 'Composed', '憂鬱': 'Depressed', '天真': 'Innocence', '狂亂': 'Madness', '活潑': 'Vivacious', '共鳴': 'Resonance' };
-
-                    if (pList.length > 1) {
-                        displayPersonality = pList.join('+'); 
-                        const enList = pList.map(p => pDictLoad[p] || 'Multifaceted');
-                        if (typeof window.ICON_MAP === 'undefined') window.ICON_MAP = {};
-                        window.ICON_MAP[`personality_${displayPersonality}`] = `sprite-base sprite-common sprite-Personality_Multifaceted_${enList.sort().join('_')}`;
-                    } else if (pList.length === 1) {
-                        displayPersonality = pList[0];
-                        if (displayPersonality === "雙重性格" || displayPersonality === "雙重") {
-                            displayPersonality = "雙面";
-                        }
-                    }
-
-                    // 5. 渲染全部屬性圖示
-                    updateTag('charIdentity', idLabel, identityValue, 'identity');
-                    updateTag('charPersonality', pLabel, displayPersonality, 'personality'); 
-                    updateTag('charRace', rLabel, currentCharData.race, 'race');
-                    updateTag('charPosition', posLabel, currentCharData.position, 'position');
-                    updateTag('charJob', jLabel, currentCharData.job, 'job');
-                    updateTag('charAttribute', aLabel, currentAttribute, 'attribute');
-                
-                    const queryParams = new URLSearchParams(window.location.search);
-                    const currentRace = currentCharData.race || queryParams.get('race');
-                    const currentPersonality = queryParams.get('personality') || currentCharData.personality;
-                    updateRaceBackground(currentRace, currentPersonality);
-                        
-                    renderStars(currentTargetName);
-                    renderExtraInfo(currentTargetName);
-                
-                    const spineKey = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[currentCharData.name] : currentCharData.name;
+                const spineKey = typeof SPINE_MAP !== 'undefined' ? (SPINE_MAP[currentTargetName] || currentTargetName) : currentTargetName;
                 
                     const faviconEl = document.getElementById('dynamicFavicon');
                     const defaultFaviconUrl = 'https://i.postimg.cc/mkfSTq5k/Favicon.png';
@@ -2241,9 +2204,9 @@
                         
                         renderCostumeButtons(currentCharData.name);
                 
-                        const initialCostumeKey = (typeof COSTUME_MAP !== 'undefined' && COSTUME_MAP[currentCharData.name] && COSTUME_MAP[currentCharData.name].length > 0) 
-                                                ? COSTUME_MAP[currentCharData.name][0] 
-                                                : spineKey;
+                        const initialCostumeKey = (typeof COSTUME_MAP !== 'undefined' && COSTUME_MAP[currentTargetName] && COSTUME_MAP[currentTargetName].length > 0) 
+                                          ? COSTUME_MAP[currentTargetName][0] 
+                                          : spineKey;
                         setTimeout(() => { loadSpineAnimation(initialCostumeKey); }, 100);
                     } else {
                         const imgUrl = typeof IMAGE_MAP !== 'undefined' ? IMAGE_MAP[`avatar_${currentCharData.name}`] : '';
@@ -2256,21 +2219,21 @@ avatarBox.innerText = currentTargetName.charAt(0);
                     }
                 
                     let crayonConfig = { layer1: [], layer2: [], layer3: [] };
-                    if (typeof CRAYON_PATH_CONFIG !== 'undefined' && 
-                        CRAYON_PATH_CONFIG[currentCharData.race] && 
-                        CRAYON_PATH_CONFIG[currentCharData.race][currentCharData.pathVersion]) {
-                        crayonConfig = CRAYON_PATH_CONFIG[currentCharData.race][currentCharData.pathVersion];
-                    }
+                if (typeof CRAYON_PATH_CONFIG !== 'undefined' && 
+                    CRAYON_PATH_CONFIG[charRace] && 
+                    CRAYON_PATH_CONFIG[charRace][charPathVersion]) {
+                    crayonConfig = CRAYON_PATH_CONFIG[charRace][charPathVersion];
+                }
 
-                    const renderCrayonList = (elementId, array) => {
-                        const ul = document.getElementById(elementId);
-                        const safeArray = array || [];
-                        ul.innerHTML = safeArray.map(attr => `<li>${t(attr)}</li>`).join('');
-                    };
-                    
-                    renderCrayonList('layer1List', crayonConfig.layer1);
-                    renderCrayonList('layer2List', crayonConfig.layer2);
-                    renderCrayonList('layer3List', crayonConfig.layer3);
+                const renderCrayonList = (elementId, array) => {
+                    const ul = document.getElementById(elementId);
+                    const safeArray = array || [];
+                    ul.innerHTML = safeArray.map(attr => `<li>${t(attr)}</li>`).join('');
+                };
+                
+                renderCrayonList('layer1List', crayonConfig.layer1);
+                renderCrayonList('layer2List', crayonConfig.layer2);
+                renderCrayonList('layer3List', crayonConfig.layer3);
                 
                     document.title = `${displayName} - ${getI18n('page_title_char_detail')}`;
                 
