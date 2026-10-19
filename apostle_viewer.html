@@ -611,7 +611,10 @@ async function fetchGlobalCharacters() {
             
                     chars.forEach(c => {
                         const iconUrl = typeof IMAGE_MAP !== 'undefined' ? IMAGE_MAP[`avatar_${c.name}`] : '';
-                        const spineName = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[c.name] : c.name;
+                        // 優先檢查 SPINE_MAP 用中文名找；找不到就直接用 Firestore 裡的 c.spineName，再沒有才用 c.name
+const spineName = (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[c.name]) 
+    ? SPINE_MAP[c.name] 
+    : (c.spineName || c.name);
                         const displayName = getI18n(c.name);
                         
                         const btn = document.createElement('button');
