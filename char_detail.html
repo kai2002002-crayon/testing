@@ -2014,6 +2014,31 @@
                     }
                     currentCharData = charSnapshot.docs[0].data();
 
+                    // =========================================================
+                    // 🌟 核心修復：資料結構正規化
+                    // 將 admin.html 存入的多語系物件 (Object) 解開成純字串
+                    // 讓後續的 SPINE_MAP, COSTUME_MAP, CRAYON 都能正常運作
+                    // =========================================================
+                    const extractLocalString = (val) => {
+                        if (!val) return "";
+                        if (typeof val === 'string') return val;
+                        if (Array.isArray(val)) return val; // 性格可能是陣列
+                        if (typeof val === 'object') {
+                            return val['zh-TW'] || val['zh'] || val['ja'] || val['en'] || Object.values(val)[0] || "";
+                        }
+                        return String(val);
+                    };
+
+                    currentCharData.name = extractLocalString(currentCharData.names) || currentCharData.name || currentTargetName;
+                    currentCharData.race = extractLocalString(currentCharData.race);
+                    currentCharData.personality = extractLocalString(currentCharData.personality);
+                    currentCharData.position = extractLocalString(currentCharData.position);
+                    currentCharData.job = extractLocalString(currentCharData.job);
+                    if (currentCharData.pathVersion) {
+                        currentCharData.pathVersion = extractLocalString(currentCharData.pathVersion);
+                    }
+                    // =========================================================
+
                     // 🌟 3. 改從本地 `characterSkills`（來自 data_skills.js）取得技能資料，不查詢不存在的 `character_skills` 集合
                     if (typeof characterSkills !== 'undefined') {
                         // 已經由 data_skills.js 載入
