@@ -913,7 +913,7 @@
         
                     const spineKey = currentCharData.spineName || (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName);
                     
-                    const normalAttackIcon = currentCharData.attribute === "物理" ? "sprite-common sprite-Type_Physic" : "sprite-common sprite-Type_Magic";
+                    const normalAttackIcon = currentCharData.attribute === "物理" ? "sprite-common sprite-attack_physical" : "sprite-common sprite-attack_magical";
                     const normalSkillIcon = `sprite-Icon_NormalSkill_${spineKey}`;
                     const passiveSkillIcon = `sprite-Icon_PassiveSkill_${spineKey}`;
         
@@ -945,8 +945,10 @@
                         }
                     }
         
-                    const ultStyle = `width: 64px; height: 64px; background-size: contain; transform: translate(-50%, -50%) scale(0.625);`;
-                    const ultSkillIcon = ultClass;
+                    // 移除 background-size: contain，以免整張 sprite sheet 被強制縮放顯示
+                    const ultStyle = `transform: translate(-50%, -50%) scale(0.625);`;
+                    // 同時套用「性格背景圖 class (ultClass)」與「角色專屬 Sprite 定位 class」
+                    const ultSkillIcon = `${ultClass} sprite-Icon_UltimateSkill_${spineKey}`;
         
                     const enhancedData = charSkillData.normalAttack?.enhanced;
                     const hasEnhanced = enhancedData && enhancedData !== "無" && (typeof enhancedData === 'string' ? true : enhancedData.desc !== "無");
