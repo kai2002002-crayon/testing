@@ -290,37 +290,55 @@ auth = firebase.auth();
             // 定義一個全域變數來存放圖鑑資料（取代原本寫死的 INITIAL_DATA）
 window.INITIAL_DATA = [];
 
-function fetchGlobalCharacters() {
-    if (!db) {
-        console.error("Firestore 尚未初始化！");
-        return;
-    }
+async function fetchGlobalCharacters() {
+    try {
+        // 假設 db 是你的 firebase.firestore() 實例
+        const snapshot = await db.collection("global_characters").get();
+        
+        if (snapshot.empty) {
+            console.log("Firestore 中找不到任何角色資料。");
+            document.getElementById("character-list-container").innerHTML = "<p>目前沒有資料</p>";
+            return;
+        }
 
-    console.log("開始讀取全域角色圖鑑...");
-    
-    // 讀取 global_characters 集合內的所有文件
-    db.collection("global_characters").get().then((querySnapshot) => {
-        let charactersData = [];
-        
-        querySnapshot.forEach((doc) => {
-            // 取得文件資料，並將 Firestore 的文件 ID 也一併存入，方便後續對應
-            let data = doc.data();
-            data.docId = doc.id; 
-            charactersData.push(data);
+        const characters = [];
+
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            
+            // 【關鍵修正】根據你的 Firestore 巢狀結構，精準提取資料
+            // 使用可選串連運算子 (?.) 避免某些文件缺少欄位時導致整個程式崩潰
+            const character = {
+                id: doc.id, // Firestore 預設的文件 ID
+                
+                // 從 core 提取基本屬性
+                name: data.core?.name || data.names?.["zh-TW"] || "未知角色",
+                job: data.core?.job || "未知職業",
+                position: data.core?.position || "未知站位",
+                race: data.core?.race || "未知種族",
+                personality: data.core?.personality || "未知性格",
+                
+                // 從 skills 提取屬性 (魔法/物理等)
+                attribute: data.skills?.attribute || "未知屬性",
+                
+                // 英文 ID / Spine 模型對應名稱
+                spineName: data.spineName || "",
+                
+                // 禮物圖標 (如果有做相關 UI)
+                presentUrl: data.texts?.present?.url || ""
+            };
+
+            characters.push(character);
         });
-        
-        console.log(`成功讀取 ${charactersData.length} 筆角色資料:`, charactersData);
-        
-        // 將陣列賦值給全域變數
-        window.INITIAL_DATA = charactersData;
-        
-        // 【關鍵步驟】：資料讀取完畢後，在這裡呼叫你用來生成/渲染畫面的函式
-        // 例如：renderCharacterGrid() 或 initApostleView() 等
-        // renderCharacterGrid();
-        
-    }).catch((error) => {
-        console.error("讀取全域角色資料發生錯誤:", error);
-    });
+
+        console.log("成功解析角色資料:", characters);
+
+        // 取得資料後，呼叫你原本負責繪製畫面的函式
+        // renderCharacters(characters); 
+
+    } catch (error) {
+        console.error("讀取 Firestore 資料時發生錯誤:", error);
+    }
 }
 
 // 確保網頁 DOM 載入後再執行讀取
