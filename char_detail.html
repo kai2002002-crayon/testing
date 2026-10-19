@@ -25,7 +25,6 @@
                                (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
             if (isDarkMode) { document.documentElement.classList.add('dark'); }
             
-            // i18n 語言設定
             window.currentLang = localStorage.getItem('user_lang') || "zh-TW";
             document.documentElement.lang = window.currentLang === "ja" ? "ja" : "zh-TW";
         </script>
@@ -34,7 +33,6 @@
         <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
         <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
         <style>
-            /* 🌟 預設空珍藏品：情信 */
             .sprite-letter {
             width: 144px !important;
             height: 117px !important;
@@ -45,15 +43,10 @@
             border: none !important;
             padding: 0 !important;
             }
-            /* 🌟 種族專屬背景的平鋪與移動動畫 */
             #raceBackground {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: -10; 
-            background-repeat: repeat;
-            background-size: 200px; 
-            opacity: 0.9; 
-            animation: raceBgPan 40s linear infinite;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -10; background-repeat: repeat; background-size: 200px; 
+            opacity: 0.9; animation: raceBgPan 40s linear infinite;
             }
             .dark #raceBackground { opacity: 0.4; }
             @keyframes raceBgPan {
@@ -69,28 +62,17 @@
             .costume-btn { transition: all 0.2s ease; }
             .costume-btn:active { transform: scale(0.95); }
             .spine-player-loading {
-            background-image: none !important;
-            border: none !important;
-            animation: none !important;
+            background-image: none !important; border: none !important; animation: none !important;
             background: transparent url('https://i.postimg.cc/qvjNxZzg/golden-crayon.png') no-repeat center center !important;
-            background-size: contain !important;
-            width: 80px !important;
-            height: 80px !important;
-            position: absolute !important;
-            left: 50% !important;
-            top: 50% !important;
-            margin-top: -40px !important;
-            margin-left: -40px !important;
-            animation: crayonFloat 1.5s ease-in-out infinite !important;
-            opacity: 1 !important;
+            background-size: contain !important; width: 80px !important; height: 80px !important;
+            position: absolute !important; left: 50% !important; top: 50% !important;
+            margin-top: -40px !important; margin-left: -40px !important;
+            animation: crayonFloat 1.5s ease-in-out infinite !important; opacity: 1 !important;
             }
-            .spine-player-loading > div, 
-            .spine-player-loading::before, 
-            .spine-player-loading::after { display: none !important; content: none !important; }
+            .spine-player-loading > div, .spine-player-loading::before, .spine-player-loading::after { display: none !important; content: none !important; }
             .spine-player-progress, .spine-player-progress-bar { display: none !important; opacity: 0 !important; }
             .spine-player-loading-custom {
-            position: absolute; top: 50%; left: 50%;
-            width: 80px; height: 80px; margin: -40px 0 0 -40px;
+            position: absolute; top: 50%; left: 50%; width: 80px; height: 80px; margin: -40px 0 0 -40px;
             background: url('https://i.postimg.cc/qvjNxZzg/golden-crayon.png') no-repeat center center;
             background-size: contain; animation: crayonFloat 1.5s ease-in-out infinite; z-index: 10;
             }
@@ -319,12 +301,12 @@
             firebase.initializeApp(firebaseConfig);
             const db = firebase.firestore();
             
-            // 🌟 屬性與標籤對應註冊 (支援中英文與大小寫)
+            // 🌟 修正：只使用 sprite-common 加上實體類別名稱，不再混用 sprite-base 避免樣式衝突
             const initIconMap = () => {
                 if (typeof window.ICON_MAP === 'undefined') window.ICON_MAP = {};
                 
                 const register = (prefix, zh, en, clsName) => {
-                    const cls = `sprite-base sprite-common ${clsName}`;
+                    const cls = `sprite-common ${clsName}`;
                     window.ICON_MAP[`${prefix}_${zh}`.toLowerCase()] = cls;
                     window.ICON_MAP[`${prefix}_${en}`.toLowerCase()] = cls;
                 };
@@ -406,7 +388,7 @@
 
                 starsContainer.innerHTML = `
                     <div class="relative" style="width: ${wrapperWidth}px; height: 28px;">
-                        <div class="sprite-base sprite-common ${starClass} drop-shadow-md absolute top-0 left-0" style="transform: scale(0.24); transform-origin: top left;"></div>
+                        <div class="sprite-common ${starClass} drop-shadow-md absolute top-0 left-0" style="transform: scale(0.24); transform-origin: top left;"></div>
                     </div>
                 `;
             }
@@ -422,21 +404,37 @@
                 const cvText = (typeof CV_MAP !== 'undefined' && CV_MAP[charName]) ? CV_MAP[charName] : "???";
                 document.getElementById('charCV').innerText = cvText;
         
-                const spineKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
-                const safeLang = (typeof INTRO_MAP !== 'undefined' && INTRO_MAP[window.currentLang]) ? window.currentLang : 'zh-TW';
+                const spineKey = currentCharData.spineName || (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName);
                 let introText = "（資料建檔中...）";
                 
-                if (typeof INTRO_MAP !== 'undefined' && INTRO_MAP[safeLang] && INTRO_MAP[safeLang][spineKey]) {
-                    let rawText = INTRO_MAP[safeLang][spineKey];
-                    let lines = rawText.split('\n');
-                    
-                    if (lines.length >= 3) {
-                        let titleText = `<span class="block text-lg sm:text-xl font-black text-amber-950 dark:text-amber-300 mb-1">${lines[0]}</span>`;
-                        let quoteText = `<span class="block text-base sm:text-lg font-bold text-amber-700 dark:text-amber-500 mb-3">${lines[1]}</span>`;
-                        let descText = `<span class="block text-sm text-gray-700 dark:text-gray-300 leading-relaxed border-t border-dashed border-amber-200 dark:border-slate-600 pt-3">${lines.slice(2).join('<br>')}</span>`;
-                        introText = titleText + quoteText + descText;
-                    } else {
-                        introText = rawText.replace(/\n/g, '<br>');
+                // 🌟 優先從資料庫的 texts 欄位獲取 Intro
+                const dbIntro = currentCharData.texts?.intro;
+                if (dbIntro) {
+                    let rawText = dbIntro[window.currentLang] || dbIntro["zh-TW"] || dbIntro["zh"];
+                    if (rawText) {
+                        let lines = rawText.split('\n');
+                        if (lines.length >= 3) {
+                            let titleText = `<span class="block text-lg sm:text-xl font-black text-amber-950 dark:text-amber-300 mb-1">${lines[0]}</span>`;
+                            let quoteText = `<span class="block text-base sm:text-lg font-bold text-amber-700 dark:text-amber-500 mb-3">${lines[1]}</span>`;
+                            let descText = `<span class="block text-sm text-gray-700 dark:text-gray-300 leading-relaxed border-t border-dashed border-amber-200 dark:border-slate-600 pt-3">${lines.slice(2).join('<br>')}</span>`;
+                            introText = titleText + quoteText + descText;
+                        } else {
+                            introText = rawText.replace(/\n/g, '<br>');
+                        }
+                    }
+                } else {
+                    const safeLang = (typeof INTRO_MAP !== 'undefined' && INTRO_MAP[window.currentLang]) ? window.currentLang : 'zh-TW';
+                    if (typeof INTRO_MAP !== 'undefined' && INTRO_MAP[safeLang] && INTRO_MAP[safeLang][spineKey]) {
+                        let rawText = INTRO_MAP[safeLang][spineKey];
+                        let lines = rawText.split('\n');
+                        if (lines.length >= 3) {
+                            let titleText = `<span class="block text-lg sm:text-xl font-black text-amber-950 dark:text-amber-300 mb-1">${lines[0]}</span>`;
+                            let quoteText = `<span class="block text-base sm:text-lg font-bold text-amber-700 dark:text-amber-500 mb-3">${lines[1]}</span>`;
+                            let descText = `<span class="block text-sm text-gray-700 dark:text-gray-300 leading-relaxed border-t border-dashed border-amber-200 dark:border-slate-600 pt-3">${lines.slice(2).join('<br>')}</span>`;
+                            introText = titleText + quoteText + descText;
+                        } else {
+                            introText = rawText.replace(/\n/g, '<br>');
+                        }
                     }
                 }
                 document.getElementById('charIntro').innerHTML = introText;
@@ -610,7 +608,7 @@
                 if (Array.isArray(personalityData)) {
                     pList = personalityData;
                 } else if (typeof personalityData === 'string') {
-                    pList = personalityData.split(/[v,\/\s+]+/).map(s => s.trim()).filter(Boolean);
+                    pList = personalityData.split(/[、,\/\s+]+/).map(s => s.trim()).filter(Boolean);
                 } else if (personalityData) {
                     pList = [String(personalityData)];
                 }
@@ -678,35 +676,40 @@
                 const presentText = document.getElementById('presentText');
                 const presentTextWrapper = document.getElementById('presentTextWrapper');
                 
-                const spineKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[currentTargetName] ? SPINE_MAP[currentTargetName] : currentTargetName; 
+                const spineKey = currentCharData.spineName || (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[currentTargetName] ? SPINE_MAP[currentTargetName] : currentTargetName); 
                 
                 const inactiveClass = "flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300";
         
                 presentTextWrapper.style.backgroundImage = 'none';
                 presentText.className = "text-sm md:text-base leading-relaxed w-full drop-shadow-md text-gray-700 dark:text-gray-300";
         
-                const langDataL = (typeof LETTER_MAP !== 'undefined' && LETTER_MAP[window.currentLang]) ? LETTER_MAP[window.currentLang] : ((typeof LETTER_MAP !== 'undefined') ? LETTER_MAP["zh-TW"] : {});
-                const langDataT = (typeof THOUGHT_MAP !== 'undefined' && THOUGHT_MAP[window.currentLang]) ? THOUGHT_MAP[window.currentLang] : ((typeof THOUGHT_MAP !== 'undefined') ? THOUGHT_MAP["zh-TW"] : {});
-                
                 let defaultNoLetter = getI18n('no_letter_hint');
                 if(defaultNoLetter === 'no_letter_hint') defaultNoLetter = '（這隻坨坨好像還沒寫信給你呢...）';
                 let defaultNoThought = getI18n('no_thought_hint');
                 if(defaultNoThought === 'no_thought_hint') defaultNoThought = '（教主目前還沒寫下對這個珍藏品的感想呢...）';
         
+                // 🌟 優先從資料庫的 texts 欄位獲取文本
+                const dbTexts = currentCharData?.texts || {};
+                const dbLetter = dbTexts.letter ? (dbTexts.letter[window.currentLang] || dbTexts.letter["zh-TW"] || dbTexts.letter["zh"]) : null;
+                const dbThought = dbTexts.thought ? (dbTexts.thought[window.currentLang] || dbTexts.thought["zh-TW"] || dbTexts.thought["zh"]) : null;
+                
+                const localLetter = (typeof LETTER_MAP !== 'undefined' && LETTER_MAP[window.currentLang]) ? LETTER_MAP[window.currentLang][spineKey] : null;
+                const localThought = (typeof THOUGHT_MAP !== 'undefined' && THOUGHT_MAP[window.currentLang]) ? THOUGHT_MAP[window.currentLang][spineKey] : null;
+
                 if (tab === 'letter') {
                     btnLetter.className = "flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-rose-500 text-white shadow-md";
                     btnThought.className = inactiveClass;
-                    presentText.innerHTML = (langDataL[spineKey] || defaultNoLetter).replace(/\n/g, '<br>');
+                    presentText.innerHTML = (dbLetter || localLetter || defaultNoLetter).replace(/\n/g, '<br>');
                 } else {
                     btnThought.className = "flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-amber-500 text-white shadow-md";
                     btnLetter.className = inactiveClass;
-                    presentText.innerHTML = (langDataT[spineKey] || defaultNoThought).replace(/\n/g, '<br>');
+                    presentText.innerHTML = (dbThought || localThought || defaultNoThought).replace(/\n/g, '<br>');
                 }
             }
             
             function loadSpineAnimation(costumeKey) {
                 const avatarBox = document.getElementById('charAvatar');
-                const baseFolderKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[currentTargetName] ? SPINE_MAP[currentTargetName] : currentTargetName; 
+                const baseFolderKey = currentCharData.spineName || (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[currentTargetName] ? SPINE_MAP[currentTargetName] : currentTargetName); 
                 
                 clearTimeout(globalIdleTimer);
         
@@ -776,7 +779,7 @@
             
             function renderCostumeButtons(charName) {
                 const container = document.getElementById('costumeButtonsContainer');
-                const spineKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
+                const spineKey = currentCharData.spineName || (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName);
                 const costumes = typeof COSTUME_MAP !== 'undefined' ? (COSTUME_MAP[spineKey] || COSTUME_MAP[charName] || []) : [];
                 
                 if (!costumes || costumes.length <= 1) {
@@ -811,9 +814,16 @@
             
             function renderCollectibles(charName) {
                 const lang = window.currentLang || 'zh-TW';
-                const spineKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
+                const spineKey = currentCharData.spineName || (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName);
         
-                if (typeof PRESENT_MAP !== 'undefined' && PRESENT_MAP[spineKey]) {
+                // 🌟 優先從資料庫獲取珍藏品名稱
+                const dbPresent = currentCharData.texts?.present;
+                if (dbPresent && dbPresent.name) {
+                    const presentNameBox = document.getElementById('presentName');
+                    if (presentNameBox) {
+                        presentNameBox.innerText = dbPresent.name[lang] || dbPresent.name['zh-TW'] || dbPresent.name['zh'] || "未知珍藏品";
+                    }
+                } else if (typeof PRESENT_MAP !== 'undefined' && PRESENT_MAP[spineKey]) {
                     const presentData = PRESENT_MAP[spineKey];
                     const presentNameBox = document.getElementById('presentName');
         
@@ -832,208 +842,207 @@
             function renderSkills(charName) {
                 const skillsContainer = document.getElementById('skillsContainer');
                 
-                if (typeof characterSkills === 'undefined') {
-                    skillsContainer.innerHTML = "❌ 找不到技能資料，請確認檔案已載入";
-                    return;
-                }
-        
-                const charBaseData = characterSkills.find(s => s.name.trim() === charName);
+                // 🌟 直接從資料庫的 skills 結構讀取，如果沒有才去 fallback
+                const charBaseData = currentCharData.skills || (typeof characterSkills !== 'undefined' ? characterSkills.find(s => s.name.trim() === charName) : null);
         
                 if (!charBaseData) {
-                    skillsContainer.innerHTML = "找不到此坨坨的技能資料 (名稱可能不符)";
+                    skillsContainer.innerHTML = `<div class="p-4 bg-gray-50 dark:bg-slate-700 text-gray-500 dark:text-gray-400 font-bold border border-gray-200 dark:border-slate-600 rounded-xl text-center">❌ 找不到技能資料</div>`;
                     return;
                 }
                 
-                if (charBaseData) {
-                    const charSkillData = charBaseData.skills[window.currentLang] || charBaseData.skills["zh-TW"];
+                let charSkillData = null;
+                if (charBaseData.skills) {
+                    charSkillData = charBaseData.skills[window.currentLang] || charBaseData.skills["zh-TW"] || charBaseData.skills["zh"];
+                } else {
+                    charSkillData = charBaseData; // 如果直接是當前語系的結構
+                }
         
-                    if (charSkillData) {
-                        const makeStatChips = (statsArray) => {
-                            if (!statsArray || statsArray.length === 0) return '';
-                            let processedStats = [];
+                if (charSkillData && charSkillData.normalSkill) {
+                    const makeStatChips = (statsArray) => {
+                        if (!statsArray || statsArray.length === 0) return '';
+                        let processedStats = [];
         
-                            statsArray.forEach(stat => {
-                                if (typeof stat === 'string') {
-                                    processedStats.push(stat.trim());
-                                } else {
-                                    processedStats.push(stat);
-                                }
-                            });
-        
-                            processedStats = processedStats.filter(Boolean);
-        
-                            if (processedStats.length === 0) return '';
-        
-                            return `<div class="flex flex-wrap gap-1.5 mt-2 relative z-10">` + 
-                                processedStats.map(stat => `<span class="px-2 py-0.5 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 text-[11px] font-bold rounded-md shadow-sm">${stat}</span>`).join('') + 
-                                `</div>`;
-                        };
-        
-                        const renderUnifiedSkill = (skillObj) => {
-                            if (!skillObj || skillObj === "無") return "";
-                            if (typeof skillObj === 'string') {
-                                let desc = skillObj;
-                                let stats = [];
-                                const bracketMatches = skillObj.match(/\[(.*?)\]/g);
-                                if (bracketMatches) {
-                                    bracketMatches.forEach(match => {
-                                        stats.push(match.replace(/[\[\]]/g, '').trim());
-                                        desc = desc.replace(match, '').trim();
-                                    });
-                                } else if (skillObj.includes('|')) {
-                                    const parts = skillObj.split('|');
-                                    desc = parts[0].trim();
-                                    stats = parts.length > 1 ? parts[1].split(/[,、，]/).map(s => s.trim()).filter(Boolean) : [];
-                                }
-                                return `<p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap relative z-10">${desc}</p>${makeStatChips(stats)}`;
-                            }
-                            return `<p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap relative z-10">${skillObj.desc || ''}</p>${makeStatChips(skillObj.stats)}`;
-                        };
-        
-                        const getSkillIconHtml = (iconSrc, borderClasses, fallbackIcon, extraStyle = "") => {
-                            if (!iconSrc) return `<span>${fallbackIcon}</span>`;
-                            if (iconSrc.startsWith('http') || iconSrc.startsWith('./')) {
-                                return `<img src="${iconSrc}" class="w-10 h-10 rounded-lg shadow-sm border ${borderClasses}">`;
+                        statsArray.forEach(stat => {
+                            if (typeof stat === 'string') {
+                                processedStats.push(stat.trim());
                             } else {
-                                const styleAttr = extraStyle ? extraStyle : 'transform: translate(-50%, -50%) scale(0.625);';
-                                return `<div class="w-10 h-10 flex items-center justify-center rounded-lg shadow-sm border ${borderClasses} overflow-hidden bg-white dark:bg-slate-700 shrink-0 relative">
-                                            <div class="${iconSrc} absolute top-1/2 left-1/2" style="${styleAttr}"></div>
-                                        </div>`;
+                                processedStats.push(stat);
                             }
-                        };
+                        });
         
-                        const spineKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
-                        
-                        const normalAttackIcon = charBaseData.attribute === "物理" ? "sprite-base sprite-common sprite-attack_physical" : "sprite-base sprite-common sprite-attack_magical";
-                        const normalSkillIcon = `sprite-Icon_NormalSkill_${spineKey}`;
-                        const passiveSkillIcon = `sprite-Icon_PassiveSkill_${spineKey}`;
+                        processedStats = processedStats.filter(Boolean);
+                        if (processedStats.length === 0) return '';
         
-                        let rawPersonality = currentCharData.personality;
-                        let pListUlt = [];
-                        if (Array.isArray(rawPersonality)) {
-                            pListUlt = rawPersonality;
-                        } else if (typeof rawPersonality === 'string') {
-                            pListUlt = rawPersonality.split(/[v,\/\s+]+/).map(s => s.trim()).filter(Boolean);
-                        } else if (rawPersonality) {
-                            pListUlt = [String(rawPersonality)];
-                        }
-
-                        // 🌟 高級技能 Icon 正確對應性格
-                        let ultFileName = "ultimate_composed";
-                        const pDictUlt = { 
-                            '冷靜': 'composed', '憂鬱': 'depressed', '天真': 'innocence', '狂亂': 'madness', '活潑': 'vivacious', '共鳴': 'resonance',
-                            'composed': 'composed', 'depressed': 'depressed', 'innocence': 'innocence', 'madness': 'madness', 'vivacious': 'vivacious', 'resonance': 'resonance' 
-                        };
-
-                        if (pListUlt.length > 1) {
-                            const enList = pListUlt.map(p => pDictUlt[p.toLowerCase()] || pDictUlt[p] || 'multifaceted');
-                            ultFileName = `ultimate_${enList.sort().join('_')}`;
-                        } else if (pListUlt.length === 1) {
-                            let pKey = pListUlt[0].toLowerCase();
-                            if (pKey.includes("雙重") || pKey.includes("雙面") || pKey === "multifaceted") {
-                                ultFileName = "ultimate_multifaceted";
-                            } else {
-                                ultFileName = `ultimate_${pDictUlt[pKey] || pDictUlt[pListUlt[0]] || "composed"}`;
+                        return `<div class="flex flex-wrap gap-1.5 mt-2 relative z-10">` + 
+                            processedStats.map(stat => `<span class="px-2 py-0.5 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 text-[11px] font-bold rounded-md shadow-sm">${stat}</span>`).join('') + 
+                            `</div>`;
+                    };
+        
+                    const renderUnifiedSkill = (skillObj) => {
+                        if (!skillObj || skillObj === "無") return "";
+                        if (typeof skillObj === 'string') {
+                            let desc = skillObj;
+                            let stats = [];
+                            const bracketMatches = skillObj.match(/\[(.*?)\]/g);
+                            if (bracketMatches) {
+                                bracketMatches.forEach(match => {
+                                    stats.push(match.replace(/[\[\]]/g, '').trim());
+                                    desc = desc.replace(match, '').trim();
+                                });
+                            } else if (skillObj.includes('|')) {
+                                const parts = skillObj.split('|');
+                                desc = parts[0].trim();
+                                stats = parts.length > 1 ? parts[1].split(/[,、，]/).map(s => s.trim()).filter(Boolean) : [];
                             }
+                            return `<p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap relative z-10">${desc}</p>${makeStatChips(stats)}`;
                         }
+                        return `<p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap relative z-10">${skillObj.desc || ''}</p>${makeStatChips(skillObj.stats)}`;
+                    };
         
-                        const ultSkillIcon = `sprite-Icon_UltimateSkill_${spineKey}`;
-                        const ultStyle = `width: 64px; height: 64px; background-image: url('char_sprites/${ultFileName}.png'); background-size: auto; transform: translate(-50%, -50%) scale(0.625);`;
+                    const getSkillIconHtml = (iconSrc, borderClasses, fallbackIcon, extraStyle = "") => {
+                        if (!iconSrc) return `<span>${fallbackIcon}</span>`;
+                        if (iconSrc.startsWith('http') || iconSrc.startsWith('./')) {
+                            return `<img src="${iconSrc}" class="w-10 h-10 rounded-lg shadow-sm border ${borderClasses}">`;
+                        } else {
+                            const styleAttr = extraStyle ? extraStyle : 'transform: translate(-50%, -50%) scale(0.625);';
+                            return `<div class="w-10 h-10 flex items-center justify-center rounded-lg shadow-sm border ${borderClasses} overflow-hidden bg-white dark:bg-slate-700 shrink-0 relative">
+                                        <div class="${iconSrc} absolute top-1/2 left-1/2" style="${styleAttr}"></div>
+                                    </div>`;
+                        }
+                    };
         
-                        const enhancedData = charSkillData.normalAttack.enhanced;
-                        const hasEnhanced = enhancedData && enhancedData !== "無" && (typeof enhancedData === 'string' ? true : enhancedData.desc !== "無");
-                        
-                        let txtNormalAtk = getI18n('skill_normal_attack'); if(txtNormalAtk === 'skill_normal_attack') txtNormalAtk = '普通攻擊';
-                        let txtPassive = getI18n('skill_passive'); if(txtPassive === 'skill_passive') txtPassive = '被動技能';
-                        let txtBasic = getI18n('skill_basic'); if(txtBasic === 'skill_basic') txtBasic = '【基本】';
-                        let txtEnhanced = getI18n('skill_enhanced'); if(txtEnhanced === 'skill_enhanced') txtEnhanced = '【強化】';
+                    const spineKey = currentCharData.spineName || (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName);
+                    
+                    const normalAttackIcon = currentCharData.attribute === "物理" ? "sprite-common sprite-Type_Physic" : "sprite-common sprite-Type_Magic";
+                    const normalSkillIcon = `sprite-Icon_NormalSkill_${spineKey}`;
+                    const passiveSkillIcon = `sprite-Icon_PassiveSkill_${spineKey}`;
         
-                        let html = `
-                            <div class="relative bg-emerald-50/80 dark:bg-emerald-900/20 border-2 border-emerald-300 dark:border-emerald-700 rounded-xl p-4 shadow-sm overflow-visible">
-                                <div class="flex justify-between items-center border-b border-emerald-200 dark:border-emerald-800 pb-2 mb-3 relative z-10">
-                                    <div class="flex items-center gap-2">
-                                        ${getSkillIconHtml(normalSkillIcon, "border-emerald-300 dark:border-emerald-700", "🟢")}
-                                        <span class="font-extrabold text-emerald-800 dark:text-emerald-300 text-base">${charSkillData.normalSkill.name}</span>
-                                    </div>
-                                </div>
-                                <div class="pr-16 sm:pr-24 relative z-10">
-                                    <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.normalSkill.desc}</p>
-                                    ${makeStatChips(charSkillData.normalSkill.stats)}
-                                </div>
-                                <div id="spine-normal-skill" class="absolute bottom-2 right-2 pointer-events-none z-0 opacity-90 drop-shadow-md"></div>
-                            </div>
-                        `;
-        
-                        html += `
-                            <div class="relative bg-violet-50/80 dark:bg-violet-900/20 border-2 border-violet-300 dark:border-violet-700 rounded-xl p-4 shadow-sm overflow-visible">
-                                <div class="flex justify-between items-center border-b border-violet-200 dark:border-violet-800 pb-2 mb-3 relative z-10">
-                                    <div class="flex items-center gap-2">
-                                        ${getSkillIconHtml(ultSkillIcon, "border-violet-300 dark:border-violet-700", "🔥", ultStyle)}
-                                        <span class="font-extrabold text-violet-800 dark:text-violet-300 text-base">${charSkillData.ultimateSkill.name}</span>
-                                    </div>
-                                    <span class="px-2 py-0.5 bg-violet-600 dark:bg-violet-500 text-white font-black text-[10px] rounded-md shadow-sm">CD: ${charSkillData.ultimateSkill.cooldown || "N/A"}</span>
-                                </div>
-                                <div class="pr-16 sm:pr-24 relative z-10">
-                                    <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.ultimateSkill.desc}</p>
-                                    ${makeStatChips(charSkillData.ultimateSkill.stats)}
-                                </div>
-                                <div id="spine-ultimate-skill" class="absolute bottom-2 right-2 pointer-events-none z-0 opacity-90 drop-shadow-md"></div>
-                            </div>
-                        `;
-        
-                        html += `
-                            <div class="relative bg-amber-50/70 dark:bg-amber-900/20 border-2 border-amber-300 dark:border-amber-700 rounded-xl p-4 shadow-sm overflow-hidden">
-                                <div class="flex justify-between items-center border-b border-amber-200 dark:border-amber-800 pb-2 mb-3 relative z-10">
-                                    <div class="flex items-center gap-2">
-                                        ${getSkillIconHtml(passiveSkillIcon, "border-amber-300 dark:border-amber-700", "✨")}
-                                        <span class="font-extrabold text-amber-800 dark:text-amber-300 text-base">${txtPassive}</span>
-                                    </div>
-                                </div>
-                                <div class="relative z-10">
-                                    <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.passiveSkill.desc}</p>
-                                    ${makeStatChips(charSkillData.passiveSkill.stats)}
-                                </div>
-                            </div>
-                        `;
-        
-                        html += `
-                            <div class="relative bg-slate-50 dark:bg-slate-700/40 border-2 border-slate-300 dark:border-slate-600 rounded-xl p-4 shadow-sm overflow-visible">
-                                <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-600 pb-2 mb-3 relative z-10">
-                                    <div class="flex items-center gap-2">
-                                        ${getSkillIconHtml(normalAttackIcon, "border-slate-300 dark:border-slate-600", "🎯")}
-                                        <span class="font-extrabold text-slate-800 dark:text-slate-200 text-base">${txtNormalAtk}</span>
-                                    </div>
-                                </div>
-                                <div class="space-y-4 pr-16 sm:pr-24 relative z-10">
-                                    <div>
-                                        ${hasEnhanced ? `<p class="text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">${txtBasic}</p>` : ''}
-                                        ${renderUnifiedSkill(charSkillData.normalAttack.basic)}
-                                    </div>
-                                    ${hasEnhanced ? `
-                                    <div>
-                                        <p class="text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">${txtEnhanced}</p>
-                                        ${renderUnifiedSkill(charSkillData.normalAttack.enhanced)}
-                                    </div>` : ''}
-                                </div>
-                                <div id="spine-attack" class="absolute bottom-2 right-2 pointer-events-none z-0 opacity-90 drop-shadow-md"></div>
-                            </div>
-                        `;
-                        
-                        skillsContainer.innerHTML = html;
-        
-                        setTimeout(() => loadSkillSpines(charName), 100);
-        
-                    } else {
-                        skillsContainer.innerHTML = `<div class="p-4 bg-gray-50 dark:bg-slate-700 text-gray-500 dark:text-gray-400 font-bold border border-gray-200 dark:border-slate-600 rounded-xl text-center">⚠️ ${getI18n('error_char_skill_not_found') || "找不到此坨坨的技能資料"}</div>`;
+                    let rawPersonality = currentCharData.personality;
+                    let pListUlt = [];
+                    if (Array.isArray(rawPersonality)) {
+                        pListUlt = rawPersonality;
+                    } else if (typeof rawPersonality === 'string') {
+                        pListUlt = rawPersonality.split(/[、,\/\s+]+/).map(s => s.trim()).filter(Boolean);
+                    } else if (rawPersonality) {
+                        pListUlt = [String(rawPersonality)];
                     }
+
+                    // 🌟 修正：利用從 CSS 解析出來的 class 代替直接拼裝路徑，完美適配使用者的 sprites.css
+                    let ultClass = "sprite-ult-composed";
+                    const pDictUlt = { 
+                        '冷靜': 'composed', '憂鬱': 'depressed', '天真': 'innocence', '狂亂': 'madness', '活潑': 'vivacious', '共鳴': 'resonance',
+                        'composed': 'composed', 'depressed': 'depressed', 'innocence': 'innocence', 'madness': 'madness', 'vivacious': 'vivacious', 'resonance': 'resonance' 
+                    };
+
+                    if (pListUlt.length > 1) {
+                        ultClass = "sprite-ult-multifaceted";
+                    } else if (pListUlt.length === 1) {
+                        let pKey = pListUlt[0].toLowerCase();
+                        if (pKey.includes("雙重") || pKey.includes("雙面") || pKey === "multifaceted") {
+                            ultClass = "sprite-ult-multifaceted";
+                        } else {
+                            ultClass = `sprite-ult-${pDictUlt[pKey] || pDictUlt[pListUlt[0]] || "composed"}`;
+                        }
+                    }
+        
+                    const ultStyle = `width: 64px; height: 64px; background-size: contain; transform: translate(-50%, -50%) scale(0.625);`;
+                    const ultSkillIcon = ultClass;
+        
+                    const enhancedData = charSkillData.normalAttack?.enhanced;
+                    const hasEnhanced = enhancedData && enhancedData !== "無" && (typeof enhancedData === 'string' ? true : enhancedData.desc !== "無");
+                    
+                    let txtNormalAtk = getI18n('skill_normal_attack'); if(txtNormalAtk === 'skill_normal_attack') txtNormalAtk = '普通攻擊';
+                    let txtPassive = getI18n('skill_passive'); if(txtPassive === 'skill_passive') txtPassive = '被動技能';
+                    let txtBasic = getI18n('skill_basic'); if(txtBasic === 'skill_basic') txtBasic = '【基本】';
+                    let txtEnhanced = getI18n('skill_enhanced'); if(txtEnhanced === 'skill_enhanced') txtEnhanced = '【強化】';
+        
+                    let html = `
+                        <div class="relative bg-emerald-50/80 dark:bg-emerald-900/20 border-2 border-emerald-300 dark:border-emerald-700 rounded-xl p-4 shadow-sm overflow-visible">
+                            <div class="flex justify-between items-center border-b border-emerald-200 dark:border-emerald-800 pb-2 mb-3 relative z-10">
+                                <div class="flex items-center gap-2">
+                                    ${getSkillIconHtml(normalSkillIcon, "border-emerald-300 dark:border-emerald-700", "🟢")}
+                                    <span class="font-extrabold text-emerald-800 dark:text-emerald-300 text-base">${charSkillData.normalSkill.name}</span>
+                                </div>
+                            </div>
+                            <div class="pr-16 sm:pr-24 relative z-10">
+                                <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.normalSkill.desc}</p>
+                                ${makeStatChips(charSkillData.normalSkill.stats)}
+                            </div>
+                            <div id="spine-normal-skill" class="absolute bottom-2 right-2 pointer-events-none z-0 opacity-90 drop-shadow-md"></div>
+                        </div>
+                    `;
+        
+                    html += `
+                        <div class="relative bg-violet-50/80 dark:bg-violet-900/20 border-2 border-violet-300 dark:border-violet-700 rounded-xl p-4 shadow-sm overflow-visible">
+                            <div class="flex justify-between items-center border-b border-violet-200 dark:border-violet-800 pb-2 mb-3 relative z-10">
+                                <div class="flex items-center gap-2">
+                                    ${getSkillIconHtml(ultSkillIcon, "border-violet-300 dark:border-violet-700", "🔥", ultStyle)}
+                                    <span class="font-extrabold text-violet-800 dark:text-violet-300 text-base">${charSkillData.ultimateSkill.name}</span>
+                                </div>
+                                <span class="px-2 py-0.5 bg-violet-600 dark:bg-violet-500 text-white font-black text-[10px] rounded-md shadow-sm">CD: ${charSkillData.ultimateSkill.cooldown || "N/A"}</span>
+                            </div>
+                            <div class="pr-16 sm:pr-24 relative z-10">
+                                <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.ultimateSkill.desc}</p>
+                                ${makeStatChips(charSkillData.ultimateSkill.stats)}
+                            </div>
+                            <div id="spine-ultimate-skill" class="absolute bottom-2 right-2 pointer-events-none z-0 opacity-90 drop-shadow-md"></div>
+                        </div>
+                    `;
+        
+                    html += `
+                        <div class="relative bg-amber-50/70 dark:bg-amber-900/20 border-2 border-amber-300 dark:border-amber-700 rounded-xl p-4 shadow-sm overflow-hidden">
+                            <div class="flex justify-between items-center border-b border-amber-200 dark:border-amber-800 pb-2 mb-3 relative z-10">
+                                <div class="flex items-center gap-2">
+                                    ${getSkillIconHtml(passiveSkillIcon, "border-amber-300 dark:border-amber-700", "✨")}
+                                    <span class="font-extrabold text-amber-800 dark:text-amber-300 text-base">${txtPassive}</span>
+                                </div>
+                            </div>
+                            <div class="relative z-10">
+                                <p class="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed whitespace-pre-wrap">${charSkillData.passiveSkill.desc}</p>
+                                ${makeStatChips(charSkillData.passiveSkill.stats)}
+                            </div>
+                        </div>
+                    `;
+        
+                    html += `
+                        <div class="relative bg-slate-50 dark:bg-slate-700/40 border-2 border-slate-300 dark:border-slate-600 rounded-xl p-4 shadow-sm overflow-visible">
+                            <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-600 pb-2 mb-3 relative z-10">
+                                <div class="flex items-center gap-2">
+                                    ${getSkillIconHtml(normalAttackIcon, "border-slate-300 dark:border-slate-600", "🎯")}
+                                    <span class="font-extrabold text-slate-800 dark:text-slate-200 text-base">${txtNormalAtk}</span>
+                                </div>
+                            </div>
+                            <div class="space-y-4 pr-16 sm:pr-24 relative z-10">
+                                <div>
+                                    ${hasEnhanced ? `<p class="text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">${txtBasic}</p>` : ''}
+                                    ${renderUnifiedSkill(charSkillData.normalAttack.basic)}
+                                </div>
+                                ${hasEnhanced ? `
+                                <div>
+                                    <p class="text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">${txtEnhanced}</p>
+                                    ${renderUnifiedSkill(charSkillData.normalAttack.enhanced)}
+                                </div>` : ''}
+                            </div>
+                            <div id="spine-attack" class="absolute bottom-2 right-2 pointer-events-none z-0 opacity-90 drop-shadow-md"></div>
+                        </div>
+                    `;
+                    
+                    skillsContainer.innerHTML = html;
+        
+                    setTimeout(() => loadSkillSpines(charName), 100);
+        
+                } else {
+                    skillsContainer.innerHTML = `<div class="p-4 bg-gray-50 dark:bg-slate-700 text-gray-500 dark:text-gray-400 font-bold border border-gray-200 dark:border-slate-600 rounded-xl text-center">⚠️ ${getI18n('error_char_skill_not_found') || "找不到此坨坨的技能資料"}</div>`;
                 }
             }
             
             function renderAside(charName) {
                 const asideSection = document.getElementById('asideSection');
                 const asideContainer = document.getElementById('asideContainer');
-                const spineKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
-                const data = ASIDE_DATA[spineKey] || ASIDE_DATA[charName];
+                const spineKey = currentCharData.spineName || (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName);
+                
+                // 🌟 優先直接從資料庫中讀取願像資料
+                const data = currentCharData.aside || (typeof ASIDE_DATA !== 'undefined' ? (ASIDE_DATA[spineKey] || ASIDE_DATA[charName]) : null);
                 
                 let lang = window.currentLang || 'zh-TW';
                 if (lang === 'zh-TW') lang = 'zh'; 
@@ -1065,7 +1074,7 @@
                     asideContainer.innerHTML = `
                     <div class="py-8 px-4 bg-gray-50/80 dark:bg-slate-800/50 text-gray-500 dark:text-gray-400 font-bold border border-dashed border-gray-300 dark:border-slate-600 rounded-xl text-center shadow-sm flex flex-col items-center justify-center gap-3">
                         <div class="flex justify-center items-center h-[100px]">
-                            <div class="sprite-base sprite-common sprite-no_aside drop-shadow-sm opacity-50" style="transform: scale(0.6);"></div>
+                            <div class="sprite-common sprite-no_aside drop-shadow-sm opacity-50" style="transform: scale(0.6);"></div>
                         </div>
                         <span class="text-sm tracking-widest">${unknownMsg[lang] || unknownMsg['zh']}</span>
                     </div>`;
@@ -1101,10 +1110,13 @@
                            `</div>`;
                 };
         
-                const asideMainSprite = `sprite-AsideIcon_${spineKey}`;
-                const asideMainHtml = `<div class="w-12 h-12 flex items-center justify-center relative overflow-hidden shrink-0 bg-transparent">
-                    <div class="${asideMainSprite} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 origin-center" style="transform: translate(-50%, -50%) scale(0.1875); width: 256px; height: 256px;"></div>
-                </div>`;
+                let asideMainHtml = `<div class="w-12 h-12 flex items-center justify-center relative overflow-hidden shrink-0 bg-transparent">`;
+                if (data.asideIcon) {
+                    asideMainHtml += `<img src="${data.asideIcon}" class="w-full h-full object-contain">`;
+                } else {
+                    asideMainHtml += `<div class="sprite-AsideIcon_${spineKey} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 origin-center" style="transform: translate(-50%, -50%) scale(0.1875); width: 256px; height: 256px;"></div>`;
+                }
+                asideMainHtml += `</div>`;
         
                 let html = `
                     <div class="mb-4 text-center sm:text-left">
@@ -1121,17 +1133,23 @@
                     if (!starData) continue;
         
                     const starIcons = { 1: "sprite-ASIDE_1STAR", 2: "sprite-ASIDE_2STAR", 3: "sprite-ASIDE_3STAR" };
-                    const asideSkillSprite = `sprite-Aside_Skill_${spineKey}_${i}`;
+                    let asideSkillIconHtml = "";
+                    
+                    if (starData.icon) {
+                        asideSkillIconHtml = `<img src="${starData.icon}" class="w-full h-full object-cover">`;
+                    } else {
+                        asideSkillIconHtml = `<div class="sprite-Aside_Skill_${spineKey}_${i} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 origin-center scale-[0.5625]"></div>`;
+                    }
         
                     html += `
                         <div class="relative bg-white dark:bg-slate-800/80 border-2 border-fuchsia-200 dark:border-fuchsia-800/60 rounded-xl p-4 shadow-sm flex flex-col h-full hover:shadow-md transition-shadow">
                             <div class="flex items-center gap-3 border-b border-fuchsia-100 dark:border-fuchsia-800/50 pb-3 mb-3">
                                 <div class="w-9 h-9 flex items-center justify-center rounded-lg shadow-sm border border-fuchsia-300 dark:border-fuchsia-600 bg-fuchsia-50 dark:bg-slate-700 overflow-hidden relative shrink-0 bg-transparent">
-                                    <div class="${asideSkillSprite} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 origin-center scale-[0.5625]"></div>
+                                    ${asideSkillIconHtml}
                                 </div>
                                 <div>
                                     <div class="mb-0.5 flex items-center" style="height: 14px;">
-                                        <div class="${starIcons[i]} drop-shadow-sm origin-left" style="width: 73px; height: 29px; transform: scale(0.6); transform-origin: left center;"></div>
+                                        <div class="sprite-common ${starIcons[i]} drop-shadow-sm origin-left" style="width: 73px; height: 29px; transform: scale(0.6); transform-origin: left center;"></div>
                                     </div>
                                     <div class="font-extrabold text-gray-800 dark:text-gray-200 text-sm">${getLocText(starData.name)}</div>
                                 </div>
@@ -1175,7 +1193,7 @@
                 }
         
                 window.currentActiveCharName = charName;
-                const baseFolderKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
+                const baseFolderKey = currentCharData.spineName || (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName);
         
                 const targets = [
                     { id: 'spine-attack', prefix: 'Attack' },
@@ -1216,7 +1234,6 @@
                         padLeft: "0%", padRight: "0%", padTop: "0%", padBottom: "0%", transitionTime: 0 
                     };
         
-                    // 🌟 戰鬥小人嚴格讀取 spine_sd_assets 內原裝檔，不套用額外 skin 名稱
                     const player = new spine.SpinePlayer(target.id, {
                         skelUrl: `./spine_sd_assets/${baseFolderKey}.skel.bytes`,
                         atlasUrl: `./spine_sd_assets/${baseFolderKey}.atlas.txt`,
@@ -1411,18 +1428,14 @@
                 const isEldain = (typeof ELDAIN_LIST !== 'undefined') ? ELDAIN_LIST.includes(currentCharData.name) : false;
                 const identityValue = isEldain ? '艾爾丁' : '普通坨坨';
                     
-                let currentAttribute = "未知";
-                if (typeof window.characterSkills !== 'undefined' && window.characterSkills.length > 0) {
-                    const skillData = window.characterSkills.find(s => s.name.trim() === currentCharData.name);
-                    if (skillData && skillData.attribute) currentAttribute = skillData.attribute;
-                }
+                let currentAttribute = currentCharData.attribute || "未知";
 
                 let displayPersonality = currentCharData.personality;
                 let pList = [];
                 if (Array.isArray(displayPersonality)) {
                     pList = displayPersonality;
                 } else if (typeof displayPersonality === 'string') {
-                    pList = displayPersonality.split(/[v,\/\s+]+/).map(s => s.trim()).filter(Boolean);
+                    pList = displayPersonality.split(/[、,\/\s+]+/).map(s => s.trim()).filter(Boolean);
                 } else if (displayPersonality) {
                     pList = [String(displayPersonality)];
                 }
@@ -1433,7 +1446,7 @@
                     displayPersonality = pList.join('+'); 
                     const enList = pList.map(p => pDictLang[p] || 'Multifaceted');
                     if (typeof window.ICON_MAP === 'undefined') window.ICON_MAP = {};
-                    window.ICON_MAP[`personality_${displayPersonality}`.toLowerCase()] = `sprite-base sprite-common sprite-Personality_Multifaceted_${enList.sort().join('_')}`;
+                    window.ICON_MAP[`personality_${displayPersonality}`.toLowerCase()] = `sprite-common sprite-Personality_Multifaceted_${enList.sort().join('_')}`;
                 } else if (pList.length === 1) {
                     displayPersonality = pList[0];
                     if (displayPersonality === "雙重性格" || displayPersonality === "雙重") {
@@ -1513,7 +1526,10 @@
                         renderError(`${getI18n('error_char_not_found') || "❌ 找不到坨坨資料: "}${currentTargetName}`); 
                         return; 
                     }
-                    currentCharData = charSnapshot.docs[0].data();
+                    
+                    // 🌟 獲取整包資料並深層解析核心屬性 (core)
+                    const data = charSnapshot.docs[0].data();
+                    currentCharData = data;
 
                     const extractLocalString = (val) => {
                         if (!val) return "";
@@ -1526,19 +1542,14 @@
                         return String(val).trim();
                     };
 
+                    const coreData = currentCharData.core || {};
                     currentCharData.name = extractLocalString(currentCharData.names) || currentCharData.name || currentTargetName;
-                    currentCharData.race = extractLocalString(currentCharData.race);
-                    currentCharData.personality = extractLocalString(currentCharData.personality);
-                    currentCharData.position = extractLocalString(currentCharData.position);
-                    currentCharData.job = extractLocalString(currentCharData.job);
-                    if (currentCharData.pathVersion) {
-                        currentCharData.pathVersion = extractLocalString(currentCharData.pathVersion);
-                    }
-
-                    if (typeof characterSkills !== 'undefined') {
-                    } else {
-                        window.characterSkills = [];
-                    }
+                    currentCharData.race = extractLocalString(coreData.race || currentCharData.race);
+                    currentCharData.personality = extractLocalString(coreData.personality || currentCharData.personality);
+                    currentCharData.position = extractLocalString(coreData.position || currentCharData.position);
+                    currentCharData.job = extractLocalString(coreData.job || currentCharData.job);
+                    currentCharData.pathVersion = extractLocalString(coreData.pathVersion || currentCharData.pathVersion);
+                    currentCharData.attribute = extractLocalString(currentCharData.skills?.attribute || coreData.attribute || currentCharData.attribute);
 
                     const avatarBox = document.getElementById('charAvatar');
                     if (typeof LOBBY_BACKGROUNDS !== 'undefined' && LOBBY_BACKGROUNDS.length > 0) {
@@ -1578,20 +1589,14 @@
                     const isEldain = (typeof ELDAIN_LIST !== 'undefined') ? ELDAIN_LIST.includes(currentCharData.name) : false;
                     const identityValue = isEldain ? '艾爾丁' : '普通坨坨';
                 
-                    let currentAttribute = "未知";
-                    if (typeof window.characterSkills !== 'undefined' && window.characterSkills.length > 0) {
-                        const skillData = window.characterSkills.find(s => s.name.trim() === currentCharData.name);
-                        if (skillData && skillData.attribute) {
-                            currentAttribute = skillData.attribute;
-                        }
-                    }
+                    let currentAttribute = currentCharData.attribute || "未知";
 
                     let displayPersonality = currentCharData.personality;
                     let pList = [];
                     if (Array.isArray(displayPersonality)) {
                         pList = displayPersonality;
                     } else if (typeof displayPersonality === 'string') {
-                        pList = displayPersonality.split(/[v,\/\s+]+/).map(s => s.trim()).filter(Boolean);
+                        pList = displayPersonality.split(/[、,\/\s+]+/).map(s => s.trim()).filter(Boolean);
                     } else if (displayPersonality) {
                         pList = [String(displayPersonality)];
                     }
@@ -1602,7 +1607,7 @@
                         displayPersonality = pList.join('+'); 
                         const enList = pList.map(p => pDictLoad[p] || 'Multifaceted');
                         if (typeof window.ICON_MAP === 'undefined') window.ICON_MAP = {};
-                        window.ICON_MAP[`personality_${displayPersonality}`.toLowerCase()] = `sprite-base sprite-common sprite-Personality_Multifaceted_${enList.sort().join('_')}`;
+                        window.ICON_MAP[`personality_${displayPersonality}`.toLowerCase()] = `sprite-common sprite-Personality_Multifaceted_${enList.sort().join('_')}`;
                     } else if (pList.length === 1) {
                         displayPersonality = pList[0];
                         if (displayPersonality === "雙重性格" || displayPersonality === "雙重") {
@@ -1625,7 +1630,7 @@
                     renderStars(currentTargetName);
                     renderExtraInfo(currentTargetName);
                 
-                    const spineKey = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[currentCharData.name] : currentCharData.name;
+                    const spineKey = currentCharData.spineName || (typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[currentCharData.name] : currentCharData.name);
                 
                     const faviconEl = document.getElementById('dynamicFavicon');
                     const defaultFaviconUrl = 'https://i.postimg.cc/mkfSTq5k/Favicon.png';
@@ -1643,17 +1648,26 @@
                         const presentContainer = document.getElementById('presentContainer');
                         const presentNameBox = document.getElementById('presentName');
                 
-                        const DEFAULT_NO_PRESENT = "sprite-base sprite-common sprite-letter";
+                        const DEFAULT_NO_PRESENT = "sprite-common sprite-letter";
                 
                         let finalImgUrl = DEFAULT_NO_PRESENT;
                         let presentDisplayName = getI18n('present_delivering'); 
                         if (presentDisplayName === 'present_delivering') presentDisplayName = '未配發寶物';
                 
                         let isHasPresent = false;
+
+                        // 🌟 優先從資料庫的 texts 獲取珍藏品資料
+                        const dbPresent = currentCharData.texts?.present;
                 
-                        if (typeof PRESENT_MAP !== 'undefined' && PRESENT_MAP[spineKey]) {
+                        if (dbPresent && dbPresent.url) {
+                            finalImgUrl = dbPresent.url;
+                            isHasPresent = true;
+                            if (dbPresent.name) {
+                                presentDisplayName = dbPresent.name[window.currentLang] || dbPresent.name["zh-TW"] || "未知珍藏品";
+                            }
+                        } else if (typeof PRESENT_MAP !== 'undefined' && PRESENT_MAP[spineKey]) {
                             finalImgUrl = PRESENT_MAP[spineKey].sprite || `sprite-PresentList_${spineKey}`;
-                            if (!finalImgUrl.includes('sprite-base')) finalImgUrl = `sprite-base sprite-common ${finalImgUrl}`;
+                            if (!finalImgUrl.includes('sprite-common')) finalImgUrl = `sprite-common ${finalImgUrl}`;
                             isHasPresent = true;
                 
                             const pNameData = PRESENT_MAP[spineKey].name;
