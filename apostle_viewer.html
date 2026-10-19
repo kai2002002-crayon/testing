@@ -303,23 +303,30 @@ async function fetchGlobalCharacters() {
         const characters = [];
 
         snapshot.forEach((doc) => {
-            const data = doc.id ? doc.data() : doc; // 兼容不同格式
-            
-            // 🌟 多重路徑防呆，確保一定能抓到性格與屬性
-            const character = {
-                id: doc.id,
-                name: data.core?.name || data.names?.["zh-TW"] || data.name || "未知角色",
-                job: data.core?.job || data.job || "未知職業",
-                position: data.core?.position || data.position || "未知站位",
-                race: data.core?.race || data.race || "未知種族",
-                personality: data.personality || data.core?.personality || data.personalityName || "天真",
-                attribute: data.skills?.attribute || data.attribute || "未知屬性",
-                spineName: data.spineName || data.core?.spineName || data.name || "",
-                presentUrl: data.texts?.present?.url || data.presentUrl || ""
-            };
+    const data = doc.id ? doc.data() : doc; // 兼容不同格式
+    
+    // 🌟 新增防呆：強制將 personality 轉為字串，避免 Firestore 存成陣列導致無法比對
+    let rawPersonality = data.personality || data.core?.personality || data.personalityName || "天真";
+    if (Array.isArray(rawPersonality)) {
+        rawPersonality = rawPersonality.join(","); // ["冷靜", "狂亂"] -> "冷靜,狂亂"
+    } else {
+        rawPersonality = String(rawPersonality);
+    }
+    
+    const character = {
+        id: doc.id,
+        name: data.core?.name || data.names?.["zh-TW"] || data.name || "未知角色",
+        job: data.core?.job || data.job || "未知職業",
+        position: data.core?.position || data.position || "未知站位",
+        race: data.core?.race || data.race || "未知種族",
+        personality: rawPersonality, // 👈 改用轉好的字串
+        attribute: data.skills?.attribute || data.attribute || "未知屬性",
+        spineName: data.spineName || data.core?.spineName || data.name || "",
+        presentUrl: data.texts?.present?.url || data.presentUrl || ""
+    };
 
-            characters.push(character);
-        });
+    characters.push(character);
+});
 
         console.log("成功解析角色資料:", characters);
 
@@ -555,13 +562,30 @@ async function fetchGlobalCharacters() {
                 }
             }
             
-            function preloadIcons() {
-                if (typeof INITIAL_DATA === 'undefined') return;
-                INITIAL_DATA.forEach(c => {
-                    const iconUrl = typeof IMAGE_MAP !== 'undefined' ? IMAGE_MAP[`avatar_${c.name}`] : '';
-                    if (iconUrl) { const img = new Image(); img.src = iconUrl; }
-                });
-            }
+            // 🌟 修正點 1
+function preloadIcons() {
+    if (typeof window.INITIAL_DATA === 'undefined') return;
+    window.INITIAL_DATA.forEach(c => {
+        const iconUrl = typeof IMAGE_MAP !== 'undefined' ? IMAGE_MAP[`avatar_${c.name}`] : '';
+        if (iconUrl) { const img = new Image(); img.src = iconUrl; }
+    });
+}
+
+// 🌟 修正點 2
+function initCharacterGrid() {
+    preloadIcons();
+    const container = document.getElementById('charGridContainer');
+    if (typeof window.INITIAL_DATA === 'undefined' || !window.INITIAL_DATA) return;
+    const personalities = ["共鳴", "雙面", "天真", "冷靜", "狂亂", "活潑", "憂鬱"];
+    
+    personalities.forEach((p, index) => {
+        // 這裡也要加上 window.
+        const chars = window.INITIAL_DATA.filter(c => {
+            if (p === "雙面") return c.personality.includes(","); 
+            else return c.personality === p;
+        });
+        
+        // ... (下方 chars.forEach 不變)
             
             function initCharacterGrid() {
                 preloadIcons();
@@ -763,18 +787,18 @@ async function fetchGlobalCharacters() {
                 container.appendChild(bossRow);
             }
             
-            function applyRaceBackground(charName) {
-                const container = document.getElementById('spineCanvasContainer');
-                
-                // 🌟 新增：如果手動關閉背景，就直接清空並退出函數
-                if (!isBgEnabled) {
-                    container.style.backgroundImage = 'none';
-                    container.classList.remove('animated-bg');
-                    return;
-                }
+        function applyRaceBackground(charName) {
+            const container = document.getElementById('spineCanvasContainer');
+    
+            if (!isBgEnabled) {
+                container.style.backgroundImage = 'none';
+                container.classList.remove('animated-bg');
+                return;
+            }
 
-                const char = INITIAL_DATA.find(c => c.name === charName);
-                const isNPC = typeof NPC_LIST !== 'undefined' && NPC_LIST.includes(charName);
+            // 這裡也要加上 window.
+            const char = window.INITIAL_DATA.find(c => c.name === charName);
+            const isNPC = typeof NPC_LIST !== 'undefined' && NPC_LIST.includes(charName);
                 
                 if (isNPC) {
                     // NPC 專屬動態背景圖
