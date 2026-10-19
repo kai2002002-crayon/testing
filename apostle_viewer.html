@@ -373,40 +373,38 @@ async function fetchGlobalCharacters() {
                 document.title = getI18n('ui_title');
             }
             
-            window.onload = async function() { 
-    // 先翻譯靜態介面，讓網頁框架先顯示出來
-    applyTranslations(); 
+            window.onload = async function() {  
+    applyTranslations(); // 先翻譯靜態介面
 
-    const gridContainer = document.getElementById('charGridContainer');
-    // 先展開容器並顯示讀取動畫
-    gridContainer.classList.remove('collapsed');
-    gridContainer.style.maxHeight = '2000px';
-    gridContainer.style.opacity = '1';
-    gridContainer.innerHTML = '<div class="p-5 text-center text-amber-700 font-bold tracking-widest animate-pulse" data-i18n="ui_loading_data">📡 正在從伺服器連接坨坨資料...</div>';
+    const container = document.getElementById('charGridContainer');
+    container.classList.remove('collapsed');
+    container.style.maxHeight = '2000px';
+    container.style.opacity = '1';
+    container.innerHTML = '<div class="p-5 text-center text-amber-700 font-bold tracking-widest animate-pulse">📡 正在從伺服器連接坨坨資料...</div>';
 
     try {
-        // 🌟 【關鍵修正】：在這裡統一呼叫我們自己寫好的 Firebase 讀取函式，並使用 await 等待它抓完
-        await fetchGlobalCharacters(); 
-
-        gridContainer.innerHTML = ''; // 清空讀取動畫
-        
-        // 確保 INITIAL_DATA 已經有資料後再渲染清單 (包含原本的坨坨與你的獨立 NPC/BOSS)
-        if (typeof window.INITIAL_DATA !== 'undefined' && window.INITIAL_DATA.length > 0) {
-            initCharacterGrid(); 
-        } else {
-            gridContainer.innerHTML = '<div class="p-5 text-center text-gray-500 font-bold">目前沒有資料。</div>';
+        // 假設你的 Firestore 獲取函數叫做 fetchGlobalCharacters，並會把資料存入 window.INITIAL_DATA
+        if (typeof fetchGlobalCharacters === 'function') {
+            await fetchGlobalCharacters();
         }
 
-        // 渲染完成後，將容器預設折疊起來
-        gridContainer.classList.add('collapsed');
-        gridContainer.style.maxHeight = '0px';
-        gridContainer.style.opacity = '0';
+        // 確保 INITIAL_DATA 已經有值
+        if (typeof window.INITIAL_DATA === 'undefined' || !window.INITIAL_DATA || window.INITIAL_DATA.length === 0) {
+            // 如果你原本的資料存在其他變數，請在這裡手動接上，例如 window.INITIAL_DATA = 你的 Firestore 資料;
+            console.warn("⚠️ 警告：INITIAL_DATA 仍然是空的！");
+        }
+
+        container.innerHTML = ''; // 清空讀取動畫
+        initCharacterGrid();       // 執行原本的渲染清單邏輯
+        
+        console.log("✅ 角色選單渲染完成！總角色數：", window.INITIAL_DATA ? window.INITIAL_DATA.length : 0);
 
     } catch (error) {
-        console.error("Firestore 載入失敗:", error);
-        gridContainer.innerHTML = '<div class="p-5 text-center text-red-500 font-bold">資料庫連線失敗，無法載入角色列表。</div>';
+        console.error("❌ Firestore 載入失敗:", error);
+        container.innerHTML = '<div class="p-5 text-center text-red-500 font-bold">資料庫連線失敗，無法載入角色列表。</div>';
     }
 };
+            
             function getI18n(key) {
                 if (!key) return key;
                 const safeLang = (typeof LANG_DICT !== 'undefined' && LANG_DICT[window.currentLang]) ? window.currentLang : 'zh-TW';
