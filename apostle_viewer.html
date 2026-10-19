@@ -290,14 +290,13 @@ auth = firebase.auth();
             // 定義一個全域變數來存放圖鑑資料（取代原本寫死的 INITIAL_DATA）
 window.INITIAL_DATA = [];
 
+// 🌟 1. 修正抓取資料函式，確保賦值給全域變數
 async function fetchGlobalCharacters() {
     try {
-        // 假設 db 是你的 firebase.firestore() 實例
         const snapshot = await db.collection("global_characters").get();
         
         if (snapshot.empty) {
             console.log("Firestore 中找不到任何角色資料。");
-            document.getElementById("character-list-container").innerHTML = "<p>目前沒有資料</p>";
             return;
         }
 
@@ -306,25 +305,15 @@ async function fetchGlobalCharacters() {
         snapshot.forEach((doc) => {
             const data = doc.data();
             
-            // 【關鍵修正】根據你的 Firestore 巢狀結構，精準提取資料
-            // 使用可選串連運算子 (?.) 避免某些文件缺少欄位時導致整個程式崩潰
             const character = {
-                id: doc.id, // Firestore 預設的文件 ID
-                
-                // 從 core 提取基本屬性
+                id: doc.id,
                 name: data.core?.name || data.names?.["zh-TW"] || "未知角色",
                 job: data.core?.job || "未知職業",
                 position: data.core?.position || "未知站位",
                 race: data.core?.race || "未知種族",
                 personality: data.core?.personality || "未知性格",
-                
-                // 從 skills 提取屬性 (魔法/物理等)
                 attribute: data.skills?.attribute || "未知屬性",
-                
-                // 英文 ID / Spine 模型對應名稱
                 spineName: data.spineName || "",
-                
-                // 禮物圖標 (如果有做相關 UI)
                 presentUrl: data.texts?.present?.url || ""
             };
 
@@ -333,18 +322,15 @@ async function fetchGlobalCharacters() {
 
         console.log("成功解析角色資料:", characters);
 
-        // 取得資料後，呼叫你原本負責繪製畫面的函式
-        // renderCharacters(characters); 
+        // 🌟 【關鍵修正】：把抓下來的資料正式交給全域變數，讓畫面函式能讀到
+        window.INITIAL_DATA = characters;
 
     } catch (error) {
         console.error("讀取 Firestore 資料時發生錯誤:", error);
     }
 }
 
-// 確保網頁 DOM 載入後再執行讀取
-window.addEventListener('load', () => {
-    fetchGlobalCharacters();
-});
+
             
             // 🌟 全域通用：專門修復 WebGL 透明畫布下的「色彩增值(Multiply)」破洞 Bug
            
@@ -398,16 +384,13 @@ window.addEventListener('load', () => {
     gridContainer.innerHTML = '<div class="p-5 text-center text-amber-700 font-bold tracking-widest animate-pulse" data-i18n="ui_loading_data">📡 正在從伺服器連接坨坨資料...</div>';
 
     try {
-        // 🌟 呼叫 data_core.js 內的 Firestore 讀取函數
-        // 假設該函數叫做 fetchApostleDataFromFirestore()，並會把結果存入全域變數 INITIAL_DATA
-        if (typeof fetchApostleDataFromFirestore === 'function') {
-            await fetchApostleDataFromFirestore(); 
-        }
+        // 🌟 【關鍵修正】：在這裡統一呼叫我們自己寫好的 Firebase 讀取函式，並使用 await 等待它抓完
+        await fetchGlobalCharacters(); 
 
         gridContainer.innerHTML = ''; // 清空讀取動畫
         
-        // 確保 INITIAL_DATA 已經有資料後再渲染清單
-        if (typeof INITIAL_DATA !== 'undefined' && INITIAL_DATA.length > 0) {
+        // 確保 INITIAL_DATA 已經有資料後再渲染清單 (包含原本的坨坨與你的獨立 NPC/BOSS)
+        if (typeof window.INITIAL_DATA !== 'undefined' && window.INITIAL_DATA.length > 0) {
             initCharacterGrid(); 
         } else {
             gridContainer.innerHTML = '<div class="p-5 text-center text-gray-500 font-bold">目前沒有資料。</div>';
