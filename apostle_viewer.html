@@ -610,48 +610,52 @@ async function fetchGlobalCharacters() {
                     iconContainer.style.maxHeight = "1000px"; iconContainer.style.opacity = "1";
             
                     chars.forEach(c => {
-                        const iconUrl = typeof IMAGE_MAP !== 'undefined' ? IMAGE_MAP[`avatar_${c.name}`] : '';
-                        // 優先檢查 SPINE_MAP 用中文名找；找不到就直接用 Firestore 裡的 c.spineName，再沒有才用 c.name
-const spineName = (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[c.name]) 
-    ? SPINE_MAP[c.name] 
-    : (c.spineName || c.name);
-                        const displayName = getI18n(c.name);
-                        
-                        const btn = document.createElement('button');
-                        btn.className = "group flex flex-col items-center gap-0.5 transition-transform hover:scale-110 active:scale-95 w-12 sm:w-14";
-                        btn.onclick = () => selectCharacter(c, spineName, iconUrl);
-            
-                        const displayPersonality = c.personality.includes(",") ? "雙面" : c.personality;
-                        const charSpriteBase = CHAR_SPRITE_MAP[displayPersonality] || "sprite-char-innocence";
-                        const charSpriteClass = `sprite-${spineName}`;
-                        let raceKey = c.race; if (raceKey === "???") raceKey = "unknown";
-                        const raceSprite = SPRITE_CLASS_MAP[`race_${raceKey}`] || "sprite-Bg_Unknown";
-            
-                        // 🌟 動態解析該角色的雙面顏色，並確保圖示框使用 2 色動畫
-                        let charStyle = "";
-                        let charBorderClass = borderClass; // 預設跟隨分類設定
-                        
-                        if (displayPersonality === "雙面") {
-                            const parts = c.personality.split(',').map(s => s.trim());
-                            const c1 = HEX_COLORS[parts[0]] || "#c084fc";
-                            const c2 = HEX_COLORS[parts[1]] || "#4ade80";
-                            charStyle = `style="--c1: ${c1}; --c2:${c2};"`;
-                            charBorderClass = "dual-border-anim"; // 🌟 強制角色小圖示只用 2 色動畫
-                        }
+    // 1. 強固防呆：確保 spineName 一定抓得到（優先用 SPINE_MAP，其次抓 c.spineName，最後用 c.name）
+    const spineName = (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[c.name]) 
+        ? SPINE_MAP[c.name] 
+        : (c.spineName || c.name);
 
-                        // 下方的 btn.innerHTML 記得要把 ${borderClass} 改為 ${charBorderClass}：
-                        btn.innerHTML = `
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl border-2 ${charBorderClass} overflow-hidden shadow-sm group-hover:shadow-md transition-all relative flex items-center justify-center" ${charStyle}>
-                                <div class="absolute inset-0 flex items-center justify-center opacity-80">
-                                    <div class="sprite-base sprite-common ${raceSprite} shrink-0 scale-[0.6]"></div>
-                                </div>
-                                <div class="w-full h-full bg-white/20 dark:bg-black/20 backdrop-blur-[1px] absolute inset-0"></div>
-                                <div class="sprite-base ${charSpriteBase} ${charSpriteClass} shrink-0 scale-[0.35] relative z-10"></div>
-                            </div>
-                            <span class="text-[9px] sm:text-[10px] font-bold text-gray-600 dark:text-gray-300 group-hover:text-amber-600 dark:group-hover:text-amber-400 text-center w-full truncate leading-tight">${displayName}</span>
-                        `;
-                        iconContainer.appendChild(btn);
-                    });
+    const iconUrl = typeof IMAGE_MAP !== 'undefined' ? IMAGE_MAP[`avatar_${c.name}`] : '';
+    const displayName = getI18n(c.name);
+    
+    const btn = document.createElement('button');
+    btn.className = "group flex flex-col items-center gap-0.5 transition-transform hover:scale-110 active:scale-95 w-12 sm:w-14";
+    btn.onclick = () => selectCharacter(c, spineName, iconUrl);
+
+    // 2. 強固防呆：確保 personality 轉字串並去除空白，避免比對失敗
+    const rawPersonality = (c.personality || "天真").toString().trim();
+    const displayPersonality = rawPersonality.includes(",") ? "雙面" : rawPersonality;
+    
+    const charSpriteBase = CHAR_SPRITE_MAP[displayPersonality] || "sprite-char-innocence";
+    const charSpriteClass = `sprite-${spineName}`;
+    
+    let raceKey = (c.race || "unknown").toString().trim(); 
+    if (raceKey === "???") raceKey = "unknown";
+    const raceSprite = SPRITE_CLASS_MAP[`race_${raceKey}`] || "sprite-Bg_Unknown";
+
+    let charStyle = "";
+    let charBorderClass = borderClass;
+    
+    if (displayPersonality === "雙面") {
+        const parts = rawPersonality.split(',').map(s => s.trim());
+        const c1 = HEX_COLORS[parts[0]] || "#c084fc";
+        const c2 = HEX_COLORS[parts[1]] || "#4ade80";
+        charStyle = `style="--c1: ${c1}; --c2:${c2};"`;
+        charBorderClass = "dual-border-anim";
+    }
+
+    btn.innerHTML = `
+        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl border-2 ${charBorderClass} overflow-hidden shadow-sm group-hover:shadow-md transition-all relative flex items-center justify-center" ${charStyle}>
+            <div class="absolute inset-0 flex items-center justify-center opacity-80">
+                <div class="sprite-base sprite-common ${raceSprite} shrink-0 scale-[0.6]"></div>
+            </div>
+            <div class="w-full h-full bg-white/20 dark:bg-black/20 backdrop-blur-[1px] absolute inset-0"></div>
+            <div class="sprite-base ${charSpriteBase} ${charSpriteClass} shrink-0 scale-[0.35] relative z-10"></div>
+        </div>
+        <span class="text-[9px] sm:text-[10px] font-bold text-gray-600 dark:text-gray-300 group-hover:text-amber-600 dark:group-hover:text-amber-400 text-center w-full truncate leading-tight">${displayName}</span>
+    `;
+    iconContainer.appendChild(btn);
+});
             
                     row.appendChild(header); row.appendChild(iconContainer); container.appendChild(row);
                 });
