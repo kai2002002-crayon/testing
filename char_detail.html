@@ -34,19 +34,18 @@
         <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
         <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
         <style>
-            /* 🌟 預設空珍藏品：情信 (更新為正確的雪碧圖尺寸與座標) */
+            /* 🌟 預設空珍藏品：情信 */
             .sprite-letter {
             width: 144px !important;
             height: 117px !important;
             background-position: -740px -654px !important;
             background-image: url('char_sprites/common_icon.png') !important;
-            /* 移除 background-size: auto，讓其正確讀取原始像素，並確保外框不會擠壓 */
             background-repeat: no-repeat !important;
             box-sizing: content-box !important;
             border: none !important;
             padding: 0 !important;
             }
-            /* 🌟 種族專屬背景的平鋪與移動動畫 (全域背景) */
+            /* 🌟 種族專屬背景的平鋪與移動動畫 */
             #raceBackground {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -56,9 +55,7 @@
             opacity: 0.9; 
             animation: raceBgPan 40s linear infinite;
             }
-            .dark #raceBackground {
-            opacity: 0.4;
-            }
+            .dark #raceBackground { opacity: 0.4; }
             @keyframes raceBgPan {
             0%   { background-position: 0px 0px; }
             25%  { background-position: -200px 200px; }
@@ -67,12 +64,10 @@
             100% { background-position: 0px 0px; }
             }
             body { font-family: 'Noto Sans TC', sans-serif; }
-            /* 🌟 只隱藏主立繪與技能區的控制器，保留超迷你小人的控制器 */
             #charAvatar .spine-player-controls, 
             #skillsContainer .spine-player-controls { display: none !important; }
             .costume-btn { transition: all 0.2s ease; }
             .costume-btn:active { transform: scale(0.95); }
-            /* 🌟 Spine 原生樣式覆蓋與金蠟筆載入圖 */
             .spine-player-loading {
             background-image: none !important;
             border: none !important;
@@ -91,78 +86,35 @@
             }
             .spine-player-loading > div, 
             .spine-player-loading::before, 
-            .spine-player-loading::after {
-            display: none !important;
-            content: none !important;
-            }
-            .spine-player-progress, .spine-player-progress-bar {
-            display: none !important;
-            opacity: 0 !important;
-            }
+            .spine-player-loading::after { display: none !important; content: none !important; }
+            .spine-player-progress, .spine-player-progress-bar { display: none !important; opacity: 0 !important; }
             .spine-player-loading-custom {
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 80px; height: 80px;
-            margin: -40px 0 0 -40px;
+            position: absolute; top: 50%; left: 50%;
+            width: 80px; height: 80px; margin: -40px 0 0 -40px;
             background: url('https://i.postimg.cc/qvjNxZzg/golden-crayon.png') no-repeat center center;
-            background-size: contain;
-            animation: crayonFloat 1.5s ease-in-out infinite;
-            z-index: 10;
+            background-size: contain; animation: crayonFloat 1.5s ease-in-out infinite; z-index: 10;
             }
             @keyframes crayonFloat {
             0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.5)); }
             50% { transform: translateY(-10px) scale(1.05); filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.9)); }
             }
-            /* 🌟 坨坨展示框的動態縮放背景 (LOBBY_BACKGROUNDS) */
-            .animated-bg {
-            position: relative;
-            z-index: 1; 
-            }
+            .animated-bg { position: relative; z-index: 1; }
             .animated-bg::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-image: var(--bg-image);
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            z-index: -1; 
-            animation: slowZoom 12s ease-in-out infinite alternate;
+            content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background-image: var(--bg-image); background-size: cover; background-position: center;
+            background-repeat: no-repeat; z-index: -1; animation: slowZoom 12s ease-in-out infinite alternate;
             }
-            @keyframes slowZoom {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.25); } 
-            }
+            @keyframes slowZoom { 0% { transform: scale(1); } 100% { transform: scale(1.25); } }
             #backToTop {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 9999;
-            display: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background-color: #fbbf24;
-            color: white;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.2s, background-color 0.3s;
-            font-size: 10px; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 9999;
+            display: none; width: 20px; height: 20px; border-radius: 50%; background-color: #fbbf24;
+            color: white; border: none; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s, background-color 0.3s; font-size: 10px; display: flex; align-items: center; justify-content: center;
             }
-            #backToTop:hover { 
-            background-color: #d97706; 
-            transform: translateX(-50%) translateY(-5px); 
-            }
-            /* YouTube 彈出視窗樣式 */
+            #backToTop:hover { background-color: #d97706; transform: translateX(-50%) translateY(-5px); }
             .yt-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.8); z-index: 9999;
-            display: flex; justify-content: center; align-items: center;
+            background-color: rgba(0, 0, 0, 0.8); z-index: 9999; display: flex; justify-content: center; align-items: center;
             }
             .yt-modal-content {
             position: relative; width: 90%; max-width: 800px;
@@ -174,12 +126,8 @@
             text-align: center; line-height: 35px; cursor: pointer; font-size: 24px; font-weight: bold; z-index: 10000;
             }
             .yt-modal-close:hover { background: #c0392b; }
-            .video-container {
-            position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;
-            }
-            .video-container iframe {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            }
+            .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; }
+            .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         </style>
     </head>
     <body class="p-4 sm:p-8 bg-[#fcf8f2] dark:bg-slate-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
@@ -260,7 +208,6 @@
                 </div>
                 <div id="presentWrapper" class="flex flex-col md:flex-row gap-6 items-center md:items-start rounded-xl bg-white/60 dark:bg-gray-900/50 border border-rose-100 dark:border-gray-800 p-5">
                     <div id="presentLeft" class="w-full md:w-1/3 flex flex-col items-center gap-3 transition-all duration-300">
-                        <!-- 🔥 這裡將最小高度改為 180px，防止大圖片超出容器被截斷 -->
                         <div id="presentContainer" class="w-full flex justify-center items-center relative min-h-[180px] sm:min-h-[200px]">
                             <p data-i18n="present_loading" class="text-orange-400 dark:text-gray-500 text-sm animate-pulse">寶箱開啟中...</p>
                         </div>
@@ -319,22 +266,13 @@
             </div>
         </div>
         <script>
-            // 🌟 全域通用：專門修復 WebGL 透明畫布下的「色彩增值(Multiply)」破洞 Bug
             function fixSpineMultiplyHole(player) {
                 const skeleton = player.skeleton;
                 if (!skeleton) return;
-
                 for (let i = 0; i < skeleton.slots.length; i++) {
                     let slot = skeleton.slots[i];
-        
-                    // 判斷是否為陰影插槽 (Trickcal 的陰影通常設定為 Multiply，或是名稱裡有 shadow)
                     if (slot.data.blendMode === spine.BlendMode.Multiply || slot.data.name.toLowerCase().includes('shadow')) {
-                        // 將混合模式改為 Normal 避免自我重疊造成的破洞加深
                         slot.data.blendMode = spine.BlendMode.Normal;
-        
-                        // 強制設定為半透明黑色 (R, G, B, A)
-                        // 將 Alpha 設為 0.4 或 0.5，絕對不要設為 1.0！
-                        // slot.color.set(0, 0, 0, 0.4);
                         slot.color.a = Math.min(slot.color.a, 0.6);
                     }
                 }
@@ -343,27 +281,21 @@
             function getI18n(key) {
                 if (!key) return key;
                 const cleanKey = String(key).trim();
-                
                 const safeLang = (typeof LANG_DICT !== 'undefined' && LANG_DICT[window.currentLang]) ? window.currentLang : 'zh-TW';
-                
                 if (typeof LANG_DICT !== 'undefined' && LANG_DICT[safeLang] && LANG_DICT[safeLang][cleanKey]) {
                     return LANG_DICT[safeLang][cleanKey];
                 }
                 return cleanKey; 
             }
             
-            function t(text) {
-                return getI18n(text);
-            }
+            function t(text) { return getI18n(text); }
             
             function applyI18n() {
                 try {
                     document.querySelectorAll('[data-i18n]').forEach(el => {
                         const key = el.getAttribute('data-i18n');
                         const text = getI18n(key);
-                        
                         if (text === key) return; 
-                        
                         if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
                             el.placeholder = text;
                         } else {
@@ -376,69 +308,56 @@
             }
             
             const firebaseConfig = { 
-    apiKey: "AIzaSyDhv8D2pY_0M56UJrDTQw0RGPHA-BkXU8Y", 
-    authDomain: "crayon-note.firebaseapp.com", 
-    projectId: "crayon-note", 
-    storageBucket: "crayon-note.firebasestorage.app", 
-    messagingSenderId: "210614088940", 
-    appId: "1:210614088940:web:7addbdc7c466eeb05421c9", 
-    measurementId: "G-M1EJPE12TE" 
-};
+                apiKey: "AIzaSyDhv8D2pY_0M56UJrDTQw0RGPHA-BkXU8Y", 
+                authDomain: "crayon-note.firebaseapp.com", 
+                projectId: "crayon-note", 
+                storageBucket: "crayon-note.firebasestorage.app", 
+                messagingSenderId: "210614088940", 
+                appId: "1:210614088940:web:7addbdc7c466eeb05421c9", 
+                measurementId: "G-M1EJPE12TE" 
+            };
             firebase.initializeApp(firebaseConfig);
             const db = firebase.firestore();
             
-            // 🌟 集中註冊全屬性的雪碧圖對應字典 (相容中/英雙語原始值)
+            // 🌟 修復 1：全面防呆，統一轉小寫處理索引鍵，解決中英文大小寫不同步的問題
             const initIconMap = () => {
                 if (typeof window.ICON_MAP === 'undefined') window.ICON_MAP = {};
-                // 在 initIconMap 內新增這段：
-                window.ICON_MAP['identity_艾爾丁'] = 'sprite-base sprite-common sprite-PickPerconalityIcon_EldainHero';
-                window.ICON_MAP['identity_普通坨坨'] = 'sprite-base sprite-common sprite-PickPerconalityIcon_NormalHero';
-                // 攻擊類型
-                window.ICON_MAP['attribute_物理'] = 'sprite-base sprite-common sprite-Type_Physic';
-                window.ICON_MAP['attribute_魔法'] = 'sprite-base sprite-common sprite-Type_Magic';
-                window.ICON_MAP['attribute_Physical'] = 'sprite-base sprite-common sprite-Type_Physic';
-                window.ICON_MAP['attribute_Magic'] = 'sprite-base sprite-common sprite-Type_Magic';
-        
-                /// 性格
+                
+                const register = (prefix, zh, en, clsName) => {
+                    const cls = `sprite-base sprite-common ${clsName}`;
+                    window.ICON_MAP[`${prefix}_${zh}`.toLowerCase()] = cls;
+                    window.ICON_MAP[`${prefix}_${en}`.toLowerCase()] = cls;
+                };
+
+                register('identity', '艾爾丁', 'Eldain', 'sprite-PickPerconalityIcon_EldainHero');
+                register('identity', '普通坨坨', 'Normal', 'sprite-PickPerconalityIcon_NormalHero');
+                
+                register('attribute', '物理', 'Physic', 'sprite-Type_Physic');
+                register('attribute', '物理', 'Physical', 'sprite-Type_Physic');
+                register('attribute', '魔法', 'Magic', 'sprite-Type_Magic');
+
                 const personalities = { 
                     '冷靜': 'Composed', '憂鬱': 'Depressed', '天真': 'Innocence', '狂亂': 'Madness', '活潑': 'Vivacious', '共鳴': 'Resonance', 
                     '雙重性格': 'Multifaceted', '雙重': 'Multifaceted', '雙面': 'Multifaceted' 
                 };
-                Object.entries(personalities).forEach(([zh, en]) => {
-                    const cls = `sprite-base sprite-common sprite-Personality_${en}`;
-                    window.ICON_MAP[`personality_${zh}`] = cls;
-                    window.ICON_MAP[`personality_${en}`] = cls;
-                });
-        
-                // 種族
+                Object.entries(personalities).forEach(([zh, en]) => register('personality', zh, en, `sprite-Personality_${en}`));
+
                 const races = { '龍族': 'Dragon', '魔靈': 'Elemental', '精靈': 'Elf', '幽靈': 'Phantom', '妖精': 'Sprite', '???': 'Unknown', '獸人': 'Werebeast', '魔女': 'Witch' };
-                Object.entries(races).forEach(([zh, en]) => {
-                    const cls = `sprite-base sprite-common sprite-Race_${en}`;
-                    window.ICON_MAP[`race_${zh}`] = cls;
-                    window.ICON_MAP[`race_${en}`] = cls;
-                });
-        
-                // 站位
+                Object.entries(races).forEach(([zh, en]) => register('race', zh, en, `sprite-Race_${en}`));
+
                 const positions = { '後排': 'Back', '前排': 'Front', '中排': 'Middle', '所有排': 'All' };
-                Object.entries(positions).forEach(([zh, en]) => {
-                    const cls = `sprite-base sprite-common sprite-Position_${en}`;
-                    window.ICON_MAP[`position_${zh}`] = cls;
-                    window.ICON_MAP[`position_${en}`] = cls;
-                });
-        
-                // 職業
-                const jobs = { '輸出': 'DPS', '輔助': 'Support', '肉盾': 'Tank' };
-                Object.entries(jobs).forEach(([zh, en]) => {
-                    const cls = `sprite-base sprite-common sprite-Job_${en}`;
-                    window.ICON_MAP[`job_${zh}`] = cls;
-                    window.ICON_MAP[`job_${en}`] = cls;
-                });
+                Object.entries(positions).forEach(([zh, en]) => register('position', zh, en, `sprite-Position_${en}`));
+
+                const jobs = { '輸出': 'DPS', '輔助': 'Support', '肉盾': 'Tank', '坦克': 'Tank' };
+                Object.entries(jobs).forEach(([zh, en]) => register('job', zh, en, `sprite-Job_${en}`));
             };
             
             const updateTag = (id, label, value, prefix) => {
                 const el = document.getElementById(id);
                 initIconMap();
-                const iconUrl = window.ICON_MAP[`${prefix}_${value}`] || "";
+                // 🌟 使用小寫進行查找比對，完美解決 "Elf" 和 "elf" 的問題
+                const searchKey = `${prefix}_${value}`.toLowerCase();
+                const iconUrl = window.ICON_MAP[searchKey] || "";
         
                 if (!iconUrl) {
                     el.classList.add('hidden');
@@ -446,13 +365,11 @@
                 }
         
                 el.classList.remove('hidden');
-                // 統一容器 class，確保 group-hover 效果能完美傳遞給內部的 icon
                 el.className = 'relative group flex items-center justify-center'; 
         
-                // 🌟 根據屬性大圖的大小設定精準的 CSS scale 比率，使其在 32x32px 佔位格內外觀完全一致
-                let scaleClass = 'scale-[0.5]'; // 64x64 縮小為 32x32 (預設)
-                if (prefix === 'race') scaleClass = 'scale-[0.58]';       // 55x55 縮小為 32x32
-                if (prefix === 'personality') scaleClass = 'scale-[0.48]';// 62x66 縮小為 32x32
+                let scaleClass = 'scale-[0.5]';
+                if (prefix === 'race') scaleClass = 'scale-[0.58]';       
+                if (prefix === 'personality') scaleClass = 'scale-[0.48]';
                 if (prefix === 'identity') scaleClass = 'scale-[0.43]';
         
                 const iconHtml = (iconUrl.startsWith('http') || iconUrl.startsWith('./'))
@@ -461,9 +378,7 @@
                         <div class="${iconUrl} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 origin-center ${scaleClass}"></div>
                        </div>`;
         
-                // 🌟 修正：利用 .replace(/[：:︰\s]+$/, '') 自動過濾掉 label 尾部可能自帶的任何全半形冒號，防止出現雙冒號
                 const cleanLabel = label.replace(/[：:︰\s]+$/, '');
-
                 el.innerHTML = `
                     ${iconHtml}
                     <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-3 py-1.5 bg-slate-900 dark:bg-slate-700 text-white dark:text-gray-100 text-[11px] font-black rounded-lg shadow-xl whitespace-nowrap pointer-events-none hidden group-hover:block transition-all duration-300 opacity-0 group-hover:opacity-100 z-50">
@@ -473,31 +388,6 @@
                 `;
             };
             
-            function createBigHoverIcon(containerId, imgUrl, tooltipText) {
-                const container = document.getElementById(containerId);
-                if (!container) return;
-                if (!imgUrl) {
-                    container.innerHTML = `<span class="text-xs text-gray-400 font-bold px-2 py-1 bg-gray-100 dark:bg-slate-700 rounded-md">無圖片</span>`;
-                    return;
-                }
-                const iconHtml = (imgUrl.startsWith('http') || imgUrl.startsWith('./')) 
-                    ? `<img src="${imgUrl}" alt="icon" class="w-full h-full object-contain p-1 drop-shadow-sm">`
-                    : `<div class="w-full h-full flex items-center justify-center"><div class="${imgUrl} origin-center scale-[0.8] drop-shadow-sm"></div></div>`;
-                    
-                container.innerHTML = `
-                    <div class="relative group flex items-center justify-center cursor-help">
-                        <div class="w-14 h-14 sm:w-16 sm:h-16 bg-white dark:bg-slate-700 rounded-xl border-2 border-amber-200 dark:border-slate-600 shadow-sm overflow-hidden transition-transform duration-300 group-hover:scale-110 group-active:scale-95">
-                            ${iconHtml}
-                        </div>
-                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-slate-900 dark:bg-slate-800 text-white dark:text-gray-100 text-xs sm:text-sm font-black rounded-lg shadow-xl whitespace-nowrap pointer-events-none hidden group-hover:block transition-all duration-300 z-50 border border-slate-700">
-                            ${tooltipText}
-                            <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-slate-900 dark:border-t-slate-800"></div>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            // 🌟 將坨坨星星修改為 Sprite 排版並完美縮放對齊
             function renderStars(charName) {
                 const starsContainer = document.getElementById('charStars');
                 if (!starsContainer) return;
@@ -508,13 +398,10 @@
                 }
         
                 const starClass = `sprite-${grade}STAR`;
-                
-                // 動態計算對應的縮小後寬度 (原寬度 * 0.24)
-                let wrapperWidth = 71; // 3星: 296 * 0.24 ≈ 71
-                if (grade === "1") wrapperWidth = 28; // 1星: 116 * 0.24 ≈ 28
-                if (grade === "2") wrapperWidth = 49; // 2星: 206 * 0.24 ≈ 49
+                let wrapperWidth = 71; 
+                if (grade === "1") wrapperWidth = 28; 
+                if (grade === "2") wrapperWidth = 49; 
 
-                // 建立與實際縮小後寬度相符的外框，讓 flex 置中能正確運作
                 starsContainer.innerHTML = `
                     <div class="relative" style="width: ${wrapperWidth}px; height: 28px;">
                         <div class="sprite-base sprite-common ${starClass} drop-shadow-md absolute top-0 left-0" style="transform: scale(0.24); transform-origin: top left;"></div>
@@ -522,7 +409,6 @@
                 `;
             }
             
-            // 🌟 新增安全獲取食物圖示的輔助函式，兼容字串與物件格式
             function getSafeFoodIconUrl(foodKey) {
                 if (typeof FOOD_ICON !== 'undefined' && FOOD_ICON[foodKey]) {
                     return typeof FOOD_ICON[foodKey] === 'object' ? FOOD_ICON[foodKey].url : FOOD_ICON[foodKey];
@@ -534,12 +420,12 @@
                 const cvText = (typeof CV_MAP !== 'undefined' && CV_MAP[charName]) ? CV_MAP[charName] : "???";
                 document.getElementById('charCV').innerText = cvText;
         
-                const introKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
+                const spineKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
                 const safeLang = (typeof INTRO_MAP !== 'undefined' && INTRO_MAP[window.currentLang]) ? window.currentLang : 'zh-TW';
                 let introText = "（資料建檔中...）";
                 
-                if (typeof INTRO_MAP !== 'undefined' && INTRO_MAP[safeLang] && INTRO_MAP[safeLang][introKey]) {
-                    let rawText = INTRO_MAP[safeLang][introKey];
+                if (typeof INTRO_MAP !== 'undefined' && INTRO_MAP[safeLang] && INTRO_MAP[safeLang][spineKey]) {
+                    let rawText = INTRO_MAP[safeLang][spineKey];
                     let lines = rawText.split('\n');
                     
                     if (lines.length >= 3) {
@@ -553,11 +439,9 @@
                 }
                 document.getElementById('charIntro').innerHTML = introText;
         
-                // --- 處理喜好料理 ---
                 const foodContainer = document.getElementById('charFoodIcon');
                 foodContainer.innerHTML = '';
         
-                const spineKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
                 const foodData = (typeof FOOD_MAP !== 'undefined') ? FOOD_MAP[spineKey] : null;
         
                 if (!foodData || foodData === "無" || foodData === "餐牌" || (Array.isArray(foodData) && foodData.length === 0)) {
@@ -567,7 +451,6 @@
                     let superFoods = [];
                     let specialFoods = [];
         
-                    // 自動兼容各種常見的鍵值寫法
                     if (typeof foodData === 'object' && !Array.isArray(foodData)) {
                         const superKeys = ['super', 'super_like', '超級', '超級喜好'];
                         const specialKeys = ['special', 'special_like', '特別', '特別喜好'];
@@ -580,7 +463,6 @@
                         });
                     }
         
-                    // 渲染超級喜好
                     superFoods.forEach(foodName => {
                         const imgUrl = getSafeFoodIconUrl(foodName);
                         html += `
@@ -590,7 +472,6 @@
                         `;
                     });
         
-                    // 渲染特別喜好
                     specialFoods.forEach(foodName => {
                         const imgUrl = getSafeFoodIconUrl(foodName);
                         html += `
@@ -600,7 +481,6 @@
                         `;
                     });
         
-                    // 若非 object 格式，當作陣列處理
                     if (html === "" && Array.isArray(foodData)) {
                         foodData.forEach(foodName => {
                             const imgUrl = getSafeFoodIconUrl(foodName);
@@ -615,36 +495,26 @@
                     foodContainer.innerHTML = html;
                 }
         
-                // --- 處理打工獎勵 ---
                 const rewardContainer = document.getElementById('charRewardIcon');
                 rewardContainer.innerHTML = '';
         
-                const spineName = (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName]) 
-                    ? SPINE_MAP[charName] 
-                    : charName;
-        
-                // 🌟 防呆標記：預設為沒有打工劇情
                 let hasJobStory = false;
         
-                if (typeof REWARD_MAP !== 'undefined' && REWARD_MAP[spineName]) {
-                    let rewards = REWARD_MAP[spineName];
+                if (typeof REWARD_MAP !== 'undefined' && REWARD_MAP[spineKey]) {
+                    let rewards = REWARD_MAP[spineKey];
                     
                     if (rewards.length === 0) {
                         rewardContainer.innerHTML = `<span class="text-sm text-gray-500 dark:text-gray-400 font-bold py-1">無</span>`;
                     } else {
-                        // 🌟 有獎勵代表有劇情，標記改為 true
                         hasJobStory = true;
                         let html = "";
                         rewards.forEach((rewardKey, idx) => {
                             const rewardDisplay = getI18n(rewardKey) !== rewardKey ? getI18n(rewardKey) : rewardKey;
-                            
-                            // 從 REWARD_ICON 尋找圖示
                             let rewardUrl = "";
                             if (typeof REWARD_ICON !== 'undefined' && REWARD_ICON[rewardKey]) {
                                 rewardUrl = typeof REWARD_ICON[rewardKey] === 'object' ? REWARD_ICON[rewardKey].url : REWARD_ICON[rewardKey];
                             }
         
-                            // 第一個螢光綠外框，其餘灰色，打橫排列
                             let borderClass = idx === 0 
                                 ? "border-[3px] border-[#39ff14] shadow-[0_0_8px_rgba(57,255,20,0.6)]" 
                                 : "border-2 border-gray-300 dark:border-slate-600 shadow-sm";
@@ -661,56 +531,54 @@
                     rewardContainer.innerHTML = `<span class="text-sm text-gray-500 dark:text-gray-400 font-bold py-1">無</span>`;
                 }
         
-                // --- 處理打工劇情 CG 與 YouTube 連結 ---
-            const cgContainer = document.getElementById('charJobCgContainer');
-            if (cgContainer) {
-            if (!hasJobStory) {
-            cgContainer.innerHTML = '';
-            cgContainer.classList.add('hidden');
-            } else {
-            let youtubeUrl = null;
-            if (typeof WORK_URL !== 'undefined' && WORK_URL[spineName]) {
-            youtubeUrl = WORK_URL[spineName];
+                const cgContainer = document.getElementById('charJobCgContainer');
+                if (cgContainer) {
+                    if (!hasJobStory) {
+                        cgContainer.innerHTML = '';
+                        cgContainer.classList.add('hidden');
+                    } else {
+                        let youtubeUrl = null;
+                        if (typeof WORK_URL !== 'undefined' && WORK_URL[spineKey]) {
+                            youtubeUrl = WORK_URL[spineKey];
+                        }
+                        
+                        const cgClass = `sprite-CG_Schedule_${spineKey}`;
+                        
+                        if (youtubeUrl && youtubeUrl.length > 0) {
+                            const videoId = youtubeUrl.split('/').pop().replace('watch?v=', '');
+                            
+                            cgContainer.innerHTML = `
+                                <a href="#" 
+                                   class="youtube-modal-trigger block relative rounded-xl border-[3px] border-amber-300 dark:border-slate-600 shadow-sm overflow-hidden group w-[144px] h-[72px] bg-slate-900 shrink-0 cursor-pointer" 
+                                   title="點擊觀看打工劇情"
+                                   data-video-id="${videoId}">
+                                    <div class="absolute top-1/2 left-1/2 transition-transform duration-300 group-hover:scale-105" style="transform: translate(-50%, -50%) scale(0.140625); width: 1024px; height: 512px;">
+                                        <div class="${cgClass} w-full h-full opacity-80 group-hover:opacity-100 transition-opacity"></div>
+                                    </div>
+                                    <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-300"></div>
+                                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                        <div class="w-8 h-8 bg-red-600/90 group-hover:bg-red-600 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.5)] transform group-hover:scale-110 transition-all duration-300">
+                                            <svg class="w-4 h-4 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                        </div>
+                                    </div>
+                                </a>
+                            `;
+                        } else {
+                            cgContainer.innerHTML = `
+                                <div class="block relative rounded-xl border-[3px] border-gray-400 dark:border-slate-700 shadow-sm overflow-hidden w-[144px] h-[72px] bg-slate-900 shrink-0 cursor-not-allowed" title="劇情影片準備中...">
+                                    <div class="absolute top-1/2 left-1/2" style="transform: translate(-50%, -50%) scale(0.140625); width: 1024px; height: 512px;">
+                                        <div class="${cgClass} w-full h-full opacity-50 grayscale"></div>
+                                    </div>
+                                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none bg-black/30">
+                                        <span class="text-white text-xs font-bold tracking-wider px-2 py-1 bg-black/60 rounded backdrop-blur-sm">準備中</span>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        cgContainer.classList.remove('hidden');
+                    }
+                }        
             }
-            
-            const cgClass = `sprite-CG_Schedule_${spineName}`;
-            
-            // 🌟 這裡接續：
-            if (youtubeUrl && youtubeUrl.length > 0) {
-            // 擷取 Youtube ID
-            const videoId = youtubeUrl.split('/').pop().replace('watch?v=', '');
-            
-            cgContainer.innerHTML = `
-                <a href="#" 
-                   class="youtube-modal-trigger block relative rounded-xl border-[3px] border-amber-300 dark:border-slate-600 shadow-sm overflow-hidden group w-[144px] h-[72px] bg-slate-900 shrink-0 cursor-pointer" 
-                   title="點擊觀看打工劇情"
-                   data-video-id="${videoId}">
-                    <div class="absolute top-1/2 left-1/2 transition-transform duration-300 group-hover:scale-105" style="transform: translate(-50%, -50%) scale(0.140625); width: 1024px; height: 512px;">
-                        <div class="${cgClass} w-full h-full opacity-80 group-hover:opacity-100 transition-opacity"></div>
-                    </div>
-                    <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-300"></div>
-                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <div class="w-8 h-8 bg-red-600/90 group-hover:bg-red-600 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.5)] transform group-hover:scale-110 transition-all duration-300">
-                            <svg class="w-4 h-4 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                        </div>
-                    </div>
-                </a>
-            `;
-            } else {
-            cgContainer.innerHTML = `
-                <div class="block relative rounded-xl border-[3px] border-gray-400 dark:border-slate-700 shadow-sm overflow-hidden w-[144px] h-[72px] bg-slate-900 shrink-0 cursor-not-allowed" title="劇情影片準備中...">
-                    <div class="absolute top-1/2 left-1/2" style="transform: translate(-50%, -50%) scale(0.140625); width: 1024px; height: 512px;">
-                        <div class="${cgClass} w-full h-full opacity-50 grayscale"></div>
-                    </div>
-                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none bg-black/30">
-                        <span class="text-white text-xs font-bold tracking-wider px-2 py-1 bg-black/60 rounded backdrop-blur-sm">準備中</span>
-                    </div>
-                </div>
-            `;
-            }
-            cgContainer.classList.remove('hidden');
-            }
-            }        }
             
             const renderError = (msg) => {
                 document.getElementById('mainContainer').innerHTML = `
@@ -728,71 +596,74 @@
             };
             
             const updateRaceBackground = (raceName, personalityData) => {
-    const bgDiv = document.getElementById('raceBackground');
-    if (!bgDiv) return;
+                const bgDiv = document.getElementById('raceBackground');
+                if (!bgDiv) return;
+            
+                if (window.bgSwapInterval) {
+                    clearInterval(window.bgSwapInterval);
+                    window.bgSwapInterval = null;
+                }
+            
+                let pList = [];
+                if (Array.isArray(personalityData)) {
+                    pList = personalityData;
+                } else if (typeof personalityData === 'string') {
+                    pList = personalityData.split(/[、,\/\s+]+/).map(s => s.trim()).filter(Boolean);
+                } else if (personalityData) {
+                    pList = [String(personalityData)];
+                }
 
-    // 1. 清除之前的切換計時器（避免切換角色時發生重複呼叫導致閃爍）
-    if (window.bgSwapInterval) {
-        clearInterval(window.bgSwapInterval);
-        window.bgSwapInterval = null;
-    }
+                // 🌟 修復 2：針對可能為英文的鍵值進行翻譯查找
+                const raceToZh = {
+                    'Dragon': '龍族', 'Elemental': '魔靈', 'Elf': '精靈', 'Phantom': '幽靈', 
+                    'Sprite': '妖精', 'Unknown': '???', 'Werebeast': '獸人', 'Witch': '魔女',
+                    'elf': '精靈', 'witch': '魔女', 'dragon': '龍族', 'sprite': '妖精'
+                };
+                const pToZh = {
+                    'Composed': '冷靜', 'Depressed': '憂鬱', 'Innocence': '天真', 
+                    'Madness': '狂亂', 'Vivacious': '活潑', 'Resonance': '共鳴',
+                    'composed': '冷靜', 'depressed': '憂鬱', 'innocence': '天真',
+                    'madness': '狂亂', 'vivacious': '活潑', 'resonance': '共鳴',
+                    'Multifaceted': '雙面', 'multifaceted': '雙面'
+                };
 
-    // 2. 處理雙面/多重性格資料，將其分割為陣列 
-    // 支援陣列格式 ["憂鬱", "天真"] 或是字串包含加號、逗號、斜線等 "憂鬱+天真"
-    let pList = [];
-    if (Array.isArray(personalityData)) {
-        pList = personalityData;
-    } else if (typeof personalityData === 'string') {
-        pList = personalityData.split(/[、,\/\s+]+/).map(s => s.trim()).filter(Boolean);
-    } else if (personalityData) {
-        pList = [String(personalityData)];
-    }
-
-    // 3. 過濾出真的有背景圖的性格
-    let validPersonalities = pList.filter(p => typeof PERSONALITY_BACKGROUNDS !== 'undefined' && PERSONALITY_BACKGROUNDS[p]);
-    
-    // 若過濾後為空，把原始字串當作備用 (預防原本就只有單一字串且無特殊符號)
-    if (validPersonalities.length === 0 && typeof PERSONALITY_BACKGROUNDS !== 'undefined' && PERSONALITY_BACKGROUNDS[personalityData]) {
-        validPersonalities = [personalityData];
-    }
-
-    // 設定 CSS 動畫效果讓背景切換更柔和 (部分瀏覽器支援背景圖漸變)
-    bgDiv.style.transition = "background-image 1.5s ease-in-out";
-
-    // 負責組合與套用背景的內部函式
-    const applyBg = (currentP) => {
-        let bgImages = [];
-        // 先放種族圖 (在上層)
-        if (raceName && typeof CHAR_BACKGROUNDS !== 'undefined' && CHAR_BACKGROUNDS[raceName]) {
-            bgImages.push(`url('${CHAR_BACKGROUNDS[raceName]}')`);
-        }
-        // 再放性格圖 (在下層打底)
-        if (currentP && typeof PERSONALITY_BACKGROUNDS !== 'undefined' && PERSONALITY_BACKGROUNDS[currentP]) {
-            bgImages.push(`url('${PERSONALITY_BACKGROUNDS[currentP]}')`);
-        }
-
-        if (bgImages.length > 0) {
-            bgDiv.style.backgroundImage = bgImages.join(', ');
-        } else {
-            bgDiv.style.backgroundImage = "none";
-        }
-    };
-
-    // 4. 根據性格數量決定要不要輪播
-    if (validPersonalities.length > 1) {
-        let currentIndex = 0;
-        applyBg(validPersonalities[currentIndex]); // 初始化第一張性格圖
-        
-        // 設定計時器，每 4 秒切換一次性格背景圖
-        window.bgSwapInterval = setInterval(() => {
-            currentIndex = (currentIndex + 1) % validPersonalities.length;
-            applyBg(validPersonalities[currentIndex]);
-        }, 4000); 
-    } else {
-        // 單一性格或無性格，直接套用不輪播
-        applyBg(validPersonalities.length > 0 ? validPersonalities[0] : personalityData);
-    }
-};
+                const mappedRace = raceToZh[raceName] || raceName;
+                let validPersonalities = pList.map(p => pToZh[p] || p).filter(p => typeof PERSONALITY_BACKGROUNDS !== 'undefined' && PERSONALITY_BACKGROUNDS[p]);
+                
+                if (validPersonalities.length === 0 && typeof PERSONALITY_BACKGROUNDS !== 'undefined' && PERSONALITY_BACKGROUNDS[personalityData]) {
+                    validPersonalities = [personalityData];
+                }
+            
+                bgDiv.style.transition = "background-image 1.5s ease-in-out";
+            
+                const applyBg = (currentP) => {
+                    let bgImages = [];
+                    if (mappedRace && typeof CHAR_BACKGROUNDS !== 'undefined' && CHAR_BACKGROUNDS[mappedRace]) {
+                        bgImages.push(`url('${CHAR_BACKGROUNDS[mappedRace]}')`);
+                    }
+                    if (currentP && typeof PERSONALITY_BACKGROUNDS !== 'undefined' && PERSONALITY_BACKGROUNDS[currentP]) {
+                        bgImages.push(`url('${PERSONALITY_BACKGROUNDS[currentP]}')`);
+                    }
+            
+                    if (bgImages.length > 0) {
+                        bgDiv.style.backgroundImage = bgImages.join(', ');
+                    } else {
+                        bgDiv.style.backgroundImage = "none";
+                    }
+                };
+            
+                if (validPersonalities.length > 1) {
+                    let currentIndex = 0;
+                    applyBg(validPersonalities[currentIndex]); 
+                    
+                    window.bgSwapInterval = setInterval(() => {
+                        currentIndex = (currentIndex + 1) % validPersonalities.length;
+                        applyBg(validPersonalities[currentIndex]);
+                    }, 4000); 
+                } else {
+                    applyBg(validPersonalities.length > 0 ? validPersonalities[0] : (pToZh[personalityData] || personalityData));
+                }
+            };
             
             let currentTargetName = "";
             let currentCharData = null;
@@ -808,7 +679,7 @@
                 const presentText = document.getElementById('presentText');
                 const presentTextWrapper = document.getElementById('presentTextWrapper');
                 
-                const spineKey = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[currentTargetName] : currentTargetName; 
+                const spineKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[currentTargetName] ? SPINE_MAP[currentTargetName] : currentTargetName; 
                 
                 const inactiveClass = "flex-1 py-1.5 text-sm font-bold rounded-lg transition-all bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300";
         
@@ -835,17 +706,8 @@
             }
             
             function loadSpineAnimation(costumeKey) {
-                function getEffectiveViewport(canvasRect, baseViewport) {
-                    const scale = Math.min(canvasRect.width / baseViewport.width, canvasRect.height / baseViewport.height);
-                    const effW = canvasRect.width / scale;
-                    const effH = canvasRect.height / scale;
-                    const effX = baseViewport.x - (effW - baseViewport.width) / 2;
-                    const effY = baseViewport.y - (effH - baseViewport.height) / 2;
-                    return { x: effX, y: effY, width: effW, height: effH };
-                }
-                
                 const avatarBox = document.getElementById('charAvatar');
-                const baseFolderKey = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[currentTargetName] : currentTargetName; 
+                const baseFolderKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[currentTargetName] ? SPINE_MAP[currentTargetName] : currentTargetName; 
                 
                 clearTimeout(globalIdleTimer);
         
@@ -868,366 +730,43 @@
                     viewport: { x: -400, y: 0, width: 800, height: 1000 },
         
                     success: function (player) {
-                                                                                                                                                            
-                            const loader = avatarBox.querySelector('.spine-player-loading-custom');
-                            if (loader) loader.remove();
+                        const loader = avatarBox.querySelector('.spine-player-loading-custom');
+                        if (loader) loader.remove();
         
-                            window.myPlayer = player;
+                        window.myPlayer = player;
         
-                            let activeFaceBone = null; 
-                            let initialBoneX = 0;
-                            let initialBoneY = 0;
-        
-                            const skins = player.skeleton.data.skins;
-                            if (skins && skins.length > 1) {
-                                const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default');
-                                if (targetSkin) {
-                                    player.skeleton.setSkinByName(targetSkin.name);
-                                    player.skeleton.setToSetupPose(); 
-                                    player.skeleton.updateWorldTransform(); 
-                                }
+                        const skins = player.skeleton.data.skins;
+                        if (skins && skins.length > 1) {
+                            const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name !== 'default');
+                            if (targetSkin) {
+                                player.skeleton.setSkinByName(targetSkin.name);
+                                player.skeleton.setToSetupPose(); 
+                                player.skeleton.updateWorldTransform(); 
                             }
-                            // 🌟 呼叫修復函數
-                            fixSpineMultiplyHole(player);
+                        }
+                        fixSpineMultiplyHole(player);
         
-                            const animations = player.skeleton.data.animations;
-                            if (animations && animations.length > 0) {
-                                const animNames = animations.map(a => a.name);
-                                const playList = animNames;
+                        const animations = player.skeleton.data.animations;
+                        if (animations && animations.length > 0) {
+                            const animNames = animations.map(a => a.name);
+                            const playList = animNames;
         
-                                function startRandomAnimationLoop() {
-                                    clearTimeout(globalIdleTimer);
-                                    globalIdleTimer = setTimeout(playNextAnimation, 5000);
-                                }
+                            function startRandomAnimationLoop() {
+                                clearTimeout(globalIdleTimer);
+                                globalIdleTimer = setTimeout(playNextAnimation, 5000);
+                            }
         
-                                function playNextAnimation() {
-                                    const targetAnims = playList.length > 0 ? playList : ['Idle_1'];
-                                    const randomIndex = Math.floor(Math.random() * targetAnims.length);
-                                    const nextAnim = targetAnims[randomIndex];
-                                    player.animationState.setAnimation(0, nextAnim, true); 
-                                    startRandomAnimationLoop();
-                                }
-        
+                            function playNextAnimation() {
+                                const targetAnims = playList.length > 0 ? playList : ['Idle_1'];
+                                const randomIndex = Math.floor(Math.random() * targetAnims.length);
+                                const nextAnim = targetAnims[randomIndex];
+                                player.animationState.setAnimation(0, nextAnim, true); 
                                 startRandomAnimationLoop();
-        
-                                const canvas = avatarBox.querySelector('canvas');
-                                if (canvas) {
-                                    canvas.style.touchAction = 'none';
-        
-                                    let currentZoom = 1.0;
-                                    const ZOOM_ANCHOR_Y = 600; 
-                                    const baseViewport = { x: -400, y: 0, width: 800, height: 1000 }; 
-                                    const pointers = {}; 
-                                    let initialPinchDistance = 0;
-        
-                                    let isDragging = false;
-                                    let startX = 0, startY = 0;
-                                    let lastMouseX = 0, lastMouseY = 0;
-                                    let dragDistance = 0;
-                                    
-                                    let hitZoneOnDown = null;
-                                    let activeInteractBone = null; 
-                                    let initialBoneWorldX = 0, initialBoneWorldY = 0; 
-        
-                                    let hasTriggeredRub = false; 
-                                    let tickleTimer = null; 
-        
-                                    // 🌟 修正 1：建立專屬變數儲存拉扯狀態，並劫持更新函數防止被 Spine 動畫覆蓋
-                                    player._customDragTargetX = null;
-                                    player._customDragTargetY = null;
-                                    player._bouncingBone = null;
-                                    player._bounceX = null;
-                                    player._bounceY = null;
-        
-                                    const origUpdateWorldTransform = player.skeleton.updateWorldTransform;
-                                    player.skeleton.updateWorldTransform = function () {
-                                        // 在 Spine 計算絕對世界座標前，強制寫入我們的自訂拉扯座標
-                                        if (activeInteractBone && player._customDragTargetX !== null) {
-                                            activeInteractBone.x = player._customDragTargetX;
-                                            activeInteractBone.y = player._customDragTargetY;
-                                        } else if (player._bouncingBone) {
-                                            player._bouncingBone.x = player._bounceX;
-                                            player._bouncingBone.y = player._bounceY;
-                                        }
-                                        origUpdateWorldTransform.call(this);
-                                    };
-        
-                                    canvas.addEventListener('wheel', function(event) {
-                                        event.preventDefault();
-                                        currentZoom = event.deltaY < 0 ? Math.min(currentZoom + 0.1, 4.0) : Math.max(currentZoom - 0.1, 0.5);
-                                        if (player.skeleton) {
-                                            player.skeleton.scaleX = currentZoom;
-                                            player.skeleton.scaleY = currentZoom;
-                                            player.skeleton.y = ZOOM_ANCHOR_Y * (1 - currentZoom);
-                                        }
-                                    }, { passive: false });
-        
-                                    canvas.addEventListener('dblclick', function() {
-                                        currentZoom = 1.0;
-                                        if (player.skeleton) {
-                                            player.skeleton.scaleX = 1.0;
-                                            player.skeleton.scaleY = 1.0;
-                                            player.skeleton.y = 0;
-                                            player.skeleton.x = 0;
-                                            player.skeleton.updateWorldTransform();
-                                        }
-                                    });
-        
-                                    function getHitZone(mouseX, mouseY) {
-                                        const rect = canvas.getBoundingClientRect();
-                                        let camX, camY, camW, camH;
-                                        const camera = player.camera || (player.sceneRenderer && player.sceneRenderer.camera);
-                                        if (camera) {
-                                            camW = camera.viewportWidth * camera.zoom;
-                                            camH = camera.viewportHeight * camera.zoom;
-                                            camX = camera.position.x - camW / 2;
-                                            camY = camera.position.y - camH / 2;
-                                        } else {
-                                            const effView = getEffectiveViewport(rect, baseViewport);
-                                            camX = effView.x; camY = effView.y; camW = effView.width; camH = effView.height;
-                                        }
-                                        
-                                        let clickedPart = null;
-                                        let minDistance = Infinity;
-                                        
-                                        const hitZones = [
-                                            { name: "臉頰", bones: ["Character_Ball_Move"], radius: 50 },
-                                            { name: "頭部", bones: ["Character_Pat"], radius: 50 },
-                                            { name: "身體", bones: ["Character_Tickle"], radius: 60 }
-                                        ];
-                                        
-                                        hitZones.forEach(zone => {
-                                            let targetBone = null;
-                                            for (let bName of zone.bones) { targetBone = player.skeleton.findBone(bName); if (targetBone) break; }
-                                            if (targetBone) {
-                                                const boneCanvasX = ((targetBone.worldX - camX) / camW) * rect.width;
-                                                const boneCanvasY = rect.height - ((targetBone.worldY - camY) / camH) * rect.height;
-                                                const distance = Math.hypot(mouseX - boneCanvasX, mouseY - boneCanvasY);
-                                                
-                                                let skeletonScale = player.skeleton ? Math.abs(player.skeleton.scaleX) : 1;
-                                                const scaledRadius = (zone.radius * skeletonScale) * (rect.width / camW);
-                                                
-                                                if (distance < scaledRadius && distance < minDistance) { 
-                                                    minDistance = distance; 
-                                                    clickedPart = { ...zone, bone: targetBone }; 
-                                                }
-                                            }
-                                        });
-                                        return clickedPart;
-                                    }
-                                    
-                                    canvas.addEventListener('pointerdown', (e) => {
-                                        pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
-                                        const pointerKeys = Object.keys(pointers);
-        
-                                        if (pointerKeys.length === 2) {
-                                            isDragging = false;
-                                            clearTimeout(tickleTimer); 
-                                            const p1 = pointers[pointerKeys[0]], p2 = pointers[pointerKeys[1]];
-                                            initialPinchDistance = Math.hypot(p1.x - p2.x, p1.y - p2.y);
-                                            return; 
-                                        }
-        
-                                        isDragging = true;
-                                        startX = lastMouseX = e.clientX;
-                                        startY = lastMouseY = e.clientY;
-                                        dragDistance = 0;
-                                        hasTriggeredRub = false; 
-                                        hitZoneOnDown = null;
-                                        activeInteractBone = null;
-                                        canvas.setPointerCapture(e.pointerId);
-        
-                                        const rect = canvas.getBoundingClientRect();
-                                        hitZoneOnDown = getHitZone(e.clientX - rect.left, e.clientY - rect.top);
-                                        
-                                        if (hitZoneOnDown && (hitZoneOnDown.name === "臉頰" || hitZoneOnDown.name === "頭部")) {
-                                            activeInteractBone = hitZoneOnDown.bone; 
-                                            initialBoneX = activeInteractBone.x; 
-                                            initialBoneY = activeInteractBone.y;
-                                            initialBoneWorldX = activeInteractBone.worldX; 
-                                            initialBoneWorldY = activeInteractBone.worldY; 
-                                        }
-                                    });
-        
-                                    canvas.addEventListener('pointermove', (e) => {
-                                        if (pointers[e.pointerId]) {
-                                            pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
-                                        }
-                                        const pointerKeys = Object.keys(pointers);
-                                        
-                                        if (pointerKeys.length === 2) {
-                                            e.preventDefault();
-                                            const p1 = pointers[pointerKeys[0]], p2 = pointers[pointerKeys[1]];
-                                            const currentDistance = Math.hypot(p1.x - p2.x, p1.y - p2.y);
-                                            const zoomChange = currentDistance / initialPinchDistance;
-                                            
-                                            currentZoom = Math.min(Math.max(currentZoom * zoomChange, 0.5), 4.0);
-                                            if (player.skeleton) {
-                                                player.skeleton.scaleX = currentZoom;
-                                                player.skeleton.scaleY = currentZoom;
-                                                player.skeleton.y = ZOOM_ANCHOR_Y * (1 - currentZoom);
-                                                player.skeleton.updateWorldTransform();
-                                            }
-                                            initialPinchDistance = currentDistance;
-                                            return;
-                                        }
-                                        
-                                        if (!isDragging || !player.skeleton) return;
-                                        const rect = canvas.getBoundingClientRect();
-                                        if (rect.width === 0) return;
-                                        
-                                        const dx = e.clientX - lastMouseX;
-                                        const dy = e.clientY - lastMouseY;
-                                        dragDistance += Math.hypot(dx, dy);
-                                        
-                                        if (dragDistance > 10 && hitZoneOnDown && !hasTriggeredRub) {
-                                            hasTriggeredRub = true;
-                                            clearTimeout(tickleTimer);
-                                            clearTimeout(globalIdleTimer); 
-                                            const animNames = player.skeleton.data.animations.map(a => a.name);
-                                            if (hitZoneOnDown.name === "臉頰" && animNames.includes("Touch_Idle")) player.animationState.setAnimation(0, "Touch_Idle", true);
-                                            else if (hitZoneOnDown.name === "頭部" && animNames.includes("Pat_Idle")) player.animationState.setAnimation(0, "Pat_Idle", true);
-                                            else if (hitZoneOnDown.name === "身體" && animNames.includes("Tickle_Idle_1")) {
-                                                player.animationState.setAnimation(0, "Tickle_Idle_1", true);
-                                                tickleTimer = setTimeout(() => { if (animNames.includes("Tickle_Idle_2")) player.animationState.setAnimation(0, "Tickle_Idle_2", true); }, 2000);
-                                            }
-                                        }
-                                        
-                                        let currentCamW = 800, currentCamH = 1000;
-                                        const camera = player.camera || (player.sceneRenderer && player.sceneRenderer.camera);
-                                        if (camera) {
-                                            currentCamW = camera.viewportWidth * camera.zoom;
-                                            currentCamH = camera.viewportHeight * camera.zoom;
-                                        } else {
-                                            const effView = getEffectiveViewport(rect, baseViewport);
-                                            currentCamW = effView.width; currentCamH = effView.height;
-                                        }
-        
-                                        if (hasTriggeredRub && hitZoneOnDown && activeInteractBone) {
-                                            const isCheek = hitZoneOnDown.name === "臉頰";
-                                            const spineScaleX = currentCamW / rect.width;
-                                            const spineScaleY = currentCamH / rect.height;
-                                            const stretchIntensity = isCheek ? 1.3 : 0.3; 
-                                            
-                                            let worldDx = (e.clientX - startX) * spineScaleX * stretchIntensity;
-                                            let worldDy = -(e.clientY - startY) * spineScaleY * stretchIntensity;
-                                            
-                                            // 🌟 修正 2：如果往反方向拉，給予很大阻力而不是直接歸零卡死，手感更滑順
-                                            if (isCheek && worldDx > 0) worldDx *= 0.1; 
-                                            
-                                            let targetWorld = { 
-                                                x: initialBoneWorldX + worldDx, 
-                                                y: initialBoneWorldY + worldDy 
-                                            };
-                                            if (activeInteractBone.parent) activeInteractBone.parent.worldToLocal(targetWorld);
-                                            
-                                            let localDx = targetWorld.x - initialBoneX;
-                                            let localDy = targetWorld.y - initialBoneY;
-                                            
-                                            let rawDistance = Math.hypot(localDx, localDy);
-                                            const MAX_RADIUS = isCheek ? 55 : 20; 
-                                            
-                                            if (rawDistance > 0) {
-                                                let elasticDist = MAX_RADIUS * (1 - Math.exp(-rawDistance / (MAX_RADIUS * 1.2)));
-                                                localDx = (localDx / rawDistance) * elasticDist;
-                                                localDy = (localDy / rawDistance) * elasticDist;
-                                            }
-                                            
-                                            // 🌟 修正 3：將計算好的座標寫入劫持變數中，交由 Spine 迴圈每幀死死咬住位置
-                                            player._customDragTargetX = initialBoneX + localDx;
-                                            player._customDragTargetY = initialBoneY + localDy;
-        
-                                        } else if (!hitZoneOnDown) {
-                                            player.skeleton.x += dx * (currentCamW / rect.width);
-                                            player.skeleton.y -= dy * (currentCamH / rect.height);
-                                            player.skeleton.updateWorldTransform(); 
-                                        }
-                                        
-                                        lastMouseX = e.clientX;
-                                        lastMouseY = e.clientY;
-                                    });
-        
-                                    const stopDrag = (e) => { 
-                                        delete pointers[e.pointerId];
-                                        if (Object.keys(pointers).length < 2) initialPinchDistance = 0;
-        
-                                        if (!isDragging) return;
-                                        isDragging = false; 
-                                        clearTimeout(tickleTimer);
-                                        clearTimeout(globalIdleTimer); 
-        
-                                        const animNames = player.skeleton.data.animations.map(a => a.name);
-        
-                                        if (activeInteractBone) {
-                                            let targetX = initialBoneX, targetY = initialBoneY;
-                                            
-                                            // 🌟 修正 4：將骨骼交接給回彈劫持變數，維持動畫流暢度
-                                            player._bouncingBone = activeInteractBone;
-                                            player._bounceX = player._customDragTargetX !== null ? player._customDragTargetX : initialBoneX;
-                                            player._bounceY = player._customDragTargetY !== null ? player._customDragTargetY : initialBoneY;
-                                            
-                                            activeInteractBone = null; 
-                                            player._customDragTargetX = null;
-                                            player._customDragTargetY = null;
-                                            
-                                            let velX = 0, velY = 0;
-                                            const tension = 0.20, friction = 0.85; // 優化阻力避免過度抖動
-                                            function applyBounce() {
-                                                if (!player._bouncingBone) return;
-                                                
-                                                let dx = targetX - player._bounceX; 
-                                                let dy = targetY - player._bounceY;
-                                                velX += dx * tension; velY += dy * tension;
-                                                velX *= friction; velY *= friction;
-                                                
-                                                player._bounceX += velX; 
-                                                player._bounceY += velY;
-                                                
-                                                if (Math.abs(dx) > 0.1 || Math.abs(velX) > 0.1 || Math.abs(dy) > 0.1 || Math.abs(velY) > 0.1) {
-                                                    requestAnimationFrame(applyBounce);
-                                                } else {
-                                                    player._bounceX = targetX; 
-                                                    player._bounceY = targetY;
-                                                    player._bouncingBone = null; // 結束回彈
-                                                }
-                                            }
-                                            applyBounce();
-                                        }
-        
-                                        if (hasTriggeredRub) {
-                                            if (hitZoneOnDown && hitZoneOnDown.name === "臉頰" && animNames.includes("Touch_End")) {
-                                                player.animationState.setAnimation(0, "Touch_End", false);
-                                                player.animationState.addAnimation(0, "Idle_1", true, 0);
-                                            } else if (hitZoneOnDown && hitZoneOnDown.name === "頭部" && animNames.includes("Pat_End")) {
-                                                player.animationState.setAnimation(0, "Pat_End", false);
-                                                player.animationState.addAnimation(0, "Idle_1", true, 0);
-                                            } else if (hitZoneOnDown && hitZoneOnDown.name === "身體" && animNames.includes("Tickle_End")) {
-                                                player.animationState.setAnimation(0, "Tickle_End", false);
-                                                player.animationState.addAnimation(0, "Idle_1", true, 0);
-                                            } else {
-                                                player.animationState.setAnimation(0, "Idle_1", true);
-                                            }
-                                            startRandomAnimationLoop();
-                                        } else if (hitZoneOnDown && dragDistance < 10) {
-                                            if ((hitZoneOnDown.name === "頭部" || hitZoneOnDown.name === "臉頰") && animNames.includes("Smash_End_1")) {
-                                                player.animationState.setAnimation(0, "Smash_End_1", false);
-                                                if (animNames.includes("Smash_End_2")) {
-                                                    player.animationState.addAnimation(0, "Smash_End_2", false, 0);
-                                                }
-                                                player.animationState.addAnimation(0, "Idle_1", true, 0);
-                                            }
-                                            startRandomAnimationLoop();
-                                        } else {
-                                            startRandomAnimationLoop();
-                                        }
-                                    };
-        
-                                    canvas.addEventListener('pointerup', stopDrag);
-                                    canvas.addEventListener('pointercancel', stopDrag);
-                                    // 🌟 修正 5：移除 pointerout，既然有 setPointerCapture，讓滑鼠即使出界也不會突然鬆手斷掉
-                                }
                             }
-                        },
+        
+                            startRandomAnimationLoop();
+                        }
+                    },
                     error: function (player, reason) {
                         console.error("❌ Spine Load Error:", reason);
                         const imgUrl = typeof IMAGE_MAP !== 'undefined' ? IMAGE_MAP[`avatar_${currentCharData.name}`] : '';
@@ -1238,7 +777,9 @@
             
             function renderCostumeButtons(charName) {
                 const container = document.getElementById('costumeButtonsContainer');
-                const costumes = typeof COSTUME_MAP !== 'undefined' ? COSTUME_MAP[charName] : [];
+                const spineKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
+                // 🌟 修復 3：COSTUME_MAP 改以 spineKey 作為優先搜尋目標
+                const costumes = typeof COSTUME_MAP !== 'undefined' ? (COSTUME_MAP[spineKey] || COSTUME_MAP[charName] || []) : [];
                 
                 if (!costumes || costumes.length <= 1) {
                     container.classList.add('hidden');
@@ -1369,7 +910,6 @@
                         const normalSkillIcon = `sprite-Icon_NormalSkill_${spineKey}`;
                         const passiveSkillIcon = `sprite-Icon_PassiveSkill_${spineKey}`;
         
-                        // 1. 先取得原始性格資料並處理組合
                         let rawPersonality = currentCharData.personality;
                         let pListUlt = [];
                         if (Array.isArray(rawPersonality)) {
@@ -1380,24 +920,22 @@
                             pListUlt = [String(rawPersonality)];
                         }
 
+                        // 🌟 修復 4：對高級技能圖片映射表全面支援英文與大小寫防護
                         let ultFileName = "ultimate_composed";
-                        const pDictUlt = { '冷靜': 'Composed', '憂鬱': 'Depressed', '天真': 'Innocence', '狂亂': 'Madness', '活潑': 'Vivacious', '共鳴': 'Resonance' };
+                        const pDictUlt = { 
+                            '冷靜': 'composed', '憂鬱': 'depressed', '天真': 'innocence', '狂亂': 'madness', '活潑': 'vivacious', '共鳴': 'resonance',
+                            'composed': 'composed', 'depressed': 'depressed', 'innocence': 'innocence', 'madness': 'madness', 'vivacious': 'vivacious', 'resonance': 'resonance' 
+                        };
 
                         if (pListUlt.length > 1) {
-                            // 若為多重性格組合，對應至 ultimate_Depressed_Innocence (全部轉小寫以符命名習慣)
-                            const enList = pListUlt.map(p => pDictUlt[p] || 'multifaceted');
-                            ultFileName = `ultimate_${enList.map(e => e.toLowerCase()).join('_')}`;
+                            const enList = pListUlt.map(p => pDictUlt[p.toLowerCase()] || pDictUlt[p] || 'multifaceted');
+                            ultFileName = `ultimate_${enList.sort().join('_')}`;
                         } else if (pListUlt.length === 1) {
-                            let pKey = pListUlt[0];
-                            if (pKey === "雙重性格" || pKey === "雙重" || pKey === "雙面") {
+                            let pKey = pListUlt[0].toLowerCase();
+                            if (pKey.includes("雙重") || pKey.includes("雙面") || pKey === "multifaceted") {
                                 ultFileName = "ultimate_multifaceted";
                             } else {
-                                const personalityMap = {
-                                    "冷靜": "ultimate_composed", "憂鬱": "ultimate_depressed", "天真": "ultimate_innocence", "狂亂": "ultimate_madness", "活潑": "ultimate_vivacious",
-                                    "共鳴": "ultimate_resonance", "Composed": "ultimate_composed", "Depressed": "ultimate_depressed", "Innocence": "ultimate_innocence", "Madness": "ultimate_madness", "Vivacious": "ultimate_vivacious",
-                                    "Resonance": "ultimate_resonance", "Multifaceted": "ultimate_multifaceted"
-                                };
-                                ultFileName = personalityMap[pKey] || "ultimate_composed";
+                                ultFileName = `ultimate_${pDictUlt[pKey] || pDictUlt[pListUlt[0]] || "composed"}`;
                             }
                         }
         
@@ -1517,11 +1055,9 @@
                 const releaseTime = new Date('2026-07-23T04:00:00+09:00').getTime(); 
                 const now = new Date().getTime();
                 
-                // 無論是否有願像，都強制顯示願像區塊，由內部判斷內容
                 asideSection.classList.remove('hidden');
                 
                 if (!data && !isUpcoming) {
-                    // 🌟 加入未知願像的顯示
                     const unknownMsg = {
                         zh: "看起來思念還不夠深",
                         ja: "まだ思念が深くなさそう",
@@ -1567,7 +1103,6 @@
                            `</div>`;
                 };
         
-                // 🌟 願像主圖：應用動態專屬雪碧圖 Class (sprite-AsideIcon_*)，並等比完美縮放置中
                 const asideMainSprite = `sprite-AsideIcon_${spineKey}`;
                 const asideMainHtml = `<div class="w-12 h-12 flex items-center justify-center relative overflow-hidden shrink-0 bg-transparent">
                     <div class="${asideMainSprite} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 origin-center" style="transform: translate(-50%, -50%) scale(0.1875); width: 256px; height: 256px;"></div>
@@ -1583,7 +1118,6 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 `;
         
-                // 🌟 願像星級技能圖標：套用專屬雪碧圖 Class (sprite-Aside_Skill_*_1~3)，並精準縮放對齊
                 for (let i = 1; i <= 3; i++) {
                     const starData = data.stars[i];
                     if (!starData) continue;
@@ -1645,6 +1179,17 @@
                 window.currentActiveCharName = charName;
         
                 const baseFolderKey = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
+                
+                // 🌟 修復 5：加入 SD_COSTUME 判斷，確保小人動態會讀取對應的 Skin 或是特定的檔案
+                let sdFolderKey = baseFolderKey;
+                let skinName = 'Normal';
+                if (typeof SD_COSTUME !== 'undefined') {
+                    if (SD_COSTUME[baseFolderKey]) {
+                        skinName = SD_COSTUME[baseFolderKey];
+                    } else if (SD_COSTUME[charName]) {
+                        skinName = SD_COSTUME[charName];
+                    }
+                }
         
                 const targets = [
                     { id: 'spine-attack', prefix: 'Attack' },
@@ -1686,10 +1231,10 @@
                     };
         
                     const player = new spine.SpinePlayer(target.id, {
-                        skelUrl: `./spine_sd_assets/${baseFolderKey}.skel.bytes`,
-                        atlasUrl: `./spine_sd_assets/${baseFolderKey}.atlas.txt`,
+                        skelUrl: `./spine_sd_assets/${sdFolderKey}.skel.bytes`,
+                        atlasUrl: `./spine_sd_assets/${sdFolderKey}.atlas.txt`,
                         animation: "Idle", 
-                        skin: "Normal",    
+                        skin: skinName,    
                         backgroundColor: "#00000000",
                         alpha: true,
                         premultipliedAlpha: true, 
@@ -1698,9 +1243,7 @@
                         viewport: isMobile ? mobileViewport : desktopViewport,
         
                         success: function (player) {
-                            // 🌟 呼叫修復函數
                             fixSpineMultiplyHole(player);
-
                             window.skillSpinePlayers.push(player);
         
                             const canvas = container.querySelector('canvas');
@@ -1713,7 +1256,7 @@
         
                             const skins = player.skeleton.data.skins;
                             if (skins && skins.length > 0) {
-                                const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name === 'default') || skins[0];
+                                const targetSkin = skins.find(s => s.name === skinName) || skins.find(s => s.name === 'default') || skins[0];
                                 if (targetSkin) {
                                     player.skeleton.setSkinByName(targetSkin.name);
                                     player.skeleton.setSlotsToSetupPose(); 
@@ -1773,7 +1316,7 @@
                             }
                         },
                         error: function(player, reason) {
-                            console.error(`[SD小人] ❌ 載入失敗 (${baseFolderKey}):`, reason);
+                            console.error(`[SD小人] ❌ 載入失敗 (${sdFolderKey}):`, reason);
                         }
                     });
                 });
@@ -1815,13 +1358,11 @@
                     showLoading: false, 
                     backgroundColor: "#00000000",
                     alpha: true,
-                    premultipliedAlpha: true, // 🌟 這裡也修正為 true 確保沒有灰線
+                    premultipliedAlpha: true,
                     viewport: { x: -250, y: 0, width: 500, height: 500 },
         
                     success: (player) => {
-                        // 🌟 呼叫修復函數
                         fixSpineMultiplyHole(player);
-                                                                                                                                                                                                            
                         const canvas = container.querySelector('canvas');
                         if (canvas) {
                             canvas.style.width = '100%';
@@ -1850,12 +1391,8 @@
             let lastWindowWidth = window.innerWidth;
             
             window.addEventListener('resize', () => {
-                if (window.innerWidth === lastWindowWidth) {
-                    return; 
-                }
-        
+                if (window.innerWidth === lastWindowWidth) { return; }
                 lastWindowWidth = window.innerWidth;
-        
                 clearTimeout(resizeTimeout);
                 resizeTimeout = setTimeout(() => {
                     if (window.currentActiveCharName) {
@@ -1869,7 +1406,6 @@
                 document.documentElement.lang = lang === "ja" ? "ja" : "zh-TW";
                 
                 if (!currentCharData) return;
-                
                 applyI18n();
         
                 document.querySelectorAll('.costume-btn').forEach((btn, idx) => {
@@ -1881,64 +1417,55 @@
                 
                 const displayName = getI18n(currentCharData.name);
         
-            // 1. 名字恢復為純文字
-            document.getElementById('charName').innerHTML = displayName;
-            document.title = `${displayName} - ${getI18n('page_title_char_detail') || '詳細資料'}`;
+                document.getElementById('charName').innerHTML = displayName;
+                document.title = `${displayName} - ${getI18n('page_title_char_detail') || '詳細資料'}`;
 
-            // 1.5 實裝日期多語系更新
-            let releaseLabel = getI18n('release_date_label');
-            if (releaseLabel === 'release_date_label') releaseLabel = '實裝日期';
-            if (document.getElementById('releaseDateLabelText')) document.getElementById('releaseDateLabelText').innerText = releaseLabel;
-                
-            // 2. 準備所有屬性標籤的多國語言文字
-            let idLabel = getI18n('stats_identity'); if(idLabel === 'stats_identity') idLabel = '身份';
-            let pLabel = getI18n('stats_personality'); if(pLabel === 'stats_personality') pLabel = '性格';
-            let rLabel = getI18n('stats_race'); if(rLabel === 'stats_race') rLabel = '種族';
-            let posLabel = getI18n('stats_position'); if(posLabel === 'stats_position') posLabel = '站位';
-            let jLabel = getI18n('stats_job'); if(jLabel === 'stats_job') jLabel = '職業';
-            let aLabel = getI18n('stats_attribute'); if(aLabel === 'stats_attribute') aLabel = '攻擊類型';
-                
-            // 3. 判斷是否為艾爾丁身份
-            const isEldain = (typeof ELDAIN_LIST !== 'undefined') ? ELDAIN_LIST.includes(currentCharData.name) : false;
-            const identityValue = isEldain ? '艾爾丁' : '普通坨坨';
-                
-            // 4. 取得攻擊類型
-            let currentAttribute = "未知";
-            if (typeof characterSkills !== 'undefined') {
-            const skillData = characterSkills.find(s => s.name.trim() === currentCharData.name);
-            if (skillData && skillData.attribute) {
-            currentAttribute = skillData.attribute;
-            }
-            }
-            // 處理雙重性格判斷
-            let displayPersonality = currentCharData.personality;
-            let pList = [];
-            if (Array.isArray(displayPersonality)) {
-                pList = displayPersonality;
-            } else if (typeof displayPersonality === 'string') {
-                pList = displayPersonality.split(/[、,\/\s+]+/).map(s => s.trim()).filter(Boolean);
-            } else if (displayPersonality) {
-                pList = [String(displayPersonality)];
-            }
-
-            const pDictLang = { '冷靜': 'Composed', '憂鬱': 'Depressed', '天真': 'Innocence', '狂亂': 'Madness', '活潑': 'Vivacious', '共鳴': 'Resonance' };
-
-            if (pList.length > 1) {
-                displayPersonality = pList.join('+'); // 將多重性格組合成顯示字串，例如 "憂鬱+天真"
-                const enList = pList.map(p => pDictLang[p] || 'Multifaceted');
-                // 動態註冊專屬的雙面性格組合 class
-                if (typeof window.ICON_MAP === 'undefined') window.ICON_MAP = {};
-                // 這樣無論 JSON 裡順序怎麼對調，都會固定產出字母順序排在前面的 (例如 D 在 I 前面，永遠輸出 Depressed_Innocence)
-                window.ICON_MAP[`personality_${displayPersonality}`] = `sprite-base sprite-common sprite-Personality_Multifaceted_${enList.sort().join('_')}`;
-            } else if (pList.length === 1) {
-                displayPersonality = pList[0];
-                if (displayPersonality === "雙重性格" || displayPersonality === "雙重") {
-                    displayPersonality = "雙面";
+                let releaseLabel = getI18n('release_date_label');
+                if (releaseLabel === 'release_date_label') releaseLabel = '實裝日期';
+                if (document.getElementById('releaseDateLabelText')) document.getElementById('releaseDateLabelText').innerText = releaseLabel;
+                    
+                let idLabel = getI18n('stats_identity'); if(idLabel === 'stats_identity') idLabel = '身份';
+                let pLabel = getI18n('stats_personality'); if(pLabel === 'stats_personality') pLabel = '性格';
+                let rLabel = getI18n('stats_race'); if(rLabel === 'stats_race') rLabel = '種族';
+                let posLabel = getI18n('stats_position'); if(posLabel === 'stats_position') posLabel = '站位';
+                let jLabel = getI18n('stats_job'); if(jLabel === 'stats_job') jLabel = '職業';
+                let aLabel = getI18n('stats_attribute'); if(aLabel === 'stats_attribute') aLabel = '攻擊類型';
+                    
+                const isEldain = (typeof ELDAIN_LIST !== 'undefined') ? ELDAIN_LIST.includes(currentCharData.name) : false;
+                const identityValue = isEldain ? '艾爾丁' : '普通坨坨';
+                    
+                let currentAttribute = "未知";
+                if (typeof window.characterSkills !== 'undefined' && window.characterSkills.length > 0) {
+                    const skillData = window.characterSkills.find(s => s.name.trim() === currentCharData.name);
+                    if (skillData && skillData.attribute) currentAttribute = skillData.attribute;
                 }
-            }
-            // 5. 渲染全部屬性圖示
+
+                let displayPersonality = currentCharData.personality;
+                let pList = [];
+                if (Array.isArray(displayPersonality)) {
+                    pList = displayPersonality;
+                } else if (typeof displayPersonality === 'string') {
+                    pList = displayPersonality.split(/[、,\/\s+]+/).map(s => s.trim()).filter(Boolean);
+                } else if (displayPersonality) {
+                    pList = [String(displayPersonality)];
+                }
+
+                const pDictLang = { '冷靜': 'Composed', '憂鬱': 'Depressed', '天真': 'Innocence', '狂亂': 'Madness', '活潑': 'Vivacious', '共鳴': 'Resonance' };
+
+                if (pList.length > 1) {
+                    displayPersonality = pList.join('+'); 
+                    const enList = pList.map(p => pDictLang[p] || 'Multifaceted');
+                    if (typeof window.ICON_MAP === 'undefined') window.ICON_MAP = {};
+                    window.ICON_MAP[`personality_${displayPersonality}`.toLowerCase()] = `sprite-base sprite-common sprite-Personality_Multifaceted_${enList.sort().join('_')}`;
+                } else if (pList.length === 1) {
+                    displayPersonality = pList[0];
+                    if (displayPersonality === "雙重性格" || displayPersonality === "雙重") {
+                        displayPersonality = "雙面";
+                    }
+                }
+
                 updateTag('charIdentity', idLabel, identityValue, 'identity');
-                updateTag('charPersonality', pLabel, displayPersonality, 'personality'); // <-- 改成 displayPersonality
+                updateTag('charPersonality', pLabel, displayPersonality, 'personality'); 
                 updateTag('charRace', rLabel, currentCharData.race, 'race');
                 updateTag('charPosition', posLabel, currentCharData.position, 'position');
                 updateTag('charJob', jLabel, currentCharData.job, 'job');
@@ -1947,21 +1474,27 @@
                 renderStars(currentTargetName);
                 renderExtraInfo(currentTargetName);
                 
-                // 🌟 新增：透過種族與 pathVersion 查詢對應的蠟筆設定
                 let crayonConfig = { layer1: [], layer2: [], layer3: [] };
+                // 🌟 修復 6：Crayon 更新加入語系對應轉換
+                const raceToZh = {
+                    'Dragon': '龍族', 'Elemental': '魔靈', 'Elf': '精靈', 'Phantom': '幽靈', 
+                    'Sprite': '妖精', 'Unknown': '???', 'Werebeast': '獸人', 'Witch': '魔女',
+                    'elf': '精靈', 'witch': '魔女', 'dragon': '龍族', 'sprite': '妖精'
+                };
+                const raceKey = raceToZh[currentCharData.race] || currentCharData.race;
+                
                 if (typeof CRAYON_PATH_CONFIG !== 'undefined' && 
-                    CRAYON_PATH_CONFIG[currentCharData.race] && 
-                    CRAYON_PATH_CONFIG[currentCharData.race][currentCharData.pathVersion]) {
-                    crayonConfig = CRAYON_PATH_CONFIG[currentCharData.race][currentCharData.pathVersion];
+                    CRAYON_PATH_CONFIG[raceKey] && 
+                    CRAYON_PATH_CONFIG[raceKey][currentCharData.pathVersion]) {
+                    crayonConfig = CRAYON_PATH_CONFIG[raceKey][currentCharData.pathVersion];
                 }
 
                 const renderCrayonList = (elementId, array) => {
                     const ul = document.getElementById(elementId);
-                    const safeArray = array || []; // 終極防呆，確保絕對不會出現 undefined 錯誤
+                    const safeArray = array || []; 
                     ul.innerHTML = safeArray.map(attr => `<li>${t(attr)}</li>`).join('');
                 };
                 
-                // 改從 crayonConfig 讀取資料
                 renderCrayonList('layer1List', crayonConfig.layer1);
                 renderCrayonList('layer2List', crayonConfig.layer2);
                 renderCrayonList('layer3List', crayonConfig.layer3);
@@ -1973,15 +1506,10 @@
             };
             
             window.addEventListener('storage', (e) => {
-                // 1. 監聽語言切換
                 if (e.key === 'user_lang' && e.newValue && e.newValue !== window.currentLang) {
-                    console.log(`📡 偵測到主頁將語言切換至 ${e.newValue}，自動同步更新！`);
                     changeLanguage(e.newValue);
                 }
-                
-                // 🌟 2. 新增：監聽主題切換 (跟隨 index.html 即時切換亮/暗色)
                 if (e.key === 'theme') {
-                    console.log(`🌗 偵測到主頁將主題切換至 ${e.newValue}，自動同步更新！`);
                     if (e.newValue === 'dark') {
                         document.documentElement.classList.add('dark');
                     } else {
@@ -1990,7 +1518,6 @@
                 }
             });
             
-            // 🌟 1. 將 window.onload 加上 async 關鍵字以支援非同步讀取
             window.onload = async function() {
                 applyI18n(); 
             
@@ -1999,11 +1526,9 @@
             
                 if (!currentTargetName) { renderError(getI18n('error_no_char') || "❌ 未指定坨坨，請從主頁點擊坨坨按鈕進入。"); return; }
 
-                // 顯示載入中提示
                 document.getElementById('charName').innerHTML = "資料連線中...";
 
                 try {
-                    // 🌟 2. 從 Firestore 讀取角色基本資料 (使用點記號查詢巢狀欄位)
                     const charSnapshot = await db.collection("global_characters")
                       .where("names.zh-TW", "==", currentTargetName)
                       .get();
@@ -2014,19 +1539,15 @@
                     }
                     currentCharData = charSnapshot.docs[0].data();
 
-                    // =========================================================
-                    // 🌟 核心修復：資料結構正規化
-                    // 將 admin.html 存入的多語系物件 (Object) 解開成純字串
-                    // 讓後續的 SPINE_MAP, COSTUME_MAP, CRAYON 都能正常運作
-                    // =========================================================
                     const extractLocalString = (val) => {
                         if (!val) return "";
-                        if (typeof val === 'string') return val;
-                        if (Array.isArray(val)) return val; // 性格可能是陣列
+                        if (typeof val === 'string') return val.trim();
+                        if (Array.isArray(val)) return val.map(v => typeof v === 'string' ? v.trim() : v); 
                         if (typeof val === 'object') {
-                            return val['zh-TW'] || val['zh'] || val['ja'] || val['en'] || Object.values(val)[0] || "";
+                            const str = val['zh-TW'] || val['zh'] || val['ja'] || val['en'] || Object.values(val)[0] || "";
+                            return typeof str === 'string' ? str.trim() : str;
                         }
-                        return String(val);
+                        return String(val).trim();
                     };
 
                     currentCharData.name = extractLocalString(currentCharData.names) || currentCharData.name || currentTargetName;
@@ -2037,19 +1558,12 @@
                     if (currentCharData.pathVersion) {
                         currentCharData.pathVersion = extractLocalString(currentCharData.pathVersion);
                     }
-                    // =========================================================
 
-                    // 🌟 3. 改從本地 `characterSkills`（來自 data_skills.js）取得技能資料，不查詢不存在的 `character_skills` 集合
                     if (typeof characterSkills !== 'undefined') {
-                        // 已經由 data_skills.js 載入
                     } else {
                         window.characterSkills = [];
                     }
 
-                    // ==========================================
-                    // 以下保留原有的渲染邏輯
-                    // ==========================================
-                    
                     const avatarBox = document.getElementById('charAvatar');
                     if (typeof LOBBY_BACKGROUNDS !== 'undefined' && LOBBY_BACKGROUNDS.length > 0) {
                         const randomIndex = Math.floor(Math.random() * LOBBY_BACKGROUNDS.length);
@@ -2060,11 +1574,8 @@
                     }
                 
                     const displayName = getI18n(currentCharData.name);
-                
-                    // 1. 名字恢復為純文字
                     document.getElementById('charName').innerHTML = displayName;
 
-                    // 實裝日期處理
                     let releaseLabel = getI18n('release_date_label');
                     if (releaseLabel === 'release_date_label') releaseLabel = '實裝日期';
                     if (document.getElementById('releaseDateLabelText')) document.getElementById('releaseDateLabelText').innerText = releaseLabel;
@@ -2081,7 +1592,6 @@
                     const releaseValueEl = document.getElementById('releaseDateValue');
                     if (releaseValueEl) releaseValueEl.innerText = releaseDateText;
                 
-                    // 2. 準備所有屬性標籤的多國語言文字
                     let idLabel = getI18n('stats_identity'); if(idLabel === 'stats_identity') idLabel = '身份';
                     let pLabel = getI18n('stats_personality'); if(pLabel === 'stats_personality') pLabel = '性格';
                     let rLabel = getI18n('stats_race'); if(rLabel === 'stats_race') rLabel = '種族';
@@ -2089,11 +1599,9 @@
                     let jLabel = getI18n('stats_job'); if(jLabel === 'stats_job') jLabel = '職業';
                     let aLabel = getI18n('stats_attribute'); if(aLabel === 'stats_attribute') aLabel = '攻擊類型';
                 
-                    // 3. 判斷是否為艾爾丁身份
                     const isEldain = (typeof ELDAIN_LIST !== 'undefined') ? ELDAIN_LIST.includes(currentCharData.name) : false;
                     const identityValue = isEldain ? '艾爾丁' : '普通坨坨';
                 
-                    // 4. 取得攻擊類型
                     let currentAttribute = "未知";
                     if (typeof window.characterSkills !== 'undefined' && window.characterSkills.length > 0) {
                         const skillData = window.characterSkills.find(s => s.name.trim() === currentCharData.name);
@@ -2102,7 +1610,6 @@
                         }
                     }
 
-                    // 處理雙重性格判斷
                     let displayPersonality = currentCharData.personality;
                     let pList = [];
                     if (Array.isArray(displayPersonality)) {
@@ -2119,7 +1626,7 @@
                         displayPersonality = pList.join('+'); 
                         const enList = pList.map(p => pDictLoad[p] || 'Multifaceted');
                         if (typeof window.ICON_MAP === 'undefined') window.ICON_MAP = {};
-                        window.ICON_MAP[`personality_${displayPersonality}`] = `sprite-base sprite-common sprite-Personality_Multifaceted_${enList.sort().join('_')}`;
+                        window.ICON_MAP[`personality_${displayPersonality}`.toLowerCase()] = `sprite-base sprite-common sprite-Personality_Multifaceted_${enList.sort().join('_')}`;
                     } else if (pList.length === 1) {
                         displayPersonality = pList[0];
                         if (displayPersonality === "雙重性格" || displayPersonality === "雙重") {
@@ -2127,7 +1634,6 @@
                         }
                     }
 
-                    // 5. 渲染全部屬性圖示
                     updateTag('charIdentity', idLabel, identityValue, 'identity');
                     updateTag('charPersonality', pLabel, displayPersonality, 'personality'); 
                     updateTag('charRace', rLabel, currentCharData.race, 'race');
@@ -2241,25 +1747,31 @@
                         
                         renderCostumeButtons(currentCharData.name);
                 
-                        const initialCostumeKey = (typeof COSTUME_MAP !== 'undefined' && COSTUME_MAP[currentCharData.name] && COSTUME_MAP[currentCharData.name].length > 0) 
-                                                ? COSTUME_MAP[currentCharData.name][0] 
-                                                : spineKey;
+                        const initialCostumeKey = (typeof COSTUME_MAP !== 'undefined' && (COSTUME_MAP[spineKey] || COSTUME_MAP[currentCharData.name]) && (COSTUME_MAP[spineKey] || COSTUME_MAP[currentCharData.name]).length > 0) 
+                                        ? (COSTUME_MAP[spineKey] || COSTUME_MAP[currentCharData.name])[0] 
+                                        : spineKey;
                         setTimeout(() => { loadSpineAnimation(initialCostumeKey); }, 100);
                     } else {
                         const imgUrl = typeof IMAGE_MAP !== 'undefined' ? IMAGE_MAP[`avatar_${currentCharData.name}`] : '';
                         if (imgUrl) {
                             avatarBox.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover">`;
                         } else {
-                            // ✅ 修正寫法：直接使用 currentTargetName，或者安全的取值
-avatarBox.innerText = currentTargetName.charAt(0);
+                            avatarBox.innerText = currentTargetName.charAt(0);
                         }
                     }
                 
                     let crayonConfig = { layer1: [], layer2: [], layer3: [] };
+                    const raceToZh = {
+                        'Dragon': '龍族', 'Elemental': '魔靈', 'Elf': '精靈', 'Phantom': '幽靈', 
+                        'Sprite': '妖精', 'Unknown': '???', 'Werebeast': '獸人', 'Witch': '魔女',
+                        'elf': '精靈', 'witch': '魔女', 'dragon': '龍族', 'sprite': '妖精'
+                    };
+                    const raceKey = raceToZh[currentCharData.race] || currentCharData.race;
+                    
                     if (typeof CRAYON_PATH_CONFIG !== 'undefined' && 
-                        CRAYON_PATH_CONFIG[currentCharData.race] && 
-                        CRAYON_PATH_CONFIG[currentCharData.race][currentCharData.pathVersion]) {
-                        crayonConfig = CRAYON_PATH_CONFIG[currentCharData.race][currentCharData.pathVersion];
+                        CRAYON_PATH_CONFIG[raceKey] && 
+                        CRAYON_PATH_CONFIG[raceKey][currentCharData.pathVersion]) {
+                        crayonConfig = CRAYON_PATH_CONFIG[raceKey][currentCharData.pathVersion];
                     }
 
                     const renderCrayonList = (elementId, array) => {
@@ -2323,7 +1835,6 @@ avatarBox.innerText = currentTargetName.charAt(0);
                               month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'
                           }) : justNowMsg;
 
-                          // 🌟 解析並渲染回覆內容
                           let repliesHtml = "";
                           if (data.replies && data.replies.length > 0) {
                               repliesHtml = `<div class="mt-3 space-y-2 pl-3 sm:pl-4 border-l-[3px] border-amber-200 dark:border-slate-600">`;
@@ -2332,7 +1843,7 @@ avatarBox.innerText = currentTargetName.charAt(0);
                                       month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'
                                   }) : justNowMsg;
                                   
-                                  const safeAuthorName = escapeHTML(r.author); // 取得對方名字
+                                  const safeAuthorName = escapeHTML(r.author); 
                                   
                                   repliesHtml += `
                                       <div class="bg-amber-50/60 dark:bg-slate-800/60 p-2 sm:p-3 rounded-lg text-xs sm:text-sm group relative">
@@ -2406,161 +1917,22 @@ avatarBox.innerText = currentTargetName.charAt(0);
                     content: contentInput,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 }).then(() => {
-                    document.getElementById('commentContent').value = '';
-                    document.getElementById('charCount').innerText = '0 / 500'; 
+                    document.getElementById('commentContent').value = "";
+                    document.getElementById('charCount').innerText = "0 / 500";
                     btn.disabled = false;
                     btn.innerHTML = textSubmitBtn;
                     btn.classList.replace('bg-gray-400', 'bg-amber-500');
                     btn.classList.replace('dark:bg-gray-500', 'dark:bg-amber-600');
-                }).catch(err => {
-                    console.error("留言失敗:", err);
-                    let alertFail = getI18n('alert_comment_failed'); if(alertFail==='alert_comment_failed') alertFail="留言失敗，請稍後再試！";
-                    alert(alertFail);
+                }).catch((error) => {
+                    console.error("Error adding document: ", error);
+                    alert("發送失敗，請稍後再試。");
                     btn.disabled = false;
                     btn.innerHTML = textSubmitBtn;
                     btn.classList.replace('bg-gray-400', 'bg-amber-500');
                     btn.classList.replace('dark:bg-gray-500', 'dark:bg-amber-600');
                 });
             }
-            // 🌟 回覆功能相關函式 (支援 @ 標註)
-            function openReplyModal(docId, targetAuthor = null) {
-                document.getElementById('replyTargetDocId').value = docId;
-                
-                const contentBox = document.getElementById('replyModalContent');
-                
-                // 如果有傳入 targetAuthor (代表是點擊別人的回覆)，就自動加上 @ 標註
-                if (targetAuthor) {
-                    contentBox.value = `@${targetAuthor} `;
-                } else {
-                    contentBox.value = '';
-                }
-                
-                document.getElementById('replyModal').style.display = 'flex';
-                
-                // 設定游標位置到文字最後
-                setTimeout(() => {
-                    contentBox.focus();
-                    contentBox.setSelectionRange(contentBox.value.length, contentBox.value.length);
-                }, 10);
-            }
-
-            // 關閉回覆視窗
-            function closeReplyModal() {
-                document.getElementById('replyModal').classList.add('hidden');
-                document.getElementById('replyModalAuthor').value = '';
-                document.getElementById('replyModalContent').value = '';
-                document.getElementById('replyModalCount').innerText = '0 / 200';
-            }
-
-            // 送出回覆
-            function submitReply() {
-                const docId = document.getElementById('replyTargetDocId').value;
-                let authorInput = document.getElementById('replyModalAuthor').value.trim();
-                const contentInput = document.getElementById('replyModalContent').value.trim();
-                const btn = document.getElementById('submitReplyBtn');
-
-                if (!authorInput) { authorInput = getAnonymousId(); }
-                if (!contentInput) { alert(getI18n('alert_empty_reply') || "請輸入回覆內容！"); return; }
-                if (contentInput.length > 200) { alert(getI18n('alert_reply_too_long') || "回覆內容太長囉，請縮減至 200 字以內！"); return; }
-
-                btn.disabled = true;
-                btn.innerHTML = getI18n('btn_submitting') || '傳送中... ⏳';
-
-                const replyData = {
-                    author: authorInput,
-                    content: contentInput,
-                    // 為了簡化，回覆時間存為 ISO 字串
-                    timestamp: new Date().toISOString() 
-                };
-
-                db.collection("character_comments").doc(docId).update({
-                    replies: firebase.firestore.FieldValue.arrayUnion(replyData)
-                }).then(() => {
-                    closeReplyModal();
-                    btn.disabled = false;
-                    btn.innerHTML = getI18n('btn_submit_reply') || '送出回覆 🚀';
-                }).catch(err => {
-                    console.error("回覆失敗:", err);
-                    alert(getI18n('alert_comment_failed') || "回覆失敗，請稍後再試！");
-                    btn.disabled = false;
-                    btn.innerHTML = getI18n('btn_submit_reply') || '送出回覆 🚀';
-                });
-            }
-            
-            // YouTube Modal 相關邏輯 (攔截 CG 圖點擊)
-            document.addEventListener('click', function(e) {
-                const trigger = e.target.closest('.youtube-modal-trigger');
-                if (trigger) {
-                    e.preventDefault();
-                    const videoId = trigger.getAttribute('data-video-id');
-                    if (videoId) {
-                        openYoutubeModal(videoId);
-                    }
-                }
-            });
-
-            function openYoutubeModal(videoId) {
-                const overlay = document.createElement('div');
-                overlay.className = 'yt-modal-overlay';
-                overlay.id = 'ytModalOverlay';
-                
-                overlay.innerHTML = `
-                    <div class="yt-modal-content">
-                        <div class="yt-modal-close" onclick="closeYoutubeModal()">&times;</div>
-                        <div class="video-container">
-                            <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                    </div>
-                `;
-                
-                document.body.appendChild(overlay);
-                
-                // 點擊背景關閉
-                overlay.addEventListener('click', function(e) {
-                    if (e.target === overlay) {
-                        closeYoutubeModal();
-                    }
-                });
-            }
-
-            window.closeYoutubeModal = function() {
-                const overlay = document.getElementById('ytModalOverlay');
-                if (overlay) {
-                    overlay.remove();
-                }
-            };
         </script>
-
-        <!-- 回覆 Modal 的 HTML 結構 -->
-        <div id="replyModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
-            <div class="bg-amber-50 dark:bg-slate-800 w-full max-w-md rounded-2xl shadow-2xl border-2 border-amber-300 dark:border-slate-600 p-5 transform transition-all">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-black text-amber-900 dark:text-amber-400">💬 回覆留言</h3>
-                    <button onclick="closeReplyModal()" class="text-gray-400 hover:text-red-500 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
-                </div>
-                
-                <input type="hidden" id="replyTargetDocId">
-                
-                <input type="text" id="replyModalAuthor" placeholder="您的暱稱 (留白將以匿名顯示)" class="w-full mb-3 px-3 py-2 text-sm font-bold text-amber-900 dark:text-white placeholder-amber-700/50 dark:placeholder-gray-400 rounded-lg border border-amber-300 dark:border-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-slate-700 shadow-inner">
-                
-                <textarea id="replyModalContent" 
-                    rows="4"
-                    maxlength="200"
-                    oninput="document.getElementById('replyModalCount').innerText = this.value.length + ' / 200'"
-                    placeholder="寫下您的回覆..."
-                    class="w-full mb-1 px-3 py-2 text-sm font-medium text-gray-800 dark:text-gray-200 rounded-lg border border-amber-300 dark:border-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-slate-700 resize-none shadow-inner"></textarea>
-                
-                <div class="flex justify-end mb-4">
-                    <span id="replyModalCount" class="text-[10px] font-bold text-amber-700/60 dark:text-gray-400">0 / 200</span>
-                </div>
-                
-                <div class="flex justify-end gap-2">
-                    <button onclick="closeReplyModal()" class="px-4 py-2 bg-gray-200 dark:bg-slate-600 text-gray-700 dark:text-gray-200 text-sm font-bold rounded-xl hover:bg-gray-300 dark:hover:bg-slate-500 transition">取消</button>
-                    <button onclick="submitReply()" id="submitReplyBtn" class="px-4 py-2 bg-amber-500 text-white text-sm font-bold rounded-xl shadow-md hover:bg-amber-600 transition transform active:scale-95">送出回覆 🚀</button>
-                </div>
-            </div>
-        </div>
     </body>
 </html>
+```<FollowUp label="如果修改後部分圖片還是顯示破圖或 404？" query="如果替換程式碼後，部分小人動畫或技能圖示還是破圖/404，該怎麼排查資料夾路徑？"/>
