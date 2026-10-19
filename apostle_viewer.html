@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>嘟嘟臉坨坨動態展示器</title>
+        <script src="data_config.js"></script>
         <script src="data_core.js"></script>
         <link rel="stylesheet" href="sprites.css">
         <script src="https://cdn.tailwindcss.com"></script>
@@ -296,12 +297,43 @@
                 document.title = getI18n('ui_title');
             }
             
-            // 確保在 window.onload 時呼叫它
-            // 請找到你原本的 window.onload = function() { initCharacterGrid(); }; 改成：
-            window.onload = function() { 
-                applyTranslations(); // 先翻譯靜態介面
-                initCharacterGrid();       // 再渲染角色清單
-            };
+            window.onload = async function() { 
+    // 先翻譯靜態介面，讓網頁框架先顯示出來
+    applyTranslations(); 
+
+    const gridContainer = document.getElementById('charGridContainer');
+    // 先展開容器並顯示讀取動畫
+    gridContainer.classList.remove('collapsed');
+    gridContainer.style.maxHeight = '2000px';
+    gridContainer.style.opacity = '1';
+    gridContainer.innerHTML = '<div class="p-5 text-center text-amber-700 font-bold tracking-widest animate-pulse" data-i18n="ui_loading_data">📡 正在從伺服器連接坨坨資料...</div>';
+
+    try {
+        // 🌟 呼叫 data_core.js 內的 Firestore 讀取函數
+        // 假設該函數叫做 fetchApostleDataFromFirestore()，並會把結果存入全域變數 INITIAL_DATA
+        if (typeof fetchApostleDataFromFirestore === 'function') {
+            await fetchApostleDataFromFirestore(); 
+        }
+
+        gridContainer.innerHTML = ''; // 清空讀取動畫
+        
+        // 確保 INITIAL_DATA 已經有資料後再渲染清單
+        if (typeof INITIAL_DATA !== 'undefined' && INITIAL_DATA.length > 0) {
+            initCharacterGrid(); 
+        } else {
+            gridContainer.innerHTML = '<div class="p-5 text-center text-gray-500 font-bold">目前沒有資料。</div>';
+        }
+
+        // 渲染完成後，將容器預設折疊起來
+        gridContainer.classList.add('collapsed');
+        gridContainer.style.maxHeight = '0px';
+        gridContainer.style.opacity = '0';
+
+    } catch (error) {
+        console.error("Firestore 載入失敗:", error);
+        gridContainer.innerHTML = '<div class="p-5 text-center text-red-500 font-bold">資料庫連線失敗，無法載入角色列表。</div>';
+    }
+};
             function getI18n(key) {
                 if (!key) return key;
                 const safeLang = (typeof LANG_DICT !== 'undefined' && LANG_DICT[window.currentLang]) ? window.currentLang : 'zh-TW';
