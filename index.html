@@ -24,11 +24,11 @@
         <script src="data_skills.js"></script>
         <script src="https://cdn.tailwindcss.com"></script>
         <script>
-            tailwind.config = {
-                darkMode: 'class',
-            }
+             tailwind.config = {
+                 darkMode: 'class',
+             }
         </script>
-        <!-- 2. 載入 Firebase SDK 並執行資料合併 -->
+        <!-- 2. 載入 Firebase SDK 並執行輕量化資料提取 -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
@@ -44,71 +44,66 @@
             measurementId: "G-M1EJPE12TE" 
         };
 
-
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
     async function loadAndMergeGameData() {
         try {
-            // 這裡可以讓網頁顯示「載入中 (Loading...)」的動畫
             console.log("正在從雲端讀取角色資料...");
 
             const querySnapshot = await getDocs(collection(db, "global_characters"));
 
-            // 確保接收資料的陣列與物件已經存在
+            // 確保接收資料的陣列已經存在 (移除不需要的 ASIDE_DATA, INTRO_MAP 等龐大文本變數)
             window.INITIAL_DATA = [];
             window.characterSkills = [];
-            window.ASIDE_DATA = window.ASIDE_DATA || {};
-            window.INTRO_MAP = window.INTRO_MAP || { "zh-TW": {}, "ja": {}, "en": {} };
-            window.THOUGHT_MAP = window.THOUGHT_MAP || { "zh-TW": {}, "ja": {}, "en": {} };
-            window.LETTER_MAP = window.LETTER_MAP || { "zh-TW": {}, "ja": {}, "en": {} };
-            window.PRESENT_MAP = window.PRESENT_MAP || {};
 
-            // 遍歷雲端上的每一隻角色
+            // 遍歷雲端上的每一隻角色，進行極致瘦身提取 (On-Demand 概念)
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
                 const spineName = data.spineName;
-                const zhName = data.names["zh-TW"];
+                const zhName = data.names && data.names["zh-TW"] ? data.names["zh-TW"] : "未知";
 
-                // A. 合併角色名稱到 LANG_DICT
+                // A. 僅保留必要的語系名稱以供切換
                 if (data.names) {
                     if (data.names["zh-TW"]) LANG_DICT["zh-TW"][zhName] = data.names["zh-TW"];
                     if (data.names["ja"]) LANG_DICT["ja"][zhName] = data.names["ja"];
                     if (data.names["en"]) LANG_DICT["en"][zhName] = data.names["en"];
                 }
 
-                // B. 還原核心屬性
-                if (data.core && Object.keys(data.core).length > 0) {
-                    INITIAL_DATA.push(data.core);
-                }
-
-                // C. 還原技能資料
-                if (data.skills && Object.keys(data.skills).length > 0) {
-                    characterSkills.push(data.skills);
-                }
-
-                // D. 還原願像資料
-                if (data.aside) {
-                    ASIDE_DATA[spineName] = data.aside;
-                }
-
-                // E. 還原多語系文本 (簡介、感想、書信、珍藏品)
-                if (data.texts) {
-                    const langs = ["zh-TW", "ja", "en"];
-                    langs.forEach(lang => {
-                        if (data.texts.intro && data.texts.intro[lang]) INTRO_MAP[lang][spineName] = data.texts.intro[lang];
-                        if (data.texts.thought && data.texts.thought[lang]) THOUGHT_MAP[lang][spineName] = data.texts.thought[lang];
-                        if (data.texts.letter && data.texts.letter[lang]) LETTER_MAP[lang][spineName] = data.texts.letter[lang];
-                        
-                        if (data.texts.present && data.texts.present[lang]) {
-                            if (!PRESENT_MAP[spineName]) PRESENT_MAP[spineName] = { name: {} };
-                            PRESENT_MAP[spineName].name[lang] = data.texts.present[lang];
-                        }
+                // B. 極致瘦身：僅提取 index.html 繪製卡片與篩選所需的核心屬性
+                if (data.core) {
+                    INITIAL_DATA.push({
+                        job: data.core.job,
+                        name: data.core.name,
+                        pathVersion: data.core.pathVersion,
+                        personality: data.core.personality,
+                        position: data.core.position,
+                        race: data.core.race,
+                        releaseDate: data.core.releaseDate,
+                        // 金蠟筆網格屬性仍需保留以計算加成
+                        layer1: data.core.layer1 || [],
+                        layer2: data.core.layer2 || [],
+                        layer3: data.core.layer3 || []
                     });
+                }
+
+                // C. 僅擷取技能的屬性(物理/魔法判定)與普攻(跑酷動畫所需)
+                if (data.skills) {
+                    characterSkills.push({
+                        name: zhName,
+                        attribute: data.skills.attribute,
+                        normalAttack: data.skills.normalAttack || {},
+                        normalSkill: data.skills.normalSkill || {}
+                    });
+                }
+
+                // 動態註冊 Spine Name (若有需要)
+                if (typeof SPINE_MAP !== 'undefined' && spineName) {
+                    SPINE_MAP[zhName] = spineName;
                 }
             });
 
-            console.log("✅ 資料讀取與合併完成！共載入", INITIAL_DATA.length, "名角色。");
+            console.log("✅ 輕量化資料提取完成！共載入", INITIAL_DATA.length, "名角色。");
 
             // 3. 資料全部就緒，呼叫你的網頁初始化函數開始畫 UI
             renderMainUI(); 
