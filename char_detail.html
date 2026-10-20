@@ -1240,7 +1240,7 @@
                 asideContainer.innerHTML = html;
             }
             
-            function loadSkillSpines(charName) {
+                        function loadSkillSpines(charName) {
                 if (window.skillSpinePlayers && window.skillSpinePlayers.length > 0) {
                     window.skillSpinePlayers.forEach(p => p.dispose());
                     window.skillSpinePlayers = [];
@@ -1292,6 +1292,7 @@
                         skelUrl: `./spine_sd_assets/${baseFolderKey}.skel.bytes`,
                         atlasUrl: `./spine_sd_assets/${baseFolderKey}.atlas.txt`,
                         animation: "Idle", 
+                        skin: "Normal",     // 🌟 修正1：確保初始掛載為 Normal Skin
                         backgroundColor: "#00000000",
                         alpha: true,
                         premultipliedAlpha: true, 
@@ -1309,6 +1310,16 @@
                                 canvas.style.height = '100%';
                                 canvas.style.position = 'relative';
                                 canvas.style.zIndex = '999'; 
+                            }
+        
+                            // 🌟 修正2：使用舊版的 Skin 檢查與 setSlotsToSetupPose() 解決破圖與配件消失的問題
+                            const skins = player.skeleton.data.skins;
+                            if (skins && skins.length > 0) {
+                                const targetSkin = skins.find(s => s.name === 'Normal') || skins.find(s => s.name === 'default') || skins[0];
+                                if (targetSkin) {
+                                    player.skeleton.setSkinByName(targetSkin.name);
+                                    player.skeleton.setSlotsToSetupPose(); 
+                                }
                             }
         
                             const allAnims = player.skeleton.data.animations.map(a => a.name);
@@ -1369,6 +1380,7 @@
                     });
                 });
             }
+
             let topMiniSpinePlayer = null;
             
             function loadTopMiniSpine(charName) {
