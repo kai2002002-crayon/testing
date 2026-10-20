@@ -963,7 +963,10 @@
                 
                 asideSection.classList.remove('hidden');
                 
-                if (!data && !isUpcoming) {
+                // 🌟 新增嚴格檢查：判斷資料庫的 aside 是否真的有內容（例如是否有 stars 資料且至少包含一星）
+                const hasValidAside = data && typeof data === 'object' && data.stars && Object.keys(data.stars).length > 0;
+
+                if (!hasValidAside && !isUpcoming) {
                     const unknownMsg = {
                         zh: "看起來思念還不夠深",
                         ja: "まだ思念が深くなさそう",
@@ -996,7 +999,7 @@
                     return;
                 }
                 
-                if (!data) {
+                if (!hasValidAside) {
                     asideSection.classList.add('hidden');
                     return;
                 }
