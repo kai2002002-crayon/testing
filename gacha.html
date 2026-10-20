@@ -231,11 +231,80 @@
             // ==========================
             let currentPool = { type: 'normal', rateUpChars: [], personality: null, name: '普通招募' };
             const personalities = ["天真", "冷靜", "狂亂", "活潑", "憂鬱"];
-            const validChars = INITIAL_DATA.filter(c => !c.releaseDate || new Date(c.releaseDate).getTime() < Date.now()).map(c => {
-                let starNum = 1; if (typeof GRADE_MAP !== 'undefined' && GRADE_MAP[c.name]) { const parsedStar = parseInt(GRADE_MAP[c.name]); if (!isNaN(parsedStar)) starNum = parsedStar; }
-                let isEldainChar = false; if (typeof ELDAIN_LIST !== 'undefined') { isEldainChar = ELDAIN_LIST.includes(c.name) || (c.name === '羽伊' && ELDAIN_LIST.includes('羽依')); }
-                return { ...c, star: starNum, isEldain: isEldainChar };
-            });
+            
+            // 🌟 1. 將 validChars 改為 let，等待從 Firestore 寫入
+            let validChars = []; 
+
+            // 🌟 2. 新增從 Firestore 讀取資料的函數
+            // 🌟 2. 新增從 Firestore 讀取資料的函數 (已修復對應結構)
+            async function loadCharactersFromFirestore() {
+                try {
+                    // 顯示載入中的提示
+                    const poolBtnContainer = document.getElementById('poolButtons');
+                    if(poolBtnContainer) {
+                        poolBtnContainer.innerHTML = '<span class="text-sm font-bold text-gray-500 dark:text-gray-400">正在從資料庫連接角色資料...</span>';
+                    }
+
+                    // ⚠️ 修正點 1: 集合名稱改為 global_characters
+                    const snapshot = await db.collection("global_characters").get(); 
+                    let rawData = [];
+                    
+                    snapshot.forEach(doc => {
+                        const data = doc.id ? doc.data() : doc;
+                        
+                        // ⚠️ 修正點 2 & 3: 完美還原 apostle_viewer 的防呆正規化邏輯
+                        let rawPersonality = data.personality || data.core?.personality || data.personalityName || "天真";
+                        if (Array.isArray(rawPersonality)) {
+                            rawPersonality = rawPersonality.join(","); // ["冷靜", "狂亂"] -> "冷靜,狂亂"
+                        } else {
+                            rawPersonality = String(rawPersonality);
+                        }
+
+                        // 將正規化後的資料存入陣列
+                        rawData.push({
+                            ...data, // 保留其餘原始資料
+                            id: doc.id,
+                            name: data.core?.name || data.names?.["zh-TW"] || data.name || "未知角色",
+                            job: data.core?.job || data.job || "未知職業",
+                            position: data.core?.position || data.position || "未知站位",
+                            race: data.core?.race || data.race || "未知種族",
+                            personality: rawPersonality
+                        });
+                    });
+
+                    // 🌟 執行抽卡系統專用的資料標籤 (星級與艾爾登屬性)
+                    validChars = rawData.filter(c => !c.releaseDate || new Date(c.releaseDate).getTime() < Date.now()).map(c => {
+                        let starNum = 1; 
+                        if (typeof GRADE_MAP !== 'undefined' && GRADE_MAP[c.name]) { 
+                            const parsedStar = parseInt(GRADE_MAP[c.name]); 
+                            if (!isNaN(parsedStar)) starNum = parsedStar; 
+                        }
+                        let isEldainChar = false; 
+                        if (typeof ELDAIN_LIST !== 'undefined') { 
+                            isEldainChar = ELDAIN_LIST.includes(c.name) || (c.name === '羽伊' && ELDAIN_LIST.includes('羽依')); 
+                        }
+                        return { ...c, star: starNum, isEldain: isEldainChar };
+                    });
+
+                    // 🌟 4. 資料準備完畢，執行原本的 UI 生成邏輯
+                    initUI(); 
+
+                } catch (error) {
+                    console.error("載入 Firestore 角色資料失敗:", error);
+                    
+                    // 備用方案：退回使用 data_core.js 的 INITIAL_DATA
+                    if (typeof INITIAL_DATA !== 'undefined' && INITIAL_DATA.length > 0) {
+                        validChars = INITIAL_DATA.filter(c => !c.releaseDate || new Date(c.releaseDate).getTime() < Date.now()).map(c => {
+                            let starNum = 1; if (typeof GRADE_MAP !== 'undefined' && GRADE_MAP[c.name]) { const parsedStar = parseInt(GRADE_MAP[c.name]); if (!isNaN(parsedStar)) starNum = parsedStar; }
+                            let isEldainChar = false; if (typeof ELDAIN_LIST !== 'undefined') { isEldainChar = ELDAIN_LIST.includes(c.name) || (c.name === '羽伊' && ELDAIN_LIST.includes('羽依')); }
+                            return { ...c, star: starNum, isEldain: isEldainChar };
+                        });
+                        initUI();
+                    } else {
+                        document.getElementById('poolButtons').innerHTML = '<span class="text-sm font-bold text-red-500">角色資料載入失敗，請檢查網路連線。</span>';
+                    }
+                }
+            }
             
             function initUI() {
                 const poolBtnContainer = document.getElementById('poolButtons'); const pBtnContainer = document.getElementById('personalityButtons');
@@ -961,10 +1030,6 @@
             canvas.addEventListener('pointerup', stopDrag); canvas.addEventListener('pointercancel', stopDrag);
             }
             
-            window.addEventListener('load', () => { 
-                initLangUI(); 
-                initUI(); 
-            });
             window.onscroll = function() {
                 const btn = document.getElementById("backToTop");
                 if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) btn.style.display = "flex"; else btn.style.display = "none";
