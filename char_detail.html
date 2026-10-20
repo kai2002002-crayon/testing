@@ -1462,7 +1462,10 @@
                     if (displayName.includes("costume_prefix")) displayName = `服裝${idx}`;
                     btn.innerText = displayName;
                 });
-                
+                let targetName = currentCharData.name;
+                if (currentCharData.names && typeof currentCharData.names === 'object') {
+                    targetName = currentCharData.names[lang] || currentCharData.names['zh-TW'] || currentCharData.names['en'] || targetName;
+                }
                 const displayName = getI18n(currentCharData.name);
         
                 document.getElementById('charName').innerHTML = displayName;
@@ -1590,7 +1593,8 @@
                         if (typeof val === 'string') return val.trim();
                         if (Array.isArray(val)) return val.map(v => typeof v === 'string' ? v.trim() : v); 
                         if (typeof val === 'object') {
-                            const str = val['zh-TW'] || val['zh'] || val['ja'] || val['en'] || Object.values(val)[0] || "";
+                            // 修改這裡：優先取得當前選擇的語系 (window.currentLang)
+                            const str = val[window.currentLang] || val['zh-TW'] || val['zh'] || val['ja'] || val['en'] || Object.values(val)[0] || "";
                             return typeof str === 'string' ? str.trim() : str;
                         }
                         return String(val).trim();
