@@ -1100,7 +1100,23 @@
                 asideSection.classList.remove('hidden');
                 
                 // 🌟 新增嚴格檢查：判斷資料庫的 aside 是否真的有內容（例如是否有 stars 資料且至少包含一星）
-                const hasValidAside = data && typeof data === 'object' && data.stars && Object.keys(data.stars).length > 0;
+                // 🌟 更嚴格的檢查：必須確保 stars 存在且裡面至少有一星包含非空的名稱或敘述
+                let hasValidAside = false;
+                if (data && typeof data === 'object' && data.stars) {
+                    hasValidAside = Object.values(data.stars).some(star => {
+                        const nameObj = star.name;
+                        const descObj = star.desc;
+                        const hasName = nameObj && (
+                            (typeof nameObj === 'string' && nameObj.trim() !== '') ||
+                            (typeof nameObj === 'object' && Object.values(nameObj).some(v => typeof v === 'string' && v.trim() !== ''))
+                        );
+                        const hasDesc = descObj && (
+                            (typeof descObj === 'string' && descObj.trim() !== '') ||
+                            (typeof descObj === 'object' && Object.values(descObj).some(v => typeof v === 'string' && v.trim() !== ''))
+                        );
+                        return hasName || hasDesc;
+                    });
+                }
 
                 if (!hasValidAside && !isUpcoming) {
                     const unknownMsg = {
