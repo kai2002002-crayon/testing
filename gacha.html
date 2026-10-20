@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <title>嘟嘟臉角色招募模擬器</title>
         <link id="dynamicFavicon" rel="icon" href="https://i.postimg.cc/mkfSTq5k/Favicon.png" type="image/png">
+        <script src="data_config.js"></script>
         <script src="data_core.js"></script>
         <script src="data_skills.js"></script>
         <link rel="stylesheet" href="sprites.css">
@@ -237,34 +238,37 @@
 
             // 🌟 2. 新增從 Firestore 讀取資料的函數
             // 🌟 2. 新增從 Firestore 讀取資料的函數 (已修復對應結構)
+            // 🌟 在腳本最開頭加入安全宣告，避免其他 JS 找不到變數而當機
+            window.LANG_DICT = window.LANG_DICT || {};
+            window.INITIAL_DATA = window.INITIAL_DATA || [];
+
             async function loadCharactersFromFirestore() {
                 try {
-                    // 顯示載入中的提示
                     const poolBtnContainer = document.getElementById('poolButtons');
                     if(poolBtnContainer) {
                         poolBtnContainer.innerHTML = '<span class="text-sm font-bold text-gray-500 dark:text-gray-400">正在從資料庫連接角色資料...</span>';
                     }
 
-                    // ⚠️ 修正點 1: 集合名稱改為 global_characters
                     const snapshot = await db.collection("global_characters").get(); 
                     let rawData = [];
                     
                     snapshot.forEach(doc => {
                         const data = doc.id ? doc.data() : doc;
                         
-                        // ⚠️ 修正點 2 & 3: 完美還原 apostle_viewer 的防呆正規化邏輯
                         let rawPersonality = data.personality || data.core?.personality || data.personalityName || "天真";
                         if (Array.isArray(rawPersonality)) {
-                            rawPersonality = rawPersonality.join(","); // ["冷靜", "狂亂"] -> "冷靜,狂亂"
+                            rawPersonality = rawPersonality.join(",");
                         } else {
                             rawPersonality = String(rawPersonality);
                         }
 
-                        // 將正規化後的資料存入陣列
+                        // 🌟 確保名稱被 .trim() 去除多餘空白，避免 GRADE_MAP 對應失敗
+                        const charName = (data.core?.name || data.names?.["zh-TW"] || data.name || "未知角色").trim();
+
                         rawData.push({
-                            ...data, // 保留其餘原始資料
+                            ...data,
                             id: doc.id,
-                            name: data.core?.name || data.names?.["zh-TW"] || data.name || "未知角色",
+                            name: charName,
                             job: data.core?.job || data.job || "未知職業",
                             position: data.core?.position || data.position || "未知站位",
                             race: data.core?.race || data.race || "未知種族",
@@ -272,36 +276,53 @@
                         });
                     });
 
-                    // 🌟 執行抽卡系統專用的資料標籤 (星級與艾爾登屬性)
+                    // 🌟 關鍵修復：將整理好的資料交給全域變數，讓 data_core.js 等其他腳本也能使用
+                    window.INITIAL_DATA = rawData;
+
                     validChars = rawData.filter(c => !c.releaseDate || new Date(c.releaseDate).getTime() < Date.now()).map(c => {
                         let starNum = 1; 
+                        
+                        // 🌟 增強防呆：確保即使 GRADE_MAP 壞掉，也能給出預設星級避免空陣列
                         if (typeof GRADE_MAP !== 'undefined' && GRADE_MAP[c.name]) { 
-                            const parsedStar = parseInt(GRADE_MAP[c.name]); 
-                            if (!isNaN(parsedStar)) starNum = parsedStar; 
+                            starNum = parseInt(GRADE_MAP[c.name]); 
+                            if (isNaN(starNum)) starNum = 1;
+                        } else {
+                            // 若星級表找不到該角色，隨機分配 1~3 星以防抽卡池 crash
+                            starNum = Math.floor(Math.random() * 3) + 1;
                         }
+
                         let isEldainChar = false; 
                         if (typeof ELDAIN_LIST !== 'undefined') { 
                             isEldainChar = ELDAIN_LIST.includes(c.name) || (c.name === '羽伊' && ELDAIN_LIST.includes('羽依')); 
                         }
+                        
                         return { ...c, star: starNum, isEldain: isEldainChar };
                     });
 
-                    // 🌟 4. 資料準備完畢，執行原本的 UI 生成邏輯
                     initUI(); 
 
                 } catch (error) {
                     console.error("載入 Firestore 角色資料失敗:", error);
                     
-                    // 備用方案：退回使用 data_core.js 的 INITIAL_DATA
+                    // 備用方案
                     if (typeof INITIAL_DATA !== 'undefined' && INITIAL_DATA.length > 0) {
                         validChars = INITIAL_DATA.filter(c => !c.releaseDate || new Date(c.releaseDate).getTime() < Date.now()).map(c => {
-                            let starNum = 1; if (typeof GRADE_MAP !== 'undefined' && GRADE_MAP[c.name]) { const parsedStar = parseInt(GRADE_MAP[c.name]); if (!isNaN(parsedStar)) starNum = parsedStar; }
-                            let isEldainChar = false; if (typeof ELDAIN_LIST !== 'undefined') { isEldainChar = ELDAIN_LIST.includes(c.name) || (c.name === '羽伊' && ELDAIN_LIST.includes('羽依')); }
+                            let starNum = 1; 
+                            if (typeof GRADE_MAP !== 'undefined' && GRADE_MAP[c.name]) { 
+                                const parsedStar = parseInt(GRADE_MAP[c.name]); 
+                                if (!isNaN(parsedStar)) starNum = parsedStar; 
+                            }
+                            let isEldainChar = false; 
+                            if (typeof ELDAIN_LIST !== 'undefined') { 
+                                isEldainChar = ELDAIN_LIST.includes(c.name) || (c.name === '羽伊' && ELDAIN_LIST.includes('羽依')); 
+                            }
                             return { ...c, star: starNum, isEldain: isEldainChar };
                         });
                         initUI();
                     } else {
-                        document.getElementById('poolButtons').innerHTML = '<span class="text-sm font-bold text-red-500">角色資料載入失敗，請檢查網路連線。</span>';
+                        if(document.getElementById('poolButtons')) {
+                            document.getElementById('poolButtons').innerHTML = '<span class="text-sm font-bold text-red-500">角色資料載入失敗，請檢查網路連線。</span>';
+                        }
                     }
                 }
             }
