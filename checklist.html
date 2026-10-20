@@ -234,6 +234,7 @@
         const db = firebase.firestore();
         const provider = new firebase.auth.GoogleAuthProvider();
         let currentUser = null;
+        let cachedCharactersData = []; // 快取從 Firestore 抓取的角色陣列
 
         auth.onAuthStateChanged(user => {
             currentUser = user;
@@ -250,7 +251,6 @@
         function loginGoogle() { auth.signInWithPopup(provider).catch(e => alert(e.message)); }
         function logoutGoogle() { if(confirm(t('alert_logout'))) auth.signOut(); }
 
-        // 🌟 新增對應的 Hex 色碼表，用來動態產生雙面的變數
         const HEX_COLORS = {
             "天真": "#4ade80", "冷靜": "#60a5fa", "狂亂": "#f87171", "活潑": "#facc15", "憂鬱": "#c084fc"
         };
@@ -259,7 +259,7 @@
             "天真": "border-green-400 text-green-400", "冷靜": "border-blue-400 text-blue-400", 
             "狂亂": "border-red-400 text-red-400", "活潑": "border-yellow-400 text-yellow-400", 
             "憂鬱": "border-purple-400 text-purple-400", "共鳴": "border-rainbow text-rainbow",
-            "雙面": "dual-border-anim" // 🌟 加入雙面動畫 Class
+            "雙面": "dual-border-anim"
         };
         const SPRITE_CLASS_MAP = {
             race_龍族: "sprite-Bg_Dragon", race_精靈: "sprite-Bg_Elf", race_妖精: "sprite-Bg_Sprite",
@@ -269,11 +269,53 @@
         const CHAR_SPRITE_MAP = {
             "共鳴": "sprite-char-resonance", "冷靜": "sprite-char-composed", "憂鬱": "sprite-char-depressed",
             "天真": "sprite-char-innocence", "狂亂": "sprite-char-madness", "活潑": "sprite-char-vivacious",
-            "雙面": "sprite-char-multifaceted" // 🌟 雙面預設使用共鳴的彩虹底圖
+            "雙面": "sprite-char-multifaceted"
         };
         let checkedCharacters = JSON.parse(localStorage.getItem('trickcal_checklist')) || {};
 
-        window.onload = function() {
+        // 🌟 提取多語系字串
+        const extractLocalString = (val) => {
+            if (!val) return "";
+            if (typeof val === 'string') return val.trim();
+            if (Array.isArray(val)) return val.map(v => typeof v === 'string' ? v.trim() : v); 
+            if (typeof val === 'object') {
+                const currentLang = window.currentLang || localStorage.getItem('user_lang') || 'zh-TW';
+                const str = val[currentLang] || val['zh-TW'] || val['zh'] || val['ja'] || val['en'] || Object.values(val)[0] || "";
+                return typeof str === 'string' ? str.trim() : str;
+            }
+            return String(val).trim();
+        };
+
+        // 🌟 從 Firestore 讀取全域角色資料 (global_characters)
+        async function fetchGlobalCharacters() {
+            try {
+                const snapshot = await db.collection('global_characters').get();
+                let chars = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    chars.push({
+                        id: doc.id,
+                        name: data.core?.name || doc.id,
+                        personality: data.core?.personality || "",
+                        race: data.core?.race || "unknown",
+                        names: data.names || {},
+                        spine: data.spineName || doc.id
+                    });
+                });
+                if (chars.length > 0) {
+                    cachedCharactersData = chars;
+                } else if (typeof INITIAL_DATA !== 'undefined') {
+                    cachedCharactersData = INITIAL_DATA;
+                }
+            } catch (e) {
+                console.error("Firestore 角色讀取失敗，使用預設資料:", e);
+                if (typeof INITIAL_DATA !== 'undefined') {
+                    cachedCharactersData = INITIAL_DATA;
+                }
+            }
+        }
+
+        window.onload = async function() {
             applyUITranslation();
             
             const savedTitle = localStorage.getItem('trickcal_custom_title');
@@ -281,9 +323,9 @@
             document.getElementById('customTitle').value = savedTitle !== null ? savedTitle : t('default_title');
             document.getElementById('customDesc').value = savedDesc !== null ? savedDesc : t('default_desc');
             
+            await fetchGlobalCharacters();
             renderChecklist();
         };
-
 
         window.addEventListener('storage', (e) => {
             if (e.key === 'user_lang' && e.newValue && e.newValue !== window.currentLang) {
@@ -310,20 +352,26 @@
             const container = document.getElementById('checklistContainer');
             const sortType = document.getElementById('sortSelect').value;
             container.innerHTML = '';
-            if (typeof INITIAL_DATA === 'undefined' || !INITIAL_DATA) return;
             
-            let data = [...INITIAL_DATA];
+            let data = cachedCharactersData.length > 0 ? [...cachedCharactersData] : (typeof INITIAL_DATA !== 'undefined' ? [...INITIAL_DATA] : []);
+            if (data.length === 0) return;
+            
             data.sort((a, b) => {
-                let nameA = (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[a.name]) ? SPINE_MAP[a.name] : a.name;
-                let nameB = (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[b.name]) ? SPINE_MAP[b.name] : b.name;
-                if (sortType === 'name') return nameA.localeCompare(nameB);
+                let nameA = extractLocalString(a.names) || a.name || a.id;
+                let nameB = extractLocalString(b.names) || b.name || b.id;
+                
+                if (sortType === 'name') return nameA.localeCompare(nameB, window.currentLang || 'zh-TW');
                 if (sortType === 'personality') {
-                    if (a.personality === b.personality) return nameA.localeCompare(nameB);
-                    return a.personality.localeCompare(b.personality);
+                    let pA = Array.isArray(a.personality) ? a.personality.join(',') : (a.personality || '');
+                    let pB = Array.isArray(b.personality) ? b.personality.join(',') : (b.personality || '');
+                    if (pA === pB) return nameA.localeCompare(nameB, window.currentLang || 'zh-TW');
+                    return pA.localeCompare(pB, window.currentLang || 'zh-TW');
                 } 
                 if (sortType === 'race') {
-                    if (a.race === b.race) return nameA.localeCompare(nameB);
-                    return a.race.localeCompare(b.race);
+                    let rA = a.race || '';
+                    let rB = b.race || '';
+                    if (rA === rB) return nameA.localeCompare(nameB, window.currentLang || 'zh-TW');
+                    return rA.localeCompare(rB, window.currentLang || 'zh-TW');
                 }
             });
 
@@ -332,40 +380,50 @@
 
         function createChecklistIcon(charData) {
             const el = document.createElement('div');
-            const charName = charData.name;
-            const spineName = (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName]) ? SPINE_MAP[charName] : charName;
-            let displayName = charName;
-            const currentLang = window.currentLang || localStorage.getItem('user_lang') || 'zh-TW';
+            const charId = charData.id || charData.name;
+            const charName = charData.name || charId;
+            const spineName = charData.spine || (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName);
             
-            if (typeof LANG_DICT !== 'undefined' && LANG_DICT[currentLang] && LANG_DICT[currentLang][charName]) {
-                displayName = LANG_DICT[currentLang][charName];
-            } else if (typeof getI18n === 'function') {
-                displayName = getI18n(charName) || charName;
-            }
+            let displayName = extractLocalString(charData.names) || extractLocalString(charData.name) || charName;
 
-            let raceKey = charData.race === "???" ? "unknown" : charData.race;
+            let raceKey = charData.race === "???" ? "unknown" : (charData.race || "unknown");
             const raceSprite = SPRITE_CLASS_MAP[`race_${raceKey}`] || "sprite-Bg_Unknown";
             
-            // 🌟 處理雙面性格的判斷與變數寫入
+            // 🌟 處理雙面性格與單性格的外框
             let displayPersonality = charData.personality;
             let borderClass = "border-gray-400";
             let customStyle = "";
             
-            if (charData.personality && charData.personality.includes(",")) {
+            let pList = [];
+            if (Array.isArray(charData.personality)) {
+                pList = charData.personality;
+            } else if (typeof charData.personality === 'string') {
+                pList = charData.personality.split(/[、,\/\s+]+/).map(s => s.trim()).filter(Boolean);
+            }
+
+            if (pList.length > 1) {
                 displayPersonality = "雙面";
                 borderClass = "dual-border-anim";
-                const parts = charData.personality.split(',').map(s => s.trim());
-                const c1 = HEX_COLORS[parts[0]] || "#c084fc"; // 預設紫
-                const c2 = HEX_COLORS[parts[1]] || "#4ade80"; // 預設綠
+                const c1 = HEX_COLORS[pList[0]] || "#c084fc";
+                const c2 = HEX_COLORS[pList[1]] || "#4ade80";
                 customStyle = `style="--c1: ${c1}; --c2: ${c2};"`;
-            } else {
-                borderClass = personalityColors[charData.personality] ? personalityColors[charData.personality].split(' ')[0] : "border-gray-400";
+            } else if (pList.length === 1) {
+                const singleP = pList[0];
+                if (singleP === "雙重性格" || singleP === "雙面") {
+                    displayPersonality = "雙面";
+                    borderClass = "dual-border-anim";
+                } else {
+                    displayPersonality = singleP;
+                    borderClass = personalityColors[singleP] ? personalityColors[singleP].split(' ')[0] : "border-gray-400";
+                }
             }
             
             const charSpriteBase = CHAR_SPRITE_MAP[displayPersonality] || "sprite-char-innocence";
             const charSpriteClass = `sprite-${spineName}`;
 
-            const currentState = checkedCharacters[charName] || 0;
+            // 支援使用 charName 或 charId / spineName 讀取狀態以保證向下相容
+            const stateKey = charName;
+            const currentState = checkedCharacters[stateKey] !== undefined ? checkedCharacters[stateKey] : (checkedCharacters[charId] || 0);
             const checkHiddenClass = currentState === 0 ? "hidden" : "";
             
             let symbolText = "";
@@ -378,7 +436,7 @@
 
             el.className = "flex flex-col items-center gap-1 group relative transition-all duration-300 no-context-menu cursor-pointer hover:scale-105";
             el.innerHTML = `
-                <div class="char-icon-box w-16 h-16 sm:w-20 sm:h-20 rounded-2xl border-4 ${borderClass} overflow-hidden shadow-md relative flex items-center justify-center transition-all duration-300" id="box_${charName}" ${customStyle}>
+                <div class="char-icon-box w-16 h-16 sm:w-20 sm:h-20 rounded-2xl border-4 ${borderClass} overflow-hidden shadow-md relative flex items-center justify-center transition-all duration-300" id="box_${stateKey}" ${customStyle}>
                     <div class="absolute inset-0 flex items-center justify-center opacity-80">
                         <div class="sprite-base sprite-common ${raceSprite} shrink-0 scale-[0.8] sm:scale-[1.0]"></div>
                     </div>
@@ -386,15 +444,15 @@
                     <div class="absolute inset-0 flex items-center justify-center z-10">
                         <div class="sprite-base ${charSpriteBase} ${charSpriteClass} shrink-0 scale-[0.7] sm:scale-[0.85]"></div>
                     </div>
-                    <div id="check_${charName}" class="absolute inset-0 bg-black/40 z-20 flex items-center justify-center ${checkHiddenClass} transition-opacity duration-200">
-                        <span id="symbol_${charName}" class="${symbolClass}">${symbolText}</span>
+                    <div id="check_${stateKey}" class="absolute inset-0 bg-black/40 z-20 flex items-center justify-center ${checkHiddenClass} transition-opacity duration-200">
+                        <span id="symbol_${stateKey}" class="${symbolClass}">${symbolText}</span>
                     </div>
                 </div>
                 <span class="text-[10px] sm:text-xs font-bold text-gray-600 dark:text-gray-300 text-center w-full truncate leading-tight">${displayName}</span>
             `;
 
-            el.addEventListener('contextmenu', e => { e.preventDefault(); toggleCheck(charName); });
-            el.addEventListener('click', () => toggleCheck(charName));
+            el.addEventListener('contextmenu', e => { e.preventDefault(); toggleCheck(stateKey); });
+            el.addEventListener('click', () => toggleCheck(stateKey));
             return el;
         }
 
