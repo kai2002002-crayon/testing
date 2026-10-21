@@ -4,10 +4,6 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>嘟嘟臉坨坨動態展示器</title>
-        <!-- Firebase SDK -->
-        <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
         <script src="data_config.js"></script>
         <script src="data_core.js"></script>
         <link rel="stylesheet" href="sprites.css">
@@ -261,85 +257,6 @@
         </section>
         </div>
         <script>
-            let db = null;
-let auth = null;
-let currentUser = null;
-let savedStates = {}; // 用於存放從 Firestore 抓取的玩家角色狀態
-
-// 替換或確保這段 Firebase 設定存在
-const firebaseConfig = { 
-    apiKey: "AIzaSyDhv8D2pY_0M56UJrDTQw0RGPHA-BkXU8Y", 
-    authDomain: "crayon-note.firebaseapp.com", 
-    projectId: "crayon-note", 
-    storageBucket: "crayon-note.firebasestorage.app", 
-    messagingSenderId: "210614088940", 
-    appId: "1:210614088940:web:7addbdc7c466eeb05421c9", 
-    measurementId: "G-M1EJPE12TE" 
-};
-
-// 初始化 Firebase
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig); 
-} else {
-    firebase.app(); 
-}
-
-db = firebase.firestore(); 
-auth = firebase.auth();
-
-            // 定義一個全域變數來存放圖鑑資料（取代原本寫死的 INITIAL_DATA）
-window.INITIAL_DATA = [];
-
-// 🌟 1. 修正抓取資料函式，確保賦值給全域變數
-async function fetchGlobalCharacters() {
-    try {
-        const snapshot = await db.collection("global_characters").get();
-        
-        if (snapshot.empty) {
-            console.log("Firestore 中找不到任何角色資料。");
-            return;
-        }
-
-        const characters = [];
-
-        snapshot.forEach((doc) => {
-    const data = doc.id ? doc.data() : doc; // 兼容不同格式
-    
-    // 🌟 新增防呆：強制將 personality 轉為字串，避免 Firestore 存成陣列導致無法比對
-    let rawPersonality = data.personality || data.core?.personality || data.personalityName || "天真";
-    if (Array.isArray(rawPersonality)) {
-        rawPersonality = rawPersonality.join(","); // ["冷靜", "狂亂"] -> "冷靜,狂亂"
-    } else {
-        rawPersonality = String(rawPersonality);
-    }
-    
-    const character = {
-        id: doc.id,
-        name: data.core?.name || data.names?.["zh-TW"] || data.name || "未知角色",
-        job: data.core?.job || data.job || "未知職業",
-        position: data.core?.position || data.position || "未知站位",
-        race: data.core?.race || data.race || "未知種族",
-        personality: rawPersonality, // 👈 改用轉好的字串
-        attribute: data.skills?.attribute || data.attribute || "未知屬性",
-        spineName: data.spineName || data.core?.spineName || data.name || "",
-        presentUrl: data.texts?.present?.url || data.presentUrl || ""
-    };
-
-    characters.push(character);
-});
-
-        console.log("成功解析角色資料:", characters);
-
-        // 🌟 【關鍵修正】：把抓下來的資料正式交給全域變數，讓畫面函式能讀到
-        window.INITIAL_DATA = characters;
-
-    } catch (error) {
-        console.error("讀取 Firestore 資料時發生錯誤:", error);
-    }
-}
-
-
-            
             // 🌟 全域通用：專門修復 WebGL 透明畫布下的「色彩增值(Multiply)」破洞 Bug
            
             function fixSpineMultiplyHole(player) {
@@ -380,38 +297,12 @@ async function fetchGlobalCharacters() {
                 document.title = getI18n('ui_title');
             }
             
-            window.onload = async function() {  
-    applyTranslations(); // 先翻譯靜態介面
-
-    const container = document.getElementById('charGridContainer');
-    container.classList.remove('collapsed');
-    container.style.maxHeight = '2000px';
-    container.style.opacity = '1';
-    container.innerHTML = '<div class="p-5 text-center text-amber-700 font-bold tracking-widest animate-pulse">📡 正在從伺服器連接坨坨資料...</div>';
-
-    try {
-        // 假設你的 Firestore 獲取函數叫做 fetchGlobalCharacters，並會把資料存入 window.INITIAL_DATA
-        if (typeof fetchGlobalCharacters === 'function') {
-            await fetchGlobalCharacters();
-        }
-
-        // 確保 INITIAL_DATA 已經有值
-        if (typeof window.INITIAL_DATA === 'undefined' || !window.INITIAL_DATA || window.INITIAL_DATA.length === 0) {
-            // 如果你原本的資料存在其他變數，請在這裡手動接上，例如 window.INITIAL_DATA = 你的 Firestore 資料;
-            console.warn("⚠️ 警告：INITIAL_DATA 仍然是空的！");
-        }
-
-        container.innerHTML = ''; // 清空讀取動畫
-        initCharacterGrid();       // 執行原本的渲染清單邏輯
-        
-        console.log("✅ 角色選單渲染完成！總角色數：", window.INITIAL_DATA ? window.INITIAL_DATA.length : 0);
-
-    } catch (error) {
-        console.error("❌ Firestore 載入失敗:", error);
-        container.innerHTML = '<div class="p-5 text-center text-red-500 font-bold">資料庫連線失敗，無法載入角色列表。</div>';
-    }
-};
-            
+            // 確保在 window.onload 時呼叫它
+            // 請找到你原本的 window.onload = function() { initCharacterGrid(); }; 改成：
+            window.onload = function() { 
+                applyTranslations(); // 先翻譯靜態介面
+                initCharacterGrid();       // 再渲染角色清單
+            };
             function getI18n(key) {
                 if (!key) return key;
                 const safeLang = (typeof LANG_DICT !== 'undefined' && LANG_DICT[window.currentLang]) ? window.currentLang : 'zh-TW';
@@ -562,220 +453,219 @@ async function fetchGlobalCharacters() {
                 }
             }
             
-            // 🌟 修正點 1
-function preloadIcons() {
-    if (typeof window.INITIAL_DATA === 'undefined') return;
-    window.INITIAL_DATA.forEach(c => {
-        const iconUrl = typeof IMAGE_MAP !== 'undefined' ? IMAGE_MAP[`avatar_${c.name}`] : '';
-        if (iconUrl) { const img = new Image(); img.src = iconUrl; }
-    });
-}
-
-/// 🌟 修正點 2 (已修復括號與重複宣告問題)
-function initCharacterGrid() {
-    preloadIcons();
-    const container = document.getElementById('charGridContainer');
-    if (typeof window.INITIAL_DATA === 'undefined' || !window.INITIAL_DATA) return;
-    const personalities = ["共鳴", "雙面", "天真", "冷靜", "狂亂", "活潑", "憂鬱"];
-    
-    personalities.forEach((p, index) => {
-        // 確保這裡使用的是 window.INITIAL_DATA
-        const chars = window.INITIAL_DATA.filter(c => {
-            if (p === "雙面") return c.personality.includes(","); 
-            else return c.personality === p;
-        });
-        
-        if (chars.length === 0) return;
-        
-        const borderTextClass = personalityColors[p] || "border-gray-400 text-gray-400";
-        const borderClass = borderTextClass.split(' ')[0];
-        const textClass = borderTextClass.split(' ')[1] || borderClass;
-        
-        const groupId = `group_${index}`;
-        const btnId = `btn_${index}`;
-
-        const row = document.createElement('div');
-        row.className = "flex flex-col bg-amber-50/50 dark:bg-slate-800/50 p-2 rounded-xl border border-dashed border-amber-200 dark:border-slate-700";
-        
-        const header = document.createElement('div');
-        header.className = "flex justify-between items-center cursor-pointer hover:bg-amber-100/50 dark:hover:bg-slate-700/50 p-1.5 rounded-lg transition";
-        header.onclick = () => togglePersonalityGroup(groupId, btnId);
-        const pSprite = SPRITE_CLASS_MAP[`p_${p}`] || "";
-        
-        header.innerHTML = `
-            <div class="flex items-center gap-1">
-                <div class="sprite-base sprite-common ${pSprite} shrink-0 scale-[0.35] origin-left -ml-2"></div>
-                <h3 class="text-xs sm:text-sm font-black border-l-4 ${borderClass} pl-1 -ml-3"><span class="${textClass}">${getI18n(p)}</span></h3>
-            </div>
-            <span id="${btnId}" class="text-xs text-gray-400">🔼</span>
-        `;
-        
-        const iconContainer = document.createElement('div');
-        iconContainer.id = groupId; iconContainer.className = "flex flex-wrap gap-1.5 pt-2 pl-1 collapsible-content";
-        iconContainer.style.maxHeight = "1000px"; iconContainer.style.opacity = "1";
-
-        chars.forEach(c => {
-            const spineName = (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[c.name]) 
-                ? SPINE_MAP[c.name] 
-                : (c.spineName || c.name);
-
-            const iconUrl = typeof IMAGE_MAP !== 'undefined' ? IMAGE_MAP[`avatar_${c.name}`] : '';
-            const displayName = getI18n(c.name);
-            
-            const btn = document.createElement('button');
-            btn.className = "group flex flex-col items-center gap-0.5 transition-transform hover:scale-110 active:scale-95 w-12 sm:w-14";
-            btn.onclick = () => selectCharacter(c, spineName, iconUrl);
-
-            const rawPersonality = (c.personality || "天真").toString().trim();
-            const displayPersonality = rawPersonality.includes(",") ? "雙面" : rawPersonality;
-            
-            const charSpriteBase = CHAR_SPRITE_MAP[displayPersonality] || "sprite-char-innocence";
-            const charSpriteClass = `sprite-${spineName}`;
-            
-            let raceKey = (c.race || "unknown").toString().trim(); 
-            if (raceKey === "???") raceKey = "unknown";
-            const raceSprite = SPRITE_CLASS_MAP[`race_${raceKey}`] || "sprite-Bg_Unknown";
-
-            let charStyle = "";
-            let charBorderClass = borderClass;
-            
-            if (displayPersonality === "雙面") {
-                const parts = rawPersonality.split(',').map(s => s.trim());
-                const c1 = HEX_COLORS[parts[0]] || "#c084fc";
-                const c2 = HEX_COLORS[parts[1]] || "#4ade80";
-                charStyle = `style="--c1: ${c1}; --c2:${c2};"`;
-                charBorderClass = "dual-border-anim";
+            function preloadIcons() {
+                if (typeof INITIAL_DATA === 'undefined') return;
+                INITIAL_DATA.forEach(c => {
+                    const iconUrl = typeof IMAGE_MAP !== 'undefined' ? IMAGE_MAP[`avatar_${c.name}`] : '';
+                    if (iconUrl) { const img = new Image(); img.src = iconUrl; }
+                });
             }
+            
+            function initCharacterGrid() {
+                preloadIcons();
+                const container = document.getElementById('charGridContainer');
+                if (typeof INITIAL_DATA === 'undefined' || !INITIAL_DATA) return;
+                const personalities = ["共鳴", "雙面", "天真", "冷靜", "狂亂", "活潑", "憂鬱"];
+                
+                personalities.forEach((p, index) => {
+                    const chars = INITIAL_DATA.filter(c => {
+                        if (p === "雙面") return c.personality.includes(","); 
+                        else return c.personality === p;
+                    });
+                    if (chars.length === 0) return;
+                    
+                    const borderTextClass = personalityColors[p] || "border-gray-400 text-gray-400";
+                    const borderClass = borderTextClass.split(' ')[0];
+                    const textClass = borderTextClass.split(' ')[1] || borderClass;
+                    
+                    const groupId = `group_${index}`;
+                    const btnId = `btn_${index}`;
+            
+                    const row = document.createElement('div');
+                    row.className = "flex flex-col bg-amber-50/50 dark:bg-slate-800/50 p-2 rounded-xl border border-dashed border-amber-200 dark:border-slate-700";
+                    
+                    const header = document.createElement('div');
+                    header.className = "flex justify-between items-center cursor-pointer hover:bg-amber-100/50 dark:hover:bg-slate-700/50 p-1.5 rounded-lg transition";
+                    header.onclick = () => togglePersonalityGroup(groupId, btnId);
+                    const pSprite = SPRITE_CLASS_MAP[`p_${p}`] || "";
+                    
+                   // 🌟 群組標題的文字顏色邏輯
+                    // (上方已經宣告過 borderClass 和 textClass，這裡直接組合 HTML 即可)
 
-            btn.innerHTML = `
-                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl border-2 ${charBorderClass} overflow-hidden shadow-sm group-hover:shadow-md transition-all relative flex items-center justify-center" ${charStyle}>
-                    <div class="absolute inset-0 flex items-center justify-center opacity-80">
-                        <div class="sprite-base sprite-common ${raceSprite} shrink-0 scale-[0.6]"></div>
+                    // 🌟 組合 HTML，並用 <span class="${textClass}"> 把文字包起來
+                    header.innerHTML = `
+                        <div class="flex items-center gap-1">
+                            <div class="sprite-base sprite-common ${pSprite} shrink-0 scale-[0.35] origin-left -ml-2"></div>
+                            <h3 class="text-xs sm:text-sm font-black border-l-4 ${borderClass} pl-1 -ml-3"><span class="${textClass}">${getI18n(p)}</span></h3>
+                        </div>
+                        <span id="${btnId}" class="text-xs text-gray-400">🔼</span>
+                    `;
+                    
+                    const iconContainer = document.createElement('div');
+                    iconContainer.id = groupId; iconContainer.className = "flex flex-wrap gap-1.5 pt-2 pl-1 collapsible-content";
+                    iconContainer.style.maxHeight = "1000px"; iconContainer.style.opacity = "1";
+            
+                    chars.forEach(c => {
+                        const iconUrl = typeof IMAGE_MAP !== 'undefined' ? IMAGE_MAP[`avatar_${c.name}`] : '';
+                        const spineName = typeof SPINE_MAP !== 'undefined' ? SPINE_MAP[c.name] : c.name;
+                        const displayName = getI18n(c.name);
+                        
+                        const btn = document.createElement('button');
+                        btn.className = "group flex flex-col items-center gap-0.5 transition-transform hover:scale-110 active:scale-95 w-12 sm:w-14";
+                        btn.onclick = () => selectCharacter(c, spineName, iconUrl);
+            
+                        const displayPersonality = c.personality.includes(",") ? "雙面" : c.personality;
+                        const charSpriteBase = CHAR_SPRITE_MAP[displayPersonality] || "sprite-char-innocence";
+                        const charSpriteClass = `sprite-${spineName}`;
+                        let raceKey = c.race; if (raceKey === "???") raceKey = "unknown";
+                        const raceSprite = SPRITE_CLASS_MAP[`race_${raceKey}`] || "sprite-Bg_Unknown";
+            
+                        // 🌟 動態解析該角色的雙面顏色，並確保圖示框使用 2 色動畫
+                        let charStyle = "";
+                        let charBorderClass = borderClass; // 預設跟隨分類設定
+                        
+                        if (displayPersonality === "雙面") {
+                            const parts = c.personality.split(',').map(s => s.trim());
+                            const c1 = HEX_COLORS[parts[0]] || "#c084fc";
+                            const c2 = HEX_COLORS[parts[1]] || "#4ade80";
+                            charStyle = `style="--c1: ${c1}; --c2:${c2};"`;
+                            charBorderClass = "dual-border-anim"; // 🌟 強制角色小圖示只用 2 色動畫
+                        }
+
+                        // 下方的 btn.innerHTML 記得要把 ${borderClass} 改為 ${charBorderClass}：
+                        btn.innerHTML = `
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl border-2 ${charBorderClass} overflow-hidden shadow-sm group-hover:shadow-md transition-all relative flex items-center justify-center" ${charStyle}>
+                                <div class="absolute inset-0 flex items-center justify-center opacity-80">
+                                    <div class="sprite-base sprite-common ${raceSprite} shrink-0 scale-[0.6]"></div>
+                                </div>
+                                <div class="w-full h-full bg-white/20 dark:bg-black/20 backdrop-blur-[1px] absolute inset-0"></div>
+                                <div class="sprite-base ${charSpriteBase} ${charSpriteClass} shrink-0 scale-[0.35] relative z-10"></div>
+                            </div>
+                            <span class="text-[9px] sm:text-[10px] font-bold text-gray-600 dark:text-gray-300 group-hover:text-amber-600 dark:group-hover:text-amber-400 text-center w-full truncate leading-tight">${displayName}</span>
+                        `;
+                        iconContainer.appendChild(btn);
+                    });
+            
+                    row.appendChild(header); row.appendChild(iconContainer); container.appendChild(row);
+                });
+                // --- 原本的 personalities.forEach 迴圈結束後，加入以下這段 ---
+
+                // 🌟 獨立渲染 NPC 區域
+                const npcGroupId = "group_npc";
+                const npcBtnId = "btn_npc";
+                
+                const npcRow = document.createElement('div');
+                npcRow.className = "flex flex-col bg-gray-50/50 dark:bg-slate-800/50 p-2 rounded-xl border border-dashed border-gray-300 dark:border-slate-600 mt-3";
+                
+                const npcHeader = document.createElement('div');
+                npcHeader.className = "flex justify-between items-center cursor-pointer hover:bg-gray-200/50 dark:hover:bg-slate-700/50 p-1.5 rounded-lg transition";
+                npcHeader.onclick = () => togglePersonalityGroup(npcGroupId, npcBtnId);
+                
+                npcHeader.innerHTML = `
+                    <div class="flex items-center gap-1">
+                        <h3 class="text-xs sm:text-sm font-black text-gray-700 dark:text-gray-400 border-l-4 border-gray-400 pl-1 -ml-3">NPC</h3>
                     </div>
-                    <div class="w-full h-full bg-white/20 dark:bg-black/20 backdrop-blur-[1px] absolute inset-0"></div>
-                    <div class="sprite-base ${charSpriteBase} ${charSpriteClass} shrink-0 scale-[0.35] relative z-10"></div>
-                </div>
-                <span class="text-[9px] sm:text-[10px] font-bold text-gray-600 dark:text-gray-300 group-hover:text-amber-600 dark:group-hover:text-amber-400 text-center w-full truncate leading-tight">${displayName}</span>
-            `;
-            iconContainer.appendChild(btn);
-        });
+                    <span id="${npcBtnId}" class="text-xs text-gray-400">🔼</span>
+                `;
+                
+                const npcIconContainer = document.createElement('div');
+                npcIconContainer.id = npcGroupId; 
+                npcIconContainer.className = "flex flex-wrap gap-1.5 pt-2 pl-1 collapsible-content";
+                npcIconContainer.style.maxHeight = "1000px"; 
+                npcIconContainer.style.opacity = "1";
         
-        row.appendChild(header); row.appendChild(iconContainer); container.appendChild(row);
-    });
-
-    // 🌟 獨立渲染 NPC 區域
-    const npcGroupId = "group_npc";
-    const npcBtnId = "btn_npc";
-    
-    const npcRow = document.createElement('div');
-    npcRow.className = "flex flex-col bg-gray-50/50 dark:bg-slate-800/50 p-2 rounded-xl border border-dashed border-gray-300 dark:border-slate-600 mt-3";
-    
-    const npcHeader = document.createElement('div');
-    npcHeader.className = "flex justify-between items-center cursor-pointer hover:bg-gray-200/50 dark:hover:bg-slate-700/50 p-1.5 rounded-lg transition";
-    npcHeader.onclick = () => togglePersonalityGroup(npcGroupId, npcBtnId);
-    
-    npcHeader.innerHTML = `
-        <div class="flex items-center gap-1">
-            <h3 class="text-xs sm:text-sm font-black text-gray-700 dark:text-gray-400 border-l-4 border-gray-400 pl-1 -ml-3">NPC</h3>
-        </div>
-        <span id="${npcBtnId}" class="text-xs text-gray-400">🔼</span>
-    `;
-    
-    const npcIconContainer = document.createElement('div');
-    npcIconContainer.id = npcGroupId; 
-    npcIconContainer.className = "flex flex-wrap gap-1.5 pt-2 pl-1 collapsible-content";
-    npcIconContainer.style.maxHeight = "1000px"; 
-    npcIconContainer.style.opacity = "1";
-
-    NPC_LIST.forEach(npcName => {
-        const spineName = NPC_SPINE[npcName];
-        const displayName = getI18n(npcName); 
-        const iconClass = NPC_ICON[npcName];
+                NPC_LIST.forEach(npcName => {
+                    const spineName = NPC_SPINE[npcName];
+                    const displayName = getI18n(npcName); 
+                    const iconClass = NPC_ICON[npcName]; // 🌟 取得對應的圖示
+                    
+                    const btn = document.createElement('button');
+                    btn.className = "group flex flex-col items-center gap-0.5 transition-transform hover:scale-110 active:scale-95 w-12 sm:w-14";
+                    
+                    const fakeCharObj = { name: npcName, personality: 'NPC', race: 'unknown' };
+                    btn.onclick = () => selectCharacter(fakeCharObj, spineName, '');
         
-        const btn = document.createElement('button');
-        btn.className = "group flex flex-col items-center gap-0.5 transition-transform hover:scale-110 active:scale-95 w-12 sm:w-14";
+                    btn.innerHTML = `
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl border-2 border-gray-400 overflow-hidden shadow-sm group-hover:shadow-md transition-all relative flex items-center justify-center">
+                            <div class="absolute inset-0 flex items-center justify-center opacity-80">
+                            <div class="sprite-base sprite-common sprite-Bg_NPC shrink-0 scale-[0.6]"></div>
+                            </div>
+                            <div class="w-full h-full bg-white/20 dark:bg-black/20 backdrop-blur-[1px] absolute inset-0"></div>
+                            
+                            <!-- 🌟 換成專屬的 sprite-NPC 與圖示 class，調整縮放比例以適應框框 -->
+                            <div class="sprite-NPC ${iconClass} shrink-0 scale-[0.35] sm:scale-[0.38] relative z-10"></div>
+                        </div>
+                        <span class="text-[9px] sm:text-[10px] font-bold text-gray-600 dark:text-gray-300 group-hover:text-gray-800 dark:group-hover:text-white text-center w-full truncate leading-tight">${displayName}</span>
+                    `;
+                    npcIconContainer.appendChild(btn);
+                });
         
-        const fakeCharObj = { name: npcName, personality: 'NPC', race: 'unknown' };
-        btn.onclick = () => selectCharacter(fakeCharObj, spineName, '');
+                npcRow.appendChild(npcHeader); 
+                npcRow.appendChild(npcIconContainer); 
+                container.appendChild(npcRow);
 
-        btn.innerHTML = `
-            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl border-2 border-gray-400 overflow-hidden shadow-sm group-hover:shadow-md transition-all relative flex items-center justify-center">
-                <div class="absolute inset-0 flex items-center justify-center opacity-80">
-                <div class="sprite-base sprite-common sprite-Bg_NPC shrink-0 scale-[0.6]"></div>
-                </div>
-                <div class="w-full h-full bg-white/20 dark:bg-black/20 backdrop-blur-[1px] absolute inset-0"></div>
-                <div class="sprite-NPC ${iconClass} shrink-0 scale-[0.35] sm:scale-[0.38] relative z-10"></div>
-            </div>
-            <span class="text-[9px] sm:text-[10px] font-bold text-gray-600 dark:text-gray-300 group-hover:text-gray-800 dark:group-hover:text-white text-center w-full truncate leading-tight">${displayName}</span>
-        `;
-        npcIconContainer.appendChild(btn);
-    });
-
-    npcRow.appendChild(npcHeader); 
-    npcRow.appendChild(npcIconContainer); 
-    container.appendChild(npcRow);
-
-    // 🌟 獨立渲染 Boss 區域
-    const bossGroupId = "group_boss";
-    const bossBtnId = "btn_boss";
-    
-    const bossRow = document.createElement('div');
-    bossRow.className = "flex flex-col bg-red-50/50 dark:bg-slate-800/50 p-2 rounded-xl border border-dashed border-red-300 dark:border-slate-600 mt-3";
-    
-    const bossHeader = document.createElement('div');
-    bossHeader.className = "flex justify-between items-center cursor-pointer hover:bg-red-100/50 dark:hover:bg-slate-700/50 p-1.5 rounded-lg transition";
-    bossHeader.onclick = () => togglePersonalityGroup(bossGroupId, bossBtnId);
-    
-    bossHeader.innerHTML = `
-        <div class="flex items-center gap-1">
-            <h3 class="text-xs sm:text-sm font-black text-red-700 dark:text-red-400 border-l-4 border-red-500 pl-1 -ml-3">Boss</h3>
-        </div>
-        <span id="${bossBtnId}" class="text-xs text-gray-400">🔼</span>
-    `;
-    
-    const bossIconContainer = document.createElement('div');
-    bossIconContainer.id = bossGroupId; 
-    bossIconContainer.className = "flex flex-wrap gap-1.5 pt-2 pl-1 collapsible-content";
-    bossIconContainer.style.maxHeight = "1000px"; 
-    bossIconContainer.style.opacity = "1";
-
-    BOSS_LIST.forEach(bossName => {
-        const info = BOSS_INFO[bossName];
-        const displayName = getI18n(bossName);
-        const iconClass = info.icon;
+                // --- 原本 NPC 區域結束的下一行加入 ---
+                // 🌟 獨立渲染 Boss 區域
+                const bossGroupId = "group_boss";
+                const bossBtnId = "btn_boss";
+                
+                const bossRow = document.createElement('div');
+                bossRow.className = "flex flex-col bg-red-50/50 dark:bg-slate-800/50 p-2 rounded-xl border border-dashed border-red-300 dark:border-slate-600 mt-3";
+                
+                const bossHeader = document.createElement('div');
+                bossHeader.className = "flex justify-between items-center cursor-pointer hover:bg-red-100/50 dark:hover:bg-slate-700/50 p-1.5 rounded-lg transition";
+                bossHeader.onclick = () => togglePersonalityGroup(bossGroupId, bossBtnId);
+                
+                bossHeader.innerHTML = `
+                    <div class="flex items-center gap-1">
+                        <h3 class="text-xs sm:text-sm font-black text-red-700 dark:text-red-400 border-l-4 border-red-500 pl-1 -ml-3">Boss</h3>
+                    </div>
+                    <span id="${bossBtnId}" class="text-xs text-gray-400">🔼</span>
+                `;
+                
+                const bossIconContainer = document.createElement('div');
+                bossIconContainer.id = bossGroupId; 
+                bossIconContainer.className = "flex flex-wrap gap-1.5 pt-2 pl-1 collapsible-content";
+                bossIconContainer.style.maxHeight = "1000px"; 
+                bossIconContainer.style.opacity = "1";
         
-        const btn = document.createElement('button');
-        btn.className = "group flex flex-col items-center gap-0.5 transition-transform hover:scale-110 active:scale-95 w-12 sm:w-14";
+                BOSS_LIST.forEach(bossName => {
+                    const info = BOSS_INFO[bossName];
+                    const displayName = getI18n(bossName);
+                    const iconClass = info.icon;
+                    
+                    const btn = document.createElement('button');
+                    btn.className = "group flex flex-col items-center gap-0.5 transition-transform hover:scale-110 active:scale-95 w-12 sm:w-14";
+                    
+                    const fakeCharObj = { name: bossName, personality: 'Boss', race: 'unknown' };
+                    btn.onclick = () => selectCharacter(fakeCharObj, info.spine || info.spineBase, '');
         
-        const fakeCharObj = { name: bossName, personality: 'Boss', race: 'unknown' };
-        btn.onclick = () => selectCharacter(fakeCharObj, info.spine || info.spineBase, '');
-
-        btn.innerHTML = `
-            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl border-2 border-red-400 overflow-hidden shadow-sm group-hover:shadow-md transition-all relative flex items-center justify-center bg-white dark:bg-slate-700">
-                <div class="sprite-boss ${iconClass} shrink-0 scale-[0.32] sm:scale-[0.38] relative z-10"></div>
-            </div>
-            <span class="text-[9px] sm:text-[10px] font-bold text-gray-600 dark:text-gray-300 group-hover:text-red-600 dark:group-hover:text-red-400 text-center w-full truncate leading-tight">${displayName}</span>
-        `;
-        bossIconContainer.appendChild(btn);
-    });
-
-    bossRow.appendChild(bossHeader); 
-    bossRow.appendChild(bossIconContainer); 
-    container.appendChild(bossRow);
-}
-// <-- 原本錯亂的地方到這裡結束，下面接著的就是你原本的 function applyRaceBackground(charName)
-        function applyRaceBackground(charName) {
-            const container = document.getElementById('spineCanvasContainer');
-    
-            if (!isBgEnabled) {
-                container.style.backgroundImage = 'none';
-                container.classList.remove('animated-bg');
-                return;
+                    btn.innerHTML = `
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl border-2 border-red-400 overflow-hidden shadow-sm group-hover:shadow-md transition-all relative flex items-center justify-center bg-white dark:bg-slate-700">
+                            <div class="sprite-boss ${iconClass} shrink-0 scale-[0.32] sm:scale-[0.38] relative z-10"></div>
+                        </div>
+                        <span class="text-[9px] sm:text-[10px] font-bold text-gray-600 dark:text-gray-300 group-hover:text-red-600 dark:group-hover:text-red-400 text-center w-full truncate leading-tight">${displayName}</span>
+                    `;
+                    bossIconContainer.appendChild(btn);
+                });
+        
+                bossRow.appendChild(bossHeader); 
+                bossRow.appendChild(bossIconContainer); 
+                container.appendChild(bossRow);
             }
+            
+            function applyRaceBackground(charName) {
+                const container = document.getElementById('spineCanvasContainer');
+                
+                // 🌟 新增：如果手動關閉背景，就直接清空並退出函數
+                if (!isBgEnabled) {
+                    container.style.backgroundImage = 'none';
+                    container.classList.remove('animated-bg');
+                    return;
+                }
 
-            // 這裡也要加上 window.
-            const char = window.INITIAL_DATA.find(c => c.name === charName);
-            const isNPC = typeof NPC_LIST !== 'undefined' && NPC_LIST.includes(charName);
+                const char = INITIAL_DATA.find(c => c.name === charName);
+                const isNPC = typeof NPC_LIST !== 'undefined' && NPC_LIST.includes(charName);
                 
                 if (isNPC) {
                     // NPC 專屬動態背景圖
