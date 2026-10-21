@@ -17,44 +17,6 @@
     <!-- 截圖匯出套件 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-    <!-- 🌟 新增：Firebase Firestore 模組引入 -->
-    <script type="module">
-        // 👉 請確保這裡的路徑正確指向你的 firebase_config.js
-        import { db } from './firebase_config.js'; 
-        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-        window.fetchCharactersFromFirestore = async function() {
-            try {
-                // 1. 改為讀取 global_characters 集合
-                const querySnapshot = await getDocs(collection(db, "global_characters"));
-                let chars = [];
-                
-                querySnapshot.forEach(doc => {
-                    const data = doc.data();
-                    
-                    // 2. 將 core 底下的欄位攤平，適應原本介面的讀取格式
-                    chars.push({
-                        id: doc.id,                               // 文件 ID (spine name)
-                        name: data.core?.name || doc.id,          // 預設名字
-                        personality: data.core?.personality || "",// 性格
-                        race: data.core?.race || "unknown",       // 種族
-                        names: data.names || {},                  // 翻譯 (en, ja, zh-TW)
-                        spine: data.spineName || doc.id           // Spine 檔名
-                    });
-                });
-                return chars;
-            } catch (error) {
-                console.error("Firestore 讀取失敗:", error);
-                return [];
-            }
-        };
-
-        // DOM 載入後啟動
-        window.addEventListener('DOMContentLoaded', () => {
-            if (window.startApp) window.startApp();
-        });
-    </script>
-
     <script>
         tailwind.config = { darkMode: 'class', }
         const isDarkMode = localStorage.getItem('theme') === 'dark' || 
@@ -117,6 +79,7 @@
         .penta-border-anim { animation: pentaColorPulse 5s ease-in-out infinite; }
         
         /* 🌟 專門給分類標題用的無陰影邊框流動 */
+        /* 🌟 專門給分類標題用的無陰影邊框流動 */
         @keyframes pentaBorderNoShadow {
             0% { border-left-color: #4ade80; }
             20% { border-left-color: #60a5fa; }
@@ -137,15 +100,16 @@
             background: linear-gradient(90deg, #4ade80, #60a5fa, #f87171, #facc15, #c084fc, #4ade80);
             background-size: 200% auto;
             -webkit-background-clip: text;
-            background-clip: text;
+            background-clip: text; /* 🌟 加上這行加強相容性 */
             -webkit-text-fill-color: transparent;
-            color: transparent;
+            color: transparent; /* 🌟 加上這行加強相容性 */
             animation: pentaTextFlow 4s linear infinite;
         }
-
         /* 🌟 控制 Rank 區內的圖示放大與名字隱藏 🌟 */
+        /* 1. 隱藏 Rank 區的角色名字 */
         .tier-dropzone[id^="tier_"] .char-name { display: none !important; }
 
+        /* 2. 放大 Rank 區的角色圖示外框 */
         .tier-dropzone[id^="tier_"] .char-icon-box {
             width: 4.5rem !important;
             height: 4.5rem !important;
@@ -164,17 +128,21 @@
         <!-- 頂部控制列 -->
         <header class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-4 rounded-2xl shadow-md border-4 border-amber-400 dark:border-slate-600 flex justify-between items-center relative z-10 flex-wrap gap-2">
             <div>
+                <!-- 🌟 加上 id="pageTitle" -->
                 <h1 id="pageTitle" class="text-xl sm:text-2xl font-black text-amber-950 dark:text-amber-400 flex items-center gap-2">
                     👑 排行榜生成器
                 </h1>
             </div>
             <div class="flex items-center gap-2">
+                <!-- 🌟 加上 id="btnAddRow" -->
                 <button id="btnAddRow" onclick="addTierRow()" class="px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl shadow transition text-sm">
                     ➕ 新增級別
                 </button>
+                <!-- 🌟 加上 id="btnReset" -->
                 <button id="btnReset" onclick="resetBoard()" class="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl shadow transition text-sm">
                     🗑️ 重置所有
                 </button>
+                <!-- 🌟 加上 id="btnExport" -->
                 <button id="btnExport" onclick="exportImage()" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow transition text-sm flex items-center gap-1">
                     📸 輸出圖片
                 </button>
@@ -194,6 +162,7 @@
 
         <!-- 🌟 角色選擇池 🌟 -->
         <section class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-4 rounded-2xl shadow-md border border-gray-200 dark:border-slate-700 mt-4">
+            <!-- 🌟 加上 id="poolTitle" -->
             <h2 id="poolTitle" class="text-lg font-bold text-gray-900 dark:text-gray-300 mb-3 border-b border-gray-200 dark:border-slate-700 pb-2">👥 角色池 (拖曳至上方排行榜)</h2>
             <div id="characterPool" class="flex flex-col gap-3">
                 <!-- Javascript 會在這裡動態插入分類與角色 -->
@@ -203,10 +172,12 @@
     </div>
 
     <script>
+        // 🌟 新增對應的 Hex 色碼表，用來動態產生雙面的變數
         const HEX_COLORS = {
             "天真": "#4ade80", "冷靜": "#60a5fa", "狂亂": "#f87171", "活潑": "#facc15", "憂鬱": "#c084fc"
         };
         
+        // 🌟 1. 定義顏色與樣式對應
         const personalityColors = { 
             "天真": "border-green-400 text-green-400", 
             "冷靜": "border-blue-400 text-blue-400", 
@@ -217,64 +188,42 @@
             "共鳴": "border-rainbow text-rainbow",
             "雙面": "penta-border-title-anim penta-text-anim"
         };
-
         const SPRITE_CLASS_MAP = {
             race_龍族: "sprite-Bg_Dragon", race_精靈: "sprite-Bg_Elf", race_妖精: "sprite-Bg_Sprite",
             race_幽靈: "sprite-Bg_Phantom", race_魔靈: "sprite-Bg_Elemental", race_不明: "sprite-Bg_Unknown",
             race_獸人: "sprite-Bg_Werebeast", race_魔女: "sprite-Bg_Witch", race_unknown: "sprite-Bg_Unknown"
         };
-
         const CHAR_SPRITE_MAP = {
             "共鳴": "sprite-char-resonance",
             "冷靜": "sprite-char-composed", "憂鬱": "sprite-char-depressed",
             "天真": "sprite-char-innocence", "狂亂": "sprite-char-madness", "活潑": "sprite-char-vivacious",
-            "NPC": "sprite-char-innocence", 
-            "雙面": "sprite-char-multifaceted"
+            "NPC": "sprite-char-innocence", // NPC 預設基底
+            "雙面": "sprite-char-multifaceted" // 🌟 雙面預設使用共鳴底圖
         };
 
+        // NPC 資料庫
         const NPC_LIST = ['雷內瓦(NPC)', '可愛餅', '高蒂', '榮春'];
         const NPC_SPINE = { "雷內瓦(NPC)": "Renewa", "可愛餅": "Crepe", "高蒂": "Goldy", "榮春": "Youngchun" };
         const NPC_ICON = { "雷內瓦(NPC)": "sprite-RenewaNPC", "可愛餅": "sprite-Crepe", "高蒂": "sprite-Goldy", "榮春": "sprite-Youngchun" };
 
+        // 預設的級別與顏色
         const DEFAULT_TIERS = [
-            { label: "S", color: "#ef4444" },
-            { label: "A", color: "#f97316" },
-            { label: "B", color: "#eab308" },
-            { label: "C", color: "#22c55e" },
-            { label: "D", color: "#3b82f6" },
+            { label: "S", color: "#ef4444" }, // 紅
+            { label: "A", color: "#f97316" }, // 橘
+            { label: "B", color: "#eab308" }, // 黃
+            { label: "C", color: "#22c55e" }, // 綠
+            { label: "D", color: "#3b82f6" }, // 藍
         ];
 
         let sortableInstances = [];
-        let cachedCharactersData = []; // 用於保存 Firestore 抓回來的資料供重置使用
 
-        // 🌟 多國語言名稱提取 (支援物件結構)
-        const extractLocalString = (val) => {
-            if (!val) return "";
-            if (typeof val === 'string') return val.trim();
-            if (Array.isArray(val)) return val.map(v => typeof v === 'string' ? v.trim() : v); 
-            if (typeof val === 'object') {
-                const currentLang = localStorage.getItem('user_lang') || window.currentLang || 'zh-TW';
-                const str = val[currentLang] || val['zh-TW'] || val['zh'] || val['ja'] || val['en'] || Object.values(val)[0] || "";
-                return typeof str === 'string' ? str.trim() : str;
-            }
-            return String(val).trim();
-        };
-
-        // 🌟 初始化主程式：改由 Module 啟動
-        window.startApp = async function() {
-            applyTranslations(); 
+        window.onload = function() {
+            applyTranslations(); // 🌟 套用多國語言
             initTiers();
-            
-            // 從 Firestore 讀取，失敗則 fallback 回 INITIAL_DATA
-            if (typeof window.fetchCharactersFromFirestore === 'function') {
-                cachedCharactersData = await window.fetchCharactersFromFirestore();
-            } else {
-                cachedCharactersData = (typeof INITIAL_DATA !== 'undefined') ? INITIAL_DATA : [];
-            }
-            
-            initCharacterPool(cachedCharactersData);
+            initCharacterPool();
         };
 
+        // 🌟 新增：套用介面翻譯
         function applyTranslations() {
             document.getElementById('pageTitle').innerHTML = `👑 ${getI18n('ui_tier_title') || '排行榜生成器'}`;
             document.getElementById('btnAddRow').innerHTML = `➕ ${getI18n('ui_tier_add_row') || '新增級別'}`;
@@ -288,6 +237,7 @@
             }
         }
         
+        // 🌟 新增：處理性格區域的開合
         function togglePoolGroup(id, btnId) {
             const group = document.getElementById(id);
             const btn = document.getElementById(btnId);
@@ -304,6 +254,7 @@
             }
         }
         
+        // 🌟 2. 初始化排行榜列
         function initTiers() {
             const container = document.getElementById('tierContainer');
             container.innerHTML = '';
@@ -317,20 +268,28 @@
             const row = document.createElement('div');
             row.className = "flex bg-slate-800 border-b border-slate-950 min-h-[90px] relative group";
             
+            // 左側標籤區
             row.innerHTML = `
                 <div class="w-20 sm:w-28 flex items-center justify-center border-r border-slate-950 relative" style="background-color: ${color};">
                     <input type="text" value="${labelText}" class="w-full bg-transparent text-center font-black text-xl sm:text-2xl text-slate-900 outline-none px-1">
+                    
+                    <!-- 隱藏控制項 (截圖時隱藏) -->
                     <div class="hide-on-export absolute left-1 top-1 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <input type="color" value="${color}" onchange="this.parentElement.parentElement.style.backgroundColor = this.value" title="更改顏色">
                     </div>
                 </div>
+                
+                <!-- 拖曳放置區 -->
                 <div id="${rowId}" class="tier-dropzone flex-1 flex flex-wrap content-start gap-2 p-2 min-h-[90px]"></div>
+                
+                <!-- 刪除按鈕 (截圖時隱藏) -->
                 <div class="hide-on-export w-8 flex flex-col items-center justify-center bg-slate-800/50 hover:bg-red-500/20 transition cursor-pointer" onclick="this.parentElement.remove()">
                     <span class="text-gray-500 hover:text-red-500">✖</span>
                 </div>
             `;
             container.appendChild(row);
 
+            // 實例化該列的拖曳功能
             setTimeout(() => {
                 const dropzone = document.getElementById(rowId);
                 const instance = new Sortable(dropzone, {
@@ -355,21 +314,19 @@
             createTierRow("Rank", "#94a3b8");
         }
 
-        // 🌟 3. 初始化角色池：支援吃 Firestore 資料
-        function initCharacterPool(charactersData) {
+        // 🌟 3. 初始化角色池
+        function initCharacterPool() {
             const container = document.getElementById('characterPool');
             container.innerHTML = '';
             
-            const personalities = ["共鳴", "雙面", "天真", "冷靜", "狂亂", "活潑", "憂鬱"]; 
+            const personalities = ["共鳴", "雙面", "天真", "冷靜", "狂亂", "活潑", "憂鬱"]; // 🌟 加入雙面
             
-            if (charactersData && charactersData.length > 0) {
+            // 處理一般角色
+            if (typeof INITIAL_DATA !== 'undefined' && INITIAL_DATA) {
                 personalities.forEach(p => {
-                    const chars = charactersData.filter(c => {
-                        let pStr = String(c.personality || "");
-                        let pList = Array.isArray(c.personality) ? c.personality : pStr.split(/[、,\/\s+]+/).map(s=>s.trim()).filter(Boolean);
-                        
-                        if (p === "雙面") return pList.length > 1 || pList.includes("雙重性格") || pList.includes("雙面");
-                        return pList.includes(p) && pList.length === 1;
+                    const chars = INITIAL_DATA.filter(c => {
+                        if (p === "雙面") return c.personality.includes(",");
+                        return c.personality === p;
                     });
                     
                     if (chars.length > 0) {
@@ -389,22 +346,28 @@
             const pColors = personalityColors[title] || "border-gray-400 text-gray-500";
             const borderClass = pColors.split(' ')[0];
             
+            // 產生專屬 ID
             const groupId = 'pool_group_' + (isNPC ? 'NPC' : title);
             const btnId = 'pool_btn_' + (isNPC ? 'NPC' : title);
             const dropzoneId = 'pool_' + (isNPC ? 'NPC' : title);
             
+            // 🌟 建立可點擊的開合標題區塊
             const header = document.createElement('div');
             header.className = "flex justify-between items-center cursor-pointer hover:bg-slate-200/50 dark:hover:bg-slate-700/50 p-1.5 rounded-lg transition mb-1";
             header.onclick = () => togglePoolGroup(groupId, btnId);
             
+            // 將原本這行刪除：
+            // let headerStyle = title === "雙面" ? `style="--c1: #c084fc; --c2: #4ade80;"` : ""; 
+            
             const i18nTitle = getI18n(title) || title;
-            const textClass = pColors.split(' ')[1] || "";
+            const textClass = pColors.split(' ')[1] || ""; // 抓取文字顏色 class
 
            header.innerHTML = `
                 <h3 class="text-xs sm:text-sm font-black border-l-4 ${borderClass} pl-2 ml-1 text-gray-700 dark:text-gray-300"><span class="${textClass}">${i18nTitle}</span></h3>
                 <span id="${btnId}" class="text-xs text-gray-400">🔼</span>
             `;
             
+            // 🌟 將 dropzone 包在一個負責開合的容器內
             const wrapper = document.createElement('div');
             wrapper.id = groupId;
             wrapper.className = "collapsible-content";
@@ -420,11 +383,13 @@
                 dropzone.appendChild(charEl);
             });
 
+            // 組裝 DOM
             wrapper.appendChild(dropzone);
             section.appendChild(header);
             section.appendChild(wrapper);
             container.appendChild(section);
 
+            // 加入 Sortable
             setTimeout(() => {
                 const instance = new Sortable(document.getElementById(dropzoneId), {
                     group: { name: 'shared', pull: 'clone', put: true }, 
@@ -458,35 +423,27 @@
             }, 0);
         }
 
-        // 🌟 產生角色圖示：適配 Firestore 資料結構
+        // 🌟 產生角色圖示
         function createCharIcon(charData, isNPC, fallbackBorder) {
             const el = document.createElement('div');
+            let charName = isNPC ? charData : charData.name;
             
-            // Firestore 資料使用 id 屬性，NPC 仍為字串
-            let charId = isNPC ? charData : charData.id;
-            
-            el.setAttribute('data-char-id', charId);
+            el.setAttribute('data-char-id', charName);
             el.className = "cursor-grab active:cursor-grabbing flex flex-col items-center gap-0.5 group relative transition-all duration-300";
             
-            // 直接讀取 Firestore 裡面的 spine 欄位，沒有則退回 id 或原本的字串
-            let spineName = isNPC ? NPC_SPINE[charId] : (charData.spine || charId);
+            let spineName = isNPC ? NPC_SPINE[charName] : (typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName);
+            let displayName = getI18n(charName).replace('(NPC)', '').trim();
             
-            // 讀取多語系顯示名稱
-            let displayName = "";
-            if (isNPC) {
-                displayName = getI18n(charId).replace('(NPC)', '').trim();
-            } else {
-                displayName = extractLocalString(charData.names) || extractLocalString(charData.name) || charId;
-            }
-            
-            let raceKey = isNPC ? "unknown" : (charData.race === "???" ? "unknown" : (charData.race || "unknown"));
+            let raceKey = isNPC ? "unknown" : (charData.race === "???" ? "unknown" : charData.race);
             const raceSprite = SPRITE_CLASS_MAP[`race_${raceKey}`] || "sprite-Bg_Unknown";
             
             let borderClass = fallbackBorder;
-            let displayPersonality = isNPC ? "NPC" : charData.personality;
+            let displayPersonality = charData.personality;
             let customStyle = "";
             
+            // 🌟 如果是雙面性格，抓取顏色並給予動態樣式
             if (!isNPC && charData.personality) {
+                // 1. 使用正規表達式與陣列判斷，完美拆解所有格式
                 let pList = [];
                 if (Array.isArray(charData.personality)) {
                     pList = charData.personality;
@@ -494,14 +451,19 @@
                     pList = charData.personality.split(/[、,\/\s+]+/).map(s => s.trim()).filter(Boolean);
                 }
 
+                // 2. 如果拆分後有兩個(或以上)的性格，啟動雙色呼吸框
                 if (pList.length > 1) {
                     displayPersonality = "雙面";
                     borderClass = "dual-border-anim";
+                    
                     const c1 = HEX_COLORS[pList[0]] || "#c084fc"; 
                     const c2 = HEX_COLORS[pList[1]] || "#4ade80"; 
                     customStyle = `style="--c1: ${c1}; --c2: ${c2};"`;
-                } else if (pList.length === 1) {
+                } 
+                // 3. 如果只有單一性格，給予單色靜態框
+                else if (pList.length === 1) {
                     const singleP = pList[0];
+                    // 防呆：如果文字明確寫「雙重性格」但沒有給第二個性格
                     if (singleP === "雙重性格" || singleP === "雙面") {
                         displayPersonality = "雙面";
                         borderClass = "dual-border-anim";
@@ -513,7 +475,7 @@
 
             let innerHtml = '';
             if (isNPC) {
-                const iconClass = NPC_ICON[charId];
+                const iconClass = NPC_ICON[charName];
                 innerHtml = `
                     <div class="absolute inset-0 flex items-center justify-center opacity-80">
                         <div class="sprite-base sprite-common sprite-Bg_NPC shrink-0 scale-[0.7] sm:scale-[0.8]"></div>
@@ -538,9 +500,10 @@
                 `;
             }
 
+            // 🌟 點擊事件：如果角色在 Rank 區，點擊就退回下方角色池
             el.onclick = function() {
                 if (this.parentElement && this.parentElement.id.startsWith('tier_')) {
-                    returnToPool(this, charId);
+                    returnToPool(this, charName);
                 }
             };
 
@@ -554,8 +517,9 @@
             return el;
         }
 
+        // 🌟 點擊將角色從 Rank 區刪除，並解鎖下方池子的原版
         function returnToPool(el, charId) {
-            el.remove(); 
+            el.remove(); // 直接移除點擊的整個角色元素
             
             const origEl = document.getElementById('pool_orig_' + charId);
             if (origEl) {
@@ -564,6 +528,7 @@
             }
         }
         
+        // 翻譯輔助函數
         function getI18n(key) {
             if (!key) return key;
             const lang = localStorage.getItem('user_lang') || 'zh-TW';
@@ -571,20 +536,22 @@
             return key; 
         }
 
+        // 修改原本的 resetBoard 讓它支援翻譯提示
         function resetBoard() {
             const confirmMsg = getI18n('ui_tier_reset_confirm') || "確定要重置整個排行榜並將所有角色放回角色池嗎？";
             if(confirm(confirmMsg)) {
                 sortableInstances.forEach(inst => inst.destroy());
                 sortableInstances = [];
                 initTiers();
-                // 使用快取的 Firestore 資料進行重置
-                initCharacterPool(cachedCharactersData);
+                initCharacterPool();
             }
         }
 
+        // 🌟 6. 完美匯出圖片
         function exportImage() {
             const captureArea = document.getElementById('captureArea');
             
+            // 替換 Title 為純文字
             const titleInput = document.getElementById('tierTitle');
             const titleValue = titleInput.value;
             const tempTitleSpan = document.createElement('h1');
@@ -595,9 +562,11 @@
 
             document.activeElement.blur();
 
+            // 稍微把調色盤控制項藏起來
             const colorPickers = captureArea.querySelectorAll('input[type="color"]');
             colorPickers.forEach(el => el.style.display = 'none');
 
+            // 延遲 50 毫秒確保 DOM 更新後拍照
             setTimeout(() => {
                 html2canvas(captureArea, {
                     backgroundColor: "#0f172a", 
@@ -605,10 +574,12 @@
                     useCORS: true,
                     logging: false
                 }).then(canvas => {
+                    // 恢復 UI
                     tempTitleSpan.remove();
                     titleInput.style.display = 'block';
                     colorPickers.forEach(el => el.style.display = '');
 
+                    // 下載圖片
                     const link = document.createElement('a');
                     link.download = `Trickcal_TierList_${new Date().getTime()}.png`;
                     link.href = canvas.toDataURL('image/png');
