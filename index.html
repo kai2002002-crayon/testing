@@ -110,12 +110,28 @@
                     });
 
                     console.log("✅ 輕量化資料提取完成！共載入", INITIAL_DATA.length, "名角色。");
-                    if (typeof window.renderMainUI === 'function') window.renderMainUI(); 
+                
+                // 1. 隱藏 Loading 動畫
+                const loaderEl = document.getElementById('loader');
+                if (loaderEl) loaderEl.classList.add('hidden');
 
-                } catch (error) {
-                    console.error("讀取資料失敗:", error);
-                    alert("無法載入圖鑑資料，請檢查網路連線。");
+                // 2. 觸發卡片清單與統計面板渲染
+                if (typeof window.renderMainUI === 'function') {
+                    window.renderMainUI(); 
+                } else {
+                    if (typeof window.initStates === 'function') window.initStates();
+                    if (typeof window.renderMatrix === 'function') window.renderMatrix();
+                    if (typeof window.calculateStats === 'function') window.calculateStats();
                 }
+
+            } catch (error) {
+                console.error("讀取資料失敗:", error);
+                alert("無法載入圖鑑資料，請檢查網路連線。");
+                
+                // 如果發生錯誤，也要把 Loader 隱藏，避免畫面卡死
+                const loaderEl = document.getElementById('loader');
+                if (loaderEl) loaderEl.classList.add('hidden');
+            }
             }
 
             // 網頁一打開就開始載入資料
