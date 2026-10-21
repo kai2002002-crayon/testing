@@ -6,6 +6,7 @@ const CACHE_NAME = 'trickcal-notepad-v1.1.7795';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
+    './style.css',
     './char_detail.html',
     './data_config.js',
     './data_core.js',
