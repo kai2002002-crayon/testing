@@ -368,4 +368,3 @@ const CARD_SCHEDULE = [
         type: "Artifact"
     }
 ];
-console.log("LANG_DICT 內容:", LANG_DICT);
