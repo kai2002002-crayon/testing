@@ -3,9 +3,6 @@
 // 負責：首頁與詳細頁共用的基礎資料、圖片映射、多語系字典
 // ==========================================
 
-const currentLang = localStorage.getItem('user_lang') || 'zh-TW';
-function t(key) { return LANG_DICT[currentLang][key] || key; }
-
 const CRAYON_PATH_CONFIG = {
     "精靈": {
         "V1": { layer1: ["攻擊", "血量"], layer2: ["攻擊", "防禦", "爆抗"], layer3: ["攻擊", "防禦", "爆擊", "爆抗"] },
