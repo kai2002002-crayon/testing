@@ -6,7 +6,89 @@
 // ------------------------------------------
 // 坨坨資料
 // ------------------------------------------
-const INITIAL_DATA = [];
+const INITIAL_DATA = [{ name: "瑰恩", personality: "冷靜", race: "獸人", position: "前排", job: "輔助", pathVersion: "", releaseDate: "2026-10-22T17:00:00+09:00" },
+	{ name: "麗息", personality: "冷靜", race: "幽靈", position: "前排", job: "肉盾", pathVersion: "V4", releaseDate: "2026-10-08T17:00:00+09:00" },
+	{ name: "柯米(泳裝)", personality: "冷靜", race: "獸人", position: "中排", job: "輔助", pathVersion: "V4", releaseDate: "2026-10-15T10:00:00+09:00" },
+	{ name: "瓊安", personality: "憂鬱, 天真", race: "妖精", position: "所有排", job: "輔助", pathVersion: "V4", releaseDate: "2026-09-24T17:00:00+09:00" },
+	{ name: "芭莉耶", personality: "憂鬱", race: "魔女", position: "後排", job: "輔助", pathVersion: "V4", releaseDate: "2026-09-10T17:00:00+09:00" },
+	{ name: "雪蘭", personality: "天真", race: "魔女", position: "前排", job: "輸出", pathVersion: "V1", releaseDate: "2026-09-10T17:00:00+09:00" },
+	{ name: "琵拉", personality: "狂亂", race: "龍族", position: "後排", job: "輔助", pathVersion: "V1", releaseDate: "2026-08-27T17:00:00+09:00" },
+	{ name: "羅蕾特", personality: "狂亂", race: "魔女", position: "後排", job: "輸出", pathVersion: "V1", releaseDate: "2026-07-30T17:00:00+09:00" },
+    { name: "洛涅", personality: "天真", race: "精靈", position: "前排", job: "肉盾", pathVersion: "V4", releaseDate: "2026-02-12" },
+    { name: "薇薇", personality: "天真", race: "龍族", position: "前排", job: "肉盾", pathVersion: "V4" },
+    { name: "卡洛特", personality: "天真", race: "妖精", position: "後排", job: "輔助", pathVersion: "V3", releaseDate: "2026-05-07" },
+    { name: "奈雅", personality: "天真", race: "魔靈", position: "中排", job: "輔助", pathVersion: "V1", releaseDate: "2026-02-26" },
+    { name: "艾爾芬", personality: "天真", race: "妖精", position: "後排", job: "輸出", pathVersion: "V2" },
+    { name: "馬爾", personality: "天真", race: "獸人", position: "中排", job: "輔助", pathVersion: "V1" },
+    { name: "加薇雅", personality: "天真", race: "魔靈", position: "中排", job: "輔助", pathVersion: "V2" },
+    { name: "希菲爾", personality: "天真", race: "龍族", position: "中排", job: "輸出", pathVersion: "V4" },
+    { name: "斯皮奇", personality: "天真", race: "幽靈", position: "後排", job: "輸出", pathVersion: "V1" },
+    { name: "海莉", personality: "天真", race: "精靈", position: "中排", job: "輸出", pathVersion: "V2" },
+    { name: "大木頭", personality: "天真", race: "魔靈", position: "前排", job: "肉盾", pathVersion: "V2" },
+    { name: "阿萊特", personality: "天真", race: "精靈", position: "前排", job: "肉盾", pathVersion: "V5" },
+    { name: "莎莉", personality: "天真", race: "幽靈", position: "中排", job: "輸出", pathVersion: "V2" },
+    { name: "路易", personality: "天真", race: "妖精", position: "中排", job: "輔助", pathVersion: "V3" },
+    { name: "修帕", personality: "活潑", race: "妖精", position: "後排", job: "輔助", pathVersion: "V5", releaseDate: "2026-03-12" },
+    { name: "奶油", personality: "活潑", race: "獸人", position: "後排", job: "輸出", pathVersion: "V3", releaseDate: "2025-10-23" },
+    { name: "桃桃", personality: "活潑", race: "獸人", position: "後排", job: "輸出", pathVersion: "V1" },
+    { name: "瑟琳娜", personality: "活潑", race: "幽靈", position: "前排", job: "肉盾", pathVersion: "V1", releaseDate: "2026-04-23" },
+    { name: "羽伊", personality: "活潑", race: "魔靈", position: "中排", job: "輔助", pathVersion: "V4" },
+    { name: "艾皮卡", personality: "活潑", race: "獸人", position: "中排", job: "輸出", pathVersion: "V5", releaseDate: "2026-01-01" },
+    { name: "路德", personality: "活潑", race: "龍族", position: "前排", job: "肉盾", pathVersion: "V4" },
+    { name: "康娜", personality: "活潑", race: "精靈", position: "後排", job: "輸出", pathVersion: "V2" },
+    { name: "班尼", personality: "活潑", race: "獸人", position: "前排", job: "輸出", pathVersion: "V4" },
+    { name: "盧波", personality: "活潑", race: "獸人", position: "中排", job: "輸出", pathVersion: "V5" },
+    { name: "茱蜜", personality: "活潑", race: "魔靈", position: "中排", job: "輸出", pathVersion: "V5" },
+    { name: "卡蓮", personality: "活潑", race: "妖精", position: "後排", job: "輔助", pathVersion: "V5" },
+    { name: "泰達", personality: "活潑", race: "精靈", position: "後排", job: "輸出", pathVersion: "V1" },
+    { name: "瑪麗", personality: "活潑", race: "妖精", position: "中排", job: "輸出", pathVersion: "V3" },
+    { name: "米雪", personality: "活潑", race: "獸人", position: "前排", job: "輸出", pathVersion: "V1" },
+    { name: "伊德", personality: "冷靜", race: "精靈", position: "前排", job: "肉盾", pathVersion: "V3", releaseDate: "2026-03-26" },
+    { name: "艾琳娜", personality: "冷靜", race: "精靈", position: "中排", job: "輸出", pathVersion: "V3", releaseDate: "2025-12-04" },
+    { name: "佩佩", personality: "冷靜", race: "魔女", position: "前排", job: "肉盾", pathVersion: "V5" },
+    { name: "希拉", personality: "冷靜", race: "魔靈", position: "後排", job: "輸出", pathVersion: "V2" },
+    { name: "皮可菈", personality: "冷靜", race: "魔女", position: "後排", job: "輔助", pathVersion: "V1" },
+    { name: "艾蜜莉雅", personality: "冷靜", race: "精靈", position: "後排", job: "輔助", pathVersion: "V2" },
+    { name: "芙莉可", personality: "冷靜", race: "魔女", position: "中排", job: "輸出", pathVersion: "V2" },
+    { name: "綾", personality: "冷靜", race: "魔女", position: "中排", job: "輸出", pathVersion: "V3" },
+    { name: "帕特拉", personality: "冷靜", race: "妖精", position: "前排", job: "輸出", pathVersion: "V2" },
+    { name: "梅露娜", personality: "冷靜", race: "魔靈", position: "後排", job: "輔助", pathVersion: "V2" },
+    { name: "傑德", personality: "冷靜", race: "龍族", position: "中排", job: "輸出", pathVersion: "V3" },
+    { name: "艾斯皮", personality: "冷靜", race: "幽靈", position: "中排", job: "輔助", pathVersion: "V4" },
+    { name: "雷吉", personality: "冷靜", race: "精靈", position: "後排", job: "輸出", pathVersion: "V2" },
+    { name: "瑪約", personality: "狂亂", race: "妖精", position: "後排", job: "輸出", pathVersion: "V1" },
+    { name: "莉茲", personality: "狂亂", race: "龍族", position: "前排", job: "輸出", pathVersion: "V2", releaseDate: "2025-12-18" },
+    { name: "謝蒂", personality: "狂亂", race: "幽靈", position: "前排", job: "輸出", pathVersion: "V1" },
+    { name: "庫洛艾", personality: "狂亂", race: "妖精", position: "前排", job: "肉盾", pathVersion: "V4" },
+    { name: "愛麗絲", personality: "狂亂", race: "幽靈", position: "中排", job: "輸出", pathVersion: "V2", releaseDate: "2025-11-06" },
+    { name: "蒂亞娜", personality: "狂亂", race: "獸人", position: "中排", job: "輔助", pathVersion: "V5" },
+    { name: "貝麗塔", personality: "狂亂", race: "魔女", position: "後排", job: "輸出", pathVersion: "V4" },
+    { name: "希瑟圖", personality: "狂亂", race: "龍族", position: "中排", job: "輸出", pathVersion: "V1" },
+    { name: "大師2號", personality: "狂亂", race: "精靈", position: "前排", job: "肉盾", pathVersion: "V4" },
+    { name: "梅森", personality: "狂亂", race: "幽靈", position: "後排", job: "輸出", pathVersion: "V4" },
+    { name: "伊弗利特", personality: "狂亂", race: "魔靈", position: "前排", job: "輸出", pathVersion: "V3" },
+    { name: "劉美美", personality: "狂亂", race: "獸人", position: "後排", job: "輸出", pathVersion: "V4" },
+    { name: "x乂錫安乂x", personality: "憂鬱", race: "幽靈", position: "後排", job: "輸出", pathVersion: "V3" },
+    { name: "基狄恩", personality: "憂鬱", race: "龍族", position: "前排", job: "輸出", pathVersion: "V3" },
+    { name: "布蘭切", personality: "憂鬱", race: "魔靈", position: "中排", job: "輸出", pathVersion: "V1", releaseDate: "2026-01-15" },
+    { name: "琳", personality: "憂鬱", race: "幽靈", position: "前排", job: "輸出", pathVersion: "V4" },
+    { name: "優米", personality: "憂鬱", race: "???", position: "中排", job: "輔助", pathVersion: "V1" },
+    { name: "希爾德", personality: "憂鬱", race: "精靈", position: "中排", job: "輔助", pathVersion: "V1", releaseDate: "2025-11-20" },
+    { name: "柯米", personality: "憂鬱", race: "獸人", position: "前排", job: "肉盾", pathVersion: "V2" },
+    { name: "珀榭", personality: "憂鬱", race: "魔女", position: "後排", job: "輔助", pathVersion: "V1" },
+    { name: "艾舒爾", personality: "憂鬱", race: "妖精", position: "後排", job: "輸出", pathVersion: "V5", releaseDate: "2026-01-29" },
+    { name: "斯諾奇", personality: "憂鬱", race: "魔女", position: "前排", job: "肉盾", pathVersion: "V3", releaseDate: "2026-04-09" },
+    { name: "貝魯", personality: "憂鬱", race: "幽靈", position: "中排", job: "輸出", pathVersion: "V1" },
+    { name: "佩斯塔", personality: "憂鬱", race: "精靈", position: "前排", job: "輔助", pathVersion: "V3" },
+    { name: "萊薇", personality: "憂鬱", race: "魔女", position: "中排", job: "輸出", pathVersion: "V5" },
+    { name: "喬菲", personality: "憂鬱", race: "獸人", position: "中排", job: "輸出", pathVersion: "V2" },
+    { name: "寧琉", personality: "狂亂", race: "妖精", position: "前排", job: "輔助", pathVersion: "V2", releaseDate: "2026-05-21" },
+    { name: "莉絲蒂", personality: "憂鬱", race: "精靈", position: "後排", job: "輸出", pathVersion: "V3", releaseDate: "2026-06-04" },
+    { name: "雷內瓦", personality: "狂亂", race: "精靈", position: "中排", job: "輸出", pathVersion: "V3", releaseDate: "2026-06-18T17:00:00+09:00" },
+    { name: "芭瓏", personality: "冷靜", race: "幽靈", position: "前排", job: "輸出", pathVersion: "V3", releaseDate: "2026-07-02T17:00:00+09:00" },
+	{ name: "達雅", personality: "天真", race: "龍族", position: "後排", job: "輸出", pathVersion: "V2", releaseDate: "2026-07-16T19:00:00+09:00" },
+	{ name: "提格", personality: "活潑", race: "獸人", position: "前排", job: "輸出", pathVersion: "V2", releaseDate: "2026-07-16T19:00:00+09:00" }
+];
 
 const CV_MAP = {
     "洛涅": "田向結月", "薇薇": "新井里美", "艾爾芬": "木野日菜", "x乂錫安乂x": "上坂すみれ", "伊弗利特": "安堂ななこ", "伊德": "内田真礼", "佩佩": "上田瞳", "佩斯塔": "仁見紗綾",
@@ -18,7 +100,7 @@ const CV_MAP = {
     "艾斯皮": "內海まり", "艾琳娜": "塚田悠衣", "艾皮卡": "日高里菜", "艾舒爾": "長尾玲奈", "艾蜜莉雅": "中林新夏", "芙莉可": "百瀨帆南", "茱蜜": "山田聖奈", "莉茲": "藤本侑里",
     "莎莉": "漆山ゆうき", "萊薇": "上永紗也華", "蒂亞娜": "立花日菜", "謝蒂": "山城リアン", "貝魯": "若山なつみ", "貝麗塔": "松岡美里", "路德": "渡部惠子", "路易": "兼田めぐみ",
     "阿萊特": "若山なつみ", "雷吉": "大園朱花子", "馬爾": "花咲心優", "泰達": "赤堀実華琉", "寧琉": "アンデルソンゆり子", "莉絲蒂": "黒沢ともよ", "雷內瓦": "花守ゆみり", "芭瓏": "橋本千波", "達雅": "羊宮妃那", "提格": "篠田南",
-	"羅蕾特": "日野麻里", "琵拉": "菱川花菜", "雪蘭": "安齋由香里", "芭莉耶": "寺澤百花", "瓊安": "雨宮天", "柯米(泳裝)": "河瀬茉希", "麗息": "藤咲野々花"
+	"羅蕾特": "日野麻里", "琵拉": "菱川花菜", "雪蘭": "安齋由香里", "芭莉耶": "寺澤百花", "瓊安": "雨宮天", "柯米(泳裝)": "河瀬茉希", "麗息": "藤咲野々花", "瑰恩": "南早紀"
 };
 
 const GRADE_MAP = {
@@ -31,7 +113,7 @@ const GRADE_MAP = {
     "艾斯皮": "2", "艾琳娜": "3", "艾皮卡": "3", "艾舒爾": "3", "艾蜜莉雅": "3", "芙莉可": "3", "茱蜜": "2", "莉茲": "3",
     "莎莉": "2", "萊薇": "3", "蒂亞娜": "3", "謝蒂": "3", "貝魯": "1", "貝麗塔": "3", "路德": "3", "路易": "1",
     "阿萊特": "2", "雷吉": "2", "馬爾": "3", "泰達": "2", "寧琉": "3", "莉絲蒂": "3", "雷內瓦": "3", "芭瓏": "3", "達雅": "3", "提格": "3", "羅蕾特": "3", "琵拉": "3", "雪蘭": "3", "芭莉耶": "2",
-	"瓊安": "3", "柯米(泳裝)": "3", "麗息": "2"
+	"瓊安": "3", "柯米(泳裝)": "3", "麗息": "2", "瑰恩": "3"
 };
 
 const ELDAIN_LIST = ['綾', '庫洛艾', '艾皮卡', '伊德', '羽伊', '薇薇', 'x乂錫安乂x', '優米', '雷內瓦', '瓊安'];
@@ -67,7 +149,8 @@ const FOOD_MAP = {
     "Festa": { super: "氫氣炸豬排", special: ["空氣炸豬排", "祕密葡萄汁", "一級祕密葡萄汁"] },
     "Fricle": { super: "927穀麵茶", special: ["麵茶", "扭結麵包", "愛心扭結麵包"] },
     "Gabia": { super: "肉桂口味健康糖球", special: ["肉桂口味糖球", "檸檬茶", "有機檸檬茶"] },
-    "Haley": { super: "一碗糯米飯", special: ["一碗米飯", "檸檬茶", "有機檸檬茶"] },
+    "Guin": "無",
+	"Haley": { super: "一碗糯米飯", special: ["一碗米飯", "檸檬茶", "有機檸檬茶"] },
     "Hilde": { super: "皇家蜂蜜大蒜鮭魚", special: ["蜂蜜大蒜鮭魚", "太空食品", "ANSA太空食品"] },
     "Ifrit": { super: "軟軟焦糖布丁", special: ["焦糖布丁", "龍族糖果", "龍族氣死你糖果"] },
     "Jade": { super: "薄荷巧克力冰淇淋", special: ["巧克力冰淇淋", "龍族糖果", "龍族氣死你糖果"] },
@@ -153,7 +236,8 @@ const REWARD_MAP = {
     "Festa": ["巧克力", "堅硬的石頭", "巧克力米"],
     "Fricle": ["柔軟的棉花", "牛肉", "堅硬的碎布"],
     "Gabia": ["米", "牛肉", "百老師萬能醬料"],
-    "Haley": ["細膩的鐵粉", "軟棉棉的樹木", "閃亮的玻璃"],
+    "Guin": [],
+	"Haley": ["細膩的鐵粉", "軟棉棉的樹木", "閃亮的玻璃"],
     "Hilde": ["可彎曲金屬", "魚", "軟棉棉的樹木"],
     "Ifrit": ["銅湯匙", "蔬菜", "堅硬的黑色果實"],
     "Jade": ["堅硬的黑色果實", "各式穀物", "水果"],
@@ -236,7 +320,8 @@ const WORK_URL = {
     "Festa": "https://youtu.be/kdbGcSzzyqI",
     "Fricle": "https://youtu.be/6dxpDLKWzJI",
     "Gabia": "https://youtu.be/cu80mqXBiew",
-    "Haley": "https://youtu.be/u6mmhB-zY3Y",
+    "Guin": "",
+	"Haley": "https://youtu.be/u6mmhB-zY3Y",
     "Hilde": "https://youtu.be/rLfss0AWKtA",
     "Ifrit": "https://youtu.be/ANWq6bxvkBo",
     "Jade": "https://youtu.be/9zc4o0jcU8g",
@@ -302,7 +387,7 @@ const SPINE_MAP = {
     "艾斯皮": "Espi", "艾琳娜": "Elena", "艾皮卡": "Epica", "艾舒爾": "Ashur", "艾蜜莉雅": "Amelia", "芙莉可": "Fricle", "茱蜜": "Jubee", "莉茲": "Leets",
     "莎莉": "Sari", "萊薇": "Levi", "蒂亞娜": "Diana", "謝蒂": "Shady", "貝魯": "Veroo", "貝麗塔": "Belita", "路德": "Rude", "路易": "Cuee",
     "阿萊特": "Allet", "雷吉": "Lazy", "馬爾": "Mago", "泰達": "Taida", "寧琉": "Ner", "莉絲蒂": "Risty", "R41雷內瓦": "R41_Renewa", "雷內瓦": "RenewaAwaken", "芭瓏": "Barong", "達雅": "Daya", "提格": "Tig",
-	"羅蕾特": "Rollett", "琵拉": "Pira", "雪蘭": "Sherum", "芭莉耶": "Barie", "瓊安": "Joanne", "柯米(泳裝)": "KommySwim", "麗息": "Lethe"
+	"羅蕾特": "Rollett", "琵拉": "Pira", "雪蘭": "Sherum", "芭莉耶": "Barie", "瓊安": "Joanne", "柯米(泳裝)": "KommySwim", "麗息": "Lethe", "瑰恩": "Guin"
 };
 
 const COSTUME_MAP = {
@@ -311,7 +396,7 @@ const COSTUME_MAP = {
     "布蘭切": ["Blanchet", "BlanchetSkin1"], "奶油": ["Butter", "ButterSkin1"], "康娜": ["Canna", "CannaSkin1"], "伊德": ["Ed", "EdSkin1", "EdSkin2", "EdSkin3"], "艾琳娜": ["Elena", "ElenaSkin1"], "艾皮卡": ["Epica", "EpicaSkin1", "EpicaSkin2", "EpicaSkin3"], "芙莉可": ["Fricle", "FricleSkin1"], "加薇雅": ["Gabia", "GabiaSkin1", "GabiaSkin2"], "海莉": ["Haley", "HaleySkin1", "HaleySkin2"], "希爾德": ["Hilde", "HildeSkin1"], "基狄恩": ["Kidian", "KidianSkin1", "KidianSkin2", "KidianSkin3"], "柯米": ["Kommy", "KommySkin1", "KommySkin2"], "卡洛特": ["Kyarot", "KyarotSkin1"], "奈雅": ["Naia", "NaiaSkin1"], "寧琉": ["Ner", "NerSkin1", "NerSkin2"], "皮可菈": ["Picora", "PicoraSkin1"], "珀榭": ["Posher", "PosherSkin1", "PosherSkin3"], "琳": ["Rim", "RimSkin1", "RimSkin2"], "洛涅": ["Rohne", "RohneSkin2"], "謝蒂": ["Shady", "ShadySkin1"], "希瑟圖": ["Sist", "SistSkin1"], "希拉": ["Sylla", "SyllaSkin1"], "優米": ["Yomi", "YomiSkin1", "YomiSkin2"],
     "愛麗絲": ["Alice", "AliceSkin1", "AliceSkin2"], "艾蜜莉雅": ["Amelia", "AmeliaSkin2"], "綾": ["Aya", "AyaSkin1", "AyaSkin2", "AyaSkin3", "AyaSkin4"], "庫洛艾": ["Chloe", "ChloeSkin1", "ChloeSkin2", "ChloeSkin3", "ChloeSkin4"], "蒂亞娜": ["Diana", "DianaSkin1", "DianaSkin2"], "桃桃": ["Momo", "MomoSkin3"], "瑟琳娜": ["Selline", "SellineSkin1"], "羽伊": ["Ui", "UiSkin1", "UiSkin2", "UiSkin3", "UiSkin4"], "薇薇": ["Vivi", "ViviSkin1", "ViviSkin2", "ViviSkin3", "ViviSkin4"], "x乂錫安乂x": ["xXionx", "xXionxSkin1", "xXionxSkin2", "xXionxSkin3", "xXionxSkin4"],
     "艾爾芬": ["Erpin", "ErpinSkin1", "ErpinSkin3"], "莉絲蒂": ["Risty", "RistySkin1"], "雷內瓦": ["RenewaAwaken", "RenewaAwakenSkin1", "RenewaAwakenSkin2"],
-	"芭瓏": ["Barong", "BarongSkin1"], "達雅": ["Daya", "DayaSkin1"], "提格": ["Tig", "TigSkin1"], "柯米(泳裝)": ["KommySwim", "KommySwimSkin3"], "麗息": ["Lethe"],
+	"芭瓏": ["Barong", "BarongSkin1"], "達雅": ["Daya", "DayaSkin1"], "提格": ["Tig", "TigSkin1"], "柯米(泳裝)": ["KommySwim", "KommySwimSkin3"], "麗息": ["Lethe"], "瑰恩": ["Guin", "GuinSkin3"],
 	"羅蕾特": ["Rollett", "RollettSkin2"], "琵拉": ["Pira", "PiraSkin2"], "雪蘭": ["Sherum", "SherumSkin1"], "芭莉耶": ["Barie"], "瓊安": ["Joanne", "JoanneSkin2", "JoanneSkin3", "JoanneSkin5"]
 };
 
@@ -322,7 +407,7 @@ const SD_COSTUME = {
     "布蘭切": ["Blanchet", "BlanchetSkin1"], "奶油": ["Butter", "ButterSkin1"], "康娜": ["Canna", "CannaSkin1"], "伊德": ["Ed", "EdSkin1", "EdSkin2", "EdSkin3"], "艾琳娜": ["Elena", "ElenaSkin1"], "艾皮卡": ["Epica", "EpicaSkin1", "EpicaSkin2", "EpicaSkin3"], "芙莉可": ["Fricle", "FricleSkin1"], "加薇雅": ["Gabia", "GabiaSkin1", "GabiaSkin2"], "海莉": ["Haley", "HaleySkin1", "HaleySkin2"], "希爾德": ["Hilde", "HildeSkin1"], "基狄恩": ["Kidian", "KidianSkin1", "KidianSkin2", "KidianSkin3"], "柯米": ["Kommy", "KommySkin1", "KommySkin2"], "卡洛特": ["Kyarot", "KyarotSkin1"], "奈雅": ["Naia", "NaiaSkin1"], "寧琉": ["Ner", "NerSkin1", "NerSkin2"], "皮可菈": ["Picora", "PicoraSkin1"], "珀榭": ["Posher", "PosherSkin1", "PosherSkin3"], "琳": ["Rim", "RimSkin1", "RimSkin2"], "洛涅": ["Rohne", "RohneSkin2"], "謝蒂": ["Shady", "ShadySkin1"], "希瑟圖": ["Sist", "SistSkin1"], "希拉": ["Sylla", "SyllaSkin1"], "優米": ["Yomi", "YomiSkin1", "YomiSkin2"],
     "愛麗絲": ["Alice", "AliceSkin1", "AliceSkin2"], "艾蜜莉雅": ["Amelia", "AmeliaSkin2"], "綾": ["Aya", "AyaSkin1", "AyaSkin2", "AyaSkin3", "AyaSkin4"], "庫洛艾": ["Chloe", "ChloeSkin1", "ChloeSkin2", "ChloeSkin3", "ChloeSkin4"], "蒂亞娜": ["Diana", "DianaSkin1", "DianaSkin2"], "桃桃": ["Momo", "MomoSkin3"], "瑟琳娜": ["Selline", "SellineSkin1"], "羽伊": ["Ui", "UiSkin1", "UiSkin2", "UiSkin3", "UiSkin4"], "薇薇": ["Vivi", "ViviSkin1", "ViviSkin2", "ViviSkin3", "ViviSkin4"], "x乂錫安乂x": ["xXionx", "xXionxSkin1", "xXionxSkin2", "xXionxSkin3", "xXionxSkin4"],
     "艾爾芬": ["Erpin", "ErpinSkin1", "ErpinSkin3"], "莉絲蒂": ["Risty", "RistySkin1"], "雷內瓦": ["RenewaAwaken", "RenewaAwakenSkin1", "RenewaAwakenSkin2"],
-	"芭瓏": ["Barong", "BarongSkin1"], "達雅": ["Daya", "DayaSkin1"], "提格": ["Tig", "TigSkin1"], "柯米(泳裝)": ["KommySwim", "KommySwimSkin3"], "麗息": ["Lethe"],
+	"芭瓏": ["Barong", "BarongSkin1"], "達雅": ["Daya", "DayaSkin1"], "提格": ["Tig", "TigSkin1"], "柯米(泳裝)": ["KommySwim", "KommySwimSkin3"], "麗息": ["Lethe"], "瑰恩": ["Guin", "GuinSkin3"],
 	"羅蕾特": ["Rollett", "RollettSkin2"], "琵拉": ["Pira", "PiraSkin2"], "雪蘭": ["Sherum", "SherumSkin1"], "芭莉耶": ["Barie"], "瓊安": ["Joanne", "JoanneSkin2", "JoanneSkin3", "JoanneSkin5"]
 };
 
@@ -337,7 +422,7 @@ const MINI_SPINE = {
     "艾斯皮": "Mini_Espi", "艾琳娜": "Mini_Elena", "艾皮卡": "Mini_Epica", "艾舒爾": "Mini_Ashur", "艾蜜莉雅": "Mini_Amelia", "芙莉可": "Mini_Fricle", "茱蜜": "Mini_Jubee", "莉茲": "Mini_Leets",
     "莎莉": "Mini_Sari", "萊薇": "Mini_Levi", "蒂亞娜": "Mini_Diana", "謝蒂": "Mini_Shady", "貝魯": "Mini_Veroo", "貝麗塔": "Mini_Belita", "路德": "Mini_Rude", "路易": "Mini_Cuee",
     "阿萊特": "Mini_Allet", "雷吉": "Mini_Lazy", "馬爾": "Mini_Mago", "泰達": "Mini_Taida", "寧琉": "Mini_Ner", "莉絲蒂": "Mini_Risty",  "雷內瓦": "Mini_RenewaAwaken", "芭瓏": "Mini_Barong", "達雅": "Mini_Daya", "提格": "Mini_Tig",
-	"羅蕾特": "Mini_Rollett", "琵拉": "Mini_Pira", "雪蘭": "Mini_Sherum", "芭莉耶": "Mini_Barie", "瓊安": "Mini_Joanne", "柯米(泳裝)": "Mini_KommySwim", "麗息": "Mini_Lethe"
+	"羅蕾特": "Mini_Rollett", "琵拉": "Mini_Pira", "雪蘭": "Mini_Sherum", "芭莉耶": "Mini_Barie", "瓊安": "Mini_Joanne", "柯米(泳裝)": "Mini_KommySwim", "麗息": "Mini_Lethe", "瑰恩": "Mini_Guin"
 };
 
 console.log("LANG_DICT 內容:", LANG_DICT);
