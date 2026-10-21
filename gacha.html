@@ -228,97 +228,14 @@
             }
             
             // ==========================
-            // 1. 全域變數安全宣告 (防止外部 JS 載入前報錯)
+            // 角色與UI初始化
             // ==========================
-            window.LANG_DICT = window.LANG_DICT || {};
-            window.GRADE_MAP = window.GRADE_MAP || {};
-            window.ELDAIN_LIST = window.ELDAIN_LIST || [];
-            window.INITIAL_DATA = window.INITIAL_DATA || [];
-
-            // ==========================
-            // 2. 抽卡系統核心變數
-            // ==========================
-            let validChars = []; // 存放所有合法可抽角色的陣列
             let currentPool = { type: 'normal', rateUpChars: [], personality: null, name: '普通招募' };
             const personalities = ["天真", "冷靜", "狂亂", "活潑", "憂鬱"];
-
-            // ==========================
-            // 3. 非同步載入 Firestore 資料
-            // ==========================
-            async function loadCharactersFromFirestore() {
-                try {
-                    // 顯示載入中提示
-                    const poolBtnContainer = document.getElementById('poolButtons');
-                    if(poolBtnContainer) {
-                        poolBtnContainer.innerHTML = '<span class="text-sm font-bold text-gray-500 animate-pulse">正在連接阿露的抽卡伺服器...</span>';
-                    }
-
-                    // 請求 Firestore 資料
-                    const snapshot = await db.collection("global_characters").get(); 
-                    let rawData = [];
-                    
-                    snapshot.forEach(doc => {
-                        const data = doc.id ? doc.data() : doc;
-                        
-                        // 【名稱】
-                        const charName = (data.core?.name || data.names?.["zh-TW"] || data.name || "未知角色").trim();
-
-                        // 【性格】(處理陣列轉字串)
-                        let rawPersonality = data.personality || data.core?.personality || data.personalityName || "天真";
-                        if (Array.isArray(rawPersonality)) rawPersonality = rawPersonality.join(",");
-                        else rawPersonality = String(rawPersonality);
-
-                        // 【星數】(優先讀取 Firestore，若無則降級依賴 GRADE_MAP，最後預設為 1)
-                        let starNum = parseInt(data.core?.star || data.star || data.grade);
-                        if (isNaN(starNum)) {
-                            starNum = (typeof GRADE_MAP !== 'undefined' && GRADE_MAP[charName]) ? parseInt(GRADE_MAP[charName]) : 1;
-                        }
-
-                        // 【艾爾登/普通角色】(優先讀取 Firestore，若無則降級依賴 ELDAIN_LIST)
-                        let isEldainChar = data.core?.isEldain || data.isEldain;
-                        if (isEldainChar === undefined) {
-                            isEldainChar = (typeof ELDAIN_LIST !== 'undefined' && (ELDAIN_LIST.includes(charName) || charName === '羽伊'));
-                        }
-
-                        // 將完整屬性推入陣列
-                        rawData.push({
-                            ...data, // 保留其餘原始資料
-                            id: doc.id,
-                            name: charName,
-                            star: starNum,
-                            isEldain: !!isEldainChar,
-                            personality: rawPersonality,
-                            race: data.core?.race || data.race || "未知種族",
-                            job: data.core?.job || data.job || "未知職業"
-                        });
-                    });
-
-                    // 寫入全域變數供其他腳本備用
-                    window.INITIAL_DATA = rawData;
-
-                    // 過濾掉「未上市」的未來角色 (如果 Firestore 有設定 releaseDate 屬性)
-                    validChars = rawData.filter(c => !c.releaseDate || new Date(c.releaseDate).getTime() < Date.now());
-
-                    // 🌟 資料載入完畢，執行 UI 初始化 
-                    // (此時 initUI() 內部就會去讀取 data_config.js 裡面的 Pick Up 活動陣列來生成按鈕)
-                    initUI(); 
-
-                } catch (error) {
-                    console.error("載入 Firestore 角色資料失敗:", error);
-                    if(document.getElementById('poolButtons')) {
-                        document.getElementById('poolButtons').innerHTML = '<span class="text-sm font-bold text-red-500">角色資料載入失敗，請檢查網路連線。</span>';
-                    }
-                }
-            }
-
-            // ==========================
-            // 4. 網頁載入事件觸發
-            // ==========================
-            window.addEventListener('load', () => {
-                if(typeof initLangUI === 'function') initLangUI(); // 如果你有翻譯 UI 函式
-                
-                // 確保 Firestore 載入完畢後，才進行卡池渲染與抽卡演算法的綁定
-                loadCharactersFromFirestore(); 
+            const validChars = INITIAL_DATA.filter(c => !c.releaseDate || new Date(c.releaseDate).getTime() < Date.now()).map(c => {
+                let starNum = 1; if (typeof GRADE_MAP !== 'undefined' && GRADE_MAP[c.name]) { const parsedStar = parseInt(GRADE_MAP[c.name]); if (!isNaN(parsedStar)) starNum = parsedStar; }
+                let isEldainChar = false; if (typeof ELDAIN_LIST !== 'undefined') { isEldainChar = ELDAIN_LIST.includes(c.name) || (c.name === '羽伊' && ELDAIN_LIST.includes('羽依')); }
+                return { ...c, star: starNum, isEldain: isEldainChar };
             });
             
             function initUI() {
@@ -1045,6 +962,10 @@
             canvas.addEventListener('pointerup', stopDrag); canvas.addEventListener('pointercancel', stopDrag);
             }
             
+            window.addEventListener('load', () => { 
+                initLangUI(); 
+                initUI(); 
+            });
             window.onscroll = function() {
                 const btn = document.getElementById("backToTop");
                 if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) btn.style.display = "flex"; else btn.style.display = "none";
