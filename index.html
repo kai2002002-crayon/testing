@@ -6,10 +6,10 @@
         <meta name="referrer" content="no-referrer-when-downgrade">
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-2Z87YT118P"></script>
         <script>
-            // window.dataLayer = window.dataLayer || [];
-            // function gtag(){dataLayer.push(arguments);}
-            // gtag('js', new Date());
-            // gtag('config', 'G-2Z87YT118P');
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-2Z87YT118P');
         </script>
         <title>嘟嘟臉金蠟筆記事本</title>
         <meta name="description" content="《Trickcal: Chibi Go》嘟嘟臉金蠟筆記事本！提供最新的《嘟嘟臉惡作劇》(Trickcal Revive / トリカル) 角色圖鑑、金蠟筆與技能資料。The best Trickcal Revive Crayon Planner & Character Database. トリカル 最強キャラ・クレヨン攻略データベース。">
@@ -24,120 +24,10 @@
         <script src="data_skills.js"></script>
         <script src="https://cdn.tailwindcss.com"></script>
         <script>
-             tailwind.config = {
-                 darkMode: 'class',
-             }
-        </script>
-
-        <!-- 🌟 統一的 Firebase 模組化載入區塊 (Auth + Firestore + 資料提取) -->
-        <script type="module">
-            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-            import { getFirestore, collection, getDocs, doc, getDoc, setDoc, runTransaction, serverTimestamp, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-            import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-
-            const firebaseConfig = {
-                apiKey: "AIzaSyDhv8D2pY_0M56UJrDTQw0RGPHA-BkXU8Y",
-                authDomain: "crayon-note.firebaseapp.com",
-                projectId: "crayon-note",
-                storageBucket: "crayon-note.firebasestorage.app",
-                messagingSenderId: "210614088940",
-                appId: "1:210614088940:web:7addbdc7c466eeb05421c9",
-                measurementId: "G-M1EJPE12TE"
-            };
-
-            const app = initializeApp(firebaseConfig);
-
-            // 🌟 啟用 Firestore 離線持久化 (取代舊版 db.enablePersistence())
-            const db = initializeFirestore(app, {
-                localCache: persistentLocalCache({tabManager: persistentMultipleTabManager()})
-            });
-            const auth = getAuth(app);
-
-            // 將 Firebase 實例與功能暴露給全域環境，讓底下一般 Script 可以呼叫
-            window.firebaseDb = db;
-            window.firebaseAuth = auth;
-            window.fb = {
-                doc, getDoc, setDoc, runTransaction, serverTimestamp, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged
-            };
-
-            async function loadAndMergeGameData() {
-                try {
-                    console.log("正在讀取角色資料...");
-                    // 優先從 IndexedDB 快取讀取，並背後向雲端驗證更新
-                    const querySnapshot = await getDocs(collection(db, "global_characters"));
-                    
-                    window.INITIAL_DATA = [];
-                    window.characterSkills = [];
-
-                    querySnapshot.forEach((docSnap) => {
-                        const data = docSnap.data();
-                        const spineName = data.spineName;
-                        const zhName = data.names && data.names["zh-TW"] ? data.names["zh-TW"] : "未知";
-
-                        if (data.names) {
-                            if (data.names["zh-TW"]) LANG_DICT["zh-TW"][zhName] = data.names["zh-TW"];
-                            if (data.names["ja"]) LANG_DICT["ja"][zhName] = data.names["ja"];
-                            if (data.names["en"]) LANG_DICT["en"][zhName] = data.names["en"];
-                        }
-
-                        if (data.core) {
-                            INITIAL_DATA.push({
-                                job: data.core.job,
-                                name: data.core.name,
-                                pathVersion: data.core.pathVersion,
-                                personality: data.core.personality,
-                                position: data.core.position,
-                                race: data.core.race,
-                                releaseDate: data.core.releaseDate,
-                                layer1: data.core.layer1 || [],
-                                layer2: data.core.layer2 || [],
-                                layer3: data.core.layer3 || []
-                            });
-                        }
-
-                        if (data.skills) {
-                            characterSkills.push({
-                                name: zhName,
-                                attribute: data.skills.attribute,
-                                normalAttack: data.skills.normalAttack || {},
-                                normalSkill: data.skills.normalSkill || {}
-                            });
-                        }
-
-                        if (typeof SPINE_MAP !== 'undefined' && spineName) {
-                            SPINE_MAP[zhName] = spineName;
-                        }
-                    });
-
-                    console.log("✅ 輕量化資料提取完成！共載入", INITIAL_DATA.length, "名角色。");
-                
-                // 1. 隱藏 Loading 動畫
-                const loaderEl = document.getElementById('loader');
-                if (loaderEl) loaderEl.classList.add('hidden');
-
-                // 2. 觸發卡片清單與統計面板渲染
-                if (typeof window.renderMainUI === 'function') {
-                    window.renderMainUI(); 
-                } else {
-                    if (typeof window.initStates === 'function') window.initStates();
-                    if (typeof window.renderMatrix === 'function') window.renderMatrix();
-                    if (typeof window.calculateStats === 'function') window.calculateStats();
-                }
-
-            } catch (error) {
-                console.error("讀取資料失敗:", error);
-                alert("無法載入圖鑑資料，請檢查網路連線。");
-                
-                // 如果發生錯誤，也要把 Loader 隱藏，避免畫面卡死
-                const loaderEl = document.getElementById('loader');
-                if (loaderEl) loaderEl.classList.add('hidden');
+            tailwind.config = {
+                darkMode: 'class',
             }
-            }
-
-            // 網頁一打開就開始載入資料
-            loadAndMergeGameData();
         </script>
-
         <script>
             // 🌟 動態載入對應語言的 PWA Manifest
             (function() {
@@ -150,16 +40,24 @@
                 }
                 const manifestLink = document.createElement('link');
                 manifestLink.rel = 'manifest';
-                if (lang === 'ja') manifestLink.href = 'manifest_ja.json';
-                else if (lang === 'en') manifestLink.href = 'manifest_en.json';
-                else manifestLink.href = 'manifest.json';
+                // 根據判斷出的語言載入對應的檔案
+                if (lang === 'ja') {
+                    manifestLink.href = 'manifest_ja.json';
+                } else if (lang === 'en') {
+                    manifestLink.href = 'manifest_en.json';
+                } else {
+                    manifestLink.href = 'manifest.json'; // 預設繁中
+                }
                 document.head.appendChild(manifestLink);
             })();
         </script>
-        
         <link rel="apple-touch-icon" href="icon.png">
         <meta name="theme-color" content="#2563eb">
+
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+        <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+        <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+        <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
         <link rel="stylesheet" href="https://unpkg.com/@esotericsoftware/spine-player@4.1/dist/spine-player.css">
         <script defer src="https://unpkg.com/@esotericsoftware/spine-player@4.1/dist/iife/spine-player.js"></script>
         <link rel="stylesheet" href="sprites.css">
@@ -307,8 +205,16 @@
             content: "✨"; position: absolute; font-size: 11px; filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.9));
             pointer-events: none; z-index: 20; animation: starRunAround 3s linear infinite;
             }
-            .card-artifact { border-color: #00f0ff !important; color: #00f0ff !important; filter: drop-shadow(0 0 4px rgba(0, 240, 255, 0.8)); }
-            .card-rune { border-color: #ff00ff !important; color: #ff00ff !important; filter: drop-shadow(0 0 4px rgba(255, 0, 255, 0.8)); }
+            .card-artifact {
+            border-color: #00f0ff !important;
+            color: #00f0ff !important;
+            filter: drop-shadow(0 0 4px rgba(0, 240, 255, 0.8));
+            }
+            .card-rune {
+            border-color: #ff00ff !important;
+            color: #ff00ff !important;
+            filter: drop-shadow(0 0 4px rgba(255, 0, 255, 0.8));
+            }
             @keyframes starRunAround {
             0%   { top: -6px; left: -6px; transform: rotate(0deg) scale(0.9); }
             25%  { top: -6px; left: calc(100% - 6px); transform: rotate(90deg) scale(1.3); }
@@ -322,65 +228,160 @@
             }
             .animate-banner-fade { animation: fadeInBanner 0.4s ease-out forwards; }
             .rainbow-wrapper {
-            position: relative; padding: 2px; border-radius: 9px;
+            position: relative;
+            padding: 2px;
+            border-radius: 9px;
             background: linear-gradient(45deg, #ff0000, #ff7300, #ffeb00, #47e247, #00bbff, #0055ff, #8800ff, #ff0000);
-            background-size: 400%; animation: rainbowMove 5s linear infinite; display: inline-block;
-            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5)); transition: transform 0.3s ease;
+            background-size: 400%;
+            animation: rainbowMove 5s linear infinite;
+            display: inline-block;
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+            transition: transform 0.3s ease;
             }
-            .rainbow-content { display: block; height: 100%; width: auto; aspect-ratio: auto; object-fit: contain; border-radius: 7px; overflow: hidden; }
-            @keyframes rainbowMove { 0% { background-position: 0 0; } 100% { background-position: 400% 0; } }
-            .rainbow-wrapper:hover { transform: scale(1.30); filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)); }
-            #bannerDisplayArea { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); width: max-content; max-width: 100%; }
+            .rainbow-content {
+            display: block;
+            height: 100%;
+            width: auto;
+            aspect-ratio: auto;
+            object-fit: contain;
+            border-radius: 7px;
+            overflow: hidden;
+            }
+            @keyframes rainbowMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 400% 0; }
+            }
+            .rainbow-wrapper:hover {
+            transform: scale(1.30);
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+            }
+            #bannerDisplayArea {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: max-content; 
+            max-width: 100%;
+            }
             #bannerDisplayArea.banner-expanded {
-            position: relative; height: auto !important; min-height: 44px; display: flex !important; 
-            flex-direction: column !important; align-items: stretch !important; overflow: visible !important;
-            padding: 10px !important; gap: 12px; background: rgba(255, 255, 255, 0.95);
-            border-color: #fbbf24; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); z-index: 100 !important;
+            position: relative;
+            height: auto !important;
+            min-height: 44px;
+            display: flex !important; 
+            flex-direction: column !important;
+            align-items: stretch !important;
+            overflow: visible !important;
+            padding: 10px !important;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.95);
+            border-color: #fbbf24;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            z-index: 100 !important;
             }
-            .dark #bannerDisplayArea.banner-expanded { background: rgba(31, 41, 55, 0.95); border-color: #4b5563; }
+            .dark #bannerDisplayArea.banner-expanded {
+            background: rgba(31, 41, 55, 0.95);
+            border-color: #4b5563;
+            }
             #bannerDisplayArea.banner-expanded > .banner-panel-item {
-            opacity: 1 !important; pointer-events: auto !important; width: 100%; border-bottom: 1px dashed rgba(217, 119, 6, 0.2); padding-bottom: 8px;
+            opacity: 1 !important;
+            pointer-events: auto !important;
+            width: 100%;
+            border-bottom: 1px dashed rgba(217, 119, 6, 0.2);
+            padding-bottom: 8px;
             }
-            .dark #bannerDisplayArea.banner-expanded > .banner-panel-item { border-bottom-color: rgba(156, 163, 175, 0.2); }
-            #bannerDisplayArea.banner-expanded > .banner-panel-item:last-child { border-bottom: none !important; padding-bottom: 0px !important; }
-            #bannerDisplayArea.banner-expanded > .banner-panel-item.panel-empty-hide { display: none !important; }
-            #bannerDisplayArea.banner-expanded #eventBannersContainer { flex-direction: column !important; align-items: flex-end !important; height: auto !important; width: max-content !important; margin-left: auto; }
-            #bannerDisplayArea.banner-expanded #eventBannersContainer .rainbow-wrapper { display: flex !important; height: 32px !important; width: auto !important; }
+            .dark #bannerDisplayArea.banner-expanded > .banner-panel-item {
+            border-bottom-color: rgba(156, 163, 175, 0.2);
+            }
+            #bannerDisplayArea.banner-expanded > .banner-panel-item:last-child {
+            border-bottom: none !important;
+            padding-bottom: 0px !important;
+            }
+            #bannerDisplayArea.banner-expanded > .banner-panel-item.panel-empty-hide {
+            display: none !important;
+            }
+            #bannerDisplayArea.banner-expanded #eventBannersContainer {
+            flex-direction: column !important;
+            align-items: flex-end !important;
+            height: auto !important;
+            width: max-content !important;
+            margin-left: auto;
+            }
+            #bannerDisplayArea.banner-expanded #eventBannersContainer .rainbow-wrapper {
+            display: flex !important; 
+            height: 32px !important; 
+            width: auto !important;
+            }
             #backToTop {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: none;
-            width: 20px; height: 20px; border-radius: 50%; background-color: #fbbf24; color: white; border: none; cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: transform 0.2s, background-color 0.3s; font-size: 10px; display: flex; align-items: center; justify-content: center;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #fbbf24;
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s, background-color 0.3s;
+            font-size: 10px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
             }
-            #backToTop:hover { background-color: #d97706; transform: translateX(-50%) translateY(-5px); }
+            #backToTop:hover { 
+            background-color: #d97706; 
+            transform: translateX(-50%) translateY(-5px); 
+            }
             
             /* 🌟 雙重性格專屬動態漸層外框 */
-            @keyframes borderFlow { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
-            .border-dual-dynamic {
-                border-color: transparent !important; background-clip: padding-box, border-box !important; background-origin: border-box !important;
-                background-image: linear-gradient(var(--bg-color, #fcf8f2), var(--bg-color, #fcf8f2)), linear-gradient(60deg, var(--c1, #a855f7), var(--c2, #4ade80), var(--c1, #a855f7)) !important;
-                background-size: 200% 200% !important; animation: borderFlow 2.5s linear infinite;
+            @keyframes borderFlow {
+                0% { background-position: 0% 50%; }
+                100% { background-position: 200% 50%; }
             }
-            .dark .border-dual-dynamic { --bg-color: #1f2937; }
-            .pickup-sparkle.border-dual-dynamic { --bg-color: #ffffff; }
-            .dark .pickup-sparkle.border-dual-dynamic { --bg-color: #1f2937; }
+            .border-dual-dynamic {
+                border-color: transparent !important;
+                background-clip: padding-box, border-box !important;
+                background-origin: border-box !important;
+                /* var(--bg-color) 會配合深色/淺色模式變更，預設為卡片頭像底色 */
+                background-image: linear-gradient(var(--bg-color, #fcf8f2), var(--bg-color, #fcf8f2)),
+                                  linear-gradient(60deg, var(--c1, #a855f7), var(--c2, #4ade80), var(--c1, #a855f7)) !important;
+                background-size: 200% 200% !important;
+                animation: borderFlow 2.5s linear infinite;
+            }
+            .dark .border-dual-dynamic {
+                --bg-color: #1f2937;
+            }
+            .pickup-sparkle.border-dual-dynamic {
+                --bg-color: #ffffff;
+            }
+            .dark .pickup-sparkle.border-dual-dynamic {
+                --bg-color: #1f2937;
+            }
         </style>
     </head>
     <body class="pt-16 sm:pt-20 p-3 sm:p-6 md:p-8 text-gray-800 dark:text-gray-100">
-        <!-- 導航列與選單... (保留原始 UI) -->
         <div id="fixedTopBar" class="fixed top-0 left-0 w-full h-12 sm:h-14 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 z-[2000] flex justify-between items-center px-3 sm:px-6 shadow-sm">
             <button onclick="toggleSidebar()" class="flex items-center justify-center p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
             </button>
             <div class="flex items-center gap-3 sm:gap-4 pr-1">
                 <div class="relative flex items-center justify-center px-1 h-8 group cursor-pointer hover:opacity-70 transition">
-                    <svg class="w-4 h-4 text-amber-600 dark:text-amber-400 mr-1" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                    <svg class="w-4 h-4 text-amber-600 dark:text-amber-400 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                    </svg>
                     <span id="currentLangText" class="text-[11px] sm:text-xs font-bold text-gray-700 dark:text-gray-300">繁中</span>
                     <select id="langSelect" onchange="changeLanguage(this.value)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                        <option value="zh-TW">繁中</option><option value="ja">日本語</option><option value="en">EN</option>
+                        <option value="zh-TW">繁中</option>
+                        <option value="ja">日本語</option>
+                        <option value="en">EN</option>
                     </select>
                 </div>
                 <button onclick="toggleDarkMode()" class="h-8 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:opacity-70 transition shrink-0 text-sm sm:text-base">
-                <span id="themeIconLight" class="block dark:hidden">🌙</span><span id="themeIconDark" class="hidden dark:block">☀️</span>
+                <span id="themeIconLight" class="block dark:hidden">🌙</span>
+                <span id="themeIconDark" class="hidden dark:block">☀️</span>
                 </button>
                 <div id="authPanel" class="flex flex-row items-center justify-end gap-2 h-8">
                     <div id="userStatus" class="hidden sm:flex flex-row items-center text-left text-[11px] text-gray-600 dark:text-gray-300">
@@ -404,37 +405,60 @@
         <div id="sidebarMenu" class="fixed top-0 left-0 h-full w-[25vw] min-w-[240px] max-w-[320px] bg-[#fcf8f2] dark:bg-gray-900 z-[3000] shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out border-r border-amber-200 dark:border-gray-700 flex flex-col pt-14 sm:pt-16">
             <div class="px-5 pb-4 mb-2 border-b border-amber-200 dark:border-gray-700 flex justify-between items-center">
                 <span class="font-bold text-lg text-amber-900 dark:text-amber-400" data-lang-key="menu_system_title">系統選單</span>
-                <button onclick="toggleSidebar()" class="text-gray-400 hover:text-red-500 transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                <button onclick="toggleSidebar()" class="text-gray-400 hover:text-red-500 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
             </div>
             <div class="flex flex-col gap-3 px-4">
                 <a href="gacha.html" target="_blank" class="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-gray-800 border border-amber-200 dark:border-gray-600 shadow-sm hover:bg-amber-50 dark:hover:bg-gray-700 transition group">
-                    <div class="w-10 h-10 flex items-center justify-center bg-amber-100 dark:bg-gray-700 rounded-lg shrink-0 overflow-hidden"><div class="sprite-base sprite-common sprite-GachaButton shrink-0 scale-[0.5] group-hover:scale-[0.6] drop-shadow-sm transition-transform origin-center"></div></div>
+                    <div class="w-10 h-10 flex items-center justify-center bg-amber-100 dark:bg-gray-700 rounded-lg shrink-0 overflow-hidden">
+                        <div class="sprite-base sprite-common sprite-GachaButton shrink-0 scale-[0.5] group-hover:scale-[0.6] drop-shadow-sm transition-transform origin-center"></div>
+                    </div>
                     <span class="font-bold text-sm text-amber-900 dark:text-gray-200" data-lang-key="menu_gacha">前往招募模擬器</span>
                 </a>
                 <a href="apostle_viewer.html" target="_blank" class="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-gray-800 border border-amber-200 dark:border-gray-600 shadow-sm hover:bg-amber-50 dark:hover:bg-gray-700 transition group">
-                    <div class="w-10 h-10 flex items-center justify-center bg-amber-100 dark:bg-gray-700 rounded-lg shrink-0 overflow-hidden"><div class="sprite-base sprite-common sprite-Album_Icon_Skin shrink-0 scale-[0.6] group-hover:scale-[0.7] drop-shadow-sm transition-transform origin-center"></div></div>
+                    <div class="w-10 h-10 flex items-center justify-center bg-amber-100 dark:bg-gray-700 rounded-lg shrink-0 overflow-hidden">
+                        <div class="sprite-base sprite-common sprite-Album_Icon_Skin shrink-0 scale-[0.6] group-hover:scale-[0.7] drop-shadow-sm transition-transform origin-center"></div>
+                    </div>
                     <span class="font-bold text-sm text-amber-900 dark:text-gray-200" data-lang-key="menu_viewer">前往動態展示器</span>
                 </a>
                 <a href="tier_maker.html" target="_blank" class="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-gray-800 border border-amber-200 dark:border-gray-600 shadow-sm hover:bg-amber-50 dark:hover:bg-gray-700 transition group">
-                    <div class="w-10 h-10 flex items-center justify-center bg-amber-100 dark:bg-gray-700 rounded-lg shrink-0 overflow-hidden text-xl drop-shadow-sm group-hover:scale-110 transition-transform">🏆</div>
+                    <div class="w-10 h-10 flex items-center justify-center bg-amber-100 dark:bg-gray-700 rounded-lg shrink-0 overflow-hidden text-xl drop-shadow-sm group-hover:scale-110 transition-transform">
+                        🏆
+                    </div>
                     <span class="font-bold text-sm text-amber-900 dark:text-gray-200" data-lang-key="menu_tier_maker">前往排行榜生成器</span>
                 </a>
                 <a href="checklist.html" target="_blank" class="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-gray-800 border border-amber-200 dark:border-gray-600 shadow-sm hover:bg-amber-50 dark:hover:bg-gray-700 transition group">
-                    <div class="w-10 h-10 flex items-center justify-center bg-amber-100 dark:bg-gray-700 rounded-lg shrink-0 overflow-hidden text-xl drop-shadow-sm group-hover:scale-110 transition-transform">⭐</div>
+                    <div class="w-10 h-10 flex items-center justify-center bg-amber-100 dark:bg-gray-700 rounded-lg shrink-0 overflow-hidden text-xl drop-shadow-sm group-hover:scale-110 transition-transform">
+                        ⭐
+                    </div>
                     <span class="font-bold text-sm text-amber-900 dark:text-gray-200" data-lang-key="menu_checklist">前往自訂角色清單</span>
                 </a>
                 <button onclick="toggleAnimation()" class="hidden md:flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-gray-800 border border-amber-200 dark:border-gray-600 shadow-sm hover:bg-amber-50 dark:hover:bg-gray-700 transition group text-left w-full">
-                    <div class="w-10 h-10 flex items-center justify-center bg-amber-100 dark:bg-gray-700 rounded-lg shrink-0 overflow-hidden"><div id="rimAnimIcon" class="sprite-base sprite-common sprite-minirim shrink-0 scale-[0.5] origin-center transition-all duration-200 grayscale opacity-50"></div></div>
+                    <div class="w-10 h-10 flex items-center justify-center bg-amber-100 dark:bg-gray-700 rounded-lg shrink-0 overflow-hidden">
+                        <div id="rimAnimIcon" class="sprite-base sprite-common sprite-minirim shrink-0 scale-[0.5] origin-center transition-all duration-200 grayscale opacity-50"></div>
+                    </div>
                     <span class="font-bold text-sm text-amber-900 dark:text-gray-200" data-lang-key="menu_toggle_anim">開關頂部跑酷動畫</span>
                 </button>
             </div>
         </div>
         <div id="runnerArea" class="hidden md:block fixed top-[-1px] left-0 w-full h-[220px] z-[100] pointer-events-none overflow-visible">
-            <div id="runnerTrack" class="absolute top-0 w-[250px] h-full pointer-events-none z-40" style="right: 0px; transform: translateX(0); opacity: 0;"><div style="width: 100%; height: 100%; transform: scale(0.75); transform-origin: center;"><div id="topRunnerContainer" class="w-full h-full relative pointer-events-none"></div></div></div>
-            <div id="bossTrack" class="absolute top-[-1px] w-[1000px] h-full pointer-events-none z-20" style="right: -300px; transform: translateX(0); opacity: 0; overflow: visible;"><div style="width: 100%; height: 100%; transform: scale(0.85); transform-origin: center;"><div id="bossRunnerContainer" class="w-full h-full relative"></div></div></div>
+            <div id="runnerTrack" class="absolute top-0 w-[250px] h-full pointer-events-none z-40" style="right: 0px; transform: translateX(0); opacity: 0;">
+                <div style="width: 100%; height: 100%; transform: scale(0.75); transform-origin: center;">
+                    <div id="topRunnerContainer" class="w-full h-full relative pointer-events-none"></div>
+                </div>
+            </div>
+            <div id="bossTrack" class="absolute top-[-1px] w-[1000px] h-full pointer-events-none z-20" style="right: -300px; transform: translateX(0); opacity: 0; overflow: visible;">
+                <div style="width: 100%; height: 100%; transform: scale(0.85); transform-origin: center;">
+                    <div id="bossRunnerContainer" class="w-full h-full relative"></div>
+                </div>
+            </div>
         </div>
-        <div id="loader" class="fixed inset-0 bg-[#fcf8f2] dark:bg-slate-900 z-[9999] flex items-center justify-center"><img src="https://i.postimg.cc/qvjNxZzg/golden-crayon.png" class="animate-bounce h-10 w-auto object-contain drop-shadow-md" alt="Loading..."></div>
-        
+        <div id="loader" class="fixed inset-0 bg-[#fcf8f2] dark:bg-slate-900 z-[9999] flex items-center justify-center">
+            <img src="https://i.postimg.cc/qvjNxZzg/golden-crayon.png" class="animate-bounce h-10 w-auto object-contain drop-shadow-md" alt="Loading...">
+        </div>
         <div class="max-w-7xl mx-auto">
             <header class="bg-gradient-to-r from-amber-100/90 via-yellow-100/90 to-orange-100/90 dark:from-gray-800/90 dark:via-gray-700/90 dark:to-gray-800/90 rounded-2xl p-4 sm:p-6 shadow-md mb-6 border-4 border-amber-400 dark:border-gray-600 flex flex-col transition-colors backdrop-blur-sm relative z-10">
                 <div class="w-full flex flex-row justify-between items-start mb-3 gap-2 relative z-[60] h-10 sm:h-11">
@@ -462,7 +486,9 @@
                     <div class="flex flex-row items-center justify-center lg:justify-start gap-3 text-center lg:text-left">
                         <div class="flex flex-col items-center lg:items-start">
                             <h1 class="text-2xl sm:text-3xl font-bold text-amber-900 dark:text-amber-400 mb-1 flex items-center justify-center lg:justify-start gap-1.5 sm:gap-2">
-                                <div class="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center shrink-0 drop-shadow-sm overflow-hidden"><div class="sprite-base sprite-common sprite-Title_Rim scale-[0.4] sm:scale-[0.5] origin-center shrink-0"></div></div>
+                                <div class="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center shrink-0 drop-shadow-sm overflow-hidden">
+                                    <div class="sprite-base sprite-common sprite-Title_Rim scale-[0.4] sm:scale-[0.5] origin-center shrink-0"></div>
+                                </div>
                                 <span data-lang-key="app_title">嘟嘟臉金蠟筆記事本</span>
                             </h1>
                             <p data-lang-key="app_subtitle" class="text-amber-800 dark:text-gray-300 text-xs sm:text-sm">祝各位教主日日出金蠟筆</p>
@@ -471,7 +497,6 @@
                 </div>
             </header>
             <div id="errorBanner" class="hidden bg-red-100 border-2 border-red-500 text-red-800 px-4 py-3 rounded-xl mb-6 text-sm font-bold shadow-sm flex flex-col gap-1"></div>
-            
             <section class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-2xl p-4 shadow border-2 border-amber-200/80 dark:border-gray-700 mb-6 transition-colors">
                 <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 pb-2 cursor-pointer" onclick="toggleFilterPanel()">
                     <h3 class="font-bold text-amber-955 dark:text-amber-400 text-sm flex items-center gap-1 shrink-0"><span data-lang-key="filter_title">🔍 篩選器</span> <span id="filterToggleIcon" class="text-xs opacity-70 ml-1">▼</span></h3>
@@ -481,11 +506,26 @@
                     </div>
                 </div>
                 <div id="filterPanelBody" class="space-y-3 text-xs mt-3">
-                    <div class="flex items-start gap-2 w-full"><span class="font-bold text-gray-500 dark:text-gray-400 shrink-0 pt-1 whitespace-nowrap" data-lang-key="stats_personality">🔮 性格：</span><div id="filter_personality" class="flex flex-wrap gap-1.5 flex-1"></div></div>
-                    <div class="flex items-start gap-2 w-full"><span class="font-bold text-gray-500 dark:text-gray-400 shrink-0 pt-1 whitespace-nowrap" data-lang-key="stats_race">🧬 種族：</span><div id="filter_race" class="flex flex-wrap gap-1.5 flex-1"></div></div>
-                    <div class="flex items-start gap-2 w-full"><span class="font-bold text-gray-500 dark:text-gray-400 shrink-0 pt-1 whitespace-nowrap" data-lang-key="stats_position">🗺️ 站位：</span><div id="filter_position" class="flex flex-wrap gap-1.5 flex-1"></div></div>
-                    <div class="flex items-start gap-2 w-full"><span class="font-bold text-gray-500 dark:text-gray-400 shrink-0 pt-1 whitespace-nowrap" data-lang-key="stats_job">⚔️ 職業：</span><div id="filter_job" class="flex flex-wrap gap-1.5 flex-1"></div></div>
-                    <div class="flex items-start gap-2 w-full"><span class="font-bold text-gray-500 dark:text-gray-400 shrink-0 pt-1 whitespace-nowrap" data-lang-key="stats_type">💥 類型：</span><div id="filter_type" class="flex flex-wrap gap-1.5 flex-1"></div></div>
+                    <div class="flex items-start gap-2 w-full">
+                        <span class="font-bold text-gray-500 dark:text-gray-400 shrink-0 pt-1 whitespace-nowrap" data-lang-key="stats_personality">🔮 性格：</span>
+                        <div id="filter_personality" class="flex flex-wrap gap-1.5 flex-1"></div>
+                    </div>
+                    <div class="flex items-start gap-2 w-full">
+                        <span class="font-bold text-gray-500 dark:text-gray-400 shrink-0 pt-1 whitespace-nowrap" data-lang-key="stats_race">🧬 種族：</span>
+                        <div id="filter_race" class="flex flex-wrap gap-1.5 flex-1"></div>
+                    </div>
+                    <div class="flex items-start gap-2 w-full">
+                        <span class="font-bold text-gray-500 dark:text-gray-400 shrink-0 pt-1 whitespace-nowrap" data-lang-key="stats_position">🗺️ 站位：</span>
+                        <div id="filter_position" class="flex flex-wrap gap-1.5 flex-1"></div>
+                    </div>
+                    <div class="flex items-start gap-2 w-full">
+                        <span class="font-bold text-gray-500 dark:text-gray-400 shrink-0 pt-1 whitespace-nowrap" data-lang-key="stats_job">⚔️ 職業：</span>
+                        <div id="filter_job" class="flex flex-wrap gap-1.5 flex-1"></div>
+                    </div>
+                    <div class="flex items-start gap-2 w-full">
+                        <span class="font-bold text-gray-500 dark:text-gray-400 shrink-0 pt-1 whitespace-nowrap" data-lang-key="stats_type">💥 類型：</span>
+                        <div id="filter_type" class="flex flex-wrap gap-1.5 flex-1"></div>
+                    </div>
                     <div class="flex flex-col sm:flex-row items-start gap-2 border-t border-dashed border-gray-100 dark:border-gray-700 pt-2 w-full mt-1">
                         <span class="font-bold text-gray-500 dark:text-gray-400 shrink-0 pt-1 flex items-center gap-0.5 whitespace-nowrap" data-lang-key="sort_title">↕️ 排序：</span>
                         <div id="filter_sort" class="flex flex-wrap gap-1.5 flex-1 w-full">
@@ -501,9 +541,18 @@
                     <div class="flex flex-col sm:flex-row items-start gap-2 border-t border-dashed border-gray-100 dark:border-gray-700 pt-2 w-full">
                         <span class="font-bold text-amber-800 dark:text-amber-500 shrink-0 pt-1 flex items-center gap-0.5 whitespace-nowrap" data-lang-key="stats_cell">🖍️ 金蠟筆格：</span>
                         <div class="flex flex-col gap-2 flex-1 w-full">
-                            <div class="flex items-center sm:items-start gap-1.5 w-full"><span class="text-[11px] text-gray-400 dark:text-gray-500 font-medium bg-gray-50 dark:bg-gray-700 px-1 rounded whitespace-nowrap mt-0.5" data-lang-key="stats_level">指定層數:</span><div id="filter_gridLayer" class="flex flex-wrap gap-1.5 flex-1"></div></div>
-                            <div class="flex items-center sm:items-start gap-1.5 w-full"><span class="text-[11px] text-gray-400 dark:text-gray-500 font-medium bg-gray-50 dark:bg-gray-700 px-1 rounded whitespace-nowrap mt-0.5" data-lang-key="cell_kind">格子種類:</span><div id="filter_gridType" class="flex flex-wrap gap-1.5 flex-1"></div></div>
-                            <div class="flex items-center sm:items-start gap-1.5 w-full mt-1"><span class="text-[11px] text-gray-400 dark:text-gray-500 font-medium bg-gray-50 dark:bg-gray-700 px-1 rounded whitespace-nowrap mt-0.5" data-lang-key="grid_status">格子狀態:</span><div id="filter_gridStatus" class="flex flex-wrap gap-1.5 flex-1"></div></div>
+                            <div class="flex items-center sm:items-start gap-1.5 w-full">
+                                <span class="text-[11px] text-gray-400 dark:text-gray-500 font-medium bg-gray-50 dark:bg-gray-700 px-1 rounded whitespace-nowrap mt-0.5" data-lang-key="stats_level">指定層數:</span>
+                                <div id="filter_gridLayer" class="flex flex-wrap gap-1.5 flex-1"></div>
+                            </div>
+                            <div class="flex items-center sm:items-start gap-1.5 w-full">
+                                <span class="text-[11px] text-gray-400 dark:text-gray-500 font-medium bg-gray-50 dark:bg-gray-700 px-1 rounded whitespace-nowrap mt-0.5" data-lang-key="cell_kind">格子種類:</span>
+                                <div id="filter_gridType" class="flex flex-wrap gap-1.5 flex-1"></div>
+                            </div>
+                            <div class="flex items-center sm:items-start gap-1.5 w-full mt-1">
+                                <span class="text-[11px] text-gray-400 dark:text-gray-500 font-medium bg-gray-50 dark:bg-gray-700 px-1 rounded whitespace-nowrap mt-0.5" data-lang-key="grid_status">格子狀態:</span>
+                                <div id="filter_gridStatus" class="flex flex-wrap gap-1.5 flex-1"></div>
+                            </div>
                         </div>
                     </div>
                     <div class="flex flex-col sm:flex-row items-start gap-2 border-t border-dashed border-gray-100 dark:border-gray-700 pt-2 w-full">
@@ -543,25 +592,31 @@
                     </div>
                 </div>
             </section>
-            
             <div class="flex justify-between items-center mb-2 px-1 cursor-pointer select-none" onclick="toggleStatsPanel()">
                 <h3 class="font-bold text-amber-955 dark:text-amber-400 text-sm flex items-center gap-1 drop-shadow-md">
                     <span data-lang-key="stats_title">📊 統計與加成資訊</span> <span id="statsToggleIcon" class="text-xs opacity-70 ml-1">▼</span>
                 </h3>
-                <span class="text-[10px] sm:text-xs font-medium text-amber-800 dark:text-amber-200 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm px-2 py-0.5 rounded-full border border-amber-200/50 dark:border-gray-600/50" data-lang-key="stats_toggle_hint">點擊展開 / 收起</span>
+                <span class="text-[10px] sm:text-xs font-medium text-amber-800 dark:text-amber-200 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm px-2 py-0.5 rounded-full border border-amber-200/50 dark:border-gray-600/50" data-lang-key="stats_toggle_hint">
+                點擊展開 / 收起
+                </span>
             </div>
-            
             <section id="statsPanelBody" class="grid grid-cols-1 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 transition-all">
                 <div class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-xl p-3 sm:p-4 shadow border-2 border-amber-200 dark:border-amber-900 flex flex-col justify-between h-full">
-                    <div class="border-b border-amber-100 dark:border-gray-700 pb-1.5 mb-2"><h3 class="font-bold text-amber-900 dark:text-amber-500 flex items-center text-xs sm:text-sm whitespace-nowrap"><span data-lang-key="stats_layer_1_title">🥇 第一層統計</span> <span class="text-[10px] ml-1 font-normal opacity-80" data-lang-key="stats_layer_1_rule">(每格+3%, 蠟筆×2)</span></h3></div>
+                    <div class="border-b border-amber-100 dark:border-gray-700 pb-1.5 mb-2">
+                        <h3 class="font-bold text-amber-900 dark:text-amber-500 flex items-center text-xs sm:text-sm whitespace-nowrap"><span data-lang-key="stats_layer_1_title">🥇 第一層統計</span> <span class="text-[10px] ml-1 font-normal opacity-80" data-lang-key="stats_layer_1_rule">(每格+3%, 蠟筆×2)</span></h3>
+                    </div>
                     <div id="stat_layer_1" class="text-[10px] sm:text-[11px] text-gray-700 dark:text-gray-300 space-y-1 flex flex-col h-full justify-between"></div>
                 </div>
                 <div class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-xl p-3 sm:p-4 shadow border-2 border-orange-200 dark:border-orange-900 flex flex-col justify-between h-full">
-                    <div class="border-b border-orange-100 dark:border-gray-700 pb-1.5 mb-2"><h3 class="font-bold text-orange-900 dark:text-orange-500 flex items-center text-xs sm:text-sm whitespace-nowrap"><span data-lang-key="stats_layer_2_title">🥈 第二層統計</span> <span class="text-[10px] ml-1 font-normal opacity-80" data-lang-key="stats_layer_2_rule">(每格+4%, 蠟筆×4)</span></h3></div>
+                    <div class="border-b border-orange-100 dark:border-gray-700 pb-1.5 mb-2">
+                        <h3 class="font-bold text-orange-900 dark:text-orange-500 flex items-center text-xs sm:text-sm whitespace-nowrap"><span data-lang-key="stats_layer_2_title">🥈 第二層統計</span> <span class="text-[10px] ml-1 font-normal opacity-80" data-lang-key="stats_layer_2_rule">(每格+4%, 蠟筆×4)</span></h3>
+                    </div>
                     <div id="stat_layer_2" class="text-[10px] sm:text-[11px] text-gray-700 dark:text-gray-300 space-y-1 flex flex-col h-full justify-between"></div>
                 </div>
                 <div class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-xl p-3 sm:p-4 shadow border-2 border-red-200 dark:border-red-900 flex flex-col justify-between h-full">
-                    <div class="border-b border-red-100 dark:border-gray-700 pb-1.5 mb-2"><h3 class="font-bold text-red-900 dark:text-red-500 flex items-center text-xs sm:text-sm whitespace-nowrap"><span data-lang-key="stats_layer_3_title">🥉 第三層統計</span> <span class="text-[10px] ml-1 font-normal opacity-80" data-lang-key="stats_layer_3_rule">(每格+5%, 蠟筆×6)</span></h3></div>
+                    <div class="border-b border-red-100 dark:border-gray-700 pb-1.5 mb-2">
+                        <h3 class="font-bold text-red-900 dark:text-red-500 flex items-center text-xs sm:text-sm whitespace-nowrap"><span data-lang-key="stats_layer_3_title">🥉 第三層統計</span> <span class="text-[10px] ml-1 font-normal opacity-80" data-lang-key="stats_layer_3_rule">(每格+5%, 蠟筆×6)</span></h3>
+                    </div>
                     <div id="stat_layer_3" class="text-[10px] sm:text-[11px] text-gray-700 dark:text-gray-300 space-y-1 flex flex-col h-full justify-between"></div>
                 </div>
                 <div class="bg-gradient-to-br from-yellow-50/90 to-amber-100/90 dark:from-gray-800/90 dark:to-gray-800/90 backdrop-blur-md rounded-xl p-3 sm:p-4 shadow border-2 border-yellow-300 dark:border-gray-600 flex flex-col justify-between h-full">
@@ -582,9 +637,7 @@
                     </div>
                 </div>
             </section>
-            
             <main id="matrixContainer" class="space-y-6 sm:space-y-8"></main>
-            
             <footer class="mt-12 mb-6 text-center border-t border-gray-200 dark:border-gray-700 pt-6">
                 <div class="flex flex-col gap-1 text-[11px] text-gray-500 dark:text-gray-400 opacity-80">
                     <p data-lang-key="footer_author">📝 記事本製作者: 冷笑話幽靈</p>
@@ -593,7 +646,6 @@
                 </div>
             </footer>
         </div>
-        
         <div class="social-fixed group">
             <div id="socialMenu" class="social-menu group-hover:flex">
                 <a id="dynamicXLink" href="https://x.com/trickcal_TW" target="_blank" class="bg-sky-500 text-white px-3 py-1 rounded-lg text-[10px] font-bold shadow-lg hover:bg-sky-600 transition" data-lang-key="x_label">台港澳服官方X</a>
@@ -605,7 +657,11 @@
             <div class="relative bg-[#fcf8f2] dark:bg-gray-800 rounded-xl p-1.5 shadow-[0_10px_40px_rgba(0,0,0,0.3)] border-2 border-amber-300 dark:border-gray-600 pointer-events-auto">
                 <button class="absolute -top-3 -right-3 bg-red-500 hover:bg-red-600 transition-colors text-white rounded-full w-6 h-6 font-bold text-xs border-2 border-white shadow-md flex items-center justify-center z-50" onclick="closePathImage()">X</button>
                 <div class="overflow-hidden rounded-lg bg-white dark:bg-gray-900 flex items-center justify-center min-w-[100px] min-h-[100px]">
-                    <img id="pathImageEl" src="" class="max-w-[180px] sm:max-w-[220px] max-h-[50vh] object-contain hidden" onload="this.classList.remove('hidden'); document.getElementById('pathImageLoading').classList.add('hidden');" onerror="this.onerror=null; this.src='https://i.postimg.cc/qvjNxZzg/golden-crayon.png'; this.classList.remove('hidden'); document.getElementById('pathImageLoading').classList.add('hidden');">
+                    <img id="pathImageEl" 
+                        src="" 
+                        class="max-w-[180px] sm:max-w-[220px] max-h-[50vh] object-contain hidden" 
+                        onload="this.classList.remove('hidden'); document.getElementById('pathImageLoading').classList.add('hidden');"
+                        onerror="this.onerror=null; this.src='https://i.postimg.cc/qvjNxZzg/golden-crayon.png'; this.classList.remove('hidden'); document.getElementById('pathImageLoading').classList.add('hidden');">
                     <div id="pathImageLoading" class="absolute inset-0 flex flex-col items-center justify-center text-amber-600 dark:text-amber-400 font-bold gap-1 text-[10px]">
                         <img src="https://i.postimg.cc/qvjNxZzg/golden-crayon.png" class="animate-bounce w-5 h-5">
                         <span>載入中...</span>
@@ -613,7 +669,6 @@
                 </div>
             </div>
         </div>
-
         <script>
             let currentRunnerPlayer = null, currentBossPlayer = null, chaseLoopId = null;
             let noticeIconEl = null, noticeIconTimeout = null;
@@ -670,22 +725,32 @@
                 boardon_爆抗: "sprite-boardon_RES"
             };
             const CHAR_SPRITE_MAP = {
-                "冷靜": "sprite-char-composed", "憂鬱": "sprite-char-depressed", "天真": "sprite-char-innocence",
-                "狂亂": "sprite-char-madness", "活潑": "sprite-char-vivacious", "雙面": "sprite-char-multifaceted" 
+                "冷靜": "sprite-char-composed",
+                "憂鬱": "sprite-char-depressed",
+                "天真": "sprite-char-innocence",
+                "狂亂": "sprite-char-madness",
+                "活潑": "sprite-char-vivacious",
+                "雙面": "sprite-char-multifaceted" 
             };
             const ULT_SPRITE_MAP = {
-                "冷靜": "sprite-ult-composed", "憂鬱": "sprite-ult-depressed", "天真": "sprite-ult-innocence",
-                "狂亂": "sprite-ult-madness", "活潑": "sprite-ult-vivacious", "雙面": "sprite-ult-multifaceted" 
+                "冷靜": "sprite-ult-composed",
+                "憂鬱": "sprite-ult-depressed",
+                "天真": "sprite-ult-innocence",
+                "狂亂": "sprite-ult-madness",
+                "活潑": "sprite-ult-vivacious",
+                "雙面": "sprite-ult-multifaceted" 
             };
             
             function toggleSidebar() {
                 const menu = document.getElementById('sidebarMenu');
                 const overlay = document.getElementById('sidebarOverlay');
                 if (menu.classList.contains('-translate-x-full')) {
+                    // Open
                     overlay.classList.remove('hidden');
                     setTimeout(() => overlay.classList.remove('opacity-0'), 10);
                     menu.classList.remove('-translate-x-full');
                 } else {
+                    // Close
                     overlay.classList.add('opacity-0');
                     menu.classList.add('-translate-x-full');
                     setTimeout(() => overlay.classList.add('hidden'), 300);
@@ -810,32 +875,32 @@
                     alert("目前尚無此版本的路徑圖資料！");
                     return;
                 }
-                const url = PATH_IMAGES[race][version][layer];
-                if (!url) {
-                    alert("找不到該層數的圖片！");
-                    return;
+            const url = PATH_IMAGES[race][version][layer];
+            if (!url) {
+                alert("找不到該層數的圖片！");
+                return;
+            }
+            const modal = document.getElementById('pathImageModal');
+            const img = document.getElementById('pathImageEl');
+            const loader = document.getElementById('pathImageLoading');
+            img.classList.add('hidden');
+            loader.classList.remove('hidden');
+            img.src = url;
+            if (event) {
+                const rect = event.currentTarget.getBoundingClientRect();
+                let leftPos = rect.right + 15;
+                let topPos = rect.top;
+                modal.style.transform = `translateY(calc(-100% + 20px))`;
+                if (leftPos + 240 > window.innerWidth) {
+                    leftPos = Math.max(10, rect.left - 240 - 15);
                 }
-                const modal = document.getElementById('pathImageModal');
-                const img = document.getElementById('pathImageEl');
-                const loader = document.getElementById('pathImageLoading');
-                img.classList.add('hidden');
-                loader.classList.remove('hidden');
-                img.src = url;
-                if (event) {
-                    const rect = event.currentTarget.getBoundingClientRect();
-                    let leftPos = rect.right + 15;
-                    let topPos = rect.top;
-                    modal.style.transform = `translateY(calc(-100% + 20px))`;
-                    if (leftPos + 240 > window.innerWidth) {
-                        leftPos = Math.max(10, rect.left - 240 - 15);
-                    }
-                    if (rect.top - 200 < 0) {
-                        topPos = rect.bottom + 10;
-                        modal.style.transform = `translateY(0)`; 
-                    }
-                    modal.style.left = `${leftPos}px`;
-                    modal.style.top = `${topPos}px`;
+                if (rect.top - 200 < 0) {
+                    topPos = rect.bottom + 10;
+                    modal.style.transform = `translateY(0)`; 
                 }
+                modal.style.left = `${leftPos}px`;
+                modal.style.top = `${topPos}px`;
+            }
                 modal.classList.remove('hidden');
                 setTimeout(() => modal.classList.remove('opacity-0'), 10);
             }
@@ -878,28 +943,28 @@
                 const personalityColors = { "天真": "border-green-400 text-green-400", "冷靜": "border-blue-400 text-blue-400", "狂亂": "border-red-400 text-red-400", "活潑": "border-yellow-400 text-yellow-400", "憂鬱": "border-purple-400 text-purple-400", "雙面": "border-teal-400 text-teal-400" };
                 const traitColors = { "天真": "#4ade80", "冷靜": "#60a5fa", "狂亂": "#f87171", "活潑": "#facc15", "憂鬱": "#a855f7" };
 
-                activeChars.forEach(charName => {
-                    const charData = INITIAL_DATA.find(c => c.name === charName); if (!charData) return;
-                    const traits = charData.personality.split(',').map(t => t.trim());
-                    const dispPersonality = traits.length > 1 ? "雙面" : charData.personality;
-                    let pColorClass = personalityColors[dispPersonality] || "border-gray-400 text-gray-400";
-                    
-                    const iconWrapper = document.createElement('div');
-                    
-                    if (traits.length > 1) {
-                        pColorClass = "border-dual-dynamic text-teal-400";
-                        iconWrapper.style.setProperty('--c1', traitColors[traits[0]] || '#a855f7');
-                        iconWrapper.style.setProperty('--c2', traitColors[traits[1]] || '#4ade80');
-                    }
-                    
-                    iconWrapper.className = `w-7 h-7 sm:w-8 sm:h-8 rounded-lg border-2 ${pColorClass} bg-white dark:bg-gray-800 flex items-center justify-center relative pickup-sparkle shrink-0 cursor-pointer transition-transform overflow-hidden`;
-                    const prefix = localTooltipTexts[window.currentLang] || localTooltipTexts["zh-TW"]; iconWrapper.title = `${prefix}${t(charName)}`;
-                    iconWrapper.onclick = () => window.open(`char_detail.html?char=${encodeURIComponent(charName)}`, '_blank');
-                    const spineName = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
-                    const passiveSkillClass = `sprite-Icon_PassiveSkill_${spineName}`;
-                    iconWrapper.innerHTML = `<div class="${passiveSkillClass} shrink-0 scale-[0.4] sm:scale-[0.45] origin-center"></div>`;
-                    container.appendChild(iconWrapper);
-                });
+                        activeChars.forEach(charName => {
+                            const charData = INITIAL_DATA.find(c => c.name === charName); if (!charData) return;
+                            const traits = charData.personality.split(',').map(t => t.trim());
+                            const dispPersonality = traits.length > 1 ? "雙面" : charData.personality;
+                            let pColorClass = personalityColors[dispPersonality] || "border-gray-400 text-gray-400";
+                            
+                            const iconWrapper = document.createElement('div');
+                            
+                            if (traits.length > 1) {
+                                pColorClass = "border-dual-dynamic text-teal-400";
+                                iconWrapper.style.setProperty('--c1', traitColors[traits[0]] || '#a855f7');
+                                iconWrapper.style.setProperty('--c2', traitColors[traits[1]] || '#4ade80');
+                            }
+                            
+                            iconWrapper.className = `w-7 h-7 sm:w-8 sm:h-8 rounded-lg border-2 ${pColorClass} bg-white dark:bg-gray-800 flex items-center justify-center relative pickup-sparkle shrink-0 cursor-pointer transition-transform overflow-hidden`;
+                            const prefix = localTooltipTexts[window.currentLang] || localTooltipTexts["zh-TW"]; iconWrapper.title = `${prefix}${t(charName)}`;
+                            iconWrapper.onclick = () => window.open(`char_detail.html?char=${encodeURIComponent(charName)}`, '_blank');
+                            const spineName = typeof SPINE_MAP !== 'undefined' && SPINE_MAP[charName] ? SPINE_MAP[charName] : charName;
+                            const passiveSkillClass = `sprite-Icon_PassiveSkill_${spineName}`;
+                            iconWrapper.innerHTML = `<div class="${passiveSkillClass} shrink-0 scale-[0.4] sm:scale-[0.45] origin-center"></div>`;
+                            container.appendChild(iconWrapper);
+                        });
             }
             
             function getActiveEvents() {
@@ -1061,7 +1126,6 @@
                     handleBannerHover(false);
                 }
             }, { passive: true }); 
-
             function initStates() {
                 INITIAL_DATA.forEach(char => {
                     if (savedStates['owned_' + char.name] === undefined) savedStates['owned_' + char.name] = false;
@@ -1136,13 +1200,7 @@
                     const layerStatBox = document.getElementById(`stat_layer_${l}`); if (layerStatBox) layerStatBox.innerHTML = html;
                 });
                 try { localStorage.setItem(storageKey, JSON.stringify(savedStates)); } catch(e) {}
-                // 🌟 使用全域暴露的模組化 SDK
-                if (currentUser && window.firebaseDb) {
-                    window.fb.setDoc(window.fb.doc(window.firebaseDb, "player_boards", currentUser.uid), {
-                        states: savedStates,
-                        updatedAt: window.fb.serverTimestamp()
-                    }, { merge: true }).catch(e => console.error(e));
-                }
+                if (currentUser && db) db.collection("player_boards").doc(currentUser.uid).set({ states: savedStates, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }).catch(e => {});
                 applyFilterUI();
             }
             
@@ -1367,15 +1425,18 @@
             
             function applyFilterUI() {
                 INITIAL_DATA.forEach(char => {
+                    // 性格判定：如果字串中有逗號，系統將其視為「雙面」
                     let matchP = activeFilters.personality.length === 0;
                     if (!matchP) {
                         matchP = activeFilters.personality.some(selectedP => {
                             if (selectedP === "雙面" && char.personality.includes(",")) return true;
+                            // 使用 includes() 可以同時達成單一符合條件 (例如點擊「憂鬱」能找到「憂鬱, 天真」)
                             return char.personality.includes(selectedP);
                         });
                     }
 
                     const matchR = activeFilters.race.length === 0 || activeFilters.race.includes(char.race);
+                    // 站位判定：加入「所有排」
                     const matchPos = activeFilters.position.length === 0 || activeFilters.position.includes(char.position) || char.position === "所有排";
                     const matchJ = activeFilters.job.length === 0 || activeFilters.job.includes(char.job);
                     const matchT = activeFilters.type.length === 0 || activeFilters.type.includes(char.type);
@@ -1478,18 +1539,20 @@
 
                     pChars.sort((a, b) => {
                         let cmp = 0;
+                        // 取得翻譯後的名稱
                         const nameA = t(a.name);
                         const nameB = t(b.name);
                         
+                        // 根據當前語言設定排序規則
                         let locale = 'zh-TW';
-                        let options = { collation: 'stroke' }; 
+                        let options = { collation: 'stroke' }; // 中文預設筆畫
                         
                         if (window.currentLang === 'ja') {
                             locale = 'ja-JP';
-                            options = {}; 
+                            options = {}; // 日文預設五十音
                         } else if (window.currentLang === 'en') {
                             locale = 'en-US';
-                            options = {}; 
+                            options = {}; // 英文預設字母A-Z
                         }
 
                         if (activeSortBy === 'name') {
@@ -1499,7 +1562,7 @@
                             const dateB = b.releaseDate ? b.releaseDate.split('T')[0] : "0000-00-00";
                             if (dateA > dateB) cmp = 1;
                             else if (dateA < dateB) cmp = -1;
-                            else cmp = nameA.localeCompare(nameB, locale, options); 
+                            else cmp = nameA.localeCompare(nameB, locale, options); // 同日期時以當地語言名稱排序
                         }
                         return activeSortOrder === 'asc' ? cmp : -cmp;
                     });
@@ -1511,8 +1574,10 @@
                     pSection.id = sectionId; 
                     pSection.className = "bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-2xl p-4 sm:p-6 shadow-sm border-2 border-amber-100/70 dark:border-gray-700 mb-6 transition-colors section-group";
                     
+                    // 動態組合標題名稱 (排除「所有坨坨」避免變成「所有角色坨坨」)
                     let headerTitle = t(groupName);
                     if (groupName !== "所有坨坨") {
+                        // 英文加上空格與複數s，中日文則直接套用字典裡的 stats_character ("坨坨" / "使徒")
                         const suffix = window.currentLang === 'en' ? ' Apostles' : t('stats_character');
                         headerTitle += suffix;
                     }
@@ -1547,9 +1612,11 @@
             const ultSpriteClass = `sprite-Icon_UltimateSkill_${spineName}`;
                         let raceIconName = char.race; if (char.race === "???") raceIconName = "unknown";
                         
+                        // 動態決定雙面性格的專屬 icon class
                         let pSprite = SPRITE_CLASS_MAP[`personality_${dispPersonality}`] || "";
                         if (traits.length > 1) {
                             const EN_PERSONALITY_MAP = { "天真": "Innocence", "冷靜": "Composed", "狂亂": "Madness", "活潑": "Vivacious", "憂鬱": "Depressed" };
+                            // 將組合轉換成英文並使用字母排序(sort)，確保生成的 class 名稱順序永遠唯一不變
                             const enTraits = traits.map(t => EN_PERSONALITY_MAP[t]).sort();
                             pSprite = `sprite-Personality_Multifaceted_${enTraits.join('_')}`;
                         }
@@ -1578,6 +1645,7 @@
                                 return `<span id="${fallbackId}" class="bg-gray-100 dark:bg-gray-700 px-1 rounded text-[9px] text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap">${fallbackText}</span>`;
                             }
                         };
+                        // 翻譯包含的所有性格組合 (例如: "憂鬱, 純粋") 用於 Tooltip 顯示
                         const translatedTraitsText = traits.map(tr => t(tr)).join(', ');
 
                         const traitsHtml = isUnreleased ? 
@@ -1778,8 +1846,9 @@
                         else if (animName.startsWith("Skill")) descText = (skillData.normalSkill?.stats || []).join("") + (skillData.normalSkill?.desc || "");
                         isMultiHitDesc = descText.includes("總");
                     }
-                } catch(e) {}
+                } catch(e) { console.warn(`⚠️ 讀取 ${charName} 的技能文本失敗，將使用預設判斷。`); }
                 if (!isMultiHitDesc && finalHits.length > 1) {
+                    console.log(`📖 文本判定：${charName} 的 [${animName}] 無「總」字，強制轉為單發判定。`);
                     finalHits = [finalHits[0]]; 
                 }
                 if (finalHits.length > 0) return finalHits; 
@@ -1799,7 +1868,7 @@
                         else if (animName === "Die") targetAnim = anims.includes("Dead") ? "Dead" : anims[0];
                     }
                     return playerObj.animationState.setAnimation(0, targetAnim, loop);
-                } catch (e) { return null; }
+                } catch (e) { console.error(`❌ 播放動畫發生錯誤:`, e); return null; }
             }
             
             function createCrayonBurst(x, y, area) {
@@ -1830,14 +1899,16 @@
             }
             
             function initTopRunner() {
-                if (!isAnimationEnabled || window.innerWidth <= 768 || typeof INITIAL_DATA === 'undefined' || INITIAL_DATA.length === 0) return;
+                if (!isAnimationEnabled) return;
+                if (window.innerWidth <= 768) return; 
+                if (typeof INITIAL_DATA === 'undefined' || INITIAL_DATA.length === 0) return;
                 const container = document.getElementById('topRunnerContainer'); const track = document.getElementById('runnerTrack');
                 const bossContainer = document.getElementById('bossRunnerContainer'); const bossTrack = document.getElementById('bossTrack');
                 const trackRightOffset = '-110px'; const bossRightOffset = '-410px'; 
                 track.style.right = trackRightOffset; bossTrack.style.right = bossRightOffset; 
                 const endLeftPosNum = 110; const endLeftPos = `${endLeftPosNum}px`; 
                 cancelAnimationFrame(chaseLoopId);
-                track.style.opacity = '0'; track.style.transition = 'none'; track.getAnimations().forEach(anim => anim.cancel()); track.style.transform = 'translateX(0) scaleX(1)';             
+                track.style.opacity = '0'; track.style.transition = 'none'; track.getAnimations().forEach(anim => anim.cancel()); track.style.transform = 'translateX(0) scaleX(1)';              
                 container.style.transform = 'scaleX(1) translateX(0)'; 
                 bossTrack.style.opacity = '0'; bossTrack.style.transition = 'none'; bossTrack.style.pointerEvents = 'none'; bossTrack.getAnimations().forEach(anim => anim.cancel()); bossTrack.style.transform = 'translateX(0) scaleX(1)';
                 if (currentRunnerPlayer) { try { currentRunnerPlayer.dispose(); } catch(e){} currentRunnerPlayer = null; }
@@ -2050,39 +2121,26 @@
             }
             
             function updateVisitCount() {
-                if (!window.firebaseDb) return;
+                if (!db) return;
                 const hostname = window.location.hostname;
                 const officialDomains = [ 'crayon-note.vercel.app', 'project-v53aw.vercel.app' ]; 
                 const isProduction = officialDomains.includes(hostname);
                 const targetDocName = isProduction ? "site_stats" : "site_stats_test";
-                const countRef = window.fb.doc(window.firebaseDb, "metadata", targetDocName);
-                window.fb.runTransaction(window.firebaseDb, async (transaction) => {
-                    const docSnap = await transaction.get(countRef); 
-                    const newCount = (docSnap.exists() ? docSnap.data().total_visits : 0) + 1; 
-                    transaction.set(countRef, { total_visits: newCount }); 
-                    return newCount; 
-                }).then((newCount) => { 
-                    const counterEl = document.getElementById('top_visit_counter'); 
-                    if (counterEl) counterEl.innerText = newCount.toLocaleString(); 
-                }).catch((err) => { console.error("計數器更新失敗:", err); });
+                const countRef = db.collection("metadata").doc(targetDocName);
+                db.runTransaction((transaction) => {
+                    return transaction.get(countRef).then((doc) => { 
+                        const newCount = (doc.exists ? doc.data().total_visits : 0) + 1; transaction.set(countRef, { total_visits: newCount }); return newCount; 
+                    });
+                }).then((newCount) => { const counterEl = document.getElementById('top_visit_counter'); if (counterEl) counterEl.innerText = newCount.toLocaleString(); }).catch((err) => { console.error("計數器更新失敗:", err); });
             }
             
             function handleAuth() {
-                if (!window.firebaseAuth) { alert("目前處於斷線單機模式（可能被擴充功能阻擋），無法登入雲端。"); return; }
-                if (currentUser) { 
-                    window.fb.signOut(window.firebaseAuth).then(() => { 
-                        localStorage.removeItem(storageKey); 
-                        location.reload(); 
-                    }).catch(err => alert("登出失敗: " + err.message)); 
-                } else { 
-                    const provider = new window.fb.GoogleAuthProvider(); 
-                    setTimeout(() => { 
-                        window.fb.signInWithPopup(window.firebaseAuth, provider).catch(err => alert("登入被中斷，請確認是否允許跳出視窗。(" + err.code + ")")); 
-                    }, 50); 
-                }
+                if (!auth) { alert("目前處於斷線單機模式（可能被擴充功能阻擋），無法登入雲端。"); return; }
+                if (currentUser) { auth.signOut().then(() => { localStorage.removeItem(storageKey); location.reload(); }).catch(err => alert("登出失敗: " + err.message)); } 
+                else { const provider = new firebase.auth.GoogleAuthProvider(); setTimeout(() => { auth.signInWithPopup(provider).catch(err => alert("登入被中斷，請確認是否允許跳出視窗。(" + err.code + ")")); }, 50); }
             }
             
-            function updateAuthButtonUI(user) {
+                        function updateAuthButtonUI(user) {
                 const btn = document.getElementById('authBtn'); 
                 const svgLogo = document.getElementById('googleLogoSvg'); 
                 const logoutText = document.getElementById('logoutText'); 
@@ -2098,6 +2156,7 @@
                     btn.className = "p-1 flex items-center justify-center transition hover:opacity-70 shrink-0"; 
                 }
             }
+            
             
             function spawnCrayonOnTrack() {
                 if (!isAnimationEnabled) return;
@@ -2134,64 +2193,120 @@
             }
             
             function initRimLive2D() {
-                if (typeof spine === 'undefined') return;
-                const rimContainer = document.getElementById("rim-live-container"); 
-                const loader = document.createElement('div'); 
-                loader.className = 'spine-loader-crayon'; 
-                rimContainer.appendChild(loader);
-                
-                new spine.SpinePlayer("rim-live-container", { 
-                    skelUrl: "./spine_assets/Rim/RimSkin2.skel.bytes", 
-                    atlasUrl: "./spine_assets/Rim/RimSkin2.atlas.txt", 
-                    alpha: true, 
-                    backgroundColor: "#00000000", 
-                    showControls: false, 
-                    premultipliedAlpha: true, 
-                    skin: "Normal", 
-                    animation: "Happy_4", 
-                    showLoading: false, 
-                    viewport: { transitionTime: 0 },
-                    success: function (player) {
-                        loader.remove(); 
-                        const animations = ["Happy_4", "Pat_End", "Tickle_Idle_2"]; 
-                        let currentIndex = 1; 
-                        function playNextAnimation() { 
-                            const nextAnim = animations[currentIndex % animations.length]; 
-                            player.skeleton.setToSetupPose(); 
-                            player.animationState.setAnimation(0, nextAnim, true); 
-                            currentIndex++; 
-                        }
-                        if (window.rimInterval) clearInterval(window.rimInterval); 
-                        window.rimInterval = setInterval(playNextAnimation, 5000);
-                    } 
-                }); 
+            if (typeof spine === 'undefined') return;
+            const rimContainer = document.getElementById("rim-live-container"); 
+            const loader = document.createElement('div'); 
+            loader.className = 'spine-loader-crayon'; 
+            rimContainer.appendChild(loader);
+            
+            new spine.SpinePlayer("rim-live-container", { 
+            skelUrl: "./spine_assets/Rim/RimSkin2.skel.bytes", 
+            atlasUrl: "./spine_assets/Rim/RimSkin2.atlas.txt", 
+            alpha: true, 
+            backgroundColor: "#00000000", 
+            showControls: false, 
+            premultipliedAlpha: true, 
+            skin: "Normal", 
+            animation: "Happy_4", 
+            showLoading: false, 
+            viewport: { transitionTime: 0 },
+            success: function (player) {
+            loader.remove(); 
+            const animations = ["Happy_4", "Pat_End", "Tickle_Idle_2"]; 
+            let currentIndex = 1; 
+            function playNextAnimation() { 
+                const nextAnim = animations[currentIndex % animations.length]; 
+                player.skeleton.setToSetupPose(); 
+                player.animationState.setAnimation(0, nextAnim, true); 
+                currentIndex++; 
             }
-
-            // 🌟 將初始化監聽綁定到 Module 載入之後
+            
+            if (window.rimInterval) clearInterval(window.rimInterval); 
+            window.rimInterval = setInterval(playNextAnimation, 5000);
+            } 
+            }); 
+            }
             window.addEventListener('load', () => {
+                document.getElementById('loader').style.display = 'none';
+            
                 try {
-                    if (window.firebaseAuth && window.fb) {
-                        updateVisitCount();
-                        window.fb.onAuthStateChanged(window.firebaseAuth, user => {
+                    if (typeof INITIAL_DATA === 'undefined') throw new Error("找不到 INITIAL_DATA，請確認 data_core.js 是否載入成功！");
+                    if (typeof CRAYON_PATH_CONFIG !== 'undefined') {
+                        INITIAL_DATA.forEach(char => {
+                            if (char.pathVersion && CRAYON_PATH_CONFIG[char.race] && CRAYON_PATH_CONFIG[char.race][char.pathVersion]) {
+                                const config = CRAYON_PATH_CONFIG[char.race][char.pathVersion];
+                                char.layer1 = config.layer1 || [];
+                                char.layer2 = config.layer2 || [];
+                                char.layer3 = config.layer3 || [];
+                            }
+                        });
+                    }
+                    if (typeof characterSkills !== 'undefined') {
+                        const skillsArray = Array.isArray(characterSkills) ? characterSkills : Object.values(characterSkills);
+                        
+                        INITIAL_DATA.forEach(char => {
+                            const skillData = skillsArray.find(item => item.name === char.name);
+                            
+                            if (skillData && skillData.attribute) {
+                                if (String(skillData.attribute).includes("魔")) {
+                                    char.type = "魔法";
+                                } else {
+                                    char.type = "物理";
+                                }
+                            } else {
+                                char.type = "物理";
+                            }
+                        });
+                    }
+                    renderPickupBanner(); renderCardBanner(); updateEventBanner(); startBannerRotation(); initStates(); changeLanguage(currentLang); updateAnimToggleUI();
+                    if (!isStatsOpen) { const body = document.getElementById("statsPanelBody"); const icon = document.getElementById("statsToggleIcon"); if(body) { body.classList.add("hidden"); body.classList.remove("grid"); icon.innerText = "▶"; } }
+                } catch (e) { const errBanner = document.getElementById('errorBanner'); if(errBanner) { errBanner.innerHTML = `⚠️ 畫面繪製失敗: ${e.message}`; errBanner.classList.remove('hidden'); } }
+                try {
+                    if (typeof firebase !== 'undefined') {
+                        const firebaseConfig = { 
+    apiKey: "AIzaSyDhv8D2pY_0M56UJrDTQw0RGPHA-BkXU8Y", 
+    authDomain: "crayon-note.firebaseapp.com", 
+    projectId: "crayon-note", 
+    storageBucket: "crayon-note.firebasestorage.app", 
+    messagingSenderId: "210614088940", 
+    appId: "1:210614088940:web:7addbdc7c466eeb05421c9", 
+    measurementId: "G-M1EJPE12TE" 
+};
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig); 
+} else {
+    firebase.app(); 
+}
+
+db = firebase.firestore(); 
+
+// 🌟 開啟 Firestore 離線持久化 (自動暫存與同步)
+db.enablePersistence()
+  .catch((err) => {
+      if (err.code == 'failed-precondition') {
+          console.warn("⚠️ 多個分頁同時開啟，離線模式只能在單一分頁運作。");
+      } else if (err.code == 'unimplemented') {
+          console.warn("⚠️ 當前瀏覽器不支援 Firebase 離線模式。");
+      }
+  });
+
+auth = firebase.auth(); 
+updateVisitCount();
+                        auth.onAuthStateChanged(user => {
                             updateAuthButtonUI(user); 
                             if (user) {
                                 currentUser = user;
                                 document.getElementById('userStatus').innerHTML = `<span id="authStatusText" class="font-bold text-green-600 dark:text-green-400 whitespace-nowrap" data-lang-key="auth_online_title">${t('auth_online_title')}</span><span class="text-[10px] text-gray-500 dark:text-gray-400 truncate max-w-[60px] sm:max-w-[100px] ml-1.5 opacity-70">${user.displayName || '教主'}</span>`;
-                                window.fb.getDoc(window.fb.doc(window.firebaseDb, "player_boards", user.uid)).then(docSnap => { 
-                                    if (docSnap.exists() && docSnap.data().states) { 
-                                        savedStates = docSnap.data().states; 
-                                        initStates(); 
-                                        renderMatrix(); 
-                                        calculateStats(); 
-                                    } 
+                                db.collection("player_boards").doc(user.uid).get().then(doc => { 
+                                    if (doc.exists && doc.data().states) { savedStates = doc.data().states; initStates(); renderMatrix(); calculateStats(); } 
                                 }).catch(err => {});
                             } else {
-                                currentUser = null; 
-                                document.getElementById('userStatus').innerHTML = `<span class="font-bold text-amber-600 dark:text-amber-400 whitespace-nowrap" data-lang-key="auth_offline_title">${t('auth_offline_title')}</span>`;
+                                currentUser = null; document.getElementById('userStatus').innerHTML = `<span class="font-bold text-amber-600 dark:text-amber-400 whitespace-nowrap" data-lang-key="auth_offline_title">${t('auth_offline_title')}</span>`;
                             }
                         });
                     }
-                } catch (e) { console.error("Firebase 初始化狀態監聽失敗", e); }
+                } catch (e) { }
                 setTimeout(() => {
                     if (isAnimationEnabled) {
                         initTopRunner();
@@ -2207,7 +2322,6 @@
                     }, 300);
                 }, 100);
             });
-
             window.onscroll = function() {
                 const btn = document.getElementById("backToTop");
                 if (btn) {
@@ -2226,62 +2340,79 @@
                 });
             }
         </script>
-
-        <button id="backToTop" onclick="scrollToTop()" title="回頂部">▲</button>
-        
+        <button id="backToTop" onclick="scrollToTop()" title="回頂部">
+        ▲
+        </button>
         <div id="updateBanner" class="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 bg-white dark:bg-gray-800 border-2 border-amber-400 shadow-2xl rounded-2xl p-4 z-[9999] hidden flex-col gap-2 transform transition-transform duration-300 translate-y-32">
-            <div class="flex items-center gap-2">
-                <span class="text-xl animate-bounce">✨</span>
-                <p class="text-sm font-bold text-amber-900 dark:text-amber-400">發現新版本！</p>
-            </div>
-            <p class="text-xs text-gray-500 dark:text-gray-400 font-medium pl-1">為了提供更好的體驗，請更新至最新版本。</p>
-            <div class="flex justify-end gap-2 mt-2">
-                <button onclick="hideUpdateBanner()" class="px-3 py-1.5 text-xs font-bold text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">稍後</button>
-                <button id="btnUpdateNow" class="px-3 py-1.5 text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-lg shadow transition flex items-center gap-1">
-                    🚀 立即更新
-                </button>
-            </div>
-        </div>
-        
-        <script>
-            let newWorker;
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('./sw.js').then(reg => {
-                        reg.addEventListener('updatefound', () => {
-                            newWorker = reg.installing;
-                            newWorker.addEventListener('statechange', () => {
-                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    showUpdateBanner();
-                                }
-                            });
-                        });
+    <div class="flex items-center gap-2">
+        <span class="text-xl animate-bounce">✨</span>
+        <p class="text-sm font-bold text-amber-900 dark:text-amber-400">發現新版本！</p>
+    </div>
+    <p class="text-xs text-gray-500 dark:text-gray-400 font-medium pl-1">為了提供更好的體驗，請更新至最新版本。</p>
+    <div class="flex justify-end gap-2 mt-2">
+        <button onclick="hideUpdateBanner()" class="px-3 py-1.5 text-xs font-bold text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">稍後</button>
+        <button id="btnUpdateNow" class="px-3 py-1.5 text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-lg shadow transition flex items-center gap-1">
+            🚀 立即更新
+        </button>
+    </div>
+</div>
+    <script>
+    let newWorker;
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js').then(reg => {
+                
+                // 偵測到有新的 Service Worker 正在安裝
+                reg.addEventListener('updatefound', () => {
+                    newWorker = reg.installing;
+                    
+                    newWorker.addEventListener('statechange', () => {
+                        // 當新版本下載完成，並且進入 installed (等待中) 狀態
+                        // 且舊的 Service Worker 依然在控制網頁時，代表這是一個「更新」
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            showUpdateBanner();
+                        }
                     });
                 });
-                let refreshing;
-                navigator.serviceWorker.addEventListener('controllerchange', () => {
-                    if (refreshing) return;
-                    refreshing = true;
-                    window.location.reload();
-                });
+            });
+        });
+
+        // 監聽 Controller 改變事件：只要新的 Service Worker 一接管，就強制重新整理網頁
+        let refreshing;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (refreshing) return;
+            refreshing = true;
+            window.location.reload();
+        });
+    }
+
+    // 顯示提示框並加上動畫
+    function showUpdateBanner() {
+        const banner = document.getElementById('updateBanner');
+        banner.classList.remove('hidden');
+        banner.classList.add('flex');
+        setTimeout(() => banner.classList.remove('translate-y-32'), 50);
+        
+        // 綁定「立即更新」按鈕事件
+        document.getElementById('btnUpdateNow').onclick = () => {
+            if (newWorker) {
+                // 發送指令給 sw.js，叫它立刻跳過等待接管網頁
+                newWorker.postMessage('SKIP_WAITING');
             }
-            function showUpdateBanner() {
-                const banner = document.getElementById('updateBanner');
-                banner.classList.remove('hidden');
-                banner.classList.add('flex');
-                setTimeout(() => banner.classList.remove('translate-y-32'), 50);
-                document.getElementById('btnUpdateNow').onclick = () => {
-                    if (newWorker) newWorker.postMessage('SKIP_WAITING');
-                };
-            }
-            function hideUpdateBanner() {
-                const banner = document.getElementById('updateBanner');
-                banner.classList.add('translate-y-32');
-                setTimeout(() => {
-                    banner.classList.remove('flex');
-                    banner.classList.add('hidden');
-                }, 300);
-            }
-        </script>
-    </body>
+        };
+    }
+
+    // 隱藏提示框
+    function hideUpdateBanner() {
+        const banner = document.getElementById('updateBanner');
+        banner.classList.add('translate-y-32');
+        setTimeout(() => {
+            banner.classList.remove('flex');
+            banner.classList.add('hidden');
+        }, 300);
+    }
+</script>
+
+</body>
 </html>
