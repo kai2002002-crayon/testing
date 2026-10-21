@@ -1,6 +1,10 @@
+// ==========================================
+// トリッカル特級クレヨンノート - スキルデータベース (data_skills.js)
+// 役割: 使徒の全言語（中・日・英）のスキルデータを一元管理
+// ==========================================
 
 const characterSkills = [
-    {
+       {
     "name": "",
     "attribute": "魔法",
     "skills": {
@@ -70,7 +74,7 @@ const characterSkills = [
     }
   },
     {
-    "name": "柯米(泳裝)",
+    "name": "瑰恩",
     "attribute": "魔法",
     "skills": {
       "zh-TW": {
@@ -138,71 +142,140 @@ const characterSkills = [
       }
     }
   },
+{
+    "name": "柯米(泳裝)",
+    "attribute": "魔法",
+    "skills": {
+      "zh-TW": {
+        "normalAttack": {
+          "basic": "出售自製果汁給剩餘HP比例最低的前排友軍以及最近的1名敵人。自製果汁可以恢復友軍的HP，並對敵人造成魔法傷害。如果沒有前排友軍，則會選擇HP比例最低的友軍為目標。 [HP恢復:目標最大HP的5%] [魔法傷害:60%]",
+          "enhanced": "無"
+        },
+        "normalSkill": {
+          "name": "玩水不是超棒的嗎?",
+          "desc": "拍打水花，在一定時間內恢復周圍友軍HP12次，並增加包括自己在內的友軍技能傷害量3次。技能傷害量增加效果最多可疊加3次。",
+          "stats": ["總HP恢復:目標最大HP的24%", "每層技能傷害量增加:22%", "技能傷害量增加持續時間:9秒"]
+        },
+        "ultimateSkill": {
+          "name": "這裡就是泳池候選地!",
+          "desc": "在一定時間內，對敵方隨機位置灑鹽水6次，並對灑水區域的敵人造成範圍魔法傷害，並給予沉默效果。",
+          "stats": ["沉默:無法使用任何技能。", "總魔法傷害:4986%", "沉默持續時間:4秒"],
+          "cooldown": "32秒"
+        },
+        "passiveSkill": {
+          "desc": "增加HP治療量。",
+          "stats": ["HP治療量增加:63%"]
+        }
+      },
+      "ja": {
+        "normalAttack": {
+          "basic": "残りHP割合が最も低い前列の味方1名と、最も近い敵1体に手作りジュースを販売する。手作りジュースは味方のHPを回復させ、敵には魔法ダメージを与える。前列の味方がいない場合、残りHP割合が最も低い味方を対象に指定する。 [HP回復: 対象の最大HPの5%] [魔法ダメージ:60%]",
+          "enhanced": "無"
+        },
+        "normalSkill": {
+          "name": "水遊びって楽しくないかにゃ?",
+          "desc": "水遊びをしながら一定時間、周囲の味方のHPを12回回復させ、スキルダメージ量を3回増加させる。スキルダメージ量増加効果は最大3回までスタック可能。",
+          "stats": ["総HP回復:対象の最大HPの24%", "1スタック時のスキルダメージ量増加:22%", "スキルダメージ量増加の持続時間:9秒"]
+        },
+        "ultimateSkill": {
+          "name": "プール建設予定地にゃ",
+          "desc": "一定時間、ランダムな敵の位置に6回塩水を浴びせる。落下地点の敵に範囲魔法ダメージを与え、沈黙を付与する。",
+          "stats": ["沈黙: すべてのスキルが使用できなくなる。", "総魔法ダメージ:4986%", "沈黙の持続時間:4秒"],
+          "cooldown": "32秒"
+        },
+        "passiveSkill": {
+          "desc": "HP治癒量が増加する。",
+          "stats": ["HP治癒量増加:63%"]
+        }
+      },
+      "en": {
+        "normalAttack": {
+          "basic": "Sells a handmade juice to the Front Row ally with the lowest HP Ratio and the closest enemy. The handmade juice recovers the ally's HP and deals Magical Damage to the enemy. If there are no Front Row allies, the effect targets the ally with the lowest HP Ratio.[HP Recovery: 5% of the target's Max HP] [Magical DMG: 60%]",
+          "enhanced": "無"
+        },
+        "normalSkill": {
+          "name": "Isn't Swimming Fun?",
+          "desc": "Recovers the HP of all allies nearby 12 times and increases their Skill Damage 3 times while splashing the water for a set period of time. The Skill Damage Increase effect can stack up to 3 times.",
+          "stats": ["Total HP Recovery: 24% of the target's Max HP", "Increases Skill Damage upon 1 Stack: 22%", "Skill DMG Increase Duration: 9s"]
+        },
+        "ultimateSkill": {
+          "name": "Perfect Pool Candidate",
+          "desc": "Splashes saltwater 6 times for a set period of time at random enemy locations. Enemies in the affected areas take AoE Magical Damage and are inflicted with Silence.",
+          "stats": ["Silence: Unable to use any skills.", "Total Magical DMG: 4986%", "Silence Duration: 4s"],
+          "cooldown": "32s"
+        },
+        "passiveSkill": {
+          "desc": "Increases HP Healing.",
+          "stats": ["HP Healing Increase: 63%"]
+        }
+      }
+    }
+  },
     {
     "name": "麗息",
     "attribute": "物理",
     "skills": {
       "zh-TW": {
         "normalAttack": {
-          "basic": " []",
-          "enhanced": " []"
+          "basic": "對敵軍使用雷射筆，造成4次物理傷害。 [總物理傷害:160%]",
+          "enhanced": "無"
         },
         "normalSkill": {
-          "name": "",
-          "desc": "",
-          "stats": [""]
+          "name": "啟動神經連結",
+          "desc": "將雷射光注入自己的口中,忘記所受到的傷害。於一定時間內,每秒恢復自身HP。",
+          "stats": ["HP恢復:最大HP的7.5%", "恢復持續時間:6秒"]
         },
         "ultimateSkill": {
-          "name": "",
-          "desc": "",
-          "stats": [""],
-          "cooldown": "秒"
+          "name": "突襲閃光砰",
+          "desc": "對敵軍引爆一道閃光，造成物理傷害並給予致盲效果。",
+          "stats": ["致盲:普通攻擊失準。", "物理傷害:365%", "致盲持續時間:6秒"],
+          "cooldown": "24秒"
         },
         "passiveSkill": {
-          "desc": "",
-          "stats": ["秒"]
+          "desc": "減少受到的物理傷害量。",
+          "stats": ["受到的物理傷害量減少:46%"]
         }
       },
       "ja": {
         "normalAttack": {
-          "basic": " []",
-          "enhanced": " []"
+          "basic": "敵にレーザーポインターを照射し、物理ダメージを4回与える。 [総物理ダメージ: 160%]",
+          "enhanced": "無"
         },
         "normalSkill": {
-          "name": "",
-          "desc": "",
-          "stats": [""]
+          "name": "ニューラルリンク・スタート",
+          "desc": "自身の口にレーザーを注入し、ダメージを受けた記憶を忘れる。一定時間、1秒ごとに自身のHPを回復する。",
+          "stats": ["HP回復:最大HPの7.5%", "回復の持続時間:6秒"]
         },
         "ultimateSkill": {
-          "name": "",
-          "desc": "",
-          "stats": [""],
-          "cooldown": "秒"
+          "name": "奇襲フラッシュ、ピカッ!",
+          "desc": "敵にフラッシュをたいて、物理ダメージを与え、目隠しを付与する。",
+          "stats": ["目隠し:普通攻撃が命中しない。", "物理ダメージ:365%", "目隠しの持続時間:6秒"],
+          "cooldown": "24秒"
         },
         "passiveSkill": {
-          "desc": "",
-          "stats": [""]
+          "desc": "物理被ダメージ量が減少する。",
+          "stats": ["物理被ダメージ量減少:46%"]
         }
       },
       "en": {
         "normalAttack": {
-          "basic": " []",
-          "enhanced": " []"
+          "basic": "Fires a Laser Pointer at enemies, dealing Physical Damage 4 times. [Total Physical DMG: 160%]",
+          "enhanced": "無"
         },
         "normalSkill": {
-          "name": "",
-          "desc": "",
-          "stats": [""]
+          "name": "Neural Link Start",
+          "desc": "Injects a laser into one's own mouth, erasing memories of past damage. Gradually recover HP for a set period of time.",
+          "stats": ["HP Recovery: 7.5% of Max HP", "Recovery Duration: 6s"]
         },
         "ultimateSkill": {
-          "name": "",
-          "desc": "",
-          "stats": [""],
-          "cooldown": "s"
+          "name": "Surprise Flash Bang",
+          "desc": "Flashes a bright light, dealing Physical Damage to the enemy and applying Blindfold.",
+          "stats": ["Blindfold: Normal Attacks miss.", "Physical Damage: 365%", "Blindfold Duration: 6s"],
+          "cooldown": "24s"
         },
         "passiveSkill": {
-          "desc": "",
-          "stats": [""]
+          "desc": "Reduces Incoming Physical Damage.",
+          "stats": ["Incoming Physical DMG Reduction: 46%"]
         }
       }
     }
@@ -283,7 +356,7 @@ const characterSkills = [
       "zh-TW": {
         "normalAttack": {
           "basic": "向敵人發射墨水並對其造成魔法傷害。 [魔法傷害:120%]",
-          "enhanced": ""
+          "enhanced": "無"
         },
         "normalSkill": {
           "name": "請整理書本",
@@ -304,7 +377,7 @@ const characterSkills = [
       "ja": {
         "normalAttack": {
           "basic": "インクを発射し、敵に魔法ダメージを与える。 [魔法ダメージ:120%]",
-          "enhanced": ""
+          "enhanced": "無"
         },
         "normalSkill": {
           "name": "本を片付けてください",
@@ -325,7 +398,7 @@ const characterSkills = [
       "en": {
         "normalAttack": {
           "basic": "Shoots ink at enemies, dealing Magical Damage. [Magical DMG: 120%]",
-          "enhanced": ""
+          "enhanced": "無"
         },
         "normalSkill": {
           "name": "Please Organize the Books!",
