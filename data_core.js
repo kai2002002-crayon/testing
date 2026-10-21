@@ -161,6 +161,8 @@ const LANG_DICT = {
 		ui_tier_title: "Tier List Maker", ui_tier_add_row: "Add Rank", ui_tier_reset: "Reset All", ui_tier_export: "Export Image", ui_tier_pool_title: "Character Pool (Drag to Rank)", ui_tier_default_title: "My Ultimate Tier List", ui_tier_reset_confirm: "Are you sure you want to reset the board and return all characters to the pool?", ui_tier_export_error: "Failed to export image.",
     }
 };
+const currentLang = localStorage.getItem('user_lang') || 'zh-TW';
+function t(key) { return LANG_DICT[currentLang][key] || key; }
 
 // ------------------------------------------
 // 坨坨資料
