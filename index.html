@@ -2321,12 +2321,12 @@ updateVisitCount();
         <button id="backToTop" title="回頂部" style="display: none; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 99; padding: 10px 15px; background-color: #f59e0b; color: white; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
             ▲
         </button>
-            <script>
+
+        <script>
+            // 回頂部按鈕邏輯
             const backToTop = document.getElementById('backToTop');
 
-            // 監聽視窗捲動事件，決定是否顯示按鈕
             window.addEventListener('scroll', () => {
-                // 當網頁往下捲動超過 200px 時，顯示按鈕；否則隱藏
                 if (window.scrollY > 200) {
                     backToTop.style.display = 'block';
                 } else {
@@ -2334,7 +2334,6 @@ updateVisitCount();
                 }
             });
 
-            // 處理點擊回到最上面
             if (backToTop) {
                 backToTop.addEventListener('click', () => {
                     window.scrollTo({
@@ -2343,7 +2342,9 @@ updateVisitCount();
                     });
                 });
             }
-            // 解除註冊所有 Service Worker
+
+            // 🛑 修正 3：將 Service Worker 的清除代碼包進 <script> 標籤內
+            // 1. 解除註冊所有 Service Worker
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.getRegistrations().then(function(registrations) {
                     for (let registration of registrations) {
