@@ -10,16 +10,13 @@
         <script src="data_collectibles.js"></script>
         <script src="data_intro.js"></script>
         <script src="data_aside.js"></script>
-        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="./style.css">
         <link id="dynamicFavicon" rel="icon" href="https://i.postimg.cc/mkfSTq5k/Favicon.png" type="image/png">
         <link rel="preconnect" href="https://firebasestorage.googleapis.com">
         <link rel="stylesheet" href="sprites.css">
         <link rel="stylesheet" href="char_sprites/char_sprites.css">
         <link rel="preconnect" href="https://i.postimg.cc">
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
-        <script>
-            tailwind.config = { darkMode: 'class', }
-        </script>
         <script>
             const isDarkMode = localStorage.getItem('theme') === 'dark' || 
                                (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
