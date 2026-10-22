@@ -1655,7 +1655,7 @@
                 asideContainer.innerHTML = html;
             }
             
-            ffunction loadSkillSpines(charName, sdCostumeKey = null) {
+            function loadSkillSpines(charName, sdCostumeKey = null) {
                 if (window.skillSpinePlayers && window.skillSpinePlayers.length > 0) {
                     window.skillSpinePlayers.forEach(p => p.dispose());
                     window.skillSpinePlayers = [];
