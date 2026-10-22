@@ -2324,7 +2324,7 @@ updateVisitCount();
             <script>
             const backToTop = document.getElementById('backToTop');
 
-            // 1. 監聽視窗捲動事件，決定是否顯示按鈕
+            // 監聽視窗捲動事件，決定是否顯示按鈕
             window.addEventListener('scroll', () => {
                 // 當網頁往下捲動超過 200px 時，顯示按鈕；否則隱藏
                 if (window.scrollY > 200) {
@@ -2334,7 +2334,7 @@ updateVisitCount();
                 }
             });
 
-            // 2. 處理點擊回到最上面
+            // 處理點擊回到最上面
             if (backToTop) {
                 backToTop.addEventListener('click', () => {
                     window.scrollTo({
@@ -2343,29 +2343,7 @@ updateVisitCount();
                     });
                 });
             }
-        </script>
-<script>
-            // 回頂部按鈕邏輯
-            const backToTop = document.getElementById('backToTop');
-
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 200) {
-                    backToTop.style.display = 'block';
-                } else {
-                    backToTop.style.display = 'none';
-                }
-            });
-
-            if (backToTop) {
-                backToTop.addEventListener('click', () => {
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth' 
-                    });
-                });
-            }
-
-            // 1. 解除註冊所有 Service Worker
+            // 解除註冊所有 Service Worker
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.getRegistrations().then(function(registrations) {
                     for (let registration of registrations) {
