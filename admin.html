@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>終極角色資料管理系統 (單機版)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./style.css">
     <script src="data_core.js"></script>
     <script src="data_skills.js"></script>
     <script src="data_aside.js"></script>
@@ -12,7 +12,6 @@
     <script src="data_collectibles.js"></script>
     
     <script>
-        tailwind.config = { darkMode: 'class' };
         
         // 確保變數存在，避免報錯
         if(typeof LANG_DICT === 'undefined') window.LANG_DICT = { "zh-TW": {}, "ja": {}, "en": {} };
