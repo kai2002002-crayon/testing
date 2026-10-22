@@ -2317,45 +2317,34 @@ updateVisitCount();
                     }, 300);
                 }, 100);
             });
-            // 1. 確保名稱與 HTML 的 id="backToTop" 完全一致
-const backToTop = document.getElementById('backToTop'); 
+            <script>
+            const backToTop = document.getElementById('backToTop');
 
-// 2. 處理滾動顯示/隱藏 (加入 requestAnimationFrame 節流)
-let isScrolling = false;
-window.addEventListener('scroll', () => {
-    if (!isScrolling) {
-        window.requestAnimationFrame(() => {
-            if (backToTop) {
-                if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-                    backToTop.style.display = "block";
+            // 1. 監聽視窗捲動事件，決定是否顯示按鈕
+            window.addEventListener('scroll', () => {
+                // 當網頁往下捲動超過 200px 時，顯示按鈕；否則隱藏
+                if (window.scrollY > 200) {
+                    backToTop.style.display = 'block';
                 } else {
-                    backToTop.style.display = "none";
+                    backToTop.style.display = 'none';
                 }
-            }
-            isScrolling = false;
-        });
-        isScrolling = true;
-    }
-});
+            });
 
-// 3. 處理點擊回到最上面 (取代原本的 onclick="scrollToTop()")
+            // 2. 處理點擊回到最上面
             if (backToTop) {
                 backToTop.addEventListener('click', () => {
-                    // 加入平滑滾動效果 (Smooth Scroll)
                     window.scrollTo({
                         top: 0,
                         behavior: 'smooth' 
                     });
                 });
             }
-        </script> <!-- 這裡必須補上 closing tag 來結束前面的 JS -->
+        </script>
 
-        <!-- 將原本在最下方的 backToTop 按鈕往上移，確保前面的 JS 抓得到這個 DOM -->
-        <button id="backToTop" title="回頂部" style="display: none;">
-            ▲
+        <!-- 將 right: 30px 改為 left: 50% 與 transform: translateX(-50%) -->
+        <button id="backToTop" title="回頂部" style="display: none; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 99; padding: 10px 15px; background-color: #f59e0b; color: white; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    ▲
         </button>
-            </div>
-        </div>
 // 1. 解除註冊所有 Service Worker
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then(function(registrations) {
