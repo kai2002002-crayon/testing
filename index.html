@@ -2317,6 +2317,10 @@ updateVisitCount();
                     }, 300);
                 }, 100);
             });
+            </script>
+        <button id="backToTop" title="回頂部" style="display: none; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 99; padding: 10px 15px; background-color: #f59e0b; color: white; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            ▲
+        </button>
             <script>
             const backToTop = document.getElementById('backToTop');
 
@@ -2340,33 +2344,50 @@ updateVisitCount();
                 });
             }
         </script>
+<script>
+            // 回頂部按鈕邏輯
+            const backToTop = document.getElementById('backToTop');
 
-        <!-- 將 right: 30px 改為 left: 50% 與 transform: translateX(-50%) -->
-        <button id="backToTop" title="回頂部" style="display: none; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 99; padding: 10px 15px; background-color: #f59e0b; color: white; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-    ▲
-        </button>
-// 1. 解除註冊所有 Service Worker
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistrations().then(function(registrations) {
-        for (let registration of registrations) {
-            registration.unregister().then(function(isUnregistered) {
-                if (isUnregistered) {
-                    console.log('Service Worker 已成功解除註冊');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 200) {
+                    backToTop.style.display = 'block';
+                } else {
+                    backToTop.style.display = 'none';
                 }
             });
-        }
-    });
-}
 
-// 2. 清除所有 Service Worker 建立的 Cache Storage 快取檔案
-if ('caches' in window) {
-    caches.keys().then(function(cacheNames) {
-        cacheNames.forEach(function(cacheName) {
-            caches.delete(cacheName).then(function() {
-                console.log('已清除舊快取:', cacheName);
-            });
-        });
-    });
-}
+            if (backToTop) {
+                backToTop.addEventListener('click', () => {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth' 
+                    });
+                });
+            }
+
+            // 1. 解除註冊所有 Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for (let registration of registrations) {
+                        registration.unregister().then(function(isUnregistered) {
+                            if (isUnregistered) {
+                                console.log('Service Worker 已成功解除註冊');
+                            }
+                        });
+                    }
+                });
+            }
+
+            // 2. 清除所有 Service Worker 建立的 Cache Storage 快取檔案
+            if ('caches' in window) {
+                caches.keys().then(function(cacheNames) {
+                    cacheNames.forEach(function(cacheName) {
+                        caches.delete(cacheName).then(function() {
+                            console.log('已清除舊快取:', cacheName);
+                        });
+                    });
+                });
+            }
+        </script>
     </body>
 </html>
