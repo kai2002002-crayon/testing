@@ -2317,71 +2317,67 @@ updateVisitCount();
                     }, 300);
                 }, 100);
             });
-            </script>
-        <!-- updateBanner HTML 區塊 (保持在 HTML 層級) -->
-        <div id="updateBanner" class="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 bg-white dark:bg-gray-800 border-2 border-amber-400 shadow-2xl rounded-2xl p-4 z-[9999] hidden flex-col gap-2 transform transition-transform duration-300 translate-y-32">
-            <div class="flex items-center gap-2">
-                <span class="text-xl animate-bounce">✨</span>
-                <p class="text-sm font-bold text-amber-900 dark:text-amber-400">發現新版本！</p>
-            </div>
-            <p class="text-xs text-gray-500 dark:text-gray-400 font-medium pl-1">為了提供更好的體驗，請更新至最新版本。</p>
-            <div class="flex justify-end gap-2 mt-2">
-                <button onclick="hideUpdateBanner()" class="px-3 py-1.5 text-xs font-bold text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">稍後</button>
-                <button id="btnUpdateNow" class="px-3 py-1.5 text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-lg shadow transition flex items-center gap-1">
-                    🚀 立即更新
-                </button>
-            </div>
-        </div>
+            // 1. 確保名稱與 HTML 的 id="backToTop" 完全一致
+const backToTop = document.getElementById('backToTop'); 
 
-        <!-- Service Worker 專用的新 script 區塊 -->
-        <script>
-            let newWorker;
+// 2. 處理滾動顯示/隱藏 (加入 requestAnimationFrame 節流)
+let isScrolling = false;
+window.addEventListener('scroll', () => {
+    if (!isScrolling) {
+        window.requestAnimationFrame(() => {
+            if (backToTop) {
+                if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                    backToTop.style.display = "block";
+                } else {
+                    backToTop.style.display = "none";
+                }
+            }
+            isScrolling = false;
+        });
+        isScrolling = true;
+    }
+});
 
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('./sw.js').then(reg => {
-                        // 偵測到有新的 Service Worker 正在安裝
-                        reg.addEventListener('updatefound', () => {
-                            newWorker = reg.installing;
-                            
-                            newWorker.addEventListener('statechange', () => {
-                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    showUpdateBanner();
-                                }
-                            });
-                        });
+// 3. 處理點擊回到最上面 (取代原本的 onclick="scrollToTop()")
+            if (backToTop) {
+                backToTop.addEventListener('click', () => {
+                    // 加入平滑滾動效果 (Smooth Scroll)
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth' 
                     });
                 });
-
-                let refreshing;
-                navigator.serviceWorker.addEventListener('controllerchange', () => {
-                    if (refreshing) return;
-                    refreshing = true;
-                    window.location.reload();
-                });
             }
+        </script> <!-- 這裡必須補上 closing tag 來結束前面的 JS -->
 
-            function showUpdateBanner() {
-                const banner = document.getElementById('updateBanner');
-                banner.classList.remove('hidden');
-                banner.classList.add('flex');
-                setTimeout(() => banner.classList.remove('translate-y-32'), 50);
-                
-                document.getElementById('btnUpdateNow').onclick = () => {
-                    if (newWorker) {
-                        newWorker.postMessage('SKIP_WAITING');
-                    }
-                };
-            }
+        <!-- 將原本在最下方的 backToTop 按鈕往上移，確保前面的 JS 抓得到這個 DOM -->
+        <button id="backToTop" title="回頂部" style="display: none;">
+            ▲
+        </button>
+            </div>
+        </div>
+// 1. 解除註冊所有 Service Worker
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for (let registration of registrations) {
+            registration.unregister().then(function(isUnregistered) {
+                if (isUnregistered) {
+                    console.log('Service Worker 已成功解除註冊');
+                }
+            });
+        }
+    });
+}
 
-            function hideUpdateBanner() {
-                const banner = document.getElementById('updateBanner');
-                banner.classList.add('translate-y-32');
-                setTimeout(() => {
-                    banner.classList.remove('flex');
-                    banner.classList.add('hidden');
-                }, 300);
-            }
-        </script>
+// 2. 清除所有 Service Worker 建立的 Cache Storage 快取檔案
+if ('caches' in window) {
+    caches.keys().then(function(cacheNames) {
+        cacheNames.forEach(function(cacheName) {
+            caches.delete(cacheName).then(function() {
+                console.log('已清除舊快取:', cacheName);
+            });
+        });
+    });
+}
     </body>
 </html>
