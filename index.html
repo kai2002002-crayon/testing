@@ -2293,8 +2293,10 @@ db.enablePersistence()
           console.warn("⚠️ 當前瀏覽器不支援 Firebase 離線模式。");
       }
   });
-
-auth = firebase.auth(); 
+                        auth = firebase.auth();
+                        auth.getRedirectResult().catch((err) => {
+                            alert("Google 授權登入失敗 (" + err.code + "): " + err.message);
+                        });
 updateVisitCount();
                         auth.onAuthStateChanged(user => {
                             updateAuthButtonUI(user); 
