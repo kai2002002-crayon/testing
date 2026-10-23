@@ -2112,32 +2112,36 @@
             }
             
             function handleAuth() {
-    if (!auth) { 
-        alert("目前處於斷線單機模式（可能被擴充功能阻擋），無法登入雲端。"); 
-        return; 
+    if (!auth) {
+        alert("目前處於斷線單機模式（可能被擴充功能阻擋），無法登入雲端。");
+        return;
     }
-    
-    if (currentUser) { 
+
+    if (currentUser) {
         auth.signOut()
             .then(() => { localStorage.removeItem(storageKey); location.reload(); })
-            .catch(err => alert("登出失敗: " + err.message)); 
-    } else { 
-        const provider = new firebase.auth.GoogleAuthProvider(); 
-        
-        // ⚠️ 絕對不能用 setTimeout，否則 iOS 會判定為「非使用者主動點擊」而封鎖跳轉狀態
-        const isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            .catch(err => alert("登出失敗: " + err.message));
+    } else {
+        const provider = new firebase.auth.GoogleAuthProvider();
 
-        if (isStandalone || isMobile) {
-            // 手機與主畫面版：使用同頁面跳轉
+        // ⚠️ 僅針對 iOS 的主畫面模式 (Standalone) 進行判定
+        const isIOSStandalone = window.navigator.standalone === true;
+
+        if (isIOSStandalone) {
+            // 只有 iOS 主畫面模式因為不支援 Popup，才被迫使用 Redirect
             auth.signInWithRedirect(provider).catch(err => alert("跳轉登入失敗: " + err.message));
         } else {
-            // 電腦版：使用彈出視窗
-            auth.signInWithPopup(provider).catch(err => alert("彈出視窗被中斷: " + err.message)); 
+            // 電腦版與一般手機網頁 (Safari/Chrome) 全部改回 Popup，避開 ITP 阻擋
+            auth.signInWithPopup(provider).catch(err => {
+                if (err.code === 'auth/popup-blocked') {
+                    alert("登入視窗被瀏覽器阻擋，請允許彈出視窗。");
+                } else {
+                    console.warn("彈出視窗登入中斷: ", err.message);
+                }
+            });
         }
     }
 }
-            
             
             function spawnCrayonOnTrack() {
                 if (!isAnimationEnabled) return;
@@ -2274,13 +2278,14 @@ db.enablePersistence()
 
 auth = firebase.auth(); 
 
-// === 新增：主動捕捉 Redirect 跳轉回來的登入結果 ===
+// === 修改：主動捕捉 Redirect 跳轉回來的登入結果 ===
 auth.getRedirectResult().then((result) => {
     if (result && result.user) {
         console.log("Redirect 登入成功", result.user);
     }
 }).catch((error) => {
-    alert("登入回傳失敗，可能是瀏覽器阻擋了跨站追蹤: " + error.message);
+    // 🛑 拔除 alert，改用 console 紀錄，避免 ITP 阻擋時卡死一般使用者的畫面
+    console.warn("跳轉登入回傳失敗 (可能被阻擋跨站追蹤): ", error.message);
 });
 // =================================================
 
