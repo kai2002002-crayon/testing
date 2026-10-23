@@ -2112,36 +2112,54 @@
             }
             
             function handleAuth() {
-    if (!auth) {
-        alert("目前處於斷線單機模式（可能被擴充功能阻擋），無法登入雲端。");
-        return;
+    if (!auth) { 
+        alert("目前處於斷線單機模式（可能被擴充功能阻擋），無法登入雲端。"); 
+        return; 
     }
-
-    if (currentUser) {
-        auth.signOut()
-            .then(() => { localStorage.removeItem(storageKey); location.reload(); })
-            .catch(err => alert("登出失敗: " + err.message));
-    } else {
-        const provider = new firebase.auth.GoogleAuthProvider();
-
-        // ⚠️ 僅針對 iOS 的主畫面模式 (Standalone) 進行判定
-        const isIOSStandalone = window.navigator.standalone === true;
-
-        if (isIOSStandalone) {
-            // 只有 iOS 主畫面模式因為不支援 Popup，才被迫使用 Redirect
-            auth.signInWithRedirect(provider).catch(err => alert("跳轉登入失敗: " + err.message));
-        } else {
-            // 電腦版與一般手機網頁 (Safari/Chrome) 全部改回 Popup，避開 ITP 阻擋
-            auth.signInWithPopup(provider).catch(err => {
-                if (err.code === 'auth/popup-blocked') {
-                    alert("登入視窗被瀏覽器阻擋，請允許彈出視窗。");
-                } else {
-                    console.warn("彈出視窗登入中斷: ", err.message);
-                }
+    
+    if (currentUser) { 
+        auth.signOut().then(() => { 
+            localStorage.removeItem(storageKey); 
+            location.reload(); 
+        }).catch(err => alert("登出失敗: " + err.message)); 
+    } else { 
+        const provider = new firebase.auth.GoogleAuthProvider(); 
+        
+        // 判斷是否為手機「加到主畫面 (Standalone)」模式或是行動裝置
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        
+        if (isStandalone || isMobile) {
+            // 手機或主畫面模式：改用頁面跳轉 (Redirect) 來避免 Popup 被阻擋
+            auth.signInWithRedirect(provider).catch(err => {
+                alert("跳轉登入失敗: " + err.message);
             });
+        } else {
+            // 電腦網頁版：維持原本的 Popup
+            setTimeout(() => { 
+                auth.signInWithPopup(provider).catch(err => alert("登入被中斷，請確認是否允許跳出視窗。(" + err.code + ")")); 
+            }, 50);
         }
     }
 }
+            
+                        function updateAuthButtonUI(user) {
+                const btn = document.getElementById('authBtn'); 
+                const svgLogo = document.getElementById('googleLogoSvg'); 
+                const logoutText = document.getElementById('logoutText'); 
+                if (!btn) return;
+                
+                if (user) { 
+                    if (svgLogo) svgLogo.classList.add('hidden'); 
+                    if (logoutText) logoutText.classList.remove('hidden'); 
+                    btn.className = "p-1 flex items-center justify-center transition hover:opacity-70 shrink-0 whitespace-nowrap"; 
+                } else { 
+                    if (svgLogo) svgLogo.classList.remove('hidden'); 
+                    if (logoutText) logoutText.classList.add('hidden'); 
+                    btn.className = "p-1 flex items-center justify-center transition hover:opacity-70 shrink-0"; 
+                }
+            }
+            
             
             function spawnCrayonOnTrack() {
                 if (!isAnimationEnabled) return;
@@ -2212,62 +2230,86 @@
             }); 
             }
             window.addEventListener('load', () => {
-    // 1. 確保 UI 一定會被初始化，並關閉 Loading 動畫
-    if (typeof renderMainUI === 'function') {
-        renderMainUI();
-    }
-
-    try {
-        if (typeof firebase !== 'undefined') {
-            const firebaseConfig = { 
-                apiKey: "AIzaSyDhv8D2pY_0M56UJrDTQw0RGPHA-BkXU8Y", 
-                authDomain: "crayon-note.firebaseapp.com", 
-                projectId: "crayon-note", 
-                storageBucket: "crayon-note.firebasestorage.app", 
-                messagingSenderId: "210614088940", 
-                appId: "1:210614088940:web:7addbdc7c466eeb05421c9", 
-                measurementId: "G-M1EJPE12TE" 
-            };
-
-            if (!firebase.apps.length) {
-                firebase.initializeApp(firebaseConfig); 
-            }
+                document.getElementById('loader').style.display = 'none';
             
-            auth = firebase.auth(); 
-            
-            // 如果你連玩家個人存檔都不用 Firestore 了，請把 db 相關代碼刪除；
-            // 若還要保留個人雲端存檔，請確保 <head> 仍有載入 firestore-compat.js 並保留以下 db 初始化
-            if (firebase.firestore) {
-                db = firebase.firestore();
-                db.enablePersistence().catch(err => console.warn("Firestore offline err:", err));
-                updateVisitCount();
-            }
-
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    currentUser = user;
-                    document.getElementById('userStatus').innerHTML = `<span id="authStatusText" class="font-bold text-green-600 dark:text-green-400 whitespace-nowrap" data-lang-key="auth_online_title">${t('auth_online_title')}</span><span class="text-[10px] text-gray-500 dark:text-gray-400 truncate max-w-[60px] sm:max-w-[100px] ml-1.5 opacity-70">${user.displayName || '教主'}</span>`;
-                    
-                    // 若有 db 才會去雲端拉取玩家存檔
-                    if (db) {
-                        db.collection("player_boards").doc(user.uid).get().then(doc => { 
-                            if (doc.exists && doc.data().states) { 
-                                savedStates = doc.data().states; 
-                                initStates(); 
-                                renderMatrix(); 
-                                calculateStats(); 
-                            } 
-                        }).catch(err => console.error(err));
+                try {
+                    if (typeof INITIAL_DATA === 'undefined') throw new Error("找不到 INITIAL_DATA，請確認 data_core.js 是否載入成功！");
+                    if (typeof CRAYON_PATH_CONFIG !== 'undefined') {
+                        INITIAL_DATA.forEach(char => {
+                            if (char.pathVersion && CRAYON_PATH_CONFIG[char.race] && CRAYON_PATH_CONFIG[char.race][char.pathVersion]) {
+                                const config = CRAYON_PATH_CONFIG[char.race][char.pathVersion];
+                                char.layer1 = config.layer1 || [];
+                                char.layer2 = config.layer2 || [];
+                                char.layer3 = config.layer3 || [];
+                            }
+                        });
                     }
-                } else {
-                    currentUser = null; 
-                    document.getElementById('userStatus').innerHTML = `<span class="font-bold text-amber-600 dark:text-amber-400 whitespace-nowrap" data-lang-key="auth_offline_title">${t('auth_offline_title')}</span>`;
-                }
-            });
-        }
-    } catch (e) { 
-        console.error("Firebase Auth 初始化失敗:", e);
-    }
+                    if (typeof characterSkills !== 'undefined') {
+                        const skillsArray = Array.isArray(characterSkills) ? characterSkills : Object.values(characterSkills);
+                        
+                        INITIAL_DATA.forEach(char => {
+                            const skillData = skillsArray.find(item => item.name === char.name);
+                            
+                            if (skillData && skillData.attribute) {
+                                if (String(skillData.attribute).includes("魔")) {
+                                    char.type = "魔法";
+                                } else {
+                                    char.type = "物理";
+                                }
+                            } else {
+                                char.type = "物理";
+                            }
+                        });
+                    }
+                    renderPickupBanner(); renderCardBanner(); updateEventBanner(); startBannerRotation(); initStates(); changeLanguage(currentLang); updateAnimToggleUI();
+                    if (!isStatsOpen) { const body = document.getElementById("statsPanelBody"); const icon = document.getElementById("statsToggleIcon"); if(body) { body.classList.add("hidden"); body.classList.remove("grid"); icon.innerText = "▶"; } }
+                } catch (e) { const errBanner = document.getElementById('errorBanner'); if(errBanner) { errBanner.innerHTML = `⚠️ 畫面繪製失敗: ${e.message}`; errBanner.classList.remove('hidden'); } }
+                try {
+                    if (typeof firebase !== 'undefined') {
+                        const firebaseConfig = { 
+    apiKey: "AIzaSyDhv8D2pY_0M56UJrDTQw0RGPHA-BkXU8Y", 
+    authDomain: "crayon-note.firebaseapp.com", 
+    projectId: "crayon-note", 
+    storageBucket: "crayon-note.firebasestorage.app", 
+    messagingSenderId: "210614088940", 
+    appId: "1:210614088940:web:7addbdc7c466eeb05421c9", 
+    measurementId: "G-M1EJPE12TE" 
+};
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig); 
+} else {
+    firebase.app(); 
+}
+
+db = firebase.firestore(); 
+
+// 🌟 開啟 Firestore 離線持久化 (自動暫存與同步)
+db.enablePersistence()
+  .catch((err) => {
+      if (err.code == 'failed-precondition') {
+          console.warn("⚠️ 多個分頁同時開啟，離線模式只能在單一分頁運作。");
+      } else if (err.code == 'unimplemented') {
+          console.warn("⚠️ 當前瀏覽器不支援 Firebase 離線模式。");
+      }
+  });
+
+auth = firebase.auth(); 
+updateVisitCount();
+                        auth.onAuthStateChanged(user => {
+                            updateAuthButtonUI(user); 
+                            if (user) {
+                                currentUser = user;
+                                document.getElementById('userStatus').innerHTML = `<span id="authStatusText" class="font-bold text-green-600 dark:text-green-400 whitespace-nowrap" data-lang-key="auth_online_title">${t('auth_online_title')}</span><span class="text-[10px] text-gray-500 dark:text-gray-400 truncate max-w-[60px] sm:max-w-[100px] ml-1.5 opacity-70">${user.displayName || '教主'}</span>`;
+                                db.collection("player_boards").doc(user.uid).get().then(doc => { 
+                                    if (doc.exists && doc.data().states) { savedStates = doc.data().states; initStates(); renderMatrix(); calculateStats(); } 
+                                }).catch(err => {});
+                            } else {
+                                currentUser = null; document.getElementById('userStatus').innerHTML = `<span class="font-bold text-amber-600 dark:text-amber-400 whitespace-nowrap" data-lang-key="auth_offline_title">${t('auth_offline_title')}</span>`;
+                            }
+                        });
+                    }
+                } catch (e) { }
                 setTimeout(() => {
                     if (isAnimationEnabled) {
                         initTopRunner();
