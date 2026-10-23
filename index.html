@@ -2112,36 +2112,10 @@
             }
             
             function handleAuth() {
-    if (!auth) { 
-        alert("目前處於斷線單機模式（可能被擴充功能阻擋），無法登入雲端。"); 
-        return; 
-    }
-    
-    if (currentUser) { 
-        auth.signOut().then(() => { 
-            localStorage.removeItem(storageKey); 
-            location.reload(); 
-        }).catch(err => alert("登出失敗: " + err.message)); 
-    } else { 
-        const provider = new firebase.auth.GoogleAuthProvider(); 
-        
-        // 判斷是否為手機「加到主畫面 (Standalone)」模式或是行動裝置
-        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        
-        if (isStandalone || isMobile) {
-            // 手機或主畫面模式：改用頁面跳轉 (Redirect) 來避免 Popup 被阻擋
-            auth.signInWithRedirect(provider).catch(err => {
-                alert("跳轉登入失敗: " + err.message);
-            });
-        } else {
-            // 電腦網頁版：維持原本的 Popup
-            setTimeout(() => { 
-                auth.signInWithPopup(provider).catch(err => alert("登入被中斷，請確認是否允許跳出視窗。(" + err.code + ")")); 
-            }, 50);
-        }
-    }
-}
+                if (!auth) { alert("目前處於斷線單機模式（可能被擴充功能阻擋），無法登入雲端。"); return; }
+                if (currentUser) { auth.signOut().then(() => { localStorage.removeItem(storageKey); location.reload(); }).catch(err => alert("登出失敗: " + err.message)); } 
+                else { const provider = new firebase.auth.GoogleAuthProvider(); setTimeout(() => { auth.signInWithPopup(provider).catch(err => alert("登入被中斷，請確認是否允許跳出視窗。(" + err.code + ")")); }, 50); }
+            }
             
                         function updateAuthButtonUI(user) {
                 const btn = document.getElementById('authBtn'); 
@@ -2293,10 +2267,8 @@ db.enablePersistence()
           console.warn("⚠️ 當前瀏覽器不支援 Firebase 離線模式。");
       }
   });
-                        auth = firebase.auth();
-                        auth.getRedirectResult().catch((err) => {
-                            alert("Google 授權登入失敗 (" + err.code + "): " + err.message);
-                        });
+
+auth = firebase.auth(); 
 updateVisitCount();
                         auth.onAuthStateChanged(user => {
                             updateAuthButtonUI(user); 
