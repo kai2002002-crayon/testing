@@ -252,6 +252,27 @@
                 placeEpisodeContainer(activeStoryIndex);
             }
         });
+        // 5. 進入頁面時自動播放官方 PV
+        window.addEventListener('DOMContentLoaded', () => {
+            // 💡 在這裡填入官方預告 PV 的 YouTube ID (例如 v= 後面的那串代碼)
+            const officialPvId = "2MMjyU3mmzs"; 
+            
+            const modal = document.getElementById('video-modal');
+            const player = document.getElementById('youtube-player');
+            
+            // ⚠️ 瀏覽器限制：現代瀏覽器嚴格禁止「有聲音」的影片自動播放。
+            // 為了確保一進網頁就能自動播，我們必須加上 &mute=1 (靜音)。
+            // 玩家看到畫面後可以自己點擊取消靜音。
+            player.src = `https://www.youtube.com/embed/${officialPvId}?autoplay=1&mute=1&rel=0`;
+            
+            // 延遲 0.5 秒再顯示，讓背景圖先載入，視覺效果更好
+            setTimeout(() => {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                }, 10);
+            }, 500);
+        });
     </script>
 </body>
 </html>
