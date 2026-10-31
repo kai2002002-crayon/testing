@@ -91,10 +91,18 @@
             }
             #topRunnerContainer .spine-player-canvas, #bossRunnerContainer .spine-player-canvas { background-color: transparent !important; }
             :root { --user-bg-image: url('./CG_Schedule_Rim.png'); }
-            body {
-            zoom: 150%;
-            font-family: 'Noto Sans TC', sans-serif; background-color: #fcf8f2; 
-            -webkit-tap-highlight-color: transparent; transition: color 0.3s ease;
+            /* 預設狀態：手機與平板維持原始尺寸 */
+            body { 
+                font-family: 'Noto Sans TC', sans-serif; 
+                background-color: #fcf8f2; 
+                -webkit-tap-highlight-color: transparent; 
+                transition: color 0.3s ease;
+            }
+            /* 當螢幕寬度大於等於 1024px (電腦螢幕) 時，才執行 200% 放大 */
+            @media (min-width: 1024px) {
+                body {
+                    zoom: 200%;
+                }
             }
             body::before {
             content: ""; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
