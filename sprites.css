@@ -109,6 +109,7 @@
 .sprite-Velvet { width: 126px; height: 126px; background-position: -5px -1773px; }
 .sprite-Lethe { width: 126px; height: 126px; background-position: -5px -1909px; }
 .sprite-KommySwim { width: 126px; height: 126px; background-position: -5px -2045px; }
+.sprite-Guin { width: 126px; height: 126px; background-position: -5px -2181px; }
 /* Depressed */
 .sprite-Ashur { width: 126px; height: 126px; background-position: -5px -5px; }
 .sprite-Blanchet { width: 126px; height: 126px; background-position: -5px -141px; }
@@ -160,6 +161,7 @@
 .sprite-Yumimi { width: 126px; height: 126px; background-position: -5px -1773px; }
 .sprite-Rollett { width: 126px; height: 126px; background-position: -5px -1909px; }
 .sprite-Pira { width: 126px; height: 126px; background-position: -5px -2045px; }
+.sprite-Polan { width: 126px; height: 126px; background-position: -5px -2045px; }
 /* Vivacious */
 .sprite-Beni { width: 126px; height: 126px; background-position: -5px -5px; }
 .sprite-Butter { width: 126px; height: 126px; background-position: -5px -141px; }
@@ -199,6 +201,7 @@
 .sprite-Icon_UltimateSkill_Velvet { width: 64px; height: 64px; background-position: -5px -967px; }
 .sprite-Icon_UltimateSkill_Lethe { width: 64px; height: 64px; background-position: -5px -1041px; }
 .sprite-Icon_UltimateSkill_KommySwim { width: 64px; height: 64px; background-position: -5px -1115px; }
+.sprite-Icon_UltimateSkill_Guin { width: 64px; height: 64px; background-position: -5px -1189px; }
 /* Depressed */
 .sprite-Icon_UltimateSkill_Ashur { width: 64px; height: 64px; background-position: -5px -5px; }
 .sprite-Icon_UltimateSkill_Blanchet { width: 64px; height: 64px; background-position: -5px -79px; }
@@ -250,6 +253,7 @@
 .sprite-Icon_UltimateSkill_Yumimi { width: 64px; height: 64px; background-position: -5px -967px; }
 .sprite-Icon_UltimateSkill_Rollett { width: 64px; height: 64px; background-position: -5px -1041px; }
 .sprite-Icon_UltimateSkill_Pira { width: 64px; height: 64px; background-position: -5px -1115px; }
+.sprite-Icon_UltimateSkill_Polan { width: 64px; height: 64px; background-position: -5px -1115px; }
 /* Vivacious */
 .sprite-Icon_UltimateSkill_Beni { width: 64px; height: 64px; background-position: -5px -5px; }
 .sprite-Icon_UltimateSkill_Butter { width: 64px; height: 64px; background-position: -5px -79px; }
